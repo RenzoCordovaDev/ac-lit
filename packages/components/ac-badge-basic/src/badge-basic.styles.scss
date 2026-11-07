@@ -1,0 +1,41 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-badge-basic {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Variants - fondo sólido + texto calculado para cumplir contraste WCAG AA
+   (4.5:1) contra ESE fondo, no contra la página: el texto blanco/negro de
+   cada variant fue elegido por cálculo, no a ojo (ver docs/CONVENTIONS.md). */
+.ac-badge--neutral {
+  background: var(--color-muted, #313335);
+  color: #fff;
+}
+
+.ac-badge--success {
+  background: var(--color-success, #499c54);
+  color: #000;
+}
+
+.ac-badge--warning {
+  background: var(--color-warning, #e8a400);
+  color: #000;
+}
+
+.ac-badge--danger {
+  background: var(--color-danger, #e05555);
+  color: #000;
+}
