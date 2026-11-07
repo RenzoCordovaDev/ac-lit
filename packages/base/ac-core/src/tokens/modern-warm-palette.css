@@ -1,0 +1,30 @@
+/* Emerald Pro - inspirada en JetBrains IDEs */
+:root {
+  /* Primary (emerald green) - profesional y sofisticado */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-300: #6ee7b7;
+  --color-primary-500: #10b981;
+  --color-primary-700: #047857;
+
+  /* Accent (amber-orange) - cálido y enérgico */
+  --color-accent-100: #fef3c7;
+  --color-accent-300: #fcd34d;
+  --color-accent-500: #f59e0b;
+
+  /* Neutrals - calidez sutil */
+  --color-bg: #1e1e1e;
+  --color-surface: #2b2b2b;
+  --color-muted: #313335;
+  --color-text: #bcbec4;
+  --color-subtext: #787a80;
+
+  /* Semantic */
+  --color-success: #499c54;
+  --color-warning: #e8a400;
+  --color-danger: #e05555;
+
+  /* Elevation */
+  --elev-1: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.45);
+}

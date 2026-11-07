@@ -1,0 +1,29 @@
+{
+  "name": "@ac-base/ac-core",
+  "version": "0.1.0",
+  "description": "Design tokens, DOM utilities and helpers shared across the ac-lit ecosystem",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./tokens": "./src/tokens.js",
+    "./utils": "./src/utils.js",
+    "./tokens/modern-warm-palette.css": "./src/tokens/modern-warm-palette.css",
+    "./tokens/*": "./src/tokens/*"
+  },
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "web-test-runner \"src/**/*.test.js\""
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0"
+  }
+}
