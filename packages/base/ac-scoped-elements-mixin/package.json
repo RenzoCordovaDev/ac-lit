@@ -1,0 +1,26 @@
+{
+  "name": "@ac-base/ac-scoped-elements-mixin",
+  "version": "0.1.0",
+  "description": "Mixin to register a component's custom element dependencies without global name collisions",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "web-test-runner \"src/**/*.test.js\""
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0"
+  }
+}
