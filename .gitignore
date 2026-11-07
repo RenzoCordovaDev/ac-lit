@@ -1,0 +1,23 @@
+node_modules/
+dist/
+build/
+.cache/
+*.log
+.DS_Store
+Thumbs.db
+
+# env
+.env
+.env.*
+!.env.example
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# test/coverage
+coverage/
+
+# changesets intermediate
+.changeset/pre.json
