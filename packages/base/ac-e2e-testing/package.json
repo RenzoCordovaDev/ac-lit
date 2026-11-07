@@ -1,0 +1,19 @@
+{
+  "name": "@ac-base/ac-e2e-testing",
+  "version": "0.1.0",
+  "description": "Configuración y helpers compartidos para tests E2E/BDD (WebdriverIO + Cucumber + axe-core) de los componentes ac-lit",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "dependencies": {
+    "axe-core": "^4.14.0"
+  }
+}

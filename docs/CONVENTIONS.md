@@ -12,7 +12,8 @@ ac-lit/
 │   │   ├── ac-core/              # @ac-base/ac-core (tokens, utils)
 │   │   ├── ac-component-mixin/   # @ac-base/ac-component-mixin
 │   │   ├── ac-scoped-elements-mixin/
-│   │   └── ac-intl-mixin/
+│   │   ├── ac-intl-mixin/
+│   │   └── ac-e2e-testing/       # @ac-base/ac-e2e-testing (config WebdriverIO/Cucumber/axe)
 │   └── components/               # catálogo de componentes publicables
 │       ├── ac-button-basic/      # @ac-components/ac-button-basic
 │       ├── ac-link-basic/
@@ -22,7 +23,7 @@ ac-lit/
 └── package.json
 ```
 
-Cada componente vive en su propio paquete dentro de `packages/components/` y contiene `src/`, `demo/`, `test/`, `locales.json`, `index.js`, `package.json` y `README.md`.
+Cada componente vive en su propio paquete dentro de `packages/components/` y contiene `src/`, `demo/`, `test/`, `locales.json`, `index.js`, `package.json` y `README.md`. Opcionalmente, `test_e2e/` para la suite E2E/BDD (ver [Testing E2E y accesibilidad](#testing-e2e-y-accesibilidad)).
 
 ## Scopes de npm
 
@@ -80,6 +81,40 @@ Comandos previstos (ver [`docs/CLI.md`](./CLI.md) cuando se implemente):
 
 - `@open-wc/testing` + `@web/test-runner`, un archivo `*.test.js` por componente en `test/`.
 - Los tests corren en navegador real (no jsdom), acorde a que se testean Custom Elements/Shadow DOM.
+
+## Testing E2E y accesibilidad
+
+Capa adicional, opcional por componente, que prueba el componente ya compilado corriendo contra su `demo/` servido estáticamente (no contra el código fuente como los tests unitarios). Usa [WebdriverIO](https://webdriver.io) v10 + [Cucumber](https://cucumber.io) (BDD) + [axe-core](https://github.com/dequelabs/axe-core-npm) para accesibilidad, con la config y los Page Objects base compartidos en `@ac-base/ac-e2e-testing`.
+
+Estructura por componente (sibling a `src/`, `test/`, `demo/`):
+
+```
+test_e2e/
+  wdio.conf.js              # suite funcional (tags: 'not @accessibility')
+  wdio.a11y.conf.js         # suite de accesibilidad (tags: '@accessibility')
+  features/
+    <componente>.feature
+    <componente>-accessibility.feature
+  step-definitions/
+    <componente>.steps.js
+  pages/
+    demo.page.js
+    <componente>.page.js
+```
+
+Convenciones:
+
+- **Gherkin en español**, consistente con el resto de la documentación del proyecto.
+- Cada componente tiene **dos feature files**: uno funcional y uno de accesibilidad, separados por el tag `@accessibility` (así cada suite corre de forma independiente).
+- Anclas de selector: los elementos que la suite E2E necesita ubicar llevan `data-testid="..."` en el `demo/index.html` — nunca se depende de texto visible o de la posición en el DOM.
+- `specs` y `cucumberOpts.import` de cada `wdio*.conf.js` se construyen como rutas absolutas vía `import.meta.url` (ver ejemplo en el README del paquete) — una ruta relativa ambigua hace que los step definitions no se carguen sin dar un error claro.
+- **Evita `/` en el texto de un step** (feature file o `Given/When/Then(...)`): en Cucumber Expressions `/` significa alternancia (`tea/coffee` = "tea" **o** "coffee"), no el carácter literal — `"WCAG 2.0/2.1"` no matchea como texto completo. Si necesitas una barra literal, usa una expresión regex (`/.../`) en vez de una Cucumber Expression, o redacta el step sin ella.
+- Step definitions y Page Objects en **JS plano** (no TypeScript), para mantener consistencia con el resto del monorepo.
+- `browser`, `$`, `$$` son globals que inyecta WebdriverIO en tiempo de ejecución — no se importan.
+- Scripts por paquete: `test:e2e` (build + `vite preview` + suite funcional) y `test:e2e:a11y` (idem + suite de accesibilidad), vía `start-server-and-test`. Desde la raíz: `pnpm test:e2e` / `pnpm test:e2e:a11y` corren ambos sobre todos los paquetes que tengan la suite.
+- En CI corren en un job `e2e` separado de `lint-and-test`, **no bloqueante** (`continue-on-error: true`, no es required status check) hasta que se demuestre estable en la práctica.
+
+Ver [`packages/base/ac-e2e-testing/README.md`](../packages/base/ac-e2e-testing/README.md) para la API completa (`buildWdioConfig`, `PageObject`, `ComponentObject`, `pageProvider`, `componentProvider`).
 
 ## Lint y formato
 

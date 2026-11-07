@@ -97,13 +97,16 @@
 
 .ac-button--secondary {
   background: var(--color-accent-500, #f59e0b);
-  color: var(--color-accent-50, white);
+  /* Texto oscuro: tonos más claros sobre #f59e0b no cumplen el contraste WCAG AA */
+  color: var(--color-accent-900, #451a03);
 }
 
 .ac-button--secondary-alt {
   background: transparent;
-  color: var(--color-accent-600, #b45309);
-  border: 1px solid var(--color-accent-100, rgba(0, 0, 0, 0.06));
+  /* accent-300 (claro) en vez de accent-600: este variant es "fondo transparente"
+     y el demo usa un fondo oscuro — un ámbar oscuro no cumple contraste ahí. */
+  color: var(--color-accent-300, #fcd34d);
+  border: 1px solid var(--color-accent-100, rgba(255, 255, 255, 0.2));
 }
 
 /* Hover / active */

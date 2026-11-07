@@ -24,8 +24,8 @@
       <section>
         <h2>Estados</h2>
         <div class="row">
-          <ac-button-basic loading>Loading</ac-button-basic>
-          <ac-button-basic disabled>Disabled</ac-button-basic>
+          <ac-button-basic data-testid="btn-loading" loading>Loading</ac-button-basic>
+          <ac-button-basic data-testid="btn-disabled" disabled>Disabled</ac-button-basic>
           <ac-button-basic full-width>Full width</ac-button-basic>
         </div>
       </section>
@@ -50,7 +50,7 @@
       <section>
         <h2>Eventos (<code>ac-button-basic-click</code>)</h2>
         <div class="row">
-          <ac-button-basic>Click me</ac-button-basic>
+          <ac-button-basic data-testid="btn-enabled">Click me</ac-button-basic>
         </div>
         <div id="event-log"></div>
       </section>

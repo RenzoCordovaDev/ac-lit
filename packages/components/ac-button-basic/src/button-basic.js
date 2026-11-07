@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
 import { ComponentMixin } from '@ac-base/ac-component-mixin';
 // Authored in button-basic.styles.scss, compiled to button-basic.styles.js by
 // `pnpm run build:styles` (scripts/compile-scss-to-lit.cjs). The compiled file
@@ -44,6 +44,7 @@ export class ButtonBasic extends ComponentMixin(LitElement) {
         ?disabled=${this.disabled || this.loading}
         aria-disabled=${this.disabled || this.loading}
         aria-busy=${this.loading}
+        aria-label=${this.loading ? this.t('button-basic-loading') : nothing}
         @click=${this._onClick}
       >
         ${

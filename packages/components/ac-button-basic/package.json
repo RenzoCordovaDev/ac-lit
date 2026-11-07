@@ -21,7 +21,12 @@
     "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/button-basic.styles.scss src/button-basic.styles.js ButtonBasicStyles",
     "dev": "pnpm run build:styles && vite demo",
     "build": "pnpm run build:styles && vite build",
-    "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\""
+    "preview": "vite preview",
+    "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",
+    "test:e2e": "pnpm run build && start-server-and-test preview http://localhost:4173 test:e2e:run",
+    "test:e2e:run": "wdio run test_e2e/wdio.conf.js",
+    "test:e2e:a11y": "pnpm run build && start-server-and-test preview http://localhost:4173 test:e2e:a11y:run",
+    "test:e2e:a11y:run": "wdio run test_e2e/wdio.a11y.conf.js"
   },
   "dependencies": {
     "@ac-base/ac-component-mixin": "workspace:^",
@@ -32,6 +37,7 @@
   },
   "devDependencies": {
     "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-e2e-testing": "workspace:^",
     "@open-wc/testing": "^4.0.0",
     "@web/test-runner": "^0.18.0",
     "lit": "^3.0.0",

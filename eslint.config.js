@@ -28,5 +28,15 @@ export default [
       },
     },
   },
+  {
+    files: ['**/test_e2e/**/*.js', 'packages/base/ac-e2e-testing/**/*.js'],
+    languageOptions: {
+      globals: {
+        browser: 'readonly',
+        $: 'readonly',
+        $$: 'readonly',
+      },
+    },
+  },
   eslintConfigPrettier,
 ];
