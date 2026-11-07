@@ -13,6 +13,8 @@
     "dev": "pnpm --filter=@ac-components/* run dev",
     "build": "pnpm -r run build",
     "test": "pnpm -r --workspace-concurrency=1 run test",
+    "test:e2e": "pnpm -r --workspace-concurrency=1 --if-present run test:e2e",
+    "test:e2e:a11y": "pnpm -r --workspace-concurrency=1 --if-present run test:e2e:a11y",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -26,14 +28,21 @@
     "@changesets/cli": "^2.27.1",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "@cucumber/cucumber": "^13.3.0",
     "@eslint/js": "^9.14.0",
+    "@wdio/cli": "^10.2.0",
+    "@wdio/cucumber-framework": "^10.2.0",
+    "@wdio/local-runner": "^10.2.0",
+    "@wdio/spec-reporter": "^10.2.0",
     "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.11.0",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
-    "sass": "^1.79.4"
+    "sass": "^1.79.4",
+    "start-server-and-test": "^3.0.13",
+    "webdriverio": "^10.2.0"
   },
   "lint-staged": {
     "*.{js,cjs,mjs}": [

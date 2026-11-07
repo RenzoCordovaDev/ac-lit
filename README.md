@@ -20,10 +20,12 @@ pnpm install
 ```
 
 ```bash
-pnpm lint       # ESLint
-pnpm format     # Prettier
-pnpm test       # tests de todos los paquetes
-pnpm build      # build de todos los paquetes
+pnpm lint            # ESLint
+pnpm format          # Prettier
+pnpm test            # tests unitarios de todos los paquetes
+pnpm test:e2e        # tests E2E/BDD (los paquetes que tengan test_e2e/)
+pnpm test:e2e:a11y   # tests de accesibilidad (axe-core)
+pnpm build           # build de todos los paquetes
 ```
 
 ## Contribuir

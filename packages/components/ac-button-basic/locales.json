@@ -1,11 +1,14 @@
 {
   "es-PE": {
-    "button-basic-submit": "Enviar"
+    "button-basic-submit": "Enviar",
+    "button-basic-loading": "Cargando"
   },
   "en-EN": {
-    "button-basic-submit": "Submit"
+    "button-basic-submit": "Submit",
+    "button-basic-loading": "Loading"
   },
   "pt-BR": {
-    "button-basic-submit": "Enviar"
+    "button-basic-submit": "Enviar",
+    "button-basic-loading": "Carregando"
   }
 }
