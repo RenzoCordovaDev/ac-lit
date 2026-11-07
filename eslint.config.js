@@ -20,5 +20,13 @@ export default [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
+  {
+    files: ['**/*.test.js'],
+    languageOptions: {
+      globals: {
+        ...globals.mocha,
+      },
+    },
+  },
   eslintConfigPrettier,
 ];
