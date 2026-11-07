@@ -1,6 +1,6 @@
 import { LitElement, html } from 'lit';
 import { fixture, expect, nextFrame } from '@open-wc/testing';
-import { IntlMixin } from './intl-mixin.js';
+import { IntlMixin, getGlobalLocale, setGlobalLocale } from './intl-mixin.js';
 
 class AcTestI18n extends IntlMixin(LitElement) {
   static get is() {
@@ -34,5 +34,15 @@ describe('IntlMixin', () => {
 
     expect(a.getLocale()).to.equal('en-EN');
     expect(b.getLocale()).to.equal('en-EN');
+  });
+
+  it('exposes getGlobalLocale/setGlobalLocale without needing a component instance', async () => {
+    const el = await fixture(html`<ac-test-i18n></ac-test-i18n>`);
+
+    setGlobalLocale('pt-BR');
+    await nextFrame();
+
+    expect(getGlobalLocale()).to.equal('pt-BR');
+    expect(el.locale).to.equal('pt-BR');
   });
 });

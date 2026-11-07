@@ -18,6 +18,27 @@ export function getRegisteredTranslations(tagName) {
   return translationsRegistry.get(tagName);
 }
 
+/** Read the current app-wide locale. Usable without any component instance. */
+export function getGlobalLocale() {
+  return globalLocale;
+}
+
+/**
+ * Set the app-wide locale and notify every mounted `IntlMixin` instance via
+ * the `ac-locale-changed` window event. Usable without any component
+ * instance — e.g. from a plain locale `<select>` in app/demo code.
+ */
+export function setGlobalLocale(locale) {
+  globalLocale = locale;
+  try {
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('ac-locale-changed', { detail: { locale } }));
+    }
+  } catch (_) {
+    /* no-op: dispatch is best-effort outside a browser environment */
+  }
+}
+
 export const IntlMixin = superClass =>
   class extends superClass {
     static get properties() {
@@ -88,18 +109,11 @@ export const IntlMixin = superClass =>
     }
 
     static getGlobalLocale() {
-      return globalLocale;
+      return getGlobalLocale();
     }
 
     static setGlobalLocale(locale) {
-      globalLocale = locale;
-      try {
-        if (typeof window !== 'undefined' && window.dispatchEvent) {
-          window.dispatchEvent(new CustomEvent('ac-locale-changed', { detail: { locale } }));
-        }
-      } catch (_) {
-        /* no-op: dispatch is best-effort outside a browser environment */
-      }
+      setGlobalLocale(locale);
     }
 
     disconnectedCallback() {
