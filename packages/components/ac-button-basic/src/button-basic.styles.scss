@@ -1,0 +1,130 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-button-basic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 120ms ease;
+}
+
+/* Full width modifier */
+.ac-button--full {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Skeleton for loading state */
+.ac-button-basic .skeleton {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  width: 6rem;
+  height: 1.25rem;
+  border-radius: 0.375rem;
+  background-color: var(--color-neutral-200, #e6e6e6);
+}
+
+/* When full width, stretch the skeleton */
+.ac-button--full .skeleton {
+  width: 100%;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.ac-button-basic .skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 60%;
+  /* stronger shimmer: brighter center, slightly darker edges for contrast */
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.2s linear infinite;
+}
+
+:host([loading]) .ac-button-basic {
+  /* remove visual background so the skeleton is the only visible element */
+  background: transparent !important;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+/* Variants - solid colors, fall back to ac-core's default palette so the
+   component still looks right even if the host app hasn't imported any
+   token file. */
+.ac-button--primary {
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-button--primary-alt {
+  background: var(--color-primary-50, #ecfdf5);
+  color: var(--color-primary-700, #047857);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.ac-button--secondary {
+  background: var(--color-accent-500, #f59e0b);
+  color: var(--color-accent-50, white);
+}
+
+.ac-button--secondary-alt {
+  background: transparent;
+  color: var(--color-accent-600, #b45309);
+  border: 1px solid var(--color-accent-100, rgba(0, 0, 0, 0.06));
+}
+
+/* Hover / active */
+.ac-button-basic:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.ac-button-basic:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.ac-button-basic:focus {
+  outline: 3px solid rgba(0, 0, 0, 0.08);
+  outline-offset: 3px;
+}
+
+/* Disabled */
+.ac-button-basic[disabled],
+.ac-button-basic[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
