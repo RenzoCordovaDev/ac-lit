@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-components/ac-link-basic", "run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "ac-badge-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-badge-basic", "run", "dev"],
+      "port": 5173
     }
   ]
 }

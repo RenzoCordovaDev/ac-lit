@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ac-badge-basic demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;ac-badge-basic&gt;</h1>
+
+      <section>
+        <h2>Variantes</h2>
+        <div class="row">
+          <ac-badge-basic data-testid="badge-neutral" variant="neutral">Neutral</ac-badge-basic>
+          <ac-badge-basic data-testid="badge-success" variant="success">Success</ac-badge-basic>
+          <ac-badge-basic data-testid="badge-warning" variant="warning">Warning</ac-badge-basic>
+          <ac-badge-basic data-testid="badge-danger" variant="danger">Danger</ac-badge-basic>
+        </div>
+      </section>
+
+      <section>
+        <h2>Ejemplos de uso</h2>
+        <div class="row">
+          <span>Pedido #1234</span>
+          <ac-badge-basic variant="success">Pagado</ac-badge-basic>
+        </div>
+        <div class="row">
+          <span>Bandeja de entrada</span>
+          <ac-badge-basic variant="danger">3</ac-badge-basic>
+        </div>
+        <div class="row">
+          <span>ac-link-basic</span>
+          <ac-badge-basic variant="neutral">Componente</ac-badge-basic>
+        </div>
+      </section>
+
+      <section>
+        <h2>i18n (texto desde locales.json)</h2>
+        <div class="controls">
+          <label
+            >Locale
+            <select id="locale-select">
+              <option value="es-PE">es-PE</option>
+              <option value="en-EN">en-EN</option>
+              <option value="pt-BR">pt-BR</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <ac-badge-basic text="badge-basic-new" variant="success"></ac-badge-basic>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
