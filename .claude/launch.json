@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-components/ac-button-basic", "run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "ac-link-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-link-basic", "run", "dev"],
+      "port": 5173
     }
   ]
 }
