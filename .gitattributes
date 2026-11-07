@@ -1,0 +1,11 @@
+# Normalize line endings to LF for everyone, regardless of the OS or local
+# core.autocrlf setting, so `git status`/Prettier never flag CRLF-only diffs.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
