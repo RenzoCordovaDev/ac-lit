@@ -6,6 +6,9 @@ build/
 .DS_Store
 Thumbs.db
 
+# generated from *.styles.scss by scripts/compile-scss-to-lit.cjs — never hand-edit, never commit
+**/*.styles.js
+
 # env
 .env
 .env.*

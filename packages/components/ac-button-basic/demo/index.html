@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ac-button-basic demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;ac-button-basic&gt;</h1>
+
+      <section>
+        <h2>Variantes</h2>
+        <div class="row">
+          <ac-button-basic variant="primary">Primary</ac-button-basic>
+          <ac-button-basic variant="primary-alt">Primary alt</ac-button-basic>
+          <ac-button-basic variant="secondary">Secondary</ac-button-basic>
+          <ac-button-basic variant="secondary-alt">Secondary alt</ac-button-basic>
+        </div>
+      </section>
+
+      <section>
+        <h2>Estados</h2>
+        <div class="row">
+          <ac-button-basic loading>Loading</ac-button-basic>
+          <ac-button-basic disabled>Disabled</ac-button-basic>
+          <ac-button-basic full-width>Full width</ac-button-basic>
+        </div>
+      </section>
+
+      <section>
+        <h2>i18n (texto desde locales.json)</h2>
+        <div class="controls">
+          <label
+            >Locale
+            <select id="locale-select">
+              <option value="es-PE">es-PE</option>
+              <option value="en-EN">en-EN</option>
+              <option value="pt-BR">pt-BR</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <ac-button-basic text="button-basic-submit"></ac-button-basic>
+        </div>
+      </section>
+
+      <section>
+        <h2>Eventos (<code>ac-button-basic-click</code>)</h2>
+        <div class="row">
+          <ac-button-basic>Click me</ac-button-basic>
+        </div>
+        <div id="event-log"></div>
+      </section>
+    </div>
+  </body>
+</html>

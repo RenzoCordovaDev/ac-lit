@@ -1,0 +1,41 @@
+{
+  "name": "@ac-components/ac-button-basic",
+  "version": "0.1.0",
+  "description": "ac-lit basic button Web Component",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./locales.json": "./locales.json"
+  },
+  "files": [
+    "/src/",
+    "index.js",
+    "locales.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/button-basic.styles.scss src/button-basic.styles.js ButtonBasicStyles",
+    "dev": "pnpm run build:styles && vite demo",
+    "build": "pnpm run build:styles && vite build",
+    "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@ac-base/ac-component-mixin": "workspace:^",
+    "@ac-base/ac-intl-mixin": "workspace:^"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0",
+    "sass": "^1.79.4",
+    "vite": "^5.4.8"
+  }
+}
