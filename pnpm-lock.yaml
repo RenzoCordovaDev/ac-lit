@@ -48,6 +48,30 @@ importers:
         specifier: ^0.18.0
         version: 0.18.3(bare-buffer@3.7.1)
 
+  packages/base/ac-intl-mixin:
+    devDependencies:
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+
+  packages/base/ac-scoped-elements-mixin:
+    devDependencies:
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+
 packages:
 
   '@babel/code-frame@7.29.7':
