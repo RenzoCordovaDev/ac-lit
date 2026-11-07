@@ -1,0 +1,56 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-link-basic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    opacity 150ms ease;
+}
+
+.ac-link-basic:hover {
+  text-decoration: underline;
+}
+
+.ac-link-basic:focus-visible {
+  outline: 3px solid rgba(0, 0, 0, 0.08);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Variants - colores legibles directamente sobre el fondo de la página (sin
+   caja propia, a diferencia de ac-button-basic), con fallback para cuando el
+   host no importa ningún token file. */
+.ac-link--primary {
+  color: var(--color-primary-500, #10b981);
+}
+
+.ac-link--primary-alt {
+  color: var(--color-primary-300, #6ee7b7);
+}
+
+.ac-link--secondary {
+  color: var(--color-accent-500, #f59e0b);
+}
+
+.ac-link--secondary-alt {
+  color: var(--color-accent-300, #fcd34d);
+}
+
+:host([disabled]) .ac-link-basic {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  text-decoration: none;
+}
