@@ -87,6 +87,8 @@ Cualquier otro comando (`ac test`, `ac lint`, `ac test:e2e`, `ac test:e2e:a11y`,
 
 - `@open-wc/testing` + `@web/test-runner`, un archivo `*.test.js` por componente en `test/`.
 - Los tests corren en navegador real (no jsdom), acorde a que se testean Custom Elements/Shadow DOM.
+- **Interfaz TDD de Mocha**: `suite`/`test` en vez de `describe`/`it` (y `setup`/`teardown` en vez de `before`/`after`, si hace falta) — se activa con `testFramework: { config: { ui: 'tdd' } }` en `web-test-runner.config.js`. Así se alinea el naming con el framework del cliente que `ac-lit` prepara a los desarrolladores a usar.
+- **Un solo `expect` por `test`**: cada test valida una sola cosa. Un caso que antes mezclaba varias aserciones (ej. "defaults to variant/disabled/loading") se separa en un test por aserción, aunque eso signifique repetir el `fixture(...)` en cada uno. Esto mantiene cada test enfocado en un único objetivo y hace que un fallo señale exactamente qué se rompió.
 
 ## Testing E2E y accesibilidad
 
