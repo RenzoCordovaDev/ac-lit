@@ -43,4 +43,4 @@ ac test:e2e        # funcional (WebdriverIO + Cucumber)
 ac test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/__file_base__.styles.js` se genera a partir de `src/__file_base__.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.
+> `src/__file_base__.styles.js` se genera a partir de `src/__file_base__.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

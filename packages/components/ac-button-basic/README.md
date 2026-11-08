@@ -54,4 +54,4 @@ pnpm --filter @ac-components/ac-button-basic test
 pnpm --filter @ac-components/ac-button-basic build
 ```
 
-> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.
+> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

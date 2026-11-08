@@ -76,3 +76,5 @@ pnpm --filter @ac-base/ac-demo-content build
 pnpm --filter @ac-base/ac-demo-content test:e2e
 pnpm --filter @ac-base/ac-demo-content test:e2e:a11y
 ```
+
+> `src/demo-content.styles.js` se genera a partir de `src/demo-content.styles.scss` (`build:styles`, corre automáticamente antes de `dev`/`build`/`test`) y no se versiona en git. Durante `dev` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

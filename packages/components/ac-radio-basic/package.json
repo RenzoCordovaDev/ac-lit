@@ -19,7 +19,8 @@
   },
   "scripts": {
     "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/radio-basic.styles.scss src/radio-basic.styles.js RadioBasicStyles",
-    "component:serve": "pnpm run build:styles && vite demo",
+    "build:styles:watch": "node ../../../scripts/compile-scss-to-lit.cjs src/radio-basic.styles.scss src/radio-basic.styles.js RadioBasicStyles --watch",
+    "component:serve": "pnpm run build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run build:styles:watch\" \"vite demo\"",
     "build": "pnpm run build:styles && vite build",
     "preview": "vite preview",
     "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",
@@ -41,6 +42,7 @@
     "@ac-base/ac-e2e-testing": "workspace:^",
     "@open-wc/testing": "^4.0.0",
     "@web/test-runner": "^0.18.0",
+    "concurrently": "^9.1.0",
     "lit": "^3.0.0",
     "sass": "^1.79.4",
     "vite": "^5.4.8"
