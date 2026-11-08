@@ -10,6 +10,15 @@ Pensado como entorno de práctica real: un desarrollador puede clonar, instalar 
 
 Ver [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) para la estructura completa del monorepo, los scopes de npm (`@ac-base/*`, `@ac-components/*`) y las convenciones de naming.
 
+## CLI (`ac`)
+
+```bash
+cd packages/components
+node ../../cli/bin/ac.js component create ac-mi-componente   # o `ac component create ...` una vez instalado
+```
+
+Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`ac component create`, passthrough genérico `ac <script>`, etc.).
+
 ## Desarrollo local
 
 Requisitos: Node.js >= 18 y pnpm (vía Corepack).

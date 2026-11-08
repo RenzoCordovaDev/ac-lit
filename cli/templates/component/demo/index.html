@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__tag__ demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;__tag__&gt;</h1>
+
+      <section>
+        <h2>Básico</h2>
+        <div class="row">
+          <__tag__ data-testid="__file_base__-default">Hola</__tag__>
+        </div>
+      </section>
+
+      <section>
+        <h2>i18n (texto desde locales.json)</h2>
+        <div class="controls">
+          <label
+            >Locale
+            <select id="locale-select">
+              <option value="es-PE">es-PE</option>
+              <option value="en-EN">en-EN</option>
+              <option value="pt-BR">pt-BR</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <__tag__ text="__file_base__-label"></__tag__>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

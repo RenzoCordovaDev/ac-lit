@@ -1,0 +1,13 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.__file_base__ {
+  font-size: 0.95rem;
+}
+
+// TODO: agrega estilos por variante, ej. .__file_base__--default { ... }

@@ -1,0 +1,24 @@
+{
+  "name": "@ac-base/cli",
+  "version": "0.1.0",
+  "description": "CLI de ac-lit — comando `ac` para scaffolding de componentes/proyectos y passthrough de tareas comunes",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ac": "./bin/ac.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "commander": "^15.1.0"
+  }
+}
