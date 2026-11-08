@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles",
-    "dev": "pnpm run build:styles && vite demo",
+    "component:serve": "pnpm run build:styles && vite demo",
     "build": "pnpm run build:styles && vite build",
     "preview": "vite preview",
     "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",

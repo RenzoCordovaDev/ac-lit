@@ -123,7 +123,11 @@ Los templates viven en `cli/templates/` como archivos reales (no un motor de tem
 
 ### Tareas (passthrough genérico)
 
-Cualquier otro comando (`ac test`, `ac lint`, `ac test:e2e`, `ac test:e2e:a11y`, `ac build`, `ac dev`, ...) es un passthrough directo a `pnpm run <nombre>` en el directorio actual — el CLI no conoce la lista de scripts de antemano, así que un script nuevo en cualquier `package.json` queda disponible como `ac <script>` sin tocar el CLI.
+Cualquier otro comando (`ac test`, `ac lint`, `ac test:e2e`, `ac test:e2e:a11y`, `ac build`, `ac component:serve`, ...) es un passthrough directo a `pnpm run <nombre>` en el directorio actual — el CLI no conoce la lista de scripts de antemano, así que un script nuevo en cualquier `package.json` queda disponible como `ac <script>` sin tocar el CLI.
+
+### Levantar el servidor de desarrollo (`component:serve` / `app:serve`)
+
+El script para levantar el demo de un componente con Vite se llama **`component:serve`** (no `dev`) en todos los `package.json` de `packages/components/*` y en el template del CLI — `ac component:serve` (o `pnpm --filter <paquete> component:serve`) levanta `demo/index.html` en `http://localhost:5173`. Cuando `ac app create` esté implementado, los proyectos de tipo app usarán el equivalente `app:serve` — son nombres separados a propósito porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa), no alias del mismo script. `packages/base/ac-demo-content` (y cualquier otro paquete base) no es un componente del catálogo, así que mantiene el nombre genérico `dev` en vez de `component:serve`.
 
 ## Testing
 

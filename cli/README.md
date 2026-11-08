@@ -28,15 +28,17 @@ ac component create ac-mi-componente
 Cualquier otro comando es un passthrough directo a `pnpm run <nombre>` en el directorio actual:
 
 ```bash
-ac test            # = pnpm run test
-ac lint             # = pnpm run lint
-ac test:e2e         # = pnpm run test:e2e
-ac test:e2e:a11y    # = pnpm run test:e2e:a11y
-ac build            # = pnpm run build
-ac dev              # = pnpm run dev
+ac test               # = pnpm run test
+ac lint                # = pnpm run lint
+ac test:e2e             # = pnpm run test:e2e
+ac test:e2e:a11y        # = pnpm run test:e2e:a11y
+ac build                # = pnpm run build
+ac component:serve      # = pnpm run component:serve — levanta el demo con Vite en http://localhost:5173
 ```
 
 El CLI no mantiene una lista de scripts conocidos — cualquier script que exista en el `package.json` del directorio actual queda disponible automáticamente.
+
+`component:serve` es el nombre convencional para levantar el servidor de desarrollo de un **componente** (`src/`+`demo/`). Cuando `ac app create` esté implementado, los proyectos de tipo **app** usarán `app:serve` como su equivalente — son comandos separados a propósito, porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa).
 
 ## Templates
 

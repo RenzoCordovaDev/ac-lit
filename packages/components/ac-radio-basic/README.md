@@ -58,11 +58,11 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 ## Desarrollo
 
 ```bash
-pnpm --filter @ac-components/ac-radio-basic dev    # demo en http://localhost:5173
+pnpm --filter @ac-components/ac-radio-basic component:serve    # demo en http://localhost:5173
 pnpm --filter @ac-components/ac-radio-basic test
 pnpm --filter @ac-components/ac-radio-basic build
 pnpm --filter @ac-components/ac-radio-basic test:e2e        # funcional (WebdriverIO + Cucumber)
 pnpm --filter @ac-components/ac-radio-basic test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/radio-basic.styles.js` se genera a partir de `src/radio-basic.styles.scss` (`build:styles`, corre automáticamente antes de `dev`/`build`/`test`) y no se versiona en git.
+> `src/radio-basic.styles.js` se genera a partir de `src/radio-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.

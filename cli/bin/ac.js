@@ -60,8 +60,8 @@ Scaffolding:
   ac app create <name>                     Crea un proyecto ac-lit nuevo (pendiente)
 
 Tareas (passthrough a "pnpm run <script>" en el directorio actual):
-  ac test            ac lint            ac build
-  ac test:e2e         ac test:e2e:a11y   ac dev
+  ac test               ac lint              ac build
+  ac test:e2e            ac test:e2e:a11y     ac component:serve
   ac <cualquier script definido en package.json>
 `);
 }

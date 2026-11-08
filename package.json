@@ -10,7 +10,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "dev": "pnpm --filter=@ac-components/* run dev",
+    "component:serve": "pnpm --filter=@ac-components/* run component:serve",
     "build": "pnpm -r run build",
     "test": "pnpm -r --workspace-concurrency=1 run test",
     "test:e2e": "pnpm -r --workspace-concurrency=1 --if-present run test:e2e",

@@ -58,6 +58,21 @@ describe('ac (bin)', () => {
     assert.match(result.stdout, /123/);
   });
 
+  it('passes through `ac component:serve` without trying to parse it as a subcommand', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, 'package.json'),
+      JSON.stringify({
+        name: 'tmp',
+        scripts: { 'component:serve': 'node -e "console.log(\'serving\')"' },
+      }),
+    );
+
+    const result = runAc(['component:serve'], tmpDir);
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /serving/);
+  });
+
   it('prints help with no arguments', () => {
     const result = runAc([], tmpDir);
 
