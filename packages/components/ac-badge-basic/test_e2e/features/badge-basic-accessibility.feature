@@ -11,3 +11,7 @@ Feature: ac-badge-basic - accesibilidad
   @smoke
   Scenario: El demo de ac-badge-basic no tiene violaciones de accesibilidad
     Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El demo de ac-badge-basic no tiene violaciones de accesibilidad en modo claro
+    When el usuario activa el modo claro
+    Then el demo no tiene violaciones de accesibilidad WCAG

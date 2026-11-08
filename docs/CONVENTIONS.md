@@ -68,6 +68,17 @@ Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atribu
 
 `ac-radio-basic` resuelve esto con un registro propio en memoria (`Map<name, Set<instancia>>` a nivel de módulo): al marcarse una instancia, desmarca manualmente a las demás del mismo grupo. Cualquier componente futuro que necesite coordinación entre instancias (ej. un acordeón de "solo un panel abierto a la vez", pestañas) debe usar el mismo patrón — un registro en memoria por una clave de agrupación, no depender del navegador para coordinar estado entre shadow roots distintos.
 
+## Dark-mode y colores de fondo sólido
+
+Un componente que pinta un fondo sólido con un color de texto **fijo** (ej. un badge: fondo de color + texto blanco/negro) debe usar los tokens semánticos fijos (`--color-neutral`, `--color-success`, `--color-warning`, `--color-danger` — no se redefinen en `modern-warm-palette-light.css`), **nunca** `--color-muted`/`--color-bg`/`--color-surface` (que sí cambian entre `dark-mode` claro/oscuro). Si no, el contraste se rompe al activar modo claro — encontrado así en `ac-badge-basic` (ver `packages/base/ac-core/README.md`).
+
+Un variant con **fondo `transparent`** (o sin caja propia, ej. texto plano sobre la página como en `ac-link-basic`) es más frágil todavía: su contraste depende por completo del fondo de la página, que SÍ cambia entre temas. Un tono ajustado para verse bien en fondo oscuro casi siempre falla en fondo claro y viceversa — no hay ningún token "fijo" que lo resuelva porque el fondo no es del componente. Dos salidas válidas, según el caso:
+
+- Darle al variant un fondo propio y estable (ya no `transparent`), con el mismo patrón de tokens fijos de arriba — es lo que se hizo con `.ac-button--secondary-alt` (fondo `--color-accent-100` + texto `--color-accent-900`, ambos sin redefinir en el tema claro).
+- Si el texto va realmente sobre el fondo de la página (sin caja), usar un color de texto que cambie según el tema con `:host-context([data-theme='light'])` — es lo que hace `ac-link-basic` para sus 4 variants.
+
+En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** — por eso cada feature de accesibilidad tiene un escenario "en modo claro" además del smoke test por defecto (que corre en modo oscuro). No alcanza con mirar el componente en un solo tema y asumir que el otro también cumple.
+
 ## Paquetes base
 
 - **`@ac-base/ac-core`** — design tokens, utilidades DOM, helpers. Exports: `./tokens`, `./utils`.
@@ -96,7 +107,7 @@ Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atribu
 - `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS.
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
-> **Migración pendiente**: `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI todavía tienen demos hechas a mano (`demo/index.html` con switchers propios) — se migran a `ac-demo-content` en un PR aparte. Esa migración también renombra `variant` → `ambient` en esos 4 componentes (hoy usan su propia propiedad `variant` en vez de la `ambient` del mixin base).
+> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component create`.
 
 ## CLI (`ac`)
 

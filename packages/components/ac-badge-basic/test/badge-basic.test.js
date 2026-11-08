@@ -12,18 +12,18 @@ suite('ac-badge-basic', () => {
     expect(el.textContent.trim()).to.equal('Beta');
   });
 
-  test('defaults to variant="neutral"', async () => {
+  test('defaults to ambient="neutral"', async () => {
     const el = await fixture(html`<ac-badge-basic></ac-badge-basic>`);
-    expect(el.variant).to.equal('neutral');
+    expect(el.ambient).to.equal('neutral');
   });
 
-  test('reflects variant as an attribute', async () => {
-    const el = await fixture(html`<ac-badge-basic variant="danger">Error</ac-badge-basic>`);
-    expect(el.getAttribute('variant')).to.equal('danger');
+  test('reflects ambient as an attribute', async () => {
+    const el = await fixture(html`<ac-badge-basic ambient="danger">Error</ac-badge-basic>`);
+    expect(el.getAttribute('ambient')).to.equal('danger');
   });
 
-  test('applies the variant class to the internal span', async () => {
-    const el = await fixture(html`<ac-badge-basic variant="danger">Error</ac-badge-basic>`);
+  test('applies the ambient class to the internal span', async () => {
+    const el = await fixture(html`<ac-badge-basic ambient="danger">Error</ac-badge-basic>`);
     const span = el.shadowRoot.querySelector('span');
     expect(span.classList.contains('ac-badge--danger')).to.be.true;
   });

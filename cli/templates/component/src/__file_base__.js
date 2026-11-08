@@ -17,18 +17,17 @@ export class __class_name__ extends ComponentMixin(LitElement) {
   static get properties() {
     return {
       text: { type: String },
-      variant: { type: String, reflect: true },
     };
   }
 
   constructor() {
     super();
     this.text = '';
-    this.variant = 'default';
+    this.ambient = 'default';
   }
 
   render() {
-    const classes = `__file_base__ __file_base__--${this.variant}`;
+    const classes = `__file_base__ __file_base__--${this.ambient}`;
 
     return html`
       <span part="root" class=${classes}>

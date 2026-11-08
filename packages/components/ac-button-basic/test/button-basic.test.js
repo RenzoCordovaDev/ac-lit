@@ -12,9 +12,9 @@ suite('ac-button-basic', () => {
     expect(el.shadowRoot.querySelector('button')).to.exist;
   });
 
-  test('defaults to variant="primary"', async () => {
+  test('defaults to ambient="primary"', async () => {
     const el = await fixture(html`<ac-button-basic></ac-button-basic>`);
-    expect(el.variant).to.equal('primary');
+    expect(el.ambient).to.equal('primary');
   });
 
   test('defaults to disabled=false', async () => {

@@ -17,7 +17,6 @@ export class ButtonBasic extends ComponentMixin(LitElement) {
   static get properties() {
     return {
       text: { type: String },
-      variant: { type: String, reflect: true },
       disabled: { type: Boolean, reflect: true },
       fullWidth: { type: Boolean, reflect: true, attribute: 'full-width' },
       loading: { type: Boolean, reflect: true },
@@ -27,7 +26,7 @@ export class ButtonBasic extends ComponentMixin(LitElement) {
   constructor() {
     super();
     this.text = '';
-    this.variant = 'primary';
+    this.ambient = 'primary';
     this.disabled = false;
     this.fullWidth = false;
     this.loading = false;
@@ -35,7 +34,7 @@ export class ButtonBasic extends ComponentMixin(LitElement) {
 
   render() {
     const classes =
-      `ac-button-basic ac-button--${this.variant} ` + (this.fullWidth ? 'ac-button--full' : '');
+      `ac-button-basic ac-button--${this.ambient} ` + (this.fullWidth ? 'ac-button--full' : '');
 
     return html`
       <button

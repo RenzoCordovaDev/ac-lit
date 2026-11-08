@@ -11,52 +11,14 @@
     <div class="demo-root">
       <h1>&lt;ac-link-basic&gt;</h1>
 
-      <section>
-        <h2>Variantes</h2>
-        <div class="row">
-          <ac-link-basic variant="primary" href="#variantes">Primary</ac-link-basic>
-          <ac-link-basic variant="primary-alt" href="#variantes">Primary alt</ac-link-basic>
-          <ac-link-basic variant="secondary" href="#variantes">Secondary</ac-link-basic>
-          <ac-link-basic variant="secondary-alt" href="#variantes">Secondary alt</ac-link-basic>
-        </div>
-      </section>
-
-      <section>
-        <h2>Estados</h2>
-        <div class="row">
-          <ac-link-basic data-testid="link-disabled" href="#estados" disabled
-            >Disabled</ac-link-basic
-          >
-          <ac-link-basic href="https://lit.dev" target="_blank"
-            >Abre en nueva pestaña</ac-link-basic
-          >
-        </div>
-      </section>
-
-      <section>
-        <h2>i18n (texto desde locales.json)</h2>
-        <div class="controls">
-          <label
-            >Locale
-            <select id="locale-select">
-              <option value="es-PE">es-PE</option>
-              <option value="en-EN">en-EN</option>
-              <option value="pt-BR">pt-BR</option>
-            </select>
-          </label>
-        </div>
-        <div class="row">
-          <ac-link-basic text="link-basic-learn-more" href="#i18n"></ac-link-basic>
-        </div>
-      </section>
-
-      <section>
-        <h2>Eventos (<code>ac-link-basic-click</code>)</h2>
-        <div class="row">
-          <ac-link-basic data-testid="link-enabled" href="#eventos">Click me</ac-link-basic>
-        </div>
-        <div id="event-log"></div>
-      </section>
+      <ac-demo-content
+        language="es-PE, en-EN, pt-BR"
+        ambients="primary, primary-alt, secondary, secondary-alt"
+        events="ac-link-basic-click"
+        dark-mode
+      >
+        <ac-demo-case header="Básico" href="case-basic.html"></ac-demo-case>
+      </ac-demo-content>
     </div>
   </body>
 </html>

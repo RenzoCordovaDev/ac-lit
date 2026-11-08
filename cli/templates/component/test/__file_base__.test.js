@@ -7,9 +7,9 @@ suite('__tag__', () => {
     expect(el.textContent.trim()).to.equal('Hola');
   });
 
-  test('defaults to variant="default"', async () => {
+  test('defaults to ambient="default"', async () => {
     const el = await fixture(html`<__tag__></__tag__>`);
-    expect(el.variant).to.equal('default');
+    expect(el.ambient).to.equal('default');
   });
 
   test('renders a translated label when `text` is a locale key', async () => {

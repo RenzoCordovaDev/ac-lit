@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-demo-content": "workspace:^",
     "@ac-base/ac-e2e-testing": "workspace:^",
     "@open-wc/testing": "^4.0.0",
     "@web/test-runner": "^0.18.0",

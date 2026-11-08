@@ -54,6 +54,8 @@ Este paquete no expone ningún Custom Element ni depende de Lit: es la base de u
 
 > **`--color-subtext` no cumple contraste WCAG AA como texto** sobre `--color-bg` (3.89:1, hace falta 4.5:1) — está pensado para bordes/elementos decorativos, no para texto de verdad. Para texto secundario legible, usa `--color-text`.
 
+> **`--color-neutral`/`--color-success`/`--color-warning`/`--color-danger` son fijos entre light/dark-mode a propósito** (no se redefinen en `modern-warm-palette-light.css`). Un componente que usa estos tokens como fondo sólido con un color de texto fijo (ej. un badge de estado) debe verse igual sin importar el tema de la página — si en cambio usara `--color-muted`/`--color-bg`/`--color-surface` (que sí cambian entre temas) con un texto fijo, el contraste se rompería al activar `dark-mode`. Encontrado así: `ac-badge-basic` usaba `--color-muted` + texto blanco fijo para su variant `neutral`, y quedaba casi ilegible en modo claro.
+
 ## Desarrollo
 
 ```bash

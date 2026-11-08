@@ -17,18 +17,17 @@ export class BadgeBasic extends ComponentMixin(LitElement) {
   static get properties() {
     return {
       text: { type: String },
-      variant: { type: String, reflect: true },
     };
   }
 
   constructor() {
     super();
     this.text = '';
-    this.variant = 'neutral';
+    this.ambient = 'neutral';
   }
 
   render() {
-    const classes = `ac-badge-basic ac-badge--${this.variant}`;
+    const classes = `ac-badge-basic ac-badge--${this.ambient}`;
 
     return html`
       <span part="badge" class=${classes}>

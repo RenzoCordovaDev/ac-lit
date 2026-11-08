@@ -13,18 +13,18 @@ import '@ac-components/ac-link-basic';
 ```
 
 ```html
-<ac-link-basic variant="primary" href="/docs">Ver documentación</ac-link-basic>
+<ac-link-basic ambient="primary" href="/docs">Ver documentación</ac-link-basic>
 ```
 
 ## Propiedades
 
-| Propiedad  | Atributo   | Tipo    | Default     | Descripción                                                                             |
-| ---------- | ---------- | ------- | ----------- | --------------------------------------------------------------------------------------- |
-| `text`     | `text`     | String  | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`. |
-| `href`     | `href`     | String  | `''`        | URL destino. Se omite del `<a>` renderizado cuando `disabled` es `true`.                |
-| `target`   | `target`   | String  | `'_self'`   | `_self` \| `_blank` \| `_parent` \| `_top`. Cualquier otro valor cae a `_self`.         |
-| `variant`  | `variant`  | String  | `'primary'` | `primary` \| `primary-alt` \| `secondary` \| `secondary-alt`                            |
-| `disabled` | `disabled` | Boolean | `false`     | Quita `href`, pone `aria-disabled="true"` y `tabindex="-1"`, y bloquea el click.        |
+| Propiedad  | Atributo   | Tipo    | Default     | Descripción                                                                                               |
+| ---------- | ---------- | ------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| `text`     | `text`     | String  | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`.                   |
+| `href`     | `href`     | String  | `''`        | URL destino. Se omite del `<a>` renderizado cuando `disabled` es `true`.                                  |
+| `target`   | `target`   | String  | `'_self'`   | `_self` \| `_blank` \| `_parent` \| `_top`. Cualquier otro valor cae a `_self`.                           |
+| `ambient`  | `ambient`  | String  | `'primary'` | `primary` \| `primary-alt` \| `secondary` \| `secondary-alt` (heredada de `@ac-base/ac-component-mixin`). |
+| `disabled` | `disabled` | Boolean | `false`     | Quita `href`, pone `aria-disabled="true"` y `tabindex="-1"`, y bloquea el click.                          |
 
 ## Eventos
 

@@ -13,18 +13,18 @@ import '@ac-components/ac-button-basic';
 ```
 
 ```html
-<ac-button-basic variant="primary">Enviar</ac-button-basic>
+<ac-button-basic ambient="primary">Enviar</ac-button-basic>
 ```
 
 ## Propiedades
 
-| Propiedad   | Atributo     | Tipo    | Default     | Descripción                                                                             |
-| ----------- | ------------ | ------- | ----------- | --------------------------------------------------------------------------------------- |
-| `text`      | `text`       | String  | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`. |
-| `variant`   | `variant`    | String  | `'primary'` | `primary` \| `primary-alt` \| `secondary` \| `secondary-alt`                            |
-| `disabled`  | `disabled`   | Boolean | `false`     | Deshabilita el botón nativo y bloquea `ac-button-basic-click`.                          |
-| `fullWidth` | `full-width` | Boolean | `false`     | Ocupa el 100% del contenedor.                                                           |
-| `loading`   | `loading`    | Boolean | `false`     | Muestra un skeleton animado en vez del contenido y deshabilita el click.                |
+| Propiedad   | Atributo     | Tipo    | Default     | Descripción                                                                                                         |
+| ----------- | ------------ | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `text`      | `text`       | String  | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`.                             |
+| `ambient`   | `ambient`    | String  | `'primary'` | `primary` \| `primary-alt` \| `secondary` \| `secondary-alt` (propiedad heredada de `@ac-base/ac-component-mixin`). |
+| `disabled`  | `disabled`   | Boolean | `false`     | Deshabilita el botón nativo y bloquea `ac-button-basic-click`.                                                      |
+| `fullWidth` | `full-width` | Boolean | `false`     | Ocupa el 100% del contenedor.                                                                                       |
+| `loading`   | `loading`    | Boolean | `false`     | Muestra un skeleton animado en vez del contenido y deshabilita el click.                                            |
 
 ## Eventos
 

@@ -21,7 +21,6 @@ export class LinkBasic extends ComponentMixin(LitElement) {
       text: { type: String },
       href: { type: String },
       target: { type: String },
-      variant: { type: String, reflect: true },
       disabled: { type: Boolean, reflect: true },
     };
   }
@@ -31,7 +30,7 @@ export class LinkBasic extends ComponentMixin(LitElement) {
     this.text = '';
     this.href = '';
     this.target = '_self';
-    this.variant = 'primary';
+    this.ambient = 'primary';
     this.disabled = false;
   }
 
@@ -46,7 +45,7 @@ export class LinkBasic extends ComponentMixin(LitElement) {
   }
 
   render() {
-    const classes = `ac-link-basic ac-link--${this.variant}`;
+    const classes = `ac-link-basic ac-link--${this.ambient}`;
 
     return html`
       <a

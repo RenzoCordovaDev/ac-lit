@@ -33,18 +33,3 @@ section h2 {
   gap: 0.75rem;
   align-items: center;
 }
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.controls label {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.85rem;
-}
