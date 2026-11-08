@@ -1,58 +1,84 @@
 import { fixture, expect, html, oneEvent } from '@open-wc/testing';
 import '../index.js';
 
-describe('ac-link-basic', () => {
-  it('renders slotted content by default', async () => {
+suite('ac-link-basic', () => {
+  test('renders an internal <a> element', async () => {
     const el = await fixture(html`<ac-link-basic href="#docs">Ver documentación</ac-link-basic>`);
     expect(el.shadowRoot.querySelector('a')).to.exist;
+  });
+
+  test('renders slotted content by default', async () => {
+    const el = await fixture(html`<ac-link-basic href="#docs">Ver documentación</ac-link-basic>`);
     expect(el.textContent.trim()).to.equal('Ver documentación');
   });
 
-  it('defaults to variant="primary", target="_self" and not disabled', async () => {
+  test('defaults to variant="primary"', async () => {
     const el = await fixture(html`<ac-link-basic></ac-link-basic>`);
     expect(el.variant).to.equal('primary');
+  });
+
+  test('defaults to target="_self"', async () => {
+    const el = await fixture(html`<ac-link-basic></ac-link-basic>`);
     expect(el.target).to.equal('_self');
+  });
+
+  test('defaults to disabled=false', async () => {
+    const el = await fixture(html`<ac-link-basic></ac-link-basic>`);
     expect(el.disabled).to.be.false;
   });
 
-  it('renders a translated label when `text` is a locale key', async () => {
+  test('renders a translated label when `text` is a locale key', async () => {
     const el = await fixture(html`<ac-link-basic text="link-basic-learn-more"></ac-link-basic>`);
     el.locale = 'en-EN';
     await el.updateComplete;
     expect(el.shadowRoot.querySelector('a').textContent.trim()).to.equal('Learn more');
   });
 
-  it('reflects href and target onto the internal <a>', async () => {
+  test('reflects href onto the internal <a>', async () => {
     const el = await fixture(
       html`<ac-link-basic href="https://ac-lit.dev" target="_blank">Visitar</ac-link-basic>`,
     );
-    const anchor = el.shadowRoot.querySelector('a');
-    expect(anchor.getAttribute('href')).to.equal('https://ac-lit.dev');
-    expect(anchor.getAttribute('target')).to.equal('_blank');
+    expect(el.shadowRoot.querySelector('a').getAttribute('href')).to.equal('https://ac-lit.dev');
   });
 
-  it('adds rel="noopener noreferrer" only when target="_blank"', async () => {
-    const blank = await fixture(html`<ac-link-basic href="#" target="_blank"></ac-link-basic>`);
-    expect(blank.shadowRoot.querySelector('a').getAttribute('rel')).to.equal('noopener noreferrer');
-
-    const self = await fixture(html`<ac-link-basic href="#"></ac-link-basic>`);
-    expect(self.shadowRoot.querySelector('a').hasAttribute('rel')).to.be.false;
+  test('reflects target onto the internal <a>', async () => {
+    const el = await fixture(
+      html`<ac-link-basic href="https://ac-lit.dev" target="_blank">Visitar</ac-link-basic>`,
+    );
+    expect(el.shadowRoot.querySelector('a').getAttribute('target')).to.equal('_blank');
   });
 
-  it('falls back to target="_self" for an unknown target value', async () => {
+  test('adds rel="noopener noreferrer" when target="_blank"', async () => {
+    const el = await fixture(html`<ac-link-basic href="#" target="_blank"></ac-link-basic>`);
+    expect(el.shadowRoot.querySelector('a').getAttribute('rel')).to.equal('noopener noreferrer');
+  });
+
+  test('does not add rel when target is not "_blank"', async () => {
+    const el = await fixture(html`<ac-link-basic href="#"></ac-link-basic>`);
+    expect(el.shadowRoot.querySelector('a').hasAttribute('rel')).to.be.false;
+  });
+
+  test('falls back to target="_self" for an unknown target value', async () => {
     const el = await fixture(html`<ac-link-basic href="#" target="_evil"></ac-link-basic>`);
     expect(el.shadowRoot.querySelector('a').getAttribute('target')).to.equal('_self');
   });
 
-  it('removes href and sets aria-disabled/tabindex when disabled', async () => {
+  test('removes href when disabled', async () => {
     const el = await fixture(html`<ac-link-basic href="#docs" disabled>Ver</ac-link-basic>`);
-    const anchor = el.shadowRoot.querySelector('a');
-    expect(anchor.hasAttribute('href')).to.be.false;
-    expect(anchor.getAttribute('aria-disabled')).to.equal('true');
-    expect(anchor.getAttribute('tabindex')).to.equal('-1');
+    expect(el.shadowRoot.querySelector('a').hasAttribute('href')).to.be.false;
   });
 
-  it('dispatches ac-link-basic-click on click', async () => {
+  test('sets aria-disabled="true" when disabled', async () => {
+    const el = await fixture(html`<ac-link-basic href="#docs" disabled>Ver</ac-link-basic>`);
+    expect(el.shadowRoot.querySelector('a').getAttribute('aria-disabled')).to.equal('true');
+  });
+
+  test('sets tabindex="-1" when disabled', async () => {
+    const el = await fixture(html`<ac-link-basic href="#docs" disabled>Ver</ac-link-basic>`);
+    expect(el.shadowRoot.querySelector('a').getAttribute('tabindex')).to.equal('-1');
+  });
+
+  test('dispatches ac-link-basic-click on click', async () => {
     const el = await fixture(html`<ac-link-basic href="#docs">Ver</ac-link-basic>`);
     const anchor = el.shadowRoot.querySelector('a');
 
@@ -60,11 +86,29 @@ describe('ac-link-basic', () => {
     const event = await oneEvent(el, 'ac-link-basic-click');
 
     expect(event).to.exist;
+  });
+
+  test('ac-link-basic-click bubbles', async () => {
+    const el = await fixture(html`<ac-link-basic href="#docs">Ver</ac-link-basic>`);
+    const anchor = el.shadowRoot.querySelector('a');
+
+    setTimeout(() => anchor.click());
+    const event = await oneEvent(el, 'ac-link-basic-click');
+
     expect(event.bubbles).to.be.true;
+  });
+
+  test('ac-link-basic-click is composed', async () => {
+    const el = await fixture(html`<ac-link-basic href="#docs">Ver</ac-link-basic>`);
+    const anchor = el.shadowRoot.querySelector('a');
+
+    setTimeout(() => anchor.click());
+    const event = await oneEvent(el, 'ac-link-basic-click');
+
     expect(event.composed).to.be.true;
   });
 
-  it('does not dispatch ac-link-basic-click when disabled', async () => {
+  test('does not dispatch ac-link-basic-click when disabled', async () => {
     const el = await fixture(html`<ac-link-basic href="#docs" disabled>Ver</ac-link-basic>`);
     const anchor = el.shadowRoot.querySelector('a');
 
