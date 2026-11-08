@@ -12,23 +12,29 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
   - `ac-link-basic` (PR #7) — link real, no boilerplate del repo de referencia
   - `ac-badge-basic` (PR #8) — variantes semánticas de estado, sin interacción
   - `ac-radio-basic` (PR #12) — primero generado con `ac component create`; agrupado entre instancias coordinado a mano (radios nativos no agrupan entre shadow roots)
-- **`@ac-base/cli`** (PR #9): `ac component create`, passthrough genérico de tareas.
+- **`@ac-base/cli`** (PR #9): `ac component create`, passthrough genérico de tareas. Comando para levantar el dev server renombrado a `component:serve` (PR #16) — `app:serve` queda reservado para cuando exista `ac app create`.
 - **Convención de tests** (PR #11): `suite`/`test` (interfaz TDD de Mocha) en vez de `describe`/`it`, un solo `expect` por test — aplicado a los 4 componentes y al template de la CLI. **No** a los paquetes base (`ac-core`, `ac-component-mixin`, etc. — fuera de alcance, no pedido).
 - **`@ac-base/ac-demo-content`** (PR #13): contenedor centralizado de demos (casos, idioma, ambient, dark-mode, tamaño, panel de eventos), construido y validado de forma aislada (con `ac-button-basic` como contenido de ejemplo).
-
-## En progreso (rama `feat/migrate-demo-content`, sin PR abierta aún)
-
-- **Migración de los 4 componentes + template del CLI a `ac-demo-content`**, con renombre `variant` → `ambient`. Completa y validada (lint/format/build/unit/e2e/a11y en todo el monorepo, incluyendo un componente generado de prueba vía `ac component create` para validar el template de punta a punta). Incluye dos bugs de contraste reales encontrados y corregidos gracias a las nuevas escenas de accesibilidad en modo claro (antes solo se probaba en modo oscuro):
-  - `ac-badge-basic` — variant `neutral` usaba `--color-muted` (cambia entre temas) con texto fijo blanco; se cambió a `--color-neutral` (fijo).
-  - `ac-button-basic` — variant `secondary-alt` tenía fondo `transparent` con texto claro pensado para fondo de página oscuro; se le dio fondo propio estable (`--color-accent-100`/`--color-accent-900`).
-  - `ac-link-basic` (sin caja propia, texto directo sobre el fondo de página) tenía el mismo problema en sus 4 variants; se resolvió con colores de texto dependientes del tema vía `:host-context([data-theme='light'])`.
-  - Ver la sección "Dark-mode y colores de fondo sólido" en `docs/CONVENTIONS.md` para el patrón general.
-- Pendiente: commitear, abrir PR y mergear esta rama.
+- **Migración de los 4 componentes + template del CLI a `ac-demo-content`** (PR #15), con renombre `variant` → `ambient` en los 4. Dos bugs de contraste reales encontrados y corregidos gracias a las nuevas escenas de accesibilidad en modo claro:
+  - `ac-badge-basic` — variant `neutral` usaba `--color-muted` (cambia entre temas) con texto fijo blanco; pasó a `--color-neutral` (fijo).
+  - `ac-button-basic` (`secondary-alt`) y `ac-link-basic` (sus 4 variants, sin caja propia) tenían texto pensado para fondo oscuro, usado directo sobre la página — resuelto con fondo propio estable o `:host-context([data-theme='light'])` según el caso. Ver "Dark-mode y colores de fondo sólido" en `docs/CONVENTIONS.md`.
+- **Rediseño de `ac-demo-content`** (PR #17):
+  - Modo claro por defecto (antes oscuro); selects de caso/ambient modernizados.
+  - Idioma, tema y tamaño de dispositivo ahora son controles segmentados (borde redondeado + divisor vertical + opción activa resaltada) — idioma exige exactamente 2 locales (ES/EN), tema son 2 iconos (sol/luna).
+  - Tamaño de dispositivo: 3 presets fijos con **ancho y alto fijos** (móvil 375×667 por defecto, tablet 768×1024, desktop 1280×720) — el contenido scrollea adentro del marco simulado en vez de estirarlo.
+  - Switcher de caso siempre visible (antes se ocultaba con un solo caso).
+  - Nuevo toggle Visual/Código — "Código" muestra el HTML fuente real del caso activo (`ac-demo-case.source`).
+  - Nuevo panel lateral de eventos (reemplaza el modal centrado), con cada campo etiquetado (`Evento:`, `Hora:`, `Payload:`).
+  - Nuevo header: `name` (reemplaza el `<h1>` manual de cada `demo/index.html`, sin `<>`), `tech` (badge, "Lit v3"), `package-name` (snippets pnpm/npm) y `docs-href` (link a documentación).
+  - Dos bugs más encontrados vía el a11y check existente: un link reusando un color pensado para fondo oscuro (mismo patrón que badge/button/link antes), y un falso positivo intermitente de axe-core por una transición CSS muestreada a mitad de camino (se sacó la transición).
+  - Todo propagado a los 4 componentes + `ac-demo-content` + template del CLI.
+- **Hot-reload de `.scss` en dev** (PR #17): `scripts/compile-scss-to-lit.cjs` soporta `--watch`; `component:serve`/`dev` corre ese watcher en paralelo a `vite demo` vía `concurrently` — guardar un `.scss` con el server corriendo ahora recarga el navegador solo, sin reiniciar nada. Antes solo compilaba una vez al arrancar.
 
 ## Pendiente / siguiente paso concreto
 
-1. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
-2. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
+1. **Revisar el estilo visual de los 4 componentes en sí** (`ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`) — lo de `ac-demo-content` fue el _contenedor_ de la demo; los componentes reales (bordes, tipografía, espaciado) siguen con el estilo original. Siguiente tarea explícitamente acordada con Renzo.
+2. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
+3. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
 
 ## Bloqueado / fuera de este repo
 
@@ -40,7 +46,8 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 - Sin wizard interactivo en la CLI — defaults sensatos, flags solo para excepciones.
 - Templates de la CLI: archivos reales + reemplazo de tokens `__token__` propio, sin motor de templates. `cli/templates/` está en `.prettierignore` (un `__token__` suelto en Markdown colisiona con énfasis `__bold__`).
 - `ac-demo-case` (de `ac-demo-content`) deliberadamente sin Shadow DOM — ver `docs/CONVENTIONS.md`.
-- Los archivos `href` de cada `ac-demo-case` van en `demo/public/`, no en `demo/` a secas (Vite solo copia `public/` al build).
+- Los archivos `href` de cada `ac-demo-case` van en `demo/public/`, no en `demo/` a secas (Vite solo copia `public/` al build) — y siguen necesitando recarga manual del navegador al editarlos (se cargan con `fetch()` en runtime, Vite no los rastrea).
+- Paleta de colores actual (verde esmeralda + ámbar) se mantiene — evaluada una paleta nueva con más identidad, Renzo decidió no cambiarla por ahora.
 - Cero rastro de Claude/IA en commits y PRs de este repo, salvo que Renzo pida lo contrario explícitamente.
 
 Ver `docs/CONVENTIONS.md` para arquitectura/naming, `CONTRIBUTING.md` para el flujo de ramas y commits.
