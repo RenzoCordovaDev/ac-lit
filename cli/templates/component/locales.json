@@ -1,0 +1,11 @@
+{
+  "es-PE": {
+    "__file_base__-label": "Hola"
+  },
+  "en-EN": {
+    "__file_base__-label": "Hello"
+  },
+  "pt-BR": {
+    "__file_base__-label": "Olá"
+  }
+}

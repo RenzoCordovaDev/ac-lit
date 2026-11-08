@@ -17,7 +17,7 @@ ac-lit/
 │   └── components/               # catálogo de componentes publicables
 │       ├── ac-button-basic/      # @ac-components/ac-button-basic
 │       ├── ac-link-basic/
-│       └── ac-helper-demo/       # contenedor de demos (dev-only)
+│       └── ac-badge-basic/
 ├── docs/
 ├── pnpm-workspace.yaml
 └── package.json
@@ -69,13 +69,19 @@ Siempre en la raíz del paquete del componente (nunca en subcarpetas), con esta 
 
 ## CLI (`ac`)
 
-Comandos previstos (ver [`docs/CLI.md`](./CLI.md) cuando se implemente):
+Paquete `@ac-base/cli` (`cli/`), implementado con [Commander.js](https://github.com/tj/commander.js). Filosofía: **cero lógica de más** — sin wizard interactivo, sin resolución de rutas/config, siempre opera sobre el directorio desde el que se ejecuta.
 
-- `ac init <nombre-proyecto>` — scaffolding de un proyecto nuevo.
-- `ac generate component <nombre>` (alias `ac g c`) — genera un componente completo (`src/`, `demo/`, `test/`, `locales.json`, `index.js`, `package.json`).
-- `ac add <componentes...>` — instala componentes del catálogo vía npm.
-- `ac list` — lista el catálogo de componentes disponible.
-- `ac serve` / `ac dev` — levanta el servidor de desarrollo local (Vite) para el componente/proyecto actual.
+### Scaffolding
+
+- **`ac component create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe ser el nombre completo con prefijo `ac-` (ej. `ac-mi-componente`) — de ahí se derivan clase, archivo, paquete npm, etc. según la tabla de naming de este documento. `--no-e2e` omite `test_e2e/` y sus entradas en `package.json`.
+  - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && ac component create ac-mi-componente`.
+- **`ac app create <nombre>`** — scaffolding de un proyecto `ac-lit` nuevo. **Pendiente de implementar.**
+
+Los templates viven en `cli/templates/` como archivos reales (no un motor de templates) con placeholders `__token__` (ej. `__class_name__`, `__tag__`, `__file_base__`), reemplazados por una función propia de reemplazo de texto (`src/scaffold/render-template.js`). Por eso `cli/templates/` está en `.prettierignore`: un placeholder `__token__` suelto en un `.md` (fuera de un code span) es indistinguible de énfasis Markdown (`__bold__`) y Prettier lo normaliza a `**bold**`, corrompiéndolo — dentro de backticks/fences no hay problema.
+
+### Tareas (passthrough genérico)
+
+Cualquier otro comando (`ac test`, `ac lint`, `ac test:e2e`, `ac test:e2e:a11y`, `ac build`, `ac dev`, ...) es un passthrough directo a `pnpm run <nombre>` en el directorio actual — el CLI no conoce la lista de scripts de antemano, así que un script nuevo en cualquier `package.json` queda disponible como `ac <script>` sin tocar el CLI.
 
 ## Testing
 

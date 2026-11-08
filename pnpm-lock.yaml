@@ -63,6 +63,12 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0(bare-buffer@3.7.1)(yauzl@2.10.0)
 
+  cli:
+    dependencies:
+      commander:
+        specifier: ^15.1.0
+        version: 15.1.0
+
   packages/base/ac-component-mixin:
     dependencies:
       '@ac-base/ac-intl-mixin':
