@@ -25,10 +25,13 @@ function defaultExportNameFromPath(filePath) {
   return `${pascal}Styles`;
 }
 
-const [, , scss, out, exportName] = process.argv;
+const rawArgs = process.argv.slice(2);
+const watch = rawArgs.includes('--watch');
+const [scss, out, exportName] = rawArgs.filter(arg => arg !== '--watch');
+
 if (!scss || !out) {
   console.error(
-    'Usage: node scripts/compile-scss-to-lit.cjs <in.scss> <out.styles.js> [exportName]',
+    'Usage: node scripts/compile-scss-to-lit.cjs <in.scss> <out.styles.js> [exportName] [--watch]',
   );
   process.exit(1);
 }
@@ -40,3 +43,22 @@ const outPath = path.isAbsolute(out) ? out : path.resolve(process.cwd(), out);
 const finalExportName = exportName || defaultExportNameFromPath(inPath);
 
 compileToLit(inPath, outPath, finalExportName);
+
+if (watch) {
+  console.log(`Watching ${inPath} for changes (Ctrl+C to stop)...`);
+  let timer = null;
+  fs.watch(inPath, () => {
+    clearTimeout(timer);
+    // Debounce: algunos editores disparan varios eventos de "change" por
+    // cada guardado (ej. escritura seguida de un rename interno).
+    timer = setTimeout(() => {
+      try {
+        compileToLit(inPath, outPath, finalExportName);
+      } catch (error) {
+        // Un error de sintaxis SCSS a mitad de edición no debe tumbar el
+        // watcher — se reporta y se sigue escuchando el próximo guardado.
+        console.error(`Error compilando ${inPath}:\n${error.message}`);
+      }
+    }, 150);
+  });
+}

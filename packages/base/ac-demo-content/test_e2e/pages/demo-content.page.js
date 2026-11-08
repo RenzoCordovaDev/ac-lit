@@ -11,23 +11,43 @@ export class DemoContentPage extends ComponentObject {
     return $(HOST_SELECTOR).$('.ac-demo-content__case-select');
   }
 
-  get localeSelect() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__locale-select');
-  }
-
   get ambientSelect() {
     return $(HOST_SELECTOR).$('.ac-demo-content__ambient-select');
   }
 
-  get sizeSelect() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__size-select');
+  get deviceFrame() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__device-frame');
   }
 
-  get themeToggle() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__theme-toggle');
+  deviceButton(key) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__device-switcher [data-value="${key}"]`);
   }
 
-  get eventLog() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__event-log');
+  themeButton(theme) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__theme-switcher [data-value="${theme}"]`);
+  }
+
+  languageButton(index) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__locale-switcher [data-value="${index}"]`);
+  }
+
+  viewModeButton(mode) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__viewmode-switcher [data-value="${mode}"]`);
+  }
+
+  get codeBlock() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__code-block');
+  }
+
+  get eventsButton() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__events-button');
+  }
+
+  get eventsPanel() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__modal');
+  }
+
+  get eventsPanelList() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__modal-list');
   }
 }

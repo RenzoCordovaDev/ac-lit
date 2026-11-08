@@ -11,3 +11,15 @@ Feature: ac-demo-content - accesibilidad
   @smoke
   Scenario: El demo de ac-demo-content no tiene violaciones de accesibilidad
     Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El demo de ac-demo-content no tiene violaciones de accesibilidad en modo oscuro
+    When el usuario selecciona el tema "dark"
+    Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El panel de eventos no tiene violaciones de accesibilidad
+    When el usuario abre el panel de eventos
+    Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: La vista de código no tiene violaciones de accesibilidad
+    When el usuario selecciona la vista "code"
+    Then el demo no tiene violaciones de accesibilidad WCAG

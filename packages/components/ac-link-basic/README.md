@@ -60,4 +60,4 @@ pnpm --filter @ac-components/ac-link-basic test:e2e        # funcional (Webdrive
 pnpm --filter @ac-components/ac-link-basic test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/link-basic.styles.js` se genera a partir de `src/link-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.
+> `src/link-basic.styles.js` se genera a partir de `src/link-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

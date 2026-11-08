@@ -77,7 +77,9 @@ Un variant con **fondo `transparent`** (o sin caja propia, ej. texto plano sobre
 - Darle al variant un fondo propio y estable (ya no `transparent`), con el mismo patrón de tokens fijos de arriba — es lo que se hizo con `.ac-button--secondary-alt` (fondo `--color-accent-100` + texto `--color-accent-900`, ambos sin redefinir en el tema claro).
 - Si el texto va realmente sobre el fondo de la página (sin caja), usar un color de texto que cambie según el tema con `:host-context([data-theme='light'])` — es lo que hace `ac-link-basic` para sus 4 variants.
 
-En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** — por eso cada feature de accesibilidad tiene un escenario "en modo claro" además del smoke test por defecto (que corre en modo oscuro). No alcanza con mirar el componente en un solo tema y asumir que el otro también cumple.
+En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** — por eso cada feature de accesibilidad tiene un escenario adicional que activa el toggle de tema, además del smoke test por defecto (que corre en el tema por defecto del demo — **claro**, desde que `ac-demo-content` lo adoptó como default). No alcanza con mirar el componente en un solo tema y asumir que el otro también cumple.
+
+**Nunca uses `opacity` para "atenuar" texto** (micro-labels, subtítulos, texto secundario) — diluye el color efectivo hacia el fondo detrás, y cuánto contraste sobrevive depende del fondo de cada superficie, así que un valor que pasa WCAG AA en un lugar puede fallar en otro (encontrado así en el switch de idioma de `ac-demo-content`: `opacity: 0.6` sobre `--color-text` fallaba color-contrast, mientras que `opacity: 0.7` en otro label de al lado pasaba de casualidad, por un margen mínimo). Para texto secundario, usa un color de menor contraste **validado explícitamente** (nunca `--color-subtext`, que ya falla WCAG AA por su cuenta — ver más abajo) o simplemente mantené el mismo color de texto y diferenciá con tamaño/peso/mayúsculas en su lugar.
 
 ## Paquetes base
 
@@ -92,6 +94,10 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 
 ```html
 <ac-demo-content
+  name="ac-mi-componente"
+  tech="Lit v3"
+  package-name="@ac-components/ac-mi-componente"
+  docs-href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/packages/components/ac-mi-componente/README.md"
   language="es-PE, en-EN"
   ambients="primary, secondary"
   events="ac-mi-componente-click"
@@ -102,9 +108,17 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 </ac-demo-content>
 ```
 
+- **El título ya no se escribe a mano en `demo/index.html`** (nada de `<h1>&lt;x&gt;</h1>`) — `name` centraliza el título (sin `<>`, el nombre tal cual), y con `tech` se muestra además la tecnología base como badge junto al nombre (`Lit v3` para todo el catálogo actual).
+- `package-name` y `docs-href` son opcionales pero se usan en todo el catálogo: `package-name` muestra los snippets `pnpm add`/`npm i` listos para copiar, `docs-href` muestra un link "Documentación" apuntando al `README.md` del componente en GitHub (no a una ruta local — el dev server de Vite no sirve `README.md` fuera de `demo/`, y en `vite build`/`preview` tampoco existiría).
 - **Los archivos `href` de cada `ac-demo-case` van en `demo/public/`**, no directo en `demo/`: Vite solo copia `public/` tal cual al build — cualquier otro archivo no referenciado desde `index.html` queda afuera de `dist/` y el `fetch()` da 404 en `vite preview`/producción (aunque funcione en `vite dev`, que sirve el disco tal cual).
+- **El switcher de caso siempre se muestra**, incluso con un solo `<ac-demo-case>` — no hay gate por cantidad de casos.
 - El switcher de `ambients` solo tiene efecto visual si el componente demostrado **usa de verdad** la propiedad `ambient` (heredada de `ComponentMixin`) en su styling — no basta con tenerla disponible sin usarla.
-- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS.
+- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS. El demo arranca en **modo claro** (no oscuro). El control es un switch de 2 iconos (sol/luna) dentro de un contenedor con borde redondeado y un divisor vertical entre ambos — nunca texto ("Modo claro"/"Modo oscuro"); el icono activo se resalta con los mismos tokens `--color-primary-700`/`--color-primary-50` que el resto de controles segmentados.
+- `language` acepta **exactamente 2 locales** — el framework solo soporta español/inglés en el demo, así que se renderiza con el mismo patrón de control segmentado (ES | divisor | EN), no como `<select>` ni como un switch deslizante. No se ofrecen más de 2 idiomas aunque `locales.json` tenga más claves (ej. `pt-BR` sigue siendo una traducción válida del componente, solo no aparece en el switcher del demo).
+- El tamaño de viewport ya **no es configurable vía atributo** (no existe más `sizes`) — son 3 presets fijos, con **ancho Y alto fijos** (no solo ancho): Móvil (375×667, activo por defecto), Tablet (768×1024) y Desktop (1280×720). Cada uno envuelve el `<slot>` en un marco visual (`ac-demo-content__device-frame`) que imita el bisel del dispositivo (notch en móvil/tablet, barra con puntos tipo navegador en desktop). El alto fijo es deliberado: si el contenido del caso activo no entra, **scrollea adentro del viewport simulado**, en vez de estirar el marco — así la demo se ve como el dispositivo real se vería, no como una página que crece sin límite.
+- **Switch Visual/Código**: todo componente tiene este control (segmentado, igual que los demás). "Visual" (por defecto) muestra el caso activo renderizado de verdad, dentro del marco de dispositivo. "Código" muestra el HTML fuente de ese mismo caso (el contenido crudo de su `href`, vía `ac-demo-case.source`) en un bloque `<pre><code>`, sin el marco de dispositivo (ver código fuente no necesita simular un viewport).
+- El panel de eventos es un ícono (campana) con contador — **no un log siempre visible**. Al hacer click abre un **panel lateral pegado al borde derecho de la pantalla** (no un modal centrado), con la configuración (qué eventos escucha) arriba y, por cada evento disparado, sus campos **etiquetados explícitamente**: `Evento:`, `Hora:`, `Payload:` (nunca datos sueltos sin decir qué son).
+- **Nunca apliques `opacity` a texto** para "atenuarlo" (ver la sección de Dark-mode más arriba) — mismo motivo, mismo riesgo de romper contraste WCAG, y el mismo patrón apareció de nuevo acá en el link de "Documentación" (color pensado para fondo oscuro, usado directo sobre la página sin caja propia — mismo fix que en `ac-link-basic`: oscurecer con `:host-context([data-theme='light'])`).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
 > `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component create`.
@@ -128,6 +142,10 @@ Cualquier otro comando (`ac test`, `ac lint`, `ac test:e2e`, `ac test:e2e:a11y`,
 ### Levantar el servidor de desarrollo (`component:serve` / `app:serve`)
 
 El script para levantar el demo de un componente con Vite se llama **`component:serve`** (no `dev`) en todos los `package.json` de `packages/components/*` y en el template del CLI — `ac component:serve` (o `pnpm --filter <paquete> component:serve`) levanta `demo/index.html` en `http://localhost:5173`. Cuando `ac app create` esté implementado, los proyectos de tipo app usarán el equivalente `app:serve` — son nombres separados a propósito porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa), no alias del mismo script. `packages/base/ac-demo-content` (y cualquier otro paquete base) no es un componente del catálogo, así que mantiene el nombre genérico `dev` en vez de `component:serve`.
+
+**`component:serve` (y `dev`) recompilan el `.scss` del componente en modo watch, no una sola vez.** Vite por sí solo no sabe recompilar `src/*.styles.scss` — eso lo hace un script aparte (`scripts/compile-scss-to-lit.cjs`, fuera del grafo de módulos de Vite), así que sin watch, `.scss` modificado con el server corriendo no se reflejaba hasta reiniciar. La solución: `scripts/compile-scss-to-lit.cjs` acepta un flag `--watch` (recompila en cada guardado del `.scss`, con debounce), y cada paquete corre ese watcher en paralelo con `vite demo`/`vite dev` usando [`concurrently`](https://www.npmjs.com/package/concurrently) (`"component:serve": "pnpm run build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run build:styles:watch\" \"vite demo\""`). Como `src/*.styles.js` SÍ es un módulo real que el componente importa, Vite lo vigila por su cuenta y recarga el navegador solo en cuanto el watcher lo reescribe — sin reiniciar nada. Todo componente nuevo (a mano o vía `ac component create`) debe tener este mismo patrón: `build:styles:watch` + `concurrently` en `component:serve`/`dev`, no solo `build:styles` una vez.
+
+> Esto resuelve el `.scss`. Los archivos `demo/public/*.html` (los `href` de cada `ac-demo-case`) siguen sin recargarse solos — `ac-demo-case` los carga una sola vez con `fetch()`, no son un módulo que Vite rastree. Ahí todavía hace falta recargar la pestaña a mano después de editarlos.
 
 ## Testing
 

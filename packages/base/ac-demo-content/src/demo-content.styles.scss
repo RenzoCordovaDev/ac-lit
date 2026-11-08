@@ -6,6 +6,82 @@
   display: none;
 }
 
+/* Header: nombre, tecnología base, instalación, documentación */
+.ac-demo-content__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.ac-demo-content__header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ac-demo-content__name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-demo-content__tech-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-demo-content__header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ac-demo-content__install {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ac-demo-content__install-cmd {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.ac-demo-content__docs-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  /* primary-500 está pensado para fondo oscuro — en modo claro el texto va
+     directo sobre la página (sin caja propia), así que se oscurece abajo.
+     Ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md. */
+  color: var(--color-primary-500, #10b981);
+  text-decoration: none;
+}
+
+:host-context([data-theme='light']) .ac-demo-content__docs-link {
+  color: var(--color-primary-700, #047857);
+}
+
+.ac-demo-content__docs-link:hover {
+  text-decoration: underline;
+}
+
+/* Toolbar */
 .ac-demo-content__toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -19,42 +95,313 @@
 .ac-demo-content__field {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-size: 0.85rem;
   /* --color-subtext no cumple contraste WCAG AA (3.89:1) sobre --color-bg */
   color: var(--color-text, #bcbec4);
 }
 
-.ac-demo-content__field select {
-  font: inherit;
+.ac-demo-content__field-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  /* Nunca opacity sobre texto: diluye el contraste contra el fondo y rompe
+     WCAG AA de forma impredecible entre temas — ver docs/CONVENTIONS.md. */
   color: inherit;
-  background: var(--color-surface, #2b2b2b);
-  border: 1px solid var(--color-muted, #313335);
-  border-radius: 0.25rem;
-  padding: 0.2rem 0.4rem;
 }
 
-.ac-demo-content__theme-toggle {
-  cursor: pointer;
+.ac-demo-content__field select {
+  appearance: none;
+  font: inherit;
   font-size: 0.85rem;
   color: inherit;
-  background: transparent;
+  background: var(--color-surface, #2b2b2b)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 0.65rem center;
+  background-size: 0.65rem;
   border: 1px solid var(--color-muted, #313335);
-  border-radius: 0.375rem;
-  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.35rem 1.75rem 0.35rem 0.65rem;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.ac-demo-content__field select:hover {
+  border-color: var(--color-primary-500, #10b981);
+}
+
+.ac-demo-content__field select:focus-visible {
+  outline: none;
+  border-color: var(--color-primary-500, #10b981);
+  box-shadow: 0 0 0 2px var(--color-primary-700, #047857);
+}
+
+/* Control segmentado genérico: idioma / tema / dispositivo / vista */
+.ac-demo-content__segmented {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ac-demo-content__segmented-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-muted, #313335);
+}
+
+.ac-demo-content__segmented-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  /* Sin transition: un axe-core check justo después del click puede
+     muestrear el color a mitad de la transición, y falla color-contrast
+     de forma intermitente (visto en CI — pasaba solo, fallaba en la
+     corrida completa del monorepo). El cambio de estado es instantáneo. */
+}
+
+.ac-demo-content__segmented-button--active {
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-demo-content__theme-switcher .ac-demo-content__segmented-button {
+  padding: 0.4rem 0.6rem;
+}
+
+/* Botón de eventos */
+.ac-demo-content__events-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ac-demo-content__events-count {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--color-accent-500, #f59e0b);
+  color: var(--color-accent-900, #451a03);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1rem;
+  text-align: center;
+}
+
+/* Escenario + marco de dispositivo (alto FIJO por preset — el contenido
+   scrollea adentro en vez de empujar el marco, para simular un viewport
+   real del dispositivo). */
+.ac-demo-content__stage {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--color-surface, #2b2b2b);
+  border-radius: 0.75rem;
+}
+
+.ac-demo-content__device-frame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--ac-demo-content-device-width, 375px);
+  background: var(--color-muted, #313335);
+  border-radius: 1.75rem;
+  padding: 0.6rem 0.4rem 1rem;
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+  overflow: hidden;
+  transition:
+    max-width 200ms ease,
+    height 200ms ease;
+}
+
+.ac-demo-content__device-frame--tablet {
+  border-radius: 1.25rem;
+  padding: 0.5rem 0.4rem 0.75rem;
+}
+
+.ac-demo-content__device-frame--desktop {
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.ac-demo-content__device-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 1.5rem;
+  gap: 0.3rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.ac-demo-content__device-frame--desktop .ac-demo-content__device-chrome {
+  justify-content: flex-start;
+  padding: 0 0.6rem;
+}
+
+.ac-demo-content__device-notch {
+  width: 3rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--color-bg, #1e1e1e);
+}
+
+.ac-demo-content__device-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-bg, #1e1e1e);
 }
 
 .ac-demo-content__viewport {
-  transition: max-width 150ms ease;
+  height: var(--ac-demo-content-device-height, 667px);
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--color-bg, #1e1e1e);
+  border-radius: 0 0 0.5rem 0.5rem;
 }
 
-.ac-demo-content__event-log {
-  margin-top: 1rem;
+/* Vista de código (HTML fuente del caso activo) */
+.ac-demo-content__code-view {
+  width: 100%;
+}
+
+.ac-demo-content__code-block {
+  margin: 0;
+  padding: 1rem;
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 0.5rem;
   font-family: monospace;
   font-size: 0.8rem;
-  background: var(--color-surface, #2b2b2b);
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  max-height: 8rem;
+  line-height: 1.5;
+  color: var(--color-text, #bcbec4);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 32rem;
   overflow-y: auto;
+}
+
+/* Panel de eventos — lateral, pegado al borde derecho */
+.ac-demo-content__panel-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 50;
+}
+
+.ac-demo-content__modal {
+  width: min(22rem, 90vw);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface, #2b2b2b);
+  border-left: 1px solid var(--color-muted, #313335);
+  box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
+  padding: 1rem 1.25rem;
+}
+
+.ac-demo-content__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.ac-demo-content__modal-title {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-demo-content__modal-close {
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.25rem;
+  color: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ac-demo-content__modal-config {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--color-text, #bcbec4);
+  margin: 0 0 0.75rem;
+}
+
+.ac-demo-content__modal-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ac-demo-content__modal-entry {
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.ac-demo-content__modal-entry-row {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-text, #bcbec4);
+  padding: 0.15rem 0;
+}
+
+.ac-demo-content__modal-entry-row--block {
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ac-demo-content__modal-entry-label {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ac-demo-content__modal-entry-detail {
+  margin: 0;
+  font-family: monospace;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-demo-content__modal-empty {
+  font-size: 0.85rem;
+  color: var(--color-text, #bcbec4);
+  margin: 0;
 }

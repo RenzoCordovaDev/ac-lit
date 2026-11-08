@@ -3,32 +3,59 @@ import '../index.js';
 import '../demo/sample-button.js';
 
 suite('ac-demo-content', () => {
-  test('renders a size switcher by default', async () => {
+  test('renders a device-size switcher by default', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
-    expect(el.shadowRoot.querySelectorAll('select').length).to.be.greaterThan(0);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-switcher')).to.exist;
   });
 
-  test('does not render a case switcher with a single case', async () => {
+  test('defaults to the mobile device size', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    const active = el.shadowRoot.querySelector(
+      '.ac-demo-content__device-switcher .ac-demo-content__segmented-button--active',
+    );
+    expect(active.getAttribute('data-value')).to.equal('mobile');
+  });
+
+  test('defaults to light mode', async () => {
+    await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(document.documentElement.getAttribute('data-theme')).to.equal('light');
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  test('wraps the viewport in a device frame matching the active device', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-frame--mobile')).to.exist;
+  });
+
+  test('switching the device size updates the device frame', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    const button = el.shadowRoot.querySelector(
+      '.ac-demo-content__device-switcher [data-value="desktop"]',
+    );
+
+    button.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-frame--desktop')).to.exist;
+  });
+
+  test('always renders a case switcher, even with a single case', async () => {
     const el = await fixture(html`
       <ac-demo-content><ac-demo-case header="Único"></ac-demo-case></ac-demo-content>
     `);
-    const labels = [...el.shadowRoot.querySelectorAll('.ac-demo-content__field')].map(label =>
-      label.textContent.trim(),
-    );
-    expect(labels.some(text => text.startsWith('Caso'))).to.be.false;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__case-select')).to.exist;
   });
 
-  test('renders a case switcher with more than one case', async () => {
+  test('the case switcher only shows the header of each case', async () => {
     const el = await fixture(html`
       <ac-demo-content>
         <ac-demo-case header="Uno"></ac-demo-case>
         <ac-demo-case header="Dos"></ac-demo-case>
       </ac-demo-content>
     `);
-    const labels = [...el.shadowRoot.querySelectorAll('.ac-demo-content__field')].map(label =>
-      label.textContent.trim(),
-    );
-    expect(labels.some(text => text.startsWith('Caso'))).to.be.true;
+    const select = el.shadowRoot.querySelector('.ac-demo-content__case-select');
+    const labels = [...select.options].map(option => option.textContent.trim());
+    expect(labels).to.deep.equal(['Uno', 'Dos']);
   });
 
   test('activates the first case by default', async () => {
@@ -50,7 +77,7 @@ suite('ac-demo-content', () => {
       </ac-demo-content>
     `);
     const [, second] = el.querySelectorAll('ac-demo-case');
-    const select = el.shadowRoot.querySelector('select');
+    const select = el.shadowRoot.querySelector('.ac-demo-content__case-select');
 
     select.value = '1';
     select.dispatchEvent(new Event('change'));
@@ -66,7 +93,7 @@ suite('ac-demo-content', () => {
       </ac-demo-content>
     `);
     const [first] = el.querySelectorAll('ac-demo-case');
-    const select = el.shadowRoot.querySelector('select');
+    const select = el.shadowRoot.querySelector('.ac-demo-content__case-select');
 
     select.value = '1';
     select.dispatchEvent(new Event('change'));
@@ -74,40 +101,44 @@ suite('ac-demo-content', () => {
     expect(first.active).to.be.false;
   });
 
-  test('does not render a language switcher without the `language` attribute', async () => {
+  test('does not render a language switch without exactly 2 `language` values', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
-    const labels = [...el.shadowRoot.querySelectorAll('.ac-demo-content__field')].map(label =>
-      label.textContent.trim(),
-    );
-    expect(labels.some(text => text.startsWith('Locale'))).to.be.false;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__locale-switcher')).to.not.exist;
   });
 
-  test('renders a language option per locale in `language`', async () => {
+  test('renders a language switch for exactly 2 `language` values', async () => {
     const el = await fixture(html`<ac-demo-content language="es-PE, en-EN"></ac-demo-content>`);
-    const selects = [...el.shadowRoot.querySelectorAll('select')];
-    const localeSelect = selects.find(select =>
-      [...select.options].some(option => option.value === 'es-PE'),
+    expect(el.shadowRoot.querySelector('.ac-demo-content__locale-switcher')).to.exist;
+  });
+
+  test('does not render a language switch for 3 `language` values', async () => {
+    const el = await fixture(
+      html`<ac-demo-content language="es-PE, en-EN, pt-BR"></ac-demo-content>`,
     );
-    expect(localeSelect.options.length).to.equal(2);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__locale-switcher')).to.not.exist;
+  });
+
+  test('selecting the second language option sets the global locale', async () => {
+    const el = await fixture(html`<ac-demo-content language="es-PE, en-EN"></ac-demo-content>`);
+    const button = el.shadowRoot.querySelector(
+      '.ac-demo-content__locale-switcher [data-value="1"]',
+    );
+    button.click();
+    await el.updateComplete;
+    expect(button.classList.contains('ac-demo-content__segmented-button--active')).to.be.true;
   });
 
   test('does not render an ambient switcher without the `ambients` attribute', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
-    const labels = [...el.shadowRoot.querySelectorAll('.ac-demo-content__field')].map(label =>
-      label.textContent.trim(),
-    );
-    expect(labels.some(text => text.startsWith('Ambient'))).to.be.false;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__ambient-select')).to.not.exist;
   });
 
   test('renders an ambient option per value in `ambients`', async () => {
     const el = await fixture(
       html`<ac-demo-content ambients="primary, secondary"></ac-demo-content>`,
     );
-    const selects = [...el.shadowRoot.querySelectorAll('select')];
-    const ambientSelect = selects.find(select =>
-      [...select.options].some(option => option.value === 'primary'),
-    );
-    expect(ambientSelect.options.length).to.equal(2);
+    const select = el.shadowRoot.querySelector('.ac-demo-content__ambient-select');
+    expect(select.options.length).to.equal(2);
   });
 
   test('changing the ambient select updates `ambient` on components in the active case', async () => {
@@ -117,45 +148,166 @@ suite('ac-demo-content', () => {
       </ac-demo-content>
     `);
     const button = el.querySelector('ac-demo-sample-button');
-    const selects = [...el.shadowRoot.querySelectorAll('select')];
-    const ambientSelect = selects.find(select =>
-      [...select.options].some(option => option.value === 'primary'),
-    );
+    const select = el.shadowRoot.querySelector('.ac-demo-content__ambient-select');
 
-    ambientSelect.value = 'secondary';
-    ambientSelect.dispatchEvent(new Event('change'));
+    select.value = 'secondary';
+    select.dispatchEvent(new Event('change'));
 
     expect(button.ambient).to.equal('secondary');
   });
 
-  test('does not render a theme toggle without the `dark-mode` attribute', async () => {
+  test('does not render a theme switcher without the `dark-mode` attribute', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
-    expect(el.shadowRoot.querySelector('.ac-demo-content__theme-toggle')).to.not.exist;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__theme-switcher')).to.not.exist;
   });
 
-  test('renders a theme toggle with the `dark-mode` attribute', async () => {
+  test('renders a theme switcher with the `dark-mode` attribute', async () => {
     const el = await fixture(html`<ac-demo-content dark-mode></ac-demo-content>`);
-    expect(el.shadowRoot.querySelector('.ac-demo-content__theme-toggle')).to.exist;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__theme-switcher')).to.exist;
   });
 
-  test('clicking the theme toggle sets data-theme="light" on <html>', async () => {
+  test('selecting dark in the theme switcher sets data-theme="dark" on <html>', async () => {
     const el = await fixture(html`<ac-demo-content dark-mode></ac-demo-content>`);
-    el.shadowRoot.querySelector('.ac-demo-content__theme-toggle').click();
-    expect(document.documentElement.getAttribute('data-theme')).to.equal('light');
+    const button = el.shadowRoot.querySelector(
+      '.ac-demo-content__theme-switcher [data-value="dark"]',
+    );
+    button.click();
+    expect(document.documentElement.getAttribute('data-theme')).to.equal('dark');
     document.documentElement.removeAttribute('data-theme');
   });
 
-  test('does not render an event log without the `events` attribute', async () => {
+  test('renders a visual/code view switcher by default', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
-    expect(el.shadowRoot.querySelector('.ac-demo-content__event-log')).to.not.exist;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__viewmode-switcher')).to.exist;
   });
 
-  test('logs a matching event dispatched on document', async () => {
+  test('shows the device frame in visual mode', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-frame')).to.exist;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__code-block')).to.not.exist;
+  });
+
+  test('shows the raw case source when switching to the code view', async () => {
+    const el = await fixture(html`
+      <ac-demo-content>
+        <ac-demo-case href="/test/fixtures/case-fixture.html"></ac-demo-case>
+      </ac-demo-content>
+    `);
+    await aTimeout(50);
+    const codeButton = el.shadowRoot.querySelector(
+      '.ac-demo-content__viewmode-switcher [data-value="code"]',
+    );
+    codeButton.click();
+    await el.updateComplete;
+
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-frame')).to.not.exist;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__code-block').textContent).to.include(
+      'fixture-marker',
+    );
+  });
+
+  test('does not render an events button without the `events` attribute', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__events-button')).to.not.exist;
+  });
+
+  test('renders an events button with the `events` attribute', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__events-button')).to.exist;
+  });
+
+  test('does not open the events panel until the button is clicked', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.not.exist;
+  });
+
+  test('opens the events panel when the events button is clicked', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    el.shadowRoot.querySelector('.ac-demo-content__events-button').click();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.exist;
+  });
+
+  test('closes the events panel when the close button is clicked', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    el.shadowRoot.querySelector('.ac-demo-content__events-button').click();
+    await el.updateComplete;
+    el.shadowRoot.querySelector('.ac-demo-content__modal-close').click();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.not.exist;
+  });
+
+  test('closes the events panel on Escape', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    el.shadowRoot.querySelector('.ac-demo-content__events-button').click();
+    await el.updateComplete;
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.not.exist;
+  });
+
+  test('shows the listened event names as the panel config', async () => {
+    const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
+    el.shadowRoot.querySelector('.ac-demo-content__events-button').click();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal-config').textContent).to.include(
+      'ac-test-demo-event',
+    );
+  });
+
+  test('logs a matching event with a labeled name/time/payload in the panel', async () => {
     const el = await fixture(html`<ac-demo-content events="ac-test-demo-event"></ac-demo-content>`);
     document.dispatchEvent(new CustomEvent('ac-test-demo-event', { detail: { value: 1 } }));
     await aTimeout(10);
-    expect(el.shadowRoot.querySelector('.ac-demo-content__event-log').textContent).to.include(
-      'ac-test-demo-event',
+
+    el.shadowRoot.querySelector('.ac-demo-content__events-button').click();
+    await el.updateComplete;
+
+    const text = el.shadowRoot.querySelector('.ac-demo-content__modal-list').textContent;
+    expect(text).to.include('Evento:');
+    expect(text).to.include('ac-test-demo-event');
+    expect(text).to.include('Hora:');
+    expect(text).to.include('Payload:');
+    expect(text).to.include('"value": 1');
+  });
+
+  test('does not render a header without `name`/`tech`/`package-name`/`docs-href`', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__header')).to.not.exist;
+  });
+
+  test('renders the component name without angle brackets', async () => {
+    const el = await fixture(html`<ac-demo-content name="ac-button-basic"></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__name').textContent.trim()).to.equal(
+      'ac-button-basic',
     );
+  });
+
+  test('renders the tech badge', async () => {
+    const el = await fixture(html`<ac-demo-content tech="Lit v3"></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__tech-badge').textContent.trim()).to.equal(
+      'Lit v3',
+    );
+  });
+
+  test('renders pnpm and npm install snippets from `package-name`', async () => {
+    const el = await fixture(
+      html`<ac-demo-content package-name="@ac-components/ac-button-basic"></ac-demo-content>`,
+    );
+    const snippets = [...el.shadowRoot.querySelectorAll('.ac-demo-content__install-cmd')].map(
+      node => node.textContent.trim(),
+    );
+    expect(snippets).to.deep.equal([
+      'pnpm add @ac-components/ac-button-basic',
+      'npm i @ac-components/ac-button-basic',
+    ]);
+  });
+
+  test('renders a docs link pointing to `docs-href`', async () => {
+    const el = await fixture(
+      html`<ac-demo-content docs-href="https://example.com/README.md"></ac-demo-content>`,
+    );
+    const link = el.shadowRoot.querySelector('.ac-demo-content__docs-link');
+    expect(link.getAttribute('href')).to.equal('https://example.com/README.md');
   });
 });
