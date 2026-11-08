@@ -16,7 +16,7 @@ Then('el componente contiene el texto {string}', async function (expectedText) {
   }
 });
 
-When('el usuario activa el modo claro', async function () {
+When('el usuario activa el modo oscuro', async function () {
   const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
   await toggle.waitForDisplayed();
   await toggle.click();

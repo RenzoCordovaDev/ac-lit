@@ -20,7 +20,11 @@ When('el usuario hace click en la opción {string}', async function (key) {
 });
 
 async function eventLogEntries() {
-  const entries = await $('ac-demo-content').$('.ac-demo-content__event-log').$$('div');
+  const host = $('ac-demo-content');
+  if (!(await host.$('.ac-demo-content__modal').isExisting())) {
+    await host.$('.ac-demo-content__events-button').click();
+  }
+  const entries = await host.$$('.ac-demo-content__modal-entry');
   return entries.map(entry => entry.getText());
 }
 
@@ -31,12 +35,12 @@ Then(
       async () => {
         const texts = await eventLogEntries();
         return texts.some(
-          entryText => entryText.includes(eventName) && entryText.includes(`"value":"${value}"`),
+          entryText => entryText.includes(eventName) && entryText.includes(`"value": "${value}"`),
         );
       },
       {
         timeout: 3000,
-        timeoutMsg: `No se encontró "${eventName}" con valor "${value}" en el log de eventos`,
+        timeoutMsg: `No se encontró "${eventName}" con valor "${value}" en el modal de eventos`,
       },
     );
   },
@@ -46,11 +50,13 @@ Then('el evento {string} no se registra en el log', async function (eventName) {
   await browser.pause(500);
   const texts = await eventLogEntries();
   if (texts.some(entryText => entryText.includes(eventName))) {
-    throw new Error(`Se esperaba que "${eventName}" NO se registrara, pero se encontró en el log.`);
+    throw new Error(
+      `Se esperaba que "${eventName}" NO se registrara, pero se encontró en el modal de eventos.`,
+    );
   }
 });
 
-When('el usuario activa el modo claro', async function () {
+When('el usuario activa el modo oscuro', async function () {
   const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
   await toggle.waitForDisplayed();
   await toggle.click();

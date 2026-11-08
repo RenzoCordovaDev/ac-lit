@@ -11,23 +11,35 @@ export class DemoContentPage extends ComponentObject {
     return $(HOST_SELECTOR).$('.ac-demo-content__case-select');
   }
 
-  get localeSelect() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__locale-select');
+  get localeSwitch() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__locale-switch');
   }
 
   get ambientSelect() {
     return $(HOST_SELECTOR).$('.ac-demo-content__ambient-select');
   }
 
-  get sizeSelect() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__size-select');
-  }
-
   get themeToggle() {
     return $(HOST_SELECTOR).$('.ac-demo-content__theme-toggle');
   }
 
-  get eventLog() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__event-log');
+  get deviceFrame() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__device-frame');
+  }
+
+  deviceButton(key) {
+    return $(HOST_SELECTOR).$(`[data-device="${key}"]`);
+  }
+
+  get eventsButton() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__events-button');
+  }
+
+  get eventsModal() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__modal');
+  }
+
+  get eventsModalList() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__modal-list');
   }
 }

@@ -14,7 +14,11 @@ When('el usuario hace click en el link {string}', async function (state) {
 });
 
 async function eventLogContains(eventName) {
-  const entries = await $('ac-demo-content').$('.ac-demo-content__event-log').$$('div');
+  const host = $('ac-demo-content');
+  if (!(await host.$('.ac-demo-content__modal').isExisting())) {
+    await host.$('.ac-demo-content__events-button').click();
+  }
+  const entries = await host.$$('.ac-demo-content__modal-entry');
   const texts = await entries.map(entry => entry.getText());
   return texts.some(text => text.includes(eventName));
 }
@@ -22,18 +26,20 @@ async function eventLogContains(eventName) {
 Then('el evento {string} se registra en el log', async function (eventName) {
   await browser.waitUntil(() => eventLogContains(eventName), {
     timeout: 3000,
-    timeoutMsg: `No se encontró "${eventName}" en el log de eventos`,
+    timeoutMsg: `No se encontró "${eventName}" en el modal de eventos`,
   });
 });
 
 Then('el evento {string} no se registra en el log', async function (eventName) {
   await browser.pause(500);
   if (await eventLogContains(eventName)) {
-    throw new Error(`Se esperaba que "${eventName}" NO se registrara, pero se encontró en el log.`);
+    throw new Error(
+      `Se esperaba que "${eventName}" NO se registrara, pero se encontró en el modal de eventos.`,
+    );
   }
 });
 
-When('el usuario activa el modo claro', async function () {
+When('el usuario activa el modo oscuro', async function () {
   const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
   await toggle.waitForDisplayed();
   await toggle.click();

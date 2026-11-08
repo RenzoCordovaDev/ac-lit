@@ -6,7 +6,7 @@ Contenedor centralizado para las demos de los componentes de `ac-lit`. En vez de
 
 ```html
 <ac-demo-content
-  language="es-PE, en-EN, pt-BR"
+  language="es-PE, en-EN"
   ambients="primary, primary-alt, secondary, secondary-alt"
   events="ac-mi-componente-click"
   dark-mode
@@ -28,15 +28,14 @@ import '@ac-base/ac-demo-content';
 
 ## `<ac-demo-content>`
 
-| Atributo    | Tipo                  | Descripción                                                                                                                                             |
-| ----------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `language`  | string, coma-separado | Locales a ofrecer en el switcher (ej. `"es-PE, en-EN"`). Usa `setGlobalLocale` — cero wiring extra.                                                     |
-| `ambients`  | string, coma-separado | Valores de `ambient` a ofrecer. Al cambiar, setea `.ambient` en los elementos del caso activo que tengan esa propiedad.                                 |
-| `events`    | string, coma-separado | Nombres de eventos a escuchar en `document` y mostrar en el panel de eventos.                                                                           |
-| `sizes`     | string, coma-separado | Hasta 5 presets de ancho (px) para el viewport. Default: `320, 480, 768, 1024, 1440`.                                                                   |
-| `dark-mode` | boolean               | Muestra el toggle de tema. Togglea `data-theme` en `<html>` — requiere que el host importe la paleta `light` de `@ac-base/ac-core` además de la oscura. |
+| Atributo    | Tipo                  | Descripción                                                                                                                                                                                                                                                  |
+| ----------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `language`  | string, coma-separado | **Exactamente 2 locales** (ej. `"es-PE, en-EN"`) — el framework solo ofrece español o inglés. Se renderiza como un switch ES/EN, no un select. Con 0, 1 o 3+ valores no se renderiza nada. Usa `setGlobalLocale` — cero wiring extra.                        |
+| `ambients`  | string, coma-separado | Valores de `ambient` a ofrecer. Al cambiar, setea `.ambient` en los elementos del caso activo que tengan esa propiedad.                                                                                                                                      |
+| `events`    | string, coma-separado | Nombres de eventos a escuchar en `document`. Si hay al menos uno, se muestra un ícono de campana en la toolbar — al hacer click abre un modal con cada evento disparado (nombre, hora, datos enviados) y la configuración (qué eventos se están escuchando). |
+| `dark-mode` | boolean               | Muestra el toggle de tema. El demo arranca en **modo claro** por defecto; togglea `data-theme` en `<html>` — requiere que el host importe la paleta `light` de `@ac-base/ac-core` además de la oscura.                                                       |
 
-Sin ningún atributo, solo se muestra el switcher de tamaño (siempre presente) y, si hay más de un `<ac-demo-case>`, el switcher de caso.
+El switcher de **tamaño de dispositivo** siempre está presente (no es configurable): 3 presets fijos — Móvil (375px, por defecto), Tablet (768px) y Desktop (1280px) — cada uno envuelve el `<slot>` en un marco visual (`.ac-demo-content__device-frame`) que simula el bisel del dispositivo correspondiente. Si hay más de un `<ac-demo-case>`, también se muestra el switcher de caso.
 
 ## `<ac-demo-case>`
 

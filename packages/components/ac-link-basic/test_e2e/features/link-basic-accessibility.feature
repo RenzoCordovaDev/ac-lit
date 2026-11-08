@@ -12,6 +12,6 @@ Feature: ac-link-basic - accesibilidad
   Scenario: El demo de ac-link-basic no tiene violaciones de accesibilidad
     Then el demo no tiene violaciones de accesibilidad WCAG
 
-  Scenario: El demo de ac-link-basic no tiene violaciones de accesibilidad en modo claro
-    When el usuario activa el modo claro
+  Scenario: El demo de ac-link-basic no tiene violaciones de accesibilidad en modo oscuro
+    When el usuario activa el modo oscuro
     Then el demo no tiene violaciones de accesibilidad WCAG

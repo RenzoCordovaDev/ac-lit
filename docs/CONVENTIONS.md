@@ -77,7 +77,9 @@ Un variant con **fondo `transparent`** (o sin caja propia, ej. texto plano sobre
 - Darle al variant un fondo propio y estable (ya no `transparent`), con el mismo patrón de tokens fijos de arriba — es lo que se hizo con `.ac-button--secondary-alt` (fondo `--color-accent-100` + texto `--color-accent-900`, ambos sin redefinir en el tema claro).
 - Si el texto va realmente sobre el fondo de la página (sin caja), usar un color de texto que cambie según el tema con `:host-context([data-theme='light'])` — es lo que hace `ac-link-basic` para sus 4 variants.
 
-En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** — por eso cada feature de accesibilidad tiene un escenario "en modo claro" además del smoke test por defecto (que corre en modo oscuro). No alcanza con mirar el componente en un solo tema y asumir que el otro también cumple.
+En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** — por eso cada feature de accesibilidad tiene un escenario adicional que activa el toggle de tema, además del smoke test por defecto (que corre en el tema por defecto del demo — **claro**, desde que `ac-demo-content` lo adoptó como default). No alcanza con mirar el componente en un solo tema y asumir que el otro también cumple.
+
+**Nunca uses `opacity` para "atenuar" texto** (micro-labels, subtítulos, texto secundario) — diluye el color efectivo hacia el fondo detrás, y cuánto contraste sobrevive depende del fondo de cada superficie, así que un valor que pasa WCAG AA en un lugar puede fallar en otro (encontrado así en el switch de idioma de `ac-demo-content`: `opacity: 0.6` sobre `--color-text` fallaba color-contrast, mientras que `opacity: 0.7` en otro label de al lado pasaba de casualidad, por un margen mínimo). Para texto secundario, usa un color de menor contraste **validado explícitamente** (nunca `--color-subtext`, que ya falla WCAG AA por su cuenta — ver más abajo) o simplemente mantené el mismo color de texto y diferenciá con tamaño/peso/mayúsculas en su lugar.
 
 ## Paquetes base
 
@@ -104,7 +106,10 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 
 - **Los archivos `href` de cada `ac-demo-case` van en `demo/public/`**, no directo en `demo/`: Vite solo copia `public/` tal cual al build — cualquier otro archivo no referenciado desde `index.html` queda afuera de `dist/` y el `fetch()` da 404 en `vite preview`/producción (aunque funcione en `vite dev`, que sirve el disco tal cual).
 - El switcher de `ambients` solo tiene efecto visual si el componente demostrado **usa de verdad** la propiedad `ambient` (heredada de `ComponentMixin`) en su styling — no basta con tenerla disponible sin usarla.
-- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS.
+- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS. El demo arranca en **modo claro** (no oscuro).
+- `language` acepta **exactamente 2 locales** — el framework solo soporta español/inglés en el demo, así que se renderiza como switch ES/EN, no como `<select>`. No se ofrecen más de 2 idiomas aunque `locales.json` tenga más claves (ej. `pt-BR` sigue siendo una traducción válida del componente, solo no aparece en el switcher del demo).
+- El tamaño de viewport ya **no es configurable vía atributo** (no existe más `sizes`) — son 3 presets fijos: Móvil (375px, activo por defecto), Tablet (768px) y Desktop (1280px), cada uno envuelto en un marco visual (`ac-demo-content__device-frame`) que imita el bisel del dispositivo.
+- El panel de eventos es un ícono (campana) + modal, no un log siempre visible — el modal muestra nombre, hora y datos de cada evento disparado, más la configuración (qué eventos se escuchan).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
 > `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component create`.
