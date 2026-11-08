@@ -20,25 +20,31 @@ When('el usuario hace click en el elemento {string}', async function (testId) {
   await el.click();
 });
 
-When('el usuario activa el toggle de tema', async function () {
-  const toggle = this.demoContent.themeToggle;
-  await toggle.waitForDisplayed();
-  await toggle.click();
-});
-
-When('el usuario selecciona el dispositivo {string}', async function (label) {
-  const button = this.demoContent.deviceButton(label);
+When('el usuario selecciona el dispositivo {string}', async function (key) {
+  const button = this.demoContent.deviceButton(key);
   await button.waitForDisplayed();
   await button.click();
 });
 
-When('el usuario activa el switch de idioma', async function () {
-  const toggle = this.demoContent.localeSwitch;
-  await toggle.waitForDisplayed();
-  await toggle.click();
+When('el usuario selecciona el tema {string}', async function (theme) {
+  const button = this.demoContent.themeButton(theme);
+  await button.waitForDisplayed();
+  await button.click();
 });
 
-When('el usuario abre el modal de eventos', async function () {
+When('el usuario selecciona el idioma {string}', async function (index) {
+  const button = this.demoContent.languageButton(index);
+  await button.waitForDisplayed();
+  await button.click();
+});
+
+When('el usuario selecciona la vista {string}', async function (mode) {
+  const button = this.demoContent.viewModeButton(mode);
+  await button.waitForDisplayed();
+  await button.click();
+});
+
+When('el usuario abre el panel de eventos', async function () {
   const button = this.demoContent.eventsButton;
   await button.waitForDisplayed();
   await button.click();
@@ -60,16 +66,22 @@ Then('el marco de dispositivo es {string}', async function (device) {
   }
 });
 
-Then('el switch de idioma queda en {string}', async function (expectedLocale) {
-  const toggle = this.demoContent.localeSwitch;
-  await toggle.waitForDisplayed();
-  // El demo declara language="es-PE, en-EN" — checked=true significa en-EN activo.
-  const expectedChecked = expectedLocale === 'en-EN' ? 'true' : 'false';
-  const checked = await toggle.getAttribute('aria-checked');
-  if (checked !== expectedChecked) {
-    throw new Error(
-      `Se esperaba el switch de idioma en "${expectedLocale}" (aria-checked="${expectedChecked}"), pero aria-checked="${checked}".`,
-    );
+Then('el idioma activo es {string}', async function (index) {
+  const button = this.demoContent.languageButton(index);
+  const isActive = (await button.getAttribute('class')).includes(
+    'ac-demo-content__segmented-button--active',
+  );
+  if (!isActive) {
+    throw new Error(`Se esperaba el idioma en el índice "${index}" activo, pero no lo está.`);
+  }
+});
+
+Then('la vista de código contiene {string}', async function (expectedText) {
+  const codeBlock = this.demoContent.codeBlock;
+  await codeBlock.waitForDisplayed();
+  const text = await codeBlock.getText();
+  if (!text.includes(expectedText)) {
+    throw new Error(`Se esperaba "${expectedText}" en la vista de código, pero no se encontró.`);
   }
 });
 
@@ -80,13 +92,22 @@ Then('el documento queda en data-theme {string}', async function (theme) {
   }
 });
 
-Then('el evento {string} aparece en el modal de eventos', async function (eventName) {
-  const list = this.demoContent.eventsModalList;
-  await browser.waitUntil(async () => (await list.getText()).includes(eventName), {
-    timeout: 3000,
-    timeoutMsg: `No se encontró "${eventName}" en el modal de eventos`,
-  });
-});
+Then(
+  'el evento {string} aparece en el panel de eventos con su etiqueta',
+  async function (eventName) {
+    const list = this.demoContent.eventsPanelList;
+    await browser.waitUntil(
+      async () => {
+        const text = await list.getText();
+        return text.includes('Evento:') && text.includes(eventName) && text.includes('Hora:');
+      },
+      {
+        timeout: 3000,
+        timeoutMsg: `No se encontró "${eventName}" (con su etiqueta "Evento:") en el panel de eventos`,
+      },
+    );
+  },
+);
 
 Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
   const results = await runAccessibilityCheck();

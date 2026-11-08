@@ -35,6 +35,15 @@ suite('ac-demo-case', () => {
     expect(el.querySelector('.fixture-marker')).to.exist;
   });
 
+  test('exposes the raw fetched HTML via `.source`', async () => {
+    const el = await fixture(
+      html`<ac-demo-case href="/test/fixtures/case-fixture.html"></ac-demo-case>`,
+    );
+    el.active = true;
+    await aTimeout(50);
+    expect(el.source).to.include('fixture-marker');
+  });
+
   test('toggling active=false hides it again without re-fetching', async () => {
     const el = await fixture(
       html`<ac-demo-case href="/test/fixtures/case-fixture.html" active></ac-demo-case>`,

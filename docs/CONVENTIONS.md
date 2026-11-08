@@ -94,6 +94,10 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 
 ```html
 <ac-demo-content
+  name="ac-mi-componente"
+  tech="Lit v3"
+  package-name="@ac-components/ac-mi-componente"
+  docs-href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/packages/components/ac-mi-componente/README.md"
   language="es-PE, en-EN"
   ambients="primary, secondary"
   events="ac-mi-componente-click"
@@ -104,12 +108,17 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 </ac-demo-content>
 ```
 
+- **El título ya no se escribe a mano en `demo/index.html`** (nada de `<h1>&lt;x&gt;</h1>`) — `name` centraliza el título (sin `<>`, el nombre tal cual), y con `tech` se muestra además la tecnología base como badge junto al nombre (`Lit v3` para todo el catálogo actual).
+- `package-name` y `docs-href` son opcionales pero se usan en todo el catálogo: `package-name` muestra los snippets `pnpm add`/`npm i` listos para copiar, `docs-href` muestra un link "Documentación" apuntando al `README.md` del componente en GitHub (no a una ruta local — el dev server de Vite no sirve `README.md` fuera de `demo/`, y en `vite build`/`preview` tampoco existiría).
 - **Los archivos `href` de cada `ac-demo-case` van en `demo/public/`**, no directo en `demo/`: Vite solo copia `public/` tal cual al build — cualquier otro archivo no referenciado desde `index.html` queda afuera de `dist/` y el `fetch()` da 404 en `vite preview`/producción (aunque funcione en `vite dev`, que sirve el disco tal cual).
+- **El switcher de caso siempre se muestra**, incluso con un solo `<ac-demo-case>` — no hay gate por cantidad de casos.
 - El switcher de `ambients` solo tiene efecto visual si el componente demostrado **usa de verdad** la propiedad `ambient` (heredada de `ComponentMixin`) en su styling — no basta con tenerla disponible sin usarla.
-- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS. El demo arranca en **modo claro** (no oscuro).
-- `language` acepta **exactamente 2 locales** — el framework solo soporta español/inglés en el demo, así que se renderiza como switch ES/EN, no como `<select>`. No se ofrecen más de 2 idiomas aunque `locales.json` tenga más claves (ej. `pt-BR` sigue siendo una traducción válida del componente, solo no aparece en el switcher del demo).
-- El tamaño de viewport ya **no es configurable vía atributo** (no existe más `sizes`) — son 3 presets fijos: Móvil (375px, activo por defecto), Tablet (768px) y Desktop (1280px), cada uno envuelto en un marco visual (`ac-demo-content__device-frame`) que imita el bisel del dispositivo.
-- El panel de eventos es un ícono (campana) + modal, no un log siempre visible — el modal muestra nombre, hora y datos de cada evento disparado, más la configuración (qué eventos se escuchan).
+- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS. El demo arranca en **modo claro** (no oscuro). El control es un switch de 2 iconos (sol/luna) dentro de un contenedor con borde redondeado y un divisor vertical entre ambos — nunca texto ("Modo claro"/"Modo oscuro"); el icono activo se resalta con los mismos tokens `--color-primary-700`/`--color-primary-50` que el resto de controles segmentados.
+- `language` acepta **exactamente 2 locales** — el framework solo soporta español/inglés en el demo, así que se renderiza con el mismo patrón de control segmentado (ES | divisor | EN), no como `<select>` ni como un switch deslizante. No se ofrecen más de 2 idiomas aunque `locales.json` tenga más claves (ej. `pt-BR` sigue siendo una traducción válida del componente, solo no aparece en el switcher del demo).
+- El tamaño de viewport ya **no es configurable vía atributo** (no existe más `sizes`) — son 3 presets fijos, con **ancho Y alto fijos** (no solo ancho): Móvil (375×667, activo por defecto), Tablet (768×1024) y Desktop (1280×720). Cada uno envuelve el `<slot>` en un marco visual (`ac-demo-content__device-frame`) que imita el bisel del dispositivo (notch en móvil/tablet, barra con puntos tipo navegador en desktop). El alto fijo es deliberado: si el contenido del caso activo no entra, **scrollea adentro del viewport simulado**, en vez de estirar el marco — así la demo se ve como el dispositivo real se vería, no como una página que crece sin límite.
+- **Switch Visual/Código**: todo componente tiene este control (segmentado, igual que los demás). "Visual" (por defecto) muestra el caso activo renderizado de verdad, dentro del marco de dispositivo. "Código" muestra el HTML fuente de ese mismo caso (el contenido crudo de su `href`, vía `ac-demo-case.source`) en un bloque `<pre><code>`, sin el marco de dispositivo (ver código fuente no necesita simular un viewport).
+- El panel de eventos es un ícono (campana) con contador — **no un log siempre visible**. Al hacer click abre un **panel lateral pegado al borde derecho de la pantalla** (no un modal centrado), con la configuración (qué eventos escucha) arriba y, por cada evento disparado, sus campos **etiquetados explícitamente**: `Evento:`, `Hora:`, `Payload:` (nunca datos sueltos sin decir qué son).
+- **Nunca apliques `opacity` a texto** para "atenuarlo" (ver la sección de Dark-mode más arriba) — mismo motivo, mismo riesgo de romper contraste WCAG, y el mismo patrón apareció de nuevo acá en el link de "Documentación" (color pensado para fondo oscuro, usado directo sobre la página sin caja propia — mismo fix que en `ac-link-basic`: oscurecer con `:host-context([data-theme='light'])`).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
 > `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component create`.

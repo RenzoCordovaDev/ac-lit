@@ -22,6 +22,12 @@ export class DemoCase extends HTMLElement {
   constructor() {
     super();
     this._loaded = false;
+    this._source = '';
+  }
+
+  /** HTML crudo cargado desde `href` — usado por el toggle Visual/Código. */
+  get source() {
+    return this._source;
   }
 
   get header() {
@@ -66,7 +72,8 @@ export class DemoCase extends HTMLElement {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      this.innerHTML = await response.text();
+      this._source = await response.text();
+      this.innerHTML = this._source;
     } catch (error) {
       this.textContent = `Error cargando "${this.href}": ${error.message}`;
     }

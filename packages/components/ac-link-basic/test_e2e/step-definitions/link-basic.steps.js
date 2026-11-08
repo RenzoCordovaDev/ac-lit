@@ -40,7 +40,7 @@ Then('el evento {string} no se registra en el log', async function (eventName) {
 });
 
 When('el usuario activa el modo oscuro', async function () {
-  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
+  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-switcher [data-value="dark"]');
   await toggle.waitForDisplayed();
   await toggle.click();
 });

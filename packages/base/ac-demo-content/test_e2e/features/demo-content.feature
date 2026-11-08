@@ -3,7 +3,7 @@ Feature: ac-demo-content - contenedor de demos
 
   Como desarrollador del catálogo ac-lit
   Quiero que ac-demo-content centralice casos, idioma, ambient, tema, tamaño
-  de dispositivo y eventos
+  de dispositivo, vista visual/código y eventos
   Para no reimplementar esto en cada demo de componente
 
   Background:
@@ -25,14 +25,18 @@ Feature: ac-demo-content - contenedor de demos
     Then el marco de dispositivo es "desktop"
 
   Scenario: El switch de idioma cambia el locale activo
-    When el usuario activa el switch de idioma
-    Then el switch de idioma queda en "en-EN"
+    When el usuario selecciona el idioma "1"
+    Then el idioma activo es "1"
 
-  Scenario: El toggle de tema cambia a modo oscuro
-    When el usuario activa el toggle de tema
+  Scenario: El switch de tema cambia a modo oscuro
+    When el usuario selecciona el tema "dark"
     Then el documento queda en data-theme "dark"
 
-  Scenario: Un evento escuchado se puede ver en el modal de eventos
+  Scenario: Cambiar a la vista de código muestra el HTML del caso activo
+    When el usuario selecciona la vista "code"
+    Then la vista de código contiene "ac-demo-sample-button"
+
+  Scenario: Un evento escuchado se puede ver en el panel lateral de eventos
     When el usuario hace click en el elemento "case-basic-button"
-    And el usuario abre el modal de eventos
-    Then el evento "ac-demo-sample-click" aparece en el modal de eventos
+    And el usuario abre el panel de eventos
+    Then el evento "ac-demo-sample-click" aparece en el panel de eventos con su etiqueta

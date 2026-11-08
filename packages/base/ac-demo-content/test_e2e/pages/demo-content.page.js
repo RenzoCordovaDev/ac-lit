@@ -11,16 +11,8 @@ export class DemoContentPage extends ComponentObject {
     return $(HOST_SELECTOR).$('.ac-demo-content__case-select');
   }
 
-  get localeSwitch() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__locale-switch');
-  }
-
   get ambientSelect() {
     return $(HOST_SELECTOR).$('.ac-demo-content__ambient-select');
-  }
-
-  get themeToggle() {
-    return $(HOST_SELECTOR).$('.ac-demo-content__theme-toggle');
   }
 
   get deviceFrame() {
@@ -28,18 +20,34 @@ export class DemoContentPage extends ComponentObject {
   }
 
   deviceButton(key) {
-    return $(HOST_SELECTOR).$(`[data-device="${key}"]`);
+    return $(HOST_SELECTOR).$(`.ac-demo-content__device-switcher [data-value="${key}"]`);
+  }
+
+  themeButton(theme) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__theme-switcher [data-value="${theme}"]`);
+  }
+
+  languageButton(index) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__locale-switcher [data-value="${index}"]`);
+  }
+
+  viewModeButton(mode) {
+    return $(HOST_SELECTOR).$(`.ac-demo-content__viewmode-switcher [data-value="${mode}"]`);
+  }
+
+  get codeBlock() {
+    return $(HOST_SELECTOR).$('.ac-demo-content__code-block');
   }
 
   get eventsButton() {
     return $(HOST_SELECTOR).$('.ac-demo-content__events-button');
   }
 
-  get eventsModal() {
+  get eventsPanel() {
     return $(HOST_SELECTOR).$('.ac-demo-content__modal');
   }
 
-  get eventsModalList() {
+  get eventsPanelList() {
     return $(HOST_SELECTOR).$('.ac-demo-content__modal-list');
   }
 }
