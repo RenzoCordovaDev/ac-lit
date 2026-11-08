@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ac-demo-content demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;ac-demo-content&gt;</h1>
+      <p class="demo-note">
+        Ejemplo usando <code>ac-button-basic</code> como contenido de prueba — no es la demo oficial
+        de ese componente.
+      </p>
+
+      <ac-demo-content
+        data-testid="demo-content"
+        language="es-PE, en-EN, pt-BR"
+        ambients="primary, secondary"
+        events="ac-button-basic-click"
+        dark-mode
+      >
+        <ac-demo-case
+          header="Básico"
+          descripcion="Botón primary por defecto"
+          href="case-basic.html"
+        ></ac-demo-case>
+        <ac-demo-case
+          header="Estados"
+          descripcion="Loading y disabled"
+          href="case-states.html"
+        ></ac-demo-case>
+      </ac-demo-content>
+    </div>
+  </body>
+</html>

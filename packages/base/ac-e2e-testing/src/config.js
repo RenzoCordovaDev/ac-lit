@@ -13,9 +13,11 @@ export const CHROME_CAPABILITIES = {
       ...(isCI ? ['--headless=new'] : []),
     ],
   },
-  // Workaround para un bug conocido de @axe-core/webdriverio con el protocolo
-  // WebDriver Bidi de WebdriverIO v10: https://github.com/dequelabs/axe-core-npm/issues/1144
-  'wdio:enforceWebDriverClassic': true,
+  // Protocolo WebDriver Bidi (default de WDIO v10): selectores CSS atraviesan
+  // shadow DOM automáticamente, sin necesitar `>>>` ni `shadow$()`. No forzar
+  // 'wdio:enforceWebDriverClassic' — eso lo deshabilita y rompe el
+  // auto-piercing (necesario para suites como @ac-base/ac-demo-content, que
+  // seleccionan controles dentro de su shadow root).
 };
 
 /**

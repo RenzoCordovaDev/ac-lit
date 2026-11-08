@@ -100,6 +100,40 @@ importers:
         specifier: ^0.18.0
         version: 0.18.3(bare-buffer@3.7.1)
 
+  packages/base/ac-demo-content:
+    dependencies:
+      '@ac-base/ac-component-mixin':
+        specifier: workspace:^
+        version: link:../ac-component-mixin
+      '@ac-base/ac-intl-mixin':
+        specifier: workspace:^
+        version: link:../ac-intl-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../ac-core
+      '@ac-base/ac-e2e-testing':
+        specifier: workspace:^
+        version: link:../ac-e2e-testing
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../../components/ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      sass:
+        specifier: ^1.79.4
+        version: 1.108.1
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
   packages/base/ac-e2e-testing:
     dependencies:
       axe-core:
