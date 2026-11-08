@@ -55,7 +55,7 @@ Deliberadamente **no usa Shadow DOM**: el HTML de `href` participa del CSS globa
 ## Desarrollo
 
 ```bash
-pnpm --filter @ac-base/ac-demo-content dev    # demo en http://localhost:5173 (usa ac-button-basic de ejemplo)
+pnpm --filter @ac-base/ac-demo-content dev    # demo en http://localhost:5173 (usa un botón de prueba propio, ver demo/sample-button.js)
 pnpm --filter @ac-base/ac-demo-content test
 pnpm --filter @ac-base/ac-demo-content build
 pnpm --filter @ac-base/ac-demo-content test:e2e

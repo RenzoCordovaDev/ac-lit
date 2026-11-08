@@ -115,9 +115,6 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../ac-e2e-testing
-      '@ac-components/ac-button-basic':
-        specifier: workspace:^
-        version: link:../../components/ac-button-basic
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0

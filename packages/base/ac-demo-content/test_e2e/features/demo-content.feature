@@ -18,7 +18,7 @@ Feature: ac-demo-content - contenedor de demos
 
   Scenario: Un evento escuchado se registra en el panel
     When el usuario hace click en el elemento "case-basic-button"
-    Then el evento "ac-button-basic-click" se registra en el panel
+    Then el evento "ac-demo-sample-click" se registra en el panel
 
   Scenario: El toggle de tema cambia a modo claro
     When el usuario activa el toggle de tema
