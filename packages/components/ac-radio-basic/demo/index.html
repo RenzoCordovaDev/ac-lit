@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ac-radio-basic demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;ac-radio-basic&gt;</h1>
+
+      <section>
+        <h2>Grupo de opciones (<code>name="plan"</code>)</h2>
+        <div class="row">
+          <ac-radio-basic data-testid="radio-monthly" name="plan" value="monthly" checked
+            >Mensual</ac-radio-basic
+          >
+          <ac-radio-basic data-testid="radio-annual" name="plan" value="annual"
+            >Anual</ac-radio-basic
+          >
+          <ac-radio-basic data-testid="radio-lifetime" name="plan" value="lifetime"
+            >De por vida</ac-radio-basic
+          >
+        </div>
+        <div id="event-log"></div>
+      </section>
+
+      <section>
+        <h2>Estados</h2>
+        <div class="row">
+          <ac-radio-basic data-testid="radio-disabled" name="estado-demo" disabled
+            >Disabled</ac-radio-basic
+          >
+        </div>
+      </section>
+
+      <section>
+        <h2>i18n (texto desde locales.json)</h2>
+        <div class="controls">
+          <label
+            >Locale
+            <select id="locale-select">
+              <option value="es-PE">es-PE</option>
+              <option value="en-EN">en-EN</option>
+              <option value="pt-BR">pt-BR</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <ac-radio-basic text="radio-basic-option" name="i18n-demo"></ac-radio-basic>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

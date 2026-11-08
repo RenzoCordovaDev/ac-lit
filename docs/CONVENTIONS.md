@@ -17,7 +17,8 @@ ac-lit/
 │   └── components/               # catálogo de componentes publicables
 │       ├── ac-button-basic/      # @ac-components/ac-button-basic
 │       ├── ac-link-basic/
-│       └── ac-badge-basic/
+│       ├── ac-badge-basic/
+│       └── ac-radio-basic/
 ├── docs/
 ├── pnpm-workspace.yaml
 └── package.json
@@ -59,6 +60,12 @@ Siempre en la raíz del paquete del componente (nunca en subcarpetas), con esta 
   "pt-BR": { "button-submit-text": "Aceitar" }
 }
 ```
+
+## Componentes con estado compartido entre instancias
+
+Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atributo, ej. `name`) **solo coordina con otros controles del mismo shadow root**. Cada instancia de un componente vive en su propio shadow root, así que ese agrupado nativo **no funciona** entre instancias distintas — confirmado en Firefox, Chromium y Safari actuales.
+
+`ac-radio-basic` resuelve esto con un registro propio en memoria (`Map<name, Set<instancia>>` a nivel de módulo): al marcarse una instancia, desmarca manualmente a las demás del mismo grupo. Cualquier componente futuro que necesite coordinación entre instancias (ej. un acordeón de "solo un panel abierto a la vez", pestañas) debe usar el mismo patrón — un registro en memoria por una clave de agrupación, no depender del navegador para coordinar estado entre shadow roots distintos.
 
 ## Paquetes base
 
