@@ -5,18 +5,21 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 ## Completado (mergeado a `main`)
 
 - **Bootstrap del repo**: git/GitHub (identidad `RenzoCordovaDev` vía noreply, sin rastro de IA en commits/PRs), licencia MIT, ESLint+Prettier, Changesets, commitlint+Husky, branch protection en `main` (PR #1-4).
-- **Paquetes base**: `@ac-base/ac-core`, `@ac-base/ac-component-mixin`, `@ac-base/ac-scoped-elements-mixin`, `@ac-base/ac-intl-mixin`.
-- **`@ac-base/ac-e2e-testing`** (PR #6): config compartida WebdriverIO v10 + Cucumber + axe-core (inyectado directo, sin `@axe-core/webdriverio` por incompatibilidad con WDIO v10).
-- **Catálogo de componentes**, los 3 con molde completo (`src/`+`test/`+`test_e2e/`+`demo/`):
+- **Paquetes base**: `@ac-base/ac-core` (incluye paleta `light` para dark-mode), `@ac-base/ac-component-mixin`, `@ac-base/ac-scoped-elements-mixin`, `@ac-base/ac-intl-mixin`.
+- **`@ac-base/ac-e2e-testing`** (PR #6): config compartida WebdriverIO v10 + Cucumber + axe-core (inyectado directo, sin `@axe-core/webdriverio` por incompatibilidad con WDIO v10). Ya no fuerza `wdio:enforceWebDriverClassic` (PR #13) — selectores que atraviesan shadow DOM se encadenan (`$(host).$('.hijo')`).
+- **Catálogo de componentes**, los 4 con molde completo (`src/`+`test/`+`test_e2e/`+`demo/`):
   - `ac-button-basic` (PR #4/#6)
   - `ac-link-basic` (PR #7) — link real, no boilerplate del repo de referencia
   - `ac-badge-basic` (PR #8) — variantes semánticas de estado, sin interacción
-- **`@ac-base/cli`** (PR #9, mergeado): `ac component create`, passthrough genérico de tareas.
+  - `ac-radio-basic` (PR #12) — primero generado con `ac component create`; agrupado entre instancias coordinado a mano (radios nativos no agrupan entre shadow roots)
+- **`@ac-base/cli`** (PR #9): `ac component create`, passthrough genérico de tareas.
+- **Convención de tests** (PR #11): `suite`/`test` (interfaz TDD de Mocha) en vez de `describe`/`it`, un solo `expect` por test — aplicado a los 4 componentes y al template de la CLI. **No** a los paquetes base (`ac-core`, `ac-component-mixin`, etc. — fuera de alcance, no pedido).
+- **`@ac-base/ac-demo-content`** (PR #13): contenedor centralizado de demos (casos, idioma, ambient, dark-mode, tamaño, panel de eventos), construido y validado de forma aislada (con `ac-button-basic` como contenido de ejemplo).
 
 ## Pendiente / siguiente paso concreto
 
-1. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Es scaffold de un proyecto `ac-lit` completo nuevo (bootstrap de monorepo: `pnpm-workspace.yaml`, root `package.json`, ESLint, Husky, docs, etc.) — pieza grande e independiente, no empezada.
-2. **Usar la CLI para el próximo componente** en vez de construirlo a mano: `cd packages/components && ac component create ac-<nombre>` (o `node ../../cli/bin/ac.js ...` hasta que el CLI esté linkeado como bin). Sirve además como prueba de regresión real del scaffold.
+1. **Migrar los 4 componentes existentes + el template del CLI a `ac-demo-content`** — hoy cada uno tiene su demo hecha a mano (`demo/index.html` con switchers propios). Esto incluye **renombrar `variant` → `ambient`** en `ac-button-basic`/`ac-link-basic`/`ac-badge-basic`/`ac-radio-basic` (hoy usan su propia propiedad `variant`, no la `ambient` heredada de `ComponentMixin` que `ac-demo-content` necesita para su switcher de ambients). Siguiente tarea explícitamente acordada con Renzo.
+2. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
 3. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
 
 ## Bloqueado / fuera de este repo
@@ -28,6 +31,8 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 - Sin TypeScript en ningún paquete (incluida la CLI) — consistencia con el resto del monorepo.
 - Sin wizard interactivo en la CLI — defaults sensatos, flags solo para excepciones.
 - Templates de la CLI: archivos reales + reemplazo de tokens `__token__` propio, sin motor de templates. `cli/templates/` está en `.prettierignore` (un `__token__` suelto en Markdown colisiona con énfasis `__bold__`).
+- `ac-demo-case` (de `ac-demo-content`) deliberadamente sin Shadow DOM — ver `docs/CONVENTIONS.md`.
+- Los archivos `href` de cada `ac-demo-case` van en `demo/public/`, no en `demo/` a secas (Vite solo copia `public/` al build).
 - Cero rastro de Claude/IA en commits y PRs de este repo, salvo que Renzo pida lo contrario explícitamente.
 
 Ver `docs/CONVENTIONS.md` para arquitectura/naming, `CONTRIBUTING.md` para el flujo de ramas y commits.
