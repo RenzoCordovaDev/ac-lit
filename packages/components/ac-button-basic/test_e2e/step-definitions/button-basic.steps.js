@@ -14,7 +14,7 @@ When('el usuario hace click en el botón {string}', async function (state) {
 });
 
 async function eventLogContains(eventName) {
-  const entries = await $$('#event-log div');
+  const entries = await $('ac-demo-content').$('.ac-demo-content__event-log').$$('div');
   const texts = await entries.map(entry => entry.getText());
   return texts.some(text => text.includes(eventName));
 }
@@ -31,6 +31,12 @@ Then('el evento {string} no se registra en el log', async function (eventName) {
   if (await eventLogContains(eventName)) {
     throw new Error(`Se esperaba que "${eventName}" NO se registrara, pero se encontró en el log.`);
   }
+});
+
+When('el usuario activa el modo claro', async function () {
+  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
+  await toggle.waitForDisplayed();
+  await toggle.click();
 });
 
 Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {

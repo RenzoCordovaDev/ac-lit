@@ -11,49 +11,14 @@
     <div class="demo-root">
       <h1>&lt;ac-button-basic&gt;</h1>
 
-      <section>
-        <h2>Variantes</h2>
-        <div class="row">
-          <ac-button-basic variant="primary">Primary</ac-button-basic>
-          <ac-button-basic variant="primary-alt">Primary alt</ac-button-basic>
-          <ac-button-basic variant="secondary">Secondary</ac-button-basic>
-          <ac-button-basic variant="secondary-alt">Secondary alt</ac-button-basic>
-        </div>
-      </section>
-
-      <section>
-        <h2>Estados</h2>
-        <div class="row">
-          <ac-button-basic data-testid="btn-loading" loading>Loading</ac-button-basic>
-          <ac-button-basic data-testid="btn-disabled" disabled>Disabled</ac-button-basic>
-          <ac-button-basic full-width>Full width</ac-button-basic>
-        </div>
-      </section>
-
-      <section>
-        <h2>i18n (texto desde locales.json)</h2>
-        <div class="controls">
-          <label
-            >Locale
-            <select id="locale-select">
-              <option value="es-PE">es-PE</option>
-              <option value="en-EN">en-EN</option>
-              <option value="pt-BR">pt-BR</option>
-            </select>
-          </label>
-        </div>
-        <div class="row">
-          <ac-button-basic text="button-basic-submit"></ac-button-basic>
-        </div>
-      </section>
-
-      <section>
-        <h2>Eventos (<code>ac-button-basic-click</code>)</h2>
-        <div class="row">
-          <ac-button-basic data-testid="btn-enabled">Click me</ac-button-basic>
-        </div>
-        <div id="event-log"></div>
-      </section>
+      <ac-demo-content
+        language="es-PE, en-EN, pt-BR"
+        ambients="primary, primary-alt, secondary, secondary-alt"
+        events="ac-button-basic-click"
+        dark-mode
+      >
+        <ac-demo-case header="Básico" href="case-basic.html"></ac-demo-case>
+      </ac-demo-content>
     </div>
   </body>
 </html>

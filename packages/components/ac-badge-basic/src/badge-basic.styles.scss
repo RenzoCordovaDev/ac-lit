@@ -19,9 +19,14 @@
 
 /* Variants - fondo sólido + texto calculado para cumplir contraste WCAG AA
    (4.5:1) contra ESE fondo, no contra la página: el texto blanco/negro de
-   cada variant fue elegido por cálculo, no a ojo (ver docs/CONVENTIONS.md). */
+   cada variant fue elegido por cálculo, no a ojo (ver docs/CONVENTIONS.md).
+   Los 4 usan tokens semánticos fijos (--color-neutral/success/warning/danger)
+   que NO cambian entre light/dark-mode — un badge debe verse igual sin
+   importar el tema de la página (a diferencia de --color-muted/--color-bg,
+   que sí cambian y por eso NO se usan acá: ver el bug real que esto
+   corrigió en docs/CONVENTIONS.md). */
 .ac-badge--neutral {
-  background: var(--color-muted, #313335);
+  background: var(--color-neutral, #44433d);
   color: #fff;
 }
 

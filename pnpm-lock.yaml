@@ -115,9 +115,6 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../ac-e2e-testing
-      '@ac-components/ac-button-basic':
-        specifier: workspace:^
-        version: link:../../components/ac-button-basic
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
@@ -176,6 +173,9 @@ importers:
       '@ac-base/ac-core':
         specifier: workspace:^
         version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
@@ -207,6 +207,9 @@ importers:
       '@ac-base/ac-core':
         specifier: workspace:^
         version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
@@ -238,6 +241,9 @@ importers:
       '@ac-base/ac-core':
         specifier: workspace:^
         version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
@@ -269,6 +275,9 @@ importers:
       '@ac-base/ac-core':
         specifier: workspace:^
         version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing

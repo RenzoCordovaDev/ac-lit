@@ -16,11 +16,19 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 - **Convención de tests** (PR #11): `suite`/`test` (interfaz TDD de Mocha) en vez de `describe`/`it`, un solo `expect` por test — aplicado a los 4 componentes y al template de la CLI. **No** a los paquetes base (`ac-core`, `ac-component-mixin`, etc. — fuera de alcance, no pedido).
 - **`@ac-base/ac-demo-content`** (PR #13): contenedor centralizado de demos (casos, idioma, ambient, dark-mode, tamaño, panel de eventos), construido y validado de forma aislada (con `ac-button-basic` como contenido de ejemplo).
 
+## En progreso (rama `feat/migrate-demo-content`, sin PR abierta aún)
+
+- **Migración de los 4 componentes + template del CLI a `ac-demo-content`**, con renombre `variant` → `ambient`. Completa y validada (lint/format/build/unit/e2e/a11y en todo el monorepo, incluyendo un componente generado de prueba vía `ac component create` para validar el template de punta a punta). Incluye dos bugs de contraste reales encontrados y corregidos gracias a las nuevas escenas de accesibilidad en modo claro (antes solo se probaba en modo oscuro):
+  - `ac-badge-basic` — variant `neutral` usaba `--color-muted` (cambia entre temas) con texto fijo blanco; se cambió a `--color-neutral` (fijo).
+  - `ac-button-basic` — variant `secondary-alt` tenía fondo `transparent` con texto claro pensado para fondo de página oscuro; se le dio fondo propio estable (`--color-accent-100`/`--color-accent-900`).
+  - `ac-link-basic` (sin caja propia, texto directo sobre el fondo de página) tenía el mismo problema en sus 4 variants; se resolvió con colores de texto dependientes del tema vía `:host-context([data-theme='light'])`.
+  - Ver la sección "Dark-mode y colores de fondo sólido" en `docs/CONVENTIONS.md` para el patrón general.
+- Pendiente: commitear, abrir PR y mergear esta rama.
+
 ## Pendiente / siguiente paso concreto
 
-1. **Migrar los 4 componentes existentes + el template del CLI a `ac-demo-content`** — hoy cada uno tiene su demo hecha a mano (`demo/index.html` con switchers propios). Esto incluye **renombrar `variant` → `ambient`** en `ac-button-basic`/`ac-link-basic`/`ac-badge-basic`/`ac-radio-basic` (hoy usan su propia propiedad `variant`, no la `ambient` heredada de `ComponentMixin` que `ac-demo-content` necesita para su switcher de ambients). Siguiente tarea explícitamente acordada con Renzo.
-2. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
-3. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
+1. **`ac app create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
+2. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
 
 ## Bloqueado / fuera de este repo
 

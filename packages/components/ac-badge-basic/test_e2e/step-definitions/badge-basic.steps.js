@@ -1,4 +1,4 @@
-import { Given, Then } from '@cucumber/cucumber';
+import { Given, When, Then } from '@cucumber/cucumber';
 import { runAccessibilityCheck, pageProvider, componentProvider } from '@ac-base/ac-e2e-testing';
 import { DemoPage } from '../pages/demo.page.js';
 import { BadgeBasicPage } from '../pages/badge-basic.page.js';
@@ -16,6 +16,12 @@ Then('el badge {string} contiene el texto {string}', async function (variant, ex
       `Se esperaba el texto "${expectedText}" en el badge "${variant}", pero se encontró "${actualText}".`,
     );
   }
+});
+
+When('el usuario activa el modo claro', async function () {
+  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
+  await toggle.waitForDisplayed();
+  await toggle.click();
 });
 
 Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {

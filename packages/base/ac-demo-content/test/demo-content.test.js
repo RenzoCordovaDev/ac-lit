@@ -1,6 +1,6 @@
 import { fixture, expect, html, aTimeout } from '@open-wc/testing';
 import '../index.js';
-import '@ac-components/ac-button-basic';
+import '../demo/sample-button.js';
 
 suite('ac-demo-content', () => {
   test('renders a size switcher by default', async () => {
@@ -113,10 +113,10 @@ suite('ac-demo-content', () => {
   test('changing the ambient select updates `ambient` on components in the active case', async () => {
     const el = await fixture(html`
       <ac-demo-content ambients="primary, secondary">
-        <ac-demo-case><ac-button-basic>Click</ac-button-basic></ac-demo-case>
+        <ac-demo-case><ac-demo-sample-button>Click</ac-demo-sample-button></ac-demo-case>
       </ac-demo-content>
     `);
-    const button = el.querySelector('ac-button-basic');
+    const button = el.querySelector('ac-demo-sample-button');
     const selects = [...el.shadowRoot.querySelectorAll('select')];
     const ambientSelect = selects.find(select =>
       [...select.options].some(option => option.value === 'primary'),

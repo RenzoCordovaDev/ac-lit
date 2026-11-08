@@ -13,17 +13,17 @@ import '@ac-components/ac-badge-basic';
 ```
 
 ```html
-<ac-badge-basic variant="success">Activo</ac-badge-basic>
+<ac-badge-basic ambient="success">Activo</ac-badge-basic>
 ```
 
 ## Propiedades
 
-| Propiedad | Atributo  | Tipo   | Default     | Descripción                                                                             |
-| --------- | --------- | ------ | ----------- | --------------------------------------------------------------------------------------- |
-| `text`    | `text`    | String | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`. |
-| `variant` | `variant` | String | `'neutral'` | `neutral` \| `success` \| `warning` \| `danger`                                         |
+| Propiedad | Atributo  | Tipo   | Default     | Descripción                                                                                  |
+| --------- | --------- | ------ | ----------- | -------------------------------------------------------------------------------------------- |
+| `text`    | `text`    | String | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`.      |
+| `ambient` | `ambient` | String | `'neutral'` | `neutral` \| `success` \| `warning` \| `danger` (heredada de `@ac-base/ac-component-mixin`). |
 
-> A diferencia de `ac-button-basic`/`ac-link-basic` (variantes de marca `primary`/`secondary`), aquí las variantes son **semánticas de estado** — tiene más sentido para una etiqueta que comunica un estado que para una acción.
+> A diferencia de `ac-button-basic`/`ac-link-basic` (`ambient` de marca `primary`/`secondary`), aquí los valores de `ambient` son **semánticos de estado** — tiene más sentido para una etiqueta que comunica un estado que para una acción. Mismo nombre de propiedad, distinto vocabulario de valores.
 
 ## Theming
 

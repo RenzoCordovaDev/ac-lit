@@ -12,9 +12,9 @@ suite('ac-link-basic', () => {
     expect(el.textContent.trim()).to.equal('Ver documentación');
   });
 
-  test('defaults to variant="primary"', async () => {
+  test('defaults to ambient="primary"', async () => {
     const el = await fixture(html`<ac-link-basic></ac-link-basic>`);
-    expect(el.variant).to.equal('primary');
+    expect(el.ambient).to.equal('primary');
   });
 
   test('defaults to target="_self"', async () => {

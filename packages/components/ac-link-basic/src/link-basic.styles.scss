@@ -48,6 +48,21 @@
   color: var(--color-accent-300, #fcd34d);
 }
 
+/* En modo claro el texto va directo sobre un fondo de página claro (este
+   componente no tiene caja propia): los tonos de arriba, pensados para un
+   fondo oscuro, no cumplen contraste WCAG aquí, así que se oscurecen. */
+:host-context([data-theme='light']) {
+  .ac-link--primary,
+  .ac-link--primary-alt {
+    color: var(--color-primary-700, #047857);
+  }
+
+  .ac-link--secondary,
+  .ac-link--secondary-alt {
+    color: var(--color-accent-900, #451a03);
+  }
+}
+
 :host([disabled]) .ac-link-basic {
   opacity: 0.45;
   cursor: not-allowed;

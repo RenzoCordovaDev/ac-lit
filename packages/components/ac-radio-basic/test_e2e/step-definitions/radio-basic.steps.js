@@ -19,27 +19,41 @@ When('el usuario hace click en la opción {string}', async function (key) {
   await radio.click();
 });
 
-async function eventLogContains(text) {
-  const entries = await $$('#event-log div');
-  const texts = await entries.map(entry => entry.getText());
-  return texts.some(entryText => entryText.includes(text));
+async function eventLogEntries() {
+  const entries = await $('ac-demo-content').$('.ac-demo-content__event-log').$$('div');
+  return entries.map(entry => entry.getText());
 }
 
 Then(
   'el evento {string} con valor {string} se registra en el log',
   async function (eventName, value) {
-    await browser.waitUntil(() => eventLogContains(`${eventName}: ${value}`), {
-      timeout: 3000,
-      timeoutMsg: `No se encontró "${eventName}: ${value}" en el log de eventos`,
-    });
+    await browser.waitUntil(
+      async () => {
+        const texts = await eventLogEntries();
+        return texts.some(
+          entryText => entryText.includes(eventName) && entryText.includes(`"value":"${value}"`),
+        );
+      },
+      {
+        timeout: 3000,
+        timeoutMsg: `No se encontró "${eventName}" con valor "${value}" en el log de eventos`,
+      },
+    );
   },
 );
 
 Then('el evento {string} no se registra en el log', async function (eventName) {
   await browser.pause(500);
-  if (await eventLogContains(eventName)) {
+  const texts = await eventLogEntries();
+  if (texts.some(entryText => entryText.includes(eventName))) {
     throw new Error(`Se esperaba que "${eventName}" NO se registrara, pero se encontró en el log.`);
   }
+});
+
+When('el usuario activa el modo claro', async function () {
+  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
+  await toggle.waitForDisplayed();
+  await toggle.click();
 });
 
 Then('la opción {string} queda desmarcada', async function (key) {

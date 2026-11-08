@@ -21,7 +21,7 @@ import '__package_name__';
 | Propiedad | Atributo  | Tipo   | Default     | Descripción                                                                             |
 | --------- | --------- | ------ | ----------- | --------------------------------------------------------------------------------------- |
 | `text`    | `text`    | String | `''`        | Si se define, se usa como **clave de traducción** (`this.t(text)`) en vez del `<slot>`. |
-| `variant` | `variant` | String | `'default'` | Agrega las variantes que necesites en `src/__file_base__.styles.scss`.                  |
+| `ambient` | `ambient` | String | `'default'` | Heredado de `ComponentMixin`. Agrega los ambients que necesites en `src/__file_base__.styles.scss`. |
 
 > Este componente es un punto de partida genérico — edita propiedades, render y estilos según lo que necesites. Revisa `docs/CONVENTIONS.md` para las convenciones de naming/eventos/CSS del ecosistema.
 

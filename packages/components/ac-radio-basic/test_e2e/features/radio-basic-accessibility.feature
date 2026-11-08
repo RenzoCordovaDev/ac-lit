@@ -11,3 +11,7 @@ Feature: ac-radio-basic - accesibilidad
   @smoke
   Scenario: El demo de ac-radio-basic no tiene violaciones de accesibilidad
     Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El demo de ac-radio-basic no tiene violaciones de accesibilidad en modo claro
+    When el usuario activa el modo claro
+    Then el demo no tiene violaciones de accesibilidad WCAG

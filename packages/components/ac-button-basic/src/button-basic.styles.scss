@@ -102,11 +102,12 @@
 }
 
 .ac-button--secondary-alt {
-  background: transparent;
-  /* accent-300 (claro) en vez de accent-600: este variant es "fondo transparente"
-     y el demo usa un fondo oscuro — un ámbar oscuro no cumple contraste ahí. */
-  color: var(--color-accent-300, #fcd34d);
-  border: 1px solid var(--color-accent-100, rgba(255, 255, 255, 0.2));
+  /* Fondo sólido y estable entre temas (no transparente): un fondo
+     transparente hereda el color de la página, que cambia entre modo
+     claro/oscuro y rompe el contraste WCAG en uno de los dos. */
+  background: var(--color-accent-100, #fef3c7);
+  color: var(--color-accent-900, #451a03);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 /* Hover / active */

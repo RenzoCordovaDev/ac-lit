@@ -1,4 +1,4 @@
-import { Given, Then } from '@cucumber/cucumber';
+import { Given, When, Then } from '@cucumber/cucumber';
 import { runAccessibilityCheck, pageProvider, componentProvider } from '@ac-base/ac-e2e-testing';
 import { DemoPage } from '../pages/demo.page.js';
 import { __class_name__Page } from '../pages/__file_base__.page.js';
@@ -14,6 +14,12 @@ Then('el componente contiene el texto {string}', async function (expectedText) {
   if (actualText !== expectedText) {
     throw new Error(`Se esperaba el texto "${expectedText}", pero se encontró "${actualText}".`);
   }
+});
+
+When('el usuario activa el modo claro', async function () {
+  const toggle = $('ac-demo-content').$('.ac-demo-content__theme-toggle');
+  await toggle.waitForDisplayed();
+  await toggle.click();
 });
 
 Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
