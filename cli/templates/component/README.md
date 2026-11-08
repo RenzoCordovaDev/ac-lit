@@ -36,11 +36,11 @@ import '__package_name__';
 ## Desarrollo
 
 ```bash
-ac dev    # o: pnpm --filter __package_name__ dev    — demo en http://localhost:5173
+ac component:serve    # o: pnpm --filter __package_name__ component:serve    — demo en http://localhost:5173
 ac test
 ac build
 ac test:e2e        # funcional (WebdriverIO + Cucumber)
 ac test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/__file_base__.styles.js` se genera a partir de `src/__file_base__.styles.scss` (`build:styles`, corre automáticamente antes de `dev`/`build`/`test`) y no se versiona en git.
+> `src/__file_base__.styles.js` se genera a partir de `src/__file_base__.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.

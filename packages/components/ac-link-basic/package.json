@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/link-basic.styles.scss src/link-basic.styles.js LinkBasicStyles",
-    "dev": "pnpm run build:styles && vite demo",
+    "component:serve": "pnpm run build:styles && vite demo",
     "build": "pnpm run build:styles && vite build",
     "preview": "vite preview",
     "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",

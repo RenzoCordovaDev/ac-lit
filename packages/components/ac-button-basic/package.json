@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/button-basic.styles.scss src/button-basic.styles.js ButtonBasicStyles",
-    "dev": "pnpm run build:styles && vite demo",
+    "component:serve": "pnpm run build:styles && vite demo",
     "build": "pnpm run build:styles && vite build",
     "preview": "vite preview",
     "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",

@@ -4,25 +4,25 @@
     {
       "name": "ac-button-basic-demo",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ac-components/ac-button-basic", "run", "dev"],
+      "runtimeArgs": ["--filter", "@ac-components/ac-button-basic", "run", "component:serve"],
       "port": 5173
     },
     {
       "name": "ac-link-basic-demo",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ac-components/ac-link-basic", "run", "dev"],
+      "runtimeArgs": ["--filter", "@ac-components/ac-link-basic", "run", "component:serve"],
       "port": 5173
     },
     {
       "name": "ac-badge-basic-demo",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ac-components/ac-badge-basic", "run", "dev"],
+      "runtimeArgs": ["--filter", "@ac-components/ac-badge-basic", "run", "component:serve"],
       "port": 5173
     },
     {
       "name": "ac-radio-basic-demo",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ac-components/ac-radio-basic", "run", "dev"],
+      "runtimeArgs": ["--filter", "@ac-components/ac-radio-basic", "run", "component:serve"],
       "port": 5173
     },
     {

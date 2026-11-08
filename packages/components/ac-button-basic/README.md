@@ -49,9 +49,9 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 ## Desarrollo
 
 ```bash
-pnpm --filter @ac-components/ac-button-basic dev    # demo en http://localhost:5173
+pnpm --filter @ac-components/ac-button-basic component:serve    # demo en http://localhost:5173
 pnpm --filter @ac-components/ac-button-basic test
 pnpm --filter @ac-components/ac-button-basic build
 ```
 
-> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`build:styles`, corre automáticamente antes de `dev`/`build`/`test`) y no se versiona en git.
+> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git.
