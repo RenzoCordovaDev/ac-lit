@@ -1,0 +1,12 @@
+/* Emerald Pro - variante clara de modern-warm-palette.css.
+   Solo redefine los tokens neutros/de fondo-texto: los tokens de marca
+   (primary/accent/success/warning/danger) se mantienen iguales en ambos
+   modos, así que no se repiten acá. Se activa con `data-theme="light"` en
+   :root — ver @ac-base/ac-demo-content, que es quien lo togglea. */
+:root[data-theme='light'] {
+  --color-bg: #faf9f6;
+  --color-surface: #f1efe8;
+  --color-muted: #d9d6cb;
+  --color-text: #27272a;
+  --color-subtext: #5f5e58;
+}

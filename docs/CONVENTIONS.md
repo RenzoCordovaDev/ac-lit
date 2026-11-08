@@ -13,7 +13,8 @@ ac-lit/
 │   │   ├── ac-component-mixin/   # @ac-base/ac-component-mixin
 │   │   ├── ac-scoped-elements-mixin/
 │   │   ├── ac-intl-mixin/
-│   │   └── ac-e2e-testing/       # @ac-base/ac-e2e-testing (config WebdriverIO/Cucumber/axe)
+│   │   ├── ac-e2e-testing/       # @ac-base/ac-e2e-testing (config WebdriverIO/Cucumber/axe)
+│   │   └── ac-demo-content/      # @ac-base/ac-demo-content (contenedor centralizado de demos)
 │   └── components/               # catálogo de componentes publicables
 │       ├── ac-button-basic/      # @ac-components/ac-button-basic
 │       ├── ac-link-basic/
@@ -74,6 +75,29 @@ Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atribu
 - **`@ac-base/ac-scoped-elements-mixin`** — aislamiento de custom elements para evitar colisiones de tag names.
 - **`@ac-base/ac-intl-mixin`** — API `t(key, params)`, `setLocale(locale)`, `loadTranslations(data)` sobre `locales.json`.
 
+## Demos centralizadas (`ac-demo-content`)
+
+**Toda demo de componente usa `@ac-base/ac-demo-content`** — ningún componente nuevo (a mano o vía CLI) reimplementa su propio selector de caso/idioma/tema/tamaño/panel de eventos. Centralizar esto en un solo paquete significa que cuando la demo evoluciona, se cambia en un solo lugar en vez de en cada componente.
+
+```html
+<ac-demo-content
+  language="es-PE, en-EN"
+  ambients="primary, secondary"
+  events="ac-mi-componente-click"
+  dark-mode
+>
+  <ac-demo-case header="Básico" href="case-basic.html"></ac-demo-case>
+  <ac-demo-case header="Estados" href="case-states.html"></ac-demo-case>
+</ac-demo-content>
+```
+
+- **Los archivos `href` de cada `ac-demo-case` van en `demo/public/`**, no directo en `demo/`: Vite solo copia `public/` tal cual al build — cualquier otro archivo no referenciado desde `index.html` queda afuera de `dist/` y el `fetch()` da 404 en `vite preview`/producción (aunque funcione en `vite dev`, que sirve el disco tal cual).
+- El switcher de `ambients` solo tiene efecto visual si el componente demostrado **usa de verdad** la propiedad `ambient` (heredada de `ComponentMixin`) en su styling — no basta con tenerla disponible sin usarla.
+- `dark-mode` requiere que el `demo.js` del componente importe **ambas** paletas de `@ac-base/ac-core` (`modern-warm-palette.css` y `modern-warm-palette-light.css`) — el contenedor solo togglea `data-theme` en `<html>`, no inyecta CSS.
+- Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
+
+> **Migración pendiente**: `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI todavía tienen demos hechas a mano (`demo/index.html` con switchers propios) — se migran a `ac-demo-content` en un PR aparte. Esa migración también renombra `variant` → `ambient` en esos 4 componentes (hoy usan su propia propiedad `variant` en vez de la `ambient` del mixin base).
+
 ## CLI (`ac`)
 
 Paquete `@ac-base/cli` (`cli/`), implementado con [Commander.js](https://github.com/tj/commander.js). Filosofía: **cero lógica de más** — sin wizard interactivo, sin resolución de rutas/config, siempre opera sobre el directorio desde el que se ejecuta.
@@ -126,6 +150,7 @@ Convenciones:
 - **Evita `/` en el texto de un step** (feature file o `Given/When/Then(...)`): en Cucumber Expressions `/` significa alternancia (`tea/coffee` = "tea" **o** "coffee"), no el carácter literal — `"WCAG 2.0/2.1"` no matchea como texto completo. Si necesitas una barra literal, usa una expresión regex (`/.../`) en vez de una Cucumber Expression, o redacta el step sin ella.
 - Step definitions y Page Objects en **JS plano** (no TypeScript), para mantener consistencia con el resto del monorepo.
 - `browser`, `$`, `$$` son globals que inyecta WebdriverIO en tiempo de ejecución — no se importan.
+- **Selectores dentro de un shadow root**: con WebDriver Bidi (default de WDIO v10, y de este proyecto — no forzamos `wdio:enforceWebDriverClassic`), `$()`/`$$()` atraviesan shadow DOM automáticamente, pero **solo si se encadenan** (`$(host).$('.hijo')`), no con un string compuesto plano (`$('host .hijo')` — tira "invalid selector" o no encuentra nada). Ver `@ac-base/ac-demo-content/test_e2e` para un ejemplo real.
 - Scripts por paquete: `test:e2e` (build + `vite preview` + suite funcional) y `test:e2e:a11y` (idem + suite de accesibilidad), vía `start-server-and-test`. Desde la raíz: `pnpm test:e2e` / `pnpm test:e2e:a11y` corren ambos sobre todos los paquetes que tengan la suite.
 - En CI corren en un job `e2e` separado de `lint-and-test`, **no bloqueante** (`continue-on-error: true`, no es required status check) hasta que se demuestre estable en la práctica.
 
