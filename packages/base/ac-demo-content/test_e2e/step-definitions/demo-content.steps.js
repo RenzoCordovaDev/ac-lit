@@ -50,6 +50,60 @@ When('el usuario abre el panel de eventos', async function () {
   await button.click();
 });
 
+When('el usuario abre la lista de casos', async function () {
+  const select = this.demoContent.caseSelect;
+  await select.waitForDisplayed();
+  await select.click();
+});
+
+When('el usuario hace click en el método de instalación {string}', async function (manager) {
+  const button = this.demoContent.installCommand(manager);
+  await button.waitForDisplayed();
+  await button.click();
+});
+
+Then('el selector de casos está en una fila separada de los demás controles', async function () {
+  const rows = await browser.execute(() => {
+    const root = document.querySelector('[data-testid="demo-content"]').shadowRoot;
+    const casesRow = root.querySelector('.ac-demo-content__toolbar-cases').getBoundingClientRect();
+    const controlsRow = root
+      .querySelector('.ac-demo-content__toolbar-controls')
+      .getBoundingClientRect();
+    return { casesBottom: casesRow.bottom, controlsTop: controlsRow.top };
+  });
+  if (rows.casesBottom > rows.controlsTop) {
+    throw new Error(
+      `El selector de casos (bottom=${rows.casesBottom}) se superpone con los demás controles (top=${rows.controlsTop}).`,
+    );
+  }
+});
+
+Then('la primera línea de la vista de código tiene el número {string}', async function (number) {
+  const gutter = this.demoContent.firstCodeGutter;
+  await gutter.waitForDisplayed();
+  const text = (await gutter.getText()).trim();
+  if (text !== number) {
+    throw new Error(`Se esperaba el número de línea "${number}", pero se encontró "${text}".`);
+  }
+});
+
+Then('el método de instalación {string} queda marcado como copiado', async function (manager) {
+  const button = this.demoContent.installCommand(manager);
+  await browser.waitUntil(
+    async () =>
+      (await button.getAttribute('class')).includes('ac-demo-content__install-cmd--copied'),
+    { timeout: 3000, timeoutMsg: `El método "${manager}" no quedó marcado como copiado` },
+  );
+});
+
+Then('el portapapeles contiene {string}', async function (expectedText) {
+  await browser.setPermissions({ name: 'clipboard-read' }, 'granted');
+  const text = await browser.execute(() => navigator.clipboard.readText());
+  if (text !== expectedText) {
+    throw new Error(`Se esperaba "${expectedText}" en el portapapeles, pero había "${text}".`);
+  }
+});
+
 Then('el elemento {string} es visible', async function (testId) {
   const el = await $(`[data-testid="${testId}"]`);
   await el.waitForDisplayed({ timeout: 3000 });
@@ -109,8 +163,7 @@ Then(
   },
 );
 
-Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
-  const results = await runAccessibilityCheck();
+function assertNoViolations(results) {
   if (results.violations.length > 0) {
     const summary = results.violations
       .map(violation => {
@@ -122,4 +175,18 @@ Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
       `Se encontraron ${results.violations.length} violaciones de accesibilidad:\n${summary}`,
     );
   }
+}
+
+Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
+  assertNoViolations(await runAccessibilityCheck());
+});
+
+// Con la lista desplegable abierta, axe marca como falso positivo de contraste los
+// controles que quedan tapados por ella; se audita solo la fila del selector de casos.
+Then('la fila del selector de casos no tiene violaciones de accesibilidad WCAG', async function () {
+  assertNoViolations(
+    await runAccessibilityCheck({
+      context: { include: [['ac-demo-content', '.ac-demo-content__toolbar-cases']] },
+    }),
+  );
 });

@@ -5,13 +5,45 @@ import { setGlobalLocale } from '@ac-base/ac-intl-mixin';
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
 // is gitignored — run `pnpm install` then `pnpm component:build` or `pnpm component:serve` to generate it.
 import { DemoContentStyles } from './demo-content.styles.js';
+import { copyToClipboard } from './clipboard.js';
+import { tokenizeHtml, splitTokensIntoLines } from './highlight-html.js';
 
 const DEVICE_PRESETS = [
   { key: 'mobile', label: 'Móvil', width: 375, height: 667 },
   { key: 'tablet', label: 'Tablet', width: 768, height: 1024 },
-  { key: 'desktop', label: 'Desktop', width: 1280, height: 720 },
+  { key: 'desktop', label: 'Desktop', width: 1280, height: 800 },
 ];
 const MAX_EVENT_LOG_ENTRIES = 50;
+const COPIED_FEEDBACK_MS = 1600;
+
+const COPY_ICON = html`<svg
+  viewBox="0 0 24 24"
+  width="14"
+  height="14"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <rect x="9" y="9" width="11" height="11" rx="2" />
+  <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+</svg>`;
+
+const CHECK_ICON = html`<svg
+  viewBox="0 0 24 24"
+  width="14"
+  height="14"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <path d="M5 12.5l4.5 4.5L19 7.5" />
+</svg>`;
 
 const SUN_ICON = html`<svg
   viewBox="0 0 24 24"
@@ -57,6 +89,16 @@ function languageLabel(localeCode) {
   return localeCode.split('-')[0].toUpperCase();
 }
 
+const PLAIN_TOKEN_TYPES = new Set(['text', 'plain']);
+
+function renderToken(token) {
+  return PLAIN_TOKEN_TYPES.has(token.type)
+    ? token.text
+    : html`<span class="ac-demo-content__tok ac-demo-content__tok--${token.type}"
+        >${token.text}</span
+      >`;
+}
+
 /**
  * ac-demo-content: contenedor centralizado para demos de componentes.
  * Hijos: uno o más <ac-demo-case header="..." href="caso.html">. Controla,
@@ -93,6 +135,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       _theme: { state: true },
       _eventLog: { state: true },
       _eventsPanelOpen: { state: true },
+      _copiedCommand: { state: true },
     };
   }
 
@@ -113,6 +156,8 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this._theme = 'light';
     this._eventLog = [];
     this._eventsPanelOpen = false;
+    this._copiedCommand = null;
+    this._copiedTimer = undefined;
     this._onEvent = this._onEvent.bind(this);
     this._onPanelKeydown = this._onPanelKeydown.bind(this);
   }
@@ -145,6 +190,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       document.removeEventListener(name, this._onEvent);
     }
     document.removeEventListener('keydown', this._onPanelKeydown);
+    clearTimeout(this._copiedTimer);
     super.disconnectedCallback();
   }
 
@@ -203,6 +249,24 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this._viewMode = mode;
   }
 
+  async _onInstallCommandClick(command) {
+    const copied = await copyToClipboard(command);
+    if (!copied) return;
+
+    this._copiedCommand = command;
+    this.dispatchEvent(
+      new CustomEvent('ac-demo-content-copy', {
+        detail: { text: command },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+    clearTimeout(this._copiedTimer);
+    this._copiedTimer = setTimeout(() => {
+      this._copiedCommand = null;
+    }, COPIED_FEEDBACK_MS);
+  }
+
   _onEventsButtonClick() {
     this._eventsPanelOpen = true;
     document.addEventListener('keydown', this._onPanelKeydown);
@@ -227,12 +291,14 @@ export class DemoContent extends ComponentMixin(LitElement) {
       ${hasHeader ? this._renderHeader() : ''}
 
       <div part="toolbar" class="ac-demo-content__toolbar">
-        ${this._renderCaseSwitcher(this._cases)}
-        ${this._languages.length === 2 ? this._renderLanguageSwitcher() : ''}
-        ${this._ambientOptions.length ? this._renderAmbientSwitcher() : ''}
-        ${this.darkMode ? this._renderThemeSwitcher() : ''} ${this._renderDeviceSwitcher()}
-        ${this._renderViewModeSwitcher()}
-        ${this._eventNames.length ? this._renderEventsButton() : ''}
+        <div class="ac-demo-content__toolbar-cases">${this._renderCaseSwitcher(this._cases)}</div>
+        <div class="ac-demo-content__toolbar-controls">
+          ${this._languages.length === 2 ? this._renderLanguageSwitcher() : ''}
+          ${this._ambientOptions.length ? this._renderAmbientSwitcher() : ''}
+          ${this.darkMode ? this._renderThemeSwitcher() : ''} ${this._renderDeviceSwitcher()}
+          ${this._renderViewModeSwitcher()}
+          ${this._eventNames.length ? this._renderEventsButton() : ''}
+        </div>
       </div>
 
       <div class="ac-demo-content__stage">
@@ -275,11 +341,29 @@ export class DemoContent extends ComponentMixin(LitElement) {
   }
 
   _renderInstallSnippets() {
+    const commands = [`pnpm add ${this.packageName}`, `npm i ${this.packageName}`];
     return html`
       <div class="ac-demo-content__install">
-        <code class="ac-demo-content__install-cmd">pnpm add ${this.packageName}</code>
-        <code class="ac-demo-content__install-cmd">npm i ${this.packageName}</code>
+        ${commands.map(command => this._renderInstallCommand(command))}
+        <span class="ac-demo-content__visually-hidden" role="status" aria-live="polite"
+          >${this._copiedCommand ? 'Copiado al portapapeles' : ''}</span
+        >
       </div>
+    `;
+  }
+
+  _renderInstallCommand(command) {
+    const copied = this._copiedCommand === command;
+    return html`
+      <button
+        type="button"
+        class=${`ac-demo-content__install-cmd${copied ? ' ac-demo-content__install-cmd--copied' : ''}`}
+        aria-label=${`Copiar comando: ${command}`}
+        title="Copiar al portapapeles"
+        @click=${() => this._onInstallCommandClick(command)}
+      >
+        ${command}${copied ? CHECK_ICON : COPY_ICON}
+      </button>
     `;
   }
 
@@ -308,10 +392,16 @@ export class DemoContent extends ComponentMixin(LitElement) {
   }
 
   _renderCaseSwitcher(cases) {
+    const activeCase = cases[this._activeCaseIndex];
+    const activeLabel = activeCase?.header || `Caso ${this._activeCaseIndex + 1}`;
     return html`
-      <label class="ac-demo-content__field">
+      <label class="ac-demo-content__field ac-demo-content__field--case">
         <span class="ac-demo-content__field-label">Caso</span>
-        <select class="ac-demo-content__case-select" @change=${this._onCaseChange}>
+        <select
+          class="ac-demo-content__case-select"
+          title=${activeLabel}
+          @change=${this._onCaseChange}
+        >
           ${cases.map(
             (caseEl, i) => html`
               <option value=${i} ?selected=${i === this._activeCaseIndex}>
@@ -341,7 +431,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
   _renderAmbientSwitcher() {
     return html`
       <label class="ac-demo-content__field">
-        <span class="ac-demo-content__field-label">Ambient</span>
+        <span class="ac-demo-content__field-label">Ambiente</span>
         <select class="ac-demo-content__ambient-select" @change=${this._onAmbientChange}>
           ${this._ambientOptions.map(ambient => html`<option value=${ambient}>${ambient}</option>`)}
         </select>
@@ -416,10 +506,39 @@ export class DemoContent extends ComponentMixin(LitElement) {
 
   _renderCodeView() {
     const activeCase = this._cases[this._activeCaseIndex];
-    const source = activeCase?.source?.trim();
+    const source = (activeCase?.source ?? '')
+      .replace(/\r\n?/g, '\n')
+      .replace(/^\s*\n/, '')
+      .trimEnd();
+    const fileName = activeCase?.href?.split('/').pop() || 'caso.html';
+    const lines = source
+      ? splitTokensIntoLines(tokenizeHtml(source))
+      : [[{ type: 'text', text: 'Cargando…' }]];
+
     return html`
       <div class="ac-demo-content__code-view">
-        <pre class="ac-demo-content__code-block"><code>${source || 'Cargando…'}</code></pre>
+        <div class="ac-demo-content__code-editor">
+          <div class="ac-demo-content__code-titlebar">
+            <span class="ac-demo-content__code-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="ac-demo-content__code-filename">${fileName}</span>
+            <span class="ac-demo-content__code-lang">HTML</span>
+          </div>
+          <div
+            class="ac-demo-content__code-block"
+            role="region"
+            tabindex="0"
+            aria-label=${`Código fuente de ${fileName}`}
+          >
+            ${lines.map(
+              (tokens, index) => html`
+                <div class="ac-demo-content__code-line">
+                  <span class="ac-demo-content__code-gutter" aria-hidden="true">${index + 1}</span>
+                  <span class="ac-demo-content__code-text">${tokens.map(renderToken)}</span>
+                </div>
+              `,
+            )}
+          </div>
+        </div>
       </div>
     `;
   }

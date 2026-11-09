@@ -23,3 +23,16 @@ Feature: ac-demo-content - accesibilidad
   Scenario: La vista de código no tiene violaciones de accesibilidad
     When el usuario selecciona la vista "code"
     Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: La vista de código no tiene violaciones de accesibilidad en modo oscuro
+    When el usuario selecciona el tema "dark"
+    And el usuario selecciona la vista "code"
+    Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: La lista desplegable de casos abierta no tiene violaciones de accesibilidad
+    When el usuario abre la lista de casos
+    Then la fila del selector de casos no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El método de instalación copiado no tiene violaciones de accesibilidad
+    When el usuario hace click en el método de instalación "pnpm"
+    Then el demo no tiene violaciones de accesibilidad WCAG

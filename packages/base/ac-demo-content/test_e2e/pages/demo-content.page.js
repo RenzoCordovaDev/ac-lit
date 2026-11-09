@@ -39,6 +39,18 @@ export class DemoContentPage extends ComponentObject {
     return $(HOST_SELECTOR).$('.ac-demo-content__code-block');
   }
 
+  get firstCodeGutter() {
+    return $(HOST_SELECTOR).$(
+      '.ac-demo-content__code-line:first-child .ac-demo-content__code-gutter',
+    );
+  }
+
+  installCommand(manager) {
+    return $(HOST_SELECTOR).$(
+      `.ac-demo-content__install-cmd[aria-label^="Copiar comando: ${manager} "]`,
+    );
+  }
+
   get eventsButton() {
     return $(HOST_SELECTOR).$('.ac-demo-content__events-button');
   }

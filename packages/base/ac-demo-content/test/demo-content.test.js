@@ -311,3 +311,228 @@ suite('ac-demo-content', () => {
     expect(link.getAttribute('href')).to.equal('https://example.com/README.md');
   });
 });
+
+suite('ac-demo-content: copy install command', () => {
+  let copied;
+
+  const stubClipboard = writeText => {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+  };
+
+  const renderWithPackage = () =>
+    fixture(html`<ac-demo-content package-name="@ac-components/ac-x"></ac-demo-content>`);
+
+  const installButton = (el, index) =>
+    el.shadowRoot.querySelectorAll('.ac-demo-content__install-cmd')[index];
+
+  setup(() => {
+    copied = [];
+    stubClipboard(async text => copied.push(text));
+  });
+
+  teardown(() => {
+    delete navigator.clipboard;
+  });
+
+  test('renders each install command as a button', async () => {
+    const el = await renderWithPackage();
+    expect(installButton(el, 0).tagName).to.equal('BUTTON');
+  });
+
+  test('copies the pnpm command when clicked', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 0).click();
+    await aTimeout(0);
+    expect(copied).to.deep.equal(['pnpm add @ac-components/ac-x']);
+  });
+
+  test('copies the npm command when clicked', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 1).click();
+    await aTimeout(0);
+    expect(copied).to.deep.equal(['npm i @ac-components/ac-x']);
+  });
+
+  test('dispatches `ac-demo-content-copy` with the copied text', async () => {
+    const el = await renderWithPackage();
+    let detail;
+    el.addEventListener('ac-demo-content-copy', event => {
+      detail = event.detail;
+    });
+    installButton(el, 1).click();
+    await aTimeout(0);
+    expect(detail).to.deep.equal({ text: 'npm i @ac-components/ac-x' });
+  });
+
+  test('`ac-demo-content-copy` bubbles and is composed', async () => {
+    const el = await renderWithPackage();
+    let event;
+    document.addEventListener('ac-demo-content-copy', e => (event = e), { once: true });
+    installButton(el, 0).click();
+    await aTimeout(0);
+    expect([event.bubbles, event.composed]).to.deep.equal([true, true]);
+  });
+
+  test('marks the clicked command as copied', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 0).click();
+    await aTimeout(0);
+    await el.updateComplete;
+    expect(installButton(el, 0).classList.contains('ac-demo-content__install-cmd--copied')).to.be
+      .true;
+  });
+
+  test('does not mark the other command as copied', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 0).click();
+    await aTimeout(0);
+    await el.updateComplete;
+    expect(installButton(el, 1).classList.contains('ac-demo-content__install-cmd--copied')).to.be
+      .false;
+  });
+
+  test('announces the copy to assistive technology', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 0).click();
+    await aTimeout(0);
+    await el.updateComplete;
+    const status = el.shadowRoot.querySelector('.ac-demo-content__visually-hidden');
+    expect(status.textContent.trim()).to.equal('Copiado al portapapeles');
+  });
+
+  test('clears the copied state after a short delay', async () => {
+    const el = await renderWithPackage();
+    installButton(el, 0).click();
+    await aTimeout(1800);
+    await el.updateComplete;
+    expect(installButton(el, 0).classList.contains('ac-demo-content__install-cmd--copied')).to.be
+      .false;
+  });
+
+  test('does not mark as copied nor dispatch when copying fails', async () => {
+    const originalExecCommand = document.execCommand;
+    document.execCommand = () => false;
+    stubClipboard(async () => Promise.reject(new Error('denied')));
+    const el = await renderWithPackage();
+    let dispatched = false;
+    el.addEventListener('ac-demo-content-copy', () => {
+      dispatched = true;
+    });
+    installButton(el, 0).click();
+    await aTimeout(0);
+    document.execCommand = originalExecCommand;
+    expect(dispatched).to.be.false;
+  });
+});
+
+suite('ac-demo-content: case row', () => {
+  test('renders the case switcher in its own row', async () => {
+    const el = await fixture(
+      html`<ac-demo-content><ac-demo-case header="Uno"></ac-demo-case></ac-demo-content>`,
+    );
+    expect(
+      el.shadowRoot.querySelector('.ac-demo-content__toolbar-cases .ac-demo-content__case-select'),
+    ).to.exist;
+  });
+
+  test('keeps the other controls out of the case row', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(
+      el.shadowRoot.querySelector('.ac-demo-content__toolbar-cases .ac-demo-content__segmented'),
+    ).to.not.exist;
+  });
+
+  test('renders the other controls in a second row', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    expect(
+      el.shadowRoot.querySelector(
+        '.ac-demo-content__toolbar-controls .ac-demo-content__device-switcher',
+      ),
+    ).to.exist;
+  });
+
+  test('exposes the active case header as the select title', async () => {
+    const el = await fixture(html`
+      <ac-demo-content>
+        <ac-demo-case header="Un encabezado largo"></ac-demo-case>
+      </ac-demo-content>
+    `);
+    const select = el.shadowRoot.querySelector('.ac-demo-content__case-select');
+    expect(select.title).to.equal('Un encabezado largo');
+  });
+});
+
+suite('ac-demo-content: code editor view', () => {
+  const FIXTURE = '/test/fixtures/case-multiline-fixture.html';
+
+  const openCodeView = async () => {
+    const el = await fixture(html`
+      <ac-demo-content>
+        <ac-demo-case href=${FIXTURE}></ac-demo-case>
+      </ac-demo-content>
+    `);
+    await aTimeout(50);
+    el.shadowRoot.querySelector('.ac-demo-content__viewmode-switcher [data-value="code"]').click();
+    await el.updateComplete;
+    return el;
+  };
+
+  test('numbers the lines starting at 1', async () => {
+    const el = await openCodeView();
+    const numbers = [...el.shadowRoot.querySelectorAll('.ac-demo-content__code-gutter')].map(
+      gutter => gutter.textContent.trim(),
+    );
+    expect(numbers).to.deep.equal(['1', '2', '3', '4']);
+  });
+
+  test('keeps the source text of each line without the line number', async () => {
+    const el = await openCodeView();
+    const lines = [...el.shadowRoot.querySelectorAll('.ac-demo-content__code-text')].map(
+      line => line.textContent,
+    );
+    expect(lines).to.deep.equal([
+      '<!-- comentario -->',
+      '<div class="row">',
+      '  <button type="button" disabled>Aceptar</button>',
+      '</div>',
+    ]);
+  });
+
+  test('hides the line numbers from assistive technology', async () => {
+    const el = await openCodeView();
+    const gutter = el.shadowRoot.querySelector('.ac-demo-content__code-gutter');
+    expect(gutter.getAttribute('aria-hidden')).to.equal('true');
+  });
+
+  test('highlights tags', async () => {
+    const el = await openCodeView();
+    expect(el.shadowRoot.querySelector('.ac-demo-content__tok--tag').textContent).to.equal('div');
+  });
+
+  test('highlights attribute values as strings', async () => {
+    const el = await openCodeView();
+    expect(el.shadowRoot.querySelector('.ac-demo-content__tok--string').textContent).to.equal(
+      '"row"',
+    );
+  });
+
+  test('highlights comments', async () => {
+    const el = await openCodeView();
+    expect(el.shadowRoot.querySelector('.ac-demo-content__tok--comment').textContent).to.equal(
+      '<!-- comentario -->',
+    );
+  });
+
+  test('shows the file name of the active case in the title bar', async () => {
+    const el = await openCodeView();
+    expect(el.shadowRoot.querySelector('.ac-demo-content__code-filename').textContent).to.equal(
+      'case-multiline-fixture.html',
+    );
+  });
+
+  test('exposes the code as a focusable, labelled region', async () => {
+    const el = await openCodeView();
+    const block = el.shadowRoot.querySelector('.ac-demo-content__code-block');
+    expect([block.getAttribute('role'), block.tabIndex]).to.deep.equal(['region', 0]);
+  });
+});
