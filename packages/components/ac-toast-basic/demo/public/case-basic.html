@@ -1,0 +1,45 @@
+<section>
+  <h2>Ambients</h2>
+  <div class="row">
+    <ac-button-basic data-testid="show-neutral" data-show-toast="toast-neutral"
+      >Neutral</ac-button-basic
+    >
+    <ac-button-basic data-testid="show-success" data-show-toast="toast-success"
+      >Éxito</ac-button-basic
+    >
+    <ac-button-basic data-testid="show-warning" data-show-toast="toast-warning"
+      >Aviso</ac-button-basic
+    >
+    <ac-button-basic data-testid="show-danger" data-show-toast="toast-danger"
+      >Error</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-toast-basic
+  id="toast-neutral"
+  data-testid="toast-neutral"
+  duration="3000"
+  message="Mensaje informativo"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-success"
+  data-testid="toast-success"
+  duration="3000"
+  ambient="success"
+  message="toast-basic-saved"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-warning"
+  data-testid="toast-warning"
+  duration="3000"
+  ambient="warning"
+  message="Revisa los datos antes de continuar"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-danger"
+  data-testid="toast-danger"
+  duration="3000"
+  ambient="danger"
+  message="No se pudo guardar"
+></ac-toast-basic>

@@ -68,6 +68,24 @@
       "port": 5173
     },
     {
+      "name": "ac-modal-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-modal-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-toast-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-toast-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-tabs-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-tabs-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "ac-demo-content-demo",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],

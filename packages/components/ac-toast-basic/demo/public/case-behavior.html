@@ -1,0 +1,51 @@
+<section>
+  <h2>Comportamiento</h2>
+  <div class="row">
+    <ac-button-basic data-testid="show-action" data-show-toast="toast-action"
+      >Con acción (no se cierra solo)</ac-button-basic
+    >
+    <ac-button-basic data-testid="show-top" data-show-toast="toast-top">Arriba</ac-button-basic>
+    <ac-button-basic data-testid="show-stack" data-show-toast="toast-stack-1 toast-stack-2"
+      >Apilar dos</ac-button-basic
+    >
+    <ac-button-basic data-testid="show-short" data-show-toast="toast-short"
+      >Corto (1,5 s)</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-toast-basic
+  id="toast-action"
+  data-testid="toast-action"
+  duration="0"
+  ambient="success"
+  message="toast-basic-saved"
+  action-text="toast-basic-undo"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-top"
+  data-testid="toast-top"
+  duration="3000"
+  position="top"
+  message="Aparece arriba"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-stack-1"
+  data-testid="toast-stack-1"
+  duration="0"
+  message="Primer toast del apilado"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-stack-2"
+  data-testid="toast-stack-2"
+  duration="0"
+  ambient="warning"
+  message="Segundo toast: se apila sin taparlo"
+></ac-toast-basic>
+<ac-toast-basic
+  id="toast-short"
+  data-testid="toast-short"
+  duration="1500"
+  hide-close
+  message="Se cierra solo en 1,5 s"
+></ac-toast-basic>

@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-tabs-basic {
+  /* El indicador de la pestaña activa se dibuja sobre la página, así que su color
+     depende del tema: tonos claros sobre fondo oscuro, oscuros sobre fondo claro.
+     Ver "Controles de formulario y texto" en docs/CONVENTIONS.md. */
+  --ac-tabs-accent: var(--color-primary-500, #10b981);
+
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-tabs--secondary {
+  --ac-tabs-accent: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-tabs-basic {
+  --ac-tabs-accent: var(--color-primary-700, #047857);
+}
+
+:host-context([data-theme='light']) .ac-tabs--secondary {
+  --ac-tabs-accent: var(--color-accent-700, #b45309);
+}
+
+.ac-tabs-basic__list {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.ac-tabs-basic__tab {
+  flex-shrink: 0;
+  margin-bottom: -1px;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+}
+
+.ac-tabs-basic__tab:hover:not(:disabled) {
+  background: var(--color-muted, #313335);
+}
+
+.ac-tabs-basic__tab[aria-selected='true'] {
+  font-weight: 700;
+  border-bottom-color: var(--ac-tabs-accent);
+}
+
+.ac-tabs-basic__tab:focus-visible,
+.ac-tabs-basic__panel:focus-visible {
+  outline: 2px solid var(--ac-tabs-accent);
+  outline-offset: -2px;
+}
+
+/* Deshabilitada: se cambia el color, no se aplica opacity al texto (ver
+   docs/CONVENTIONS.md). Los controles deshabilitados están exentos de contraste. */
+.ac-tabs-basic__tab:disabled {
+  color: var(--color-subtext, #787a80);
+  cursor: not-allowed;
+}
+
+.ac-tabs-basic__panel {
+  padding: 1rem 0.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.ac-tabs-basic__panel[hidden] {
+  display: none;
+}

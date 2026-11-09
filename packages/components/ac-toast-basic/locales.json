@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "toast-basic-close": "Cerrar notificación",
+    "toast-basic-saved": "Cambios guardados",
+    "toast-basic-undo": "Deshacer"
+  },
+  "en-EN": {
+    "toast-basic-close": "Dismiss notification",
+    "toast-basic-saved": "Changes saved",
+    "toast-basic-undo": "Undo"
+  },
+  "pt-BR": {
+    "toast-basic-close": "Fechar notificação",
+    "toast-basic-saved": "Alterações salvas",
+    "toast-basic-undo": "Desfazer"
+  }
+}
