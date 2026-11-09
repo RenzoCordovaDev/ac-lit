@@ -31,7 +31,7 @@ const [scss, out, exportName] = rawArgs.filter(arg => arg !== '--watch');
 
 if (!scss || !out) {
   console.error(
-    'Usage: node scripts/compile-scss-to-lit.cjs <in.scss> <out.styles.js> [exportName] [--watch]',
+    'Usage: node node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs <in.scss> <out.styles.js> [exportName] [--watch]',
   );
   process.exit(1);
 }

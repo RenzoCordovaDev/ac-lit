@@ -68,6 +68,9 @@ importers:
       commander:
         specifier: ^15.1.0
         version: 15.1.0
+      sass:
+        specifier: ^1.79.4
+        version: 1.108.1
 
   packages/base/ac-component-mixin:
     dependencies:
@@ -115,6 +118,9 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
@@ -182,6 +188,9 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
@@ -219,6 +228,9 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
@@ -256,6 +268,9 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
@@ -293,6 +308,9 @@ importers:
       '@ac-base/ac-e2e-testing':
         specifier: workspace:^
         version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
       '@open-wc/testing':
         specifier: ^4.0.0
         version: 4.0.0
