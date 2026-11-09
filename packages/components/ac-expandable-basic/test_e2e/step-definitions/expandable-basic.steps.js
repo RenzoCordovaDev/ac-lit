@@ -36,7 +36,7 @@ When('el usuario activa el modo oscuro', async function () {
 When('el usuario hace click en la cabecera de {string}', async function (testId) {
   const panel = componentProvider.find(ExpandableBasicPage, testId);
   await panel.header.waitForDisplayed();
-  await panel.header.click();
+  await panel.clickHeader();
 });
 
 async function eventLogEntries() {
