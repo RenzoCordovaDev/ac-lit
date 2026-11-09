@@ -1,0 +1,124 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-checkbox-basic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--color-text, #bcbec4);
+}
+
+:host([disabled]) .ac-checkbox-basic {
+  cursor: not-allowed;
+}
+
+/* Input nativo real, visualmente oculto pero superpuesto al control custom
+   (no display:none/visibility:hidden — eso lo sacaría del árbol de
+   accesibilidad y rompería foco/teclado). */
+.ac-checkbox-basic__input {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.ac-checkbox-basic__control {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.3rem;
+  /* El borde del control es un elemento de interfaz: necesita 3:1 contra el
+     fondo — --color-subtext lo cumple en ambos temas. */
+  border: 2px solid var(--color-subtext, #787a80);
+  background: transparent;
+  color: transparent;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.ac-checkbox-basic__check,
+.ac-checkbox-basic__dash {
+  opacity: 0;
+}
+
+/* Estado marcado / indeterminado: fondo sólido + glifo con tokens fijos (no
+   cambian entre temas), nunca --color-bg/--color-surface. */
+.ac-checkbox--primary .ac-checkbox-basic__input:checked + .ac-checkbox-basic__control,
+.ac-checkbox--primary .ac-checkbox-basic__input:indeterminate + .ac-checkbox-basic__control {
+  background: var(--color-primary-700, #047857);
+  border-color: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-checkbox--secondary .ac-checkbox-basic__input:checked + .ac-checkbox-basic__control,
+.ac-checkbox--secondary .ac-checkbox-basic__input:indeterminate + .ac-checkbox-basic__control {
+  background: var(--color-accent-700, #b45309);
+  border-color: var(--color-accent-700, #b45309);
+  color: #fff;
+}
+
+.ac-checkbox-basic__input:checked + .ac-checkbox-basic__control .ac-checkbox-basic__check {
+  opacity: 1;
+}
+
+.ac-checkbox-basic__input:indeterminate + .ac-checkbox-basic__control .ac-checkbox-basic__dash {
+  opacity: 1;
+}
+
+/* Indeterminado gana sobre marcado: se muestra solo el guion. */
+.ac-checkbox-basic__input:indeterminate + .ac-checkbox-basic__control .ac-checkbox-basic__check {
+  opacity: 0;
+}
+
+.ac-checkbox-basic__input:focus-visible + .ac-checkbox-basic__control {
+  outline: 2px solid var(--color-primary-700, #047857);
+  outline-offset: 2px;
+}
+
+.ac-checkbox--secondary .ac-checkbox-basic__input:focus-visible + .ac-checkbox-basic__control {
+  outline-color: var(--color-accent-700, #b45309);
+}
+
+/* Deshabilitado: sin opacity sobre el texto (ver docs/CONVENTIONS.md); se
+   cambia el color. Los controles deshabilitados están exentos de contraste. */
+.ac-checkbox-basic__input:disabled + .ac-checkbox-basic__control {
+  border-color: var(--color-muted, #313335);
+}
+
+.ac-checkbox--primary .ac-checkbox-basic__input:disabled:checked + .ac-checkbox-basic__control,
+.ac-checkbox--secondary .ac-checkbox-basic__input:disabled:checked + .ac-checkbox-basic__control,
+.ac-checkbox--primary
+  .ac-checkbox-basic__input:disabled:indeterminate
+  + .ac-checkbox-basic__control,
+.ac-checkbox--secondary
+  .ac-checkbox-basic__input:disabled:indeterminate
+  + .ac-checkbox-basic__control {
+  background: var(--color-muted, #313335);
+  border-color: var(--color-muted, #313335);
+  color: var(--color-subtext, #787a80);
+}
+
+.ac-checkbox-basic__input:disabled ~ .ac-checkbox-basic__label {
+  color: var(--color-subtext, #787a80);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-checkbox-basic__control {
+    transition: none;
+  }
+}

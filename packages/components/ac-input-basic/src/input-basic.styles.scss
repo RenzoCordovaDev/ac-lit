@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-input-basic {
+  /* Foco y error dependen del tema porque el texto/borde va sobre la página:
+     tonos claros sobre fondo oscuro, tonos oscuros sobre fondo claro. Ver
+     "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md. */
+  --ac-input-focus: var(--color-primary-500, #10b981);
+  --ac-input-error: #ff9b9b;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-input--secondary {
+  --ac-input-focus: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-input-basic {
+  --ac-input-focus: var(--color-primary-700, #047857);
+  --ac-input-error: #b42318;
+}
+
+:host-context([data-theme='light']) .ac-input--secondary {
+  --ac-input-focus: var(--color-accent-700, #b45309);
+}
+
+.ac-input-basic__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ac-input-basic__field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
+  border: 1px solid var(--color-subtext, #787a80);
+  border-radius: 0.5rem;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.ac-input-basic__field::placeholder {
+  /* Mezcla (no opacity): el contraste se calcula contra el fondo del campo. */
+  color: color-mix(in srgb, var(--color-text, #bcbec4) 70%, var(--color-surface, #2b2b2b));
+}
+
+.ac-input-basic__field:focus-visible {
+  outline: none;
+  border-color: var(--ac-input-focus);
+  box-shadow: 0 0 0 2px var(--ac-input-focus);
+}
+
+.ac-input--invalid .ac-input-basic__field {
+  border-color: var(--color-danger, #e05555);
+}
+
+.ac-input--invalid .ac-input-basic__field:focus-visible {
+  border-color: var(--color-danger, #e05555);
+  box-shadow: 0 0 0 2px var(--color-danger, #e05555);
+}
+
+.ac-input-basic__field[readonly] {
+  border-style: dashed;
+}
+
+.ac-input-basic__field:disabled {
+  cursor: not-allowed;
+  color: var(--color-subtext, #787a80);
+  background: var(--color-muted, #313335);
+  border-color: var(--color-muted, #313335);
+}
+
+.ac-input-basic__message {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-input-basic__message--error {
+  color: var(--ac-input-error);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-input-basic__field {
+    transition: none;
+  }
+}

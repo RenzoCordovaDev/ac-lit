@@ -1,0 +1,46 @@
+<section>
+  <h2>Obligatorio</h2>
+  <ac-input-basic
+    data-testid="input-required"
+    label="Usuario"
+    name="user"
+    required
+  ></ac-input-basic>
+</section>
+
+<section>
+  <h2>Con error</h2>
+  <ac-input-basic
+    data-testid="input-error"
+    label="input-basic-email-label"
+    type="email"
+    value="no-es-un-correo"
+    error="input-basic-email-error"
+  ></ac-input-basic>
+</section>
+
+<section>
+  <h2>Solo lectura y deshabilitado</h2>
+  <ac-input-basic
+    data-testid="input-readonly"
+    label="Solo lectura"
+    value="No editable"
+    readonly
+  ></ac-input-basic>
+  <ac-input-basic
+    data-testid="input-disabled"
+    label="Deshabilitado"
+    value="Bloqueado"
+    disabled
+  ></ac-input-basic>
+</section>
+
+<section>
+  <h2>Sin etiqueta visible (<code>a11y-label</code>)</h2>
+  <ac-input-basic
+    data-testid="input-search"
+    a11y-label="Buscar"
+    type="search"
+    placeholder="Buscar..."
+  ></ac-input-basic>
+</section>

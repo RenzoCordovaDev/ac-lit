@@ -1,0 +1,39 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-text-basic {
+  margin: 0;
+  color: var(--color-text, #bcbec4);
+  line-height: 1.4;
+}
+
+/* Tamaños */
+.ac-text--sm {
+  font-size: 0.8rem;
+}
+
+.ac-text--md {
+  font-size: 0.95rem;
+}
+
+.ac-text--lg {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Ambients: el texto va directo sobre la página (sin caja propia), así que su
+   color depende del tema — primary-500 solo cumple AA sobre fondo oscuro; en
+   modo claro se usa primary-700. Ver "Dark-mode y colores de fondo sólido" en
+   docs/CONVENTIONS.md. */
+.ac-text--primary {
+  color: var(--color-primary-500, #10b981);
+}
+
+:host-context([data-theme='light']) .ac-text--primary {
+  color: var(--color-primary-700, #047857);
+}

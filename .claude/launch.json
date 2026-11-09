@@ -26,6 +26,30 @@
       "port": 5173
     },
     {
+      "name": "ac-text-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-text-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-input-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-input-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-checkbox-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-checkbox-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-switch-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-switch-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "ac-demo-content-demo",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],

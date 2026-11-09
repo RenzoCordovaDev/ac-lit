@@ -1,0 +1,122 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-switch-basic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--color-text, #bcbec4);
+}
+
+:host([disabled]) .ac-switch-basic {
+  cursor: not-allowed;
+}
+
+/* Input nativo real (role="switch"), superpuesto y transparente: conserva
+   foco, teclado (Espacio) y semántica sin display:none. */
+.ac-switch-basic__input {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2.5rem;
+  height: 1.4rem;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.ac-switch-basic__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 1.4rem;
+  box-sizing: border-box;
+  border-radius: 999px;
+  /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
+  border: 2px solid var(--color-subtext, #787a80);
+  background: var(--color-muted, #313335);
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.ac-switch-basic__thumb {
+  position: absolute;
+  top: 50%;
+  left: 0.15rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: var(--color-text, #bcbec4);
+  transform: translateY(-50%);
+  transition:
+    transform 150ms ease,
+    background 150ms ease;
+}
+
+/* Encendido: pista sólida + pulgar con tokens fijos (no cambian entre temas). */
+.ac-switch--primary .ac-switch-basic__input:checked + .ac-switch-basic__track {
+  background: var(--color-primary-700, #047857);
+  border-color: var(--color-primary-700, #047857);
+}
+
+.ac-switch--primary
+  .ac-switch-basic__input:checked
+  + .ac-switch-basic__track
+  .ac-switch-basic__thumb {
+  background: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-switch--secondary .ac-switch-basic__input:checked + .ac-switch-basic__track {
+  background: var(--color-accent-700, #b45309);
+  border-color: var(--color-accent-700, #b45309);
+}
+
+.ac-switch--secondary
+  .ac-switch-basic__input:checked
+  + .ac-switch-basic__track
+  .ac-switch-basic__thumb {
+  background: #fff;
+}
+
+.ac-switch-basic__input:checked + .ac-switch-basic__track .ac-switch-basic__thumb {
+  transform: translate(1.1rem, -50%);
+}
+
+.ac-switch-basic__input:focus-visible + .ac-switch-basic__track {
+  outline: 2px solid var(--color-primary-700, #047857);
+  outline-offset: 2px;
+}
+
+.ac-switch--secondary .ac-switch-basic__input:focus-visible + .ac-switch-basic__track {
+  outline-color: var(--color-accent-700, #b45309);
+}
+
+/* Deshabilitado: se cambia el color, no se aplica opacity al texto (ver
+   docs/CONVENTIONS.md). Los controles deshabilitados están exentos de contraste. */
+.ac-switch-basic__input:disabled + .ac-switch-basic__track {
+  background: var(--color-muted, #313335);
+  border-color: var(--color-muted, #313335);
+}
+
+.ac-switch-basic__input:disabled + .ac-switch-basic__track .ac-switch-basic__thumb {
+  background: var(--color-subtext, #787a80);
+}
+
+.ac-switch-basic__input:disabled ~ .ac-switch-basic__label {
+  color: var(--color-subtext, #787a80);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-switch-basic__track,
+  .ac-switch-basic__thumb {
+    transition: none;
+  }
+}
