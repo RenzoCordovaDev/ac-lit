@@ -7,21 +7,29 @@ CLI de `ac-lit` — comando `ac`. Implementado con [Commander.js](https://github
 Dentro de este monorepo (sin instalar nada):
 
 ```bash
-node cli/bin/ac.js component create ac-mi-componente
+node cli/bin/ac.js component:create ac-mi-componente
 ```
 
 Una vez publicado, como dependencia o global:
 
 ```bash
 pnpm add -D @ac-base/cli   # o: npm i -g @ac-base/cli
-ac component create ac-mi-componente
+ac component:create ac-mi-componente
 ```
+
+Todos los comandos usan la forma `<tipo>:<accion>` (no subcomandos con espacio). `ac help` (o `ac -h`, `ac --help`, `ac` a secas) lista todos los comandos propios, las tareas habituales y los scripts del `package.json` del directorio actual.
 
 ### Scaffolding
 
-- **`ac component create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe tener el prefijo `ac-` y ser kebab-case (ej. `ac-mi-componente`); de ahí se derivan la clase (`MiComponente`), el archivo (`mi-componente.js`), el paquete npm (`@ac-components/ac-mi-componente`), etc.
-  - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && ac component create ac-mi-componente`.
-- **`ac app create <nombre>`** — scaffolding de un proyecto `ac-lit` nuevo. **Pendiente de implementar.**
+- **`ac component:create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe tener el prefijo `ac-` y ser kebab-case (ej. `ac-mi-componente`); de ahí se derivan la clase (`MiComponente`), el archivo (`mi-componente.js`), el paquete npm (`@ac-components/ac-mi-componente`), etc.
+  - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && ac component:create ac-mi-componente`.
+- **`ac app:create <nombre>`** — scaffolding de un proyecto `ac-lit` nuevo. **Pendiente de implementar.**
+
+### Ayuda
+
+- **`ac help`** — lista todos los comandos disponibles.
+
+Los comandos propios (`component:create`, `app:create`) se declaran en `src/commands/registry.js`; Commander y `ac help` leen de ese único registro. Tienen prioridad sobre un script de `package.json` con el mismo nombre. La sintaxis anterior (`ac component create`) ya no existe y sugiere la forma nueva.
 
 ### Tareas (passthrough genérico)
 
@@ -38,7 +46,7 @@ ac component:serve      # = pnpm run component:serve — levanta el demo con Vit
 
 El CLI no mantiene una lista de scripts conocidos — cualquier script que exista en el `package.json` del directorio actual queda disponible automáticamente.
 
-`component:serve` es el nombre convencional para levantar el servidor de desarrollo de un **componente** (`src/`+`demo/`). Cuando `ac app create` esté implementado, los proyectos de tipo **app** usarán `app:serve` como su equivalente — son comandos separados a propósito, porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa).
+`component:serve` es el nombre convencional para levantar el servidor de desarrollo de un **componente** (`src/`+`demo/`). Cuando `ac app:create` esté implementado, los proyectos de tipo **app** usarán `app:serve` como su equivalente — son comandos separados a propósito, porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa).
 
 ## Templates
 

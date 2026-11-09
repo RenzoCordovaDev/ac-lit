@@ -1,6 +1,6 @@
 # `__package_name__`
 
-Componente `__tag__` generado con `ac component create`.
+Componente `__tag__` generado con `ac component:create`.
 
 ## Instalación
 
