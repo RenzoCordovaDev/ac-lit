@@ -1,0 +1,36 @@
+<section>
+  <h2>Con etiqueta y valor</h2>
+  <ac-slider-basic
+    data-testid="slider-volume"
+    label="Volumen"
+    name="volume"
+    value="40"
+    show-value
+    suffix="%"
+    hint="Usa las flechas del teclado para ajustar."
+  ></ac-slider-basic>
+</section>
+
+<section>
+  <h2>Rango y paso (<code>min</code>, <code>max</code>, <code>step</code>)</h2>
+  <ac-slider-basic
+    data-testid="slider-temperature"
+    label="Temperatura"
+    min="16"
+    max="30"
+    step="2"
+    value="22"
+    show-value
+    suffix="°C"
+  ></ac-slider-basic>
+</section>
+
+<section>
+  <h2>i18n (clave de locales.json)</h2>
+  <ac-slider-basic
+    data-testid="slider-i18n"
+    label="slider-basic-brightness"
+    value="70"
+    show-value
+  ></ac-slider-basic>
+</section>

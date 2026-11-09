@@ -24,6 +24,10 @@ Feature: ac-demo-content - accesibilidad
     When el usuario selecciona la vista "code"
     Then el demo no tiene violaciones de accesibilidad WCAG
 
+  Scenario: Con eventos registrados el botón de eventos no tiene violaciones de accesibilidad
+    When el usuario hace click en el elemento "case-basic-button"
+    Then el demo no tiene violaciones de accesibilidad WCAG
+
   Scenario: La vista de código no tiene violaciones de accesibilidad en modo oscuro
     When el usuario selecciona el tema "dark"
     And el usuario selecciona la vista "code"

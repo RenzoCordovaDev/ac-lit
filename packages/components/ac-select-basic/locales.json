@@ -1,0 +1,23 @@
+{
+  "es-PE": {
+    "select-basic-placeholder": "Elige una opción",
+    "select-basic-option-monthly": "Mensual",
+    "select-basic-option-annual": "Anual",
+    "select-basic-option-lifetime": "De por vida",
+    "select-basic-required-error": "Selecciona una opción."
+  },
+  "en-EN": {
+    "select-basic-placeholder": "Choose an option",
+    "select-basic-option-monthly": "Monthly",
+    "select-basic-option-annual": "Annual",
+    "select-basic-option-lifetime": "Lifetime",
+    "select-basic-required-error": "Select an option."
+  },
+  "pt-BR": {
+    "select-basic-placeholder": "Escolha uma opção",
+    "select-basic-option-monthly": "Mensal",
+    "select-basic-option-annual": "Anual",
+    "select-basic-option-lifetime": "Vitalício",
+    "select-basic-required-error": "Selecione uma opção."
+  }
+}

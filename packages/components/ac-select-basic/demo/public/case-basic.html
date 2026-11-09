@@ -1,0 +1,29 @@
+<section>
+  <h2>Opciones por propiedad (<code>options</code>)</h2>
+  <ac-select-basic
+    data-testid="select-plan"
+    label="Plan"
+    name="plan"
+    placeholder="Elige un plan"
+    hint="Puedes cambiarlo después."
+    options='[{"value":"monthly","label":"Mensual"},{"value":"annual","label":"Anual"},{"value":"lifetime","label":"De por vida"}]'
+  ></ac-select-basic>
+</section>
+
+<section>
+  <h2>Opciones por slot (<code>&lt;option&gt;</code>)</h2>
+  <ac-select-basic data-testid="select-slot" label="País" name="country">
+    <option value="pe">Perú</option>
+    <option value="co" selected>Colombia</option>
+    <option value="cl">Chile</option>
+  </ac-select-basic>
+</section>
+
+<section>
+  <h2>Opciones largas</h2>
+  <ac-select-basic
+    data-testid="select-long"
+    label="Descripción"
+    options='[{"value":"a","label":"Una opción con un texto muy largo para comprobar que la lista hace wrap y no se desborda"},{"value":"b","label":"Corta"}]'
+  ></ac-select-basic>
+</section>

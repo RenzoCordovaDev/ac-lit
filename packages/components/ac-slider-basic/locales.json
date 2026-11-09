@@ -1,0 +1,14 @@
+{
+  "es-PE": {
+    "slider-basic-volume": "Volumen",
+    "slider-basic-brightness": "Brillo"
+  },
+  "en-EN": {
+    "slider-basic-volume": "Volume",
+    "slider-basic-brightness": "Brightness"
+  },
+  "pt-BR": {
+    "slider-basic-volume": "Volume",
+    "slider-basic-brightness": "Brilho"
+  }
+}

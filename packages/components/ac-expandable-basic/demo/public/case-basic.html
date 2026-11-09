@@ -1,0 +1,28 @@
+<section>
+  <h2>Contenido por slot</h2>
+  <ac-expandable-basic data-testid="expandable-details" header="Más detalles" open>
+    <p>
+      El contenido es un <code>&lt;slot&gt;</code>: aquí cabe cualquier HTML — texto, listas,
+      imágenes u otros componentes.
+    </p>
+    <ul>
+      <li>Primer punto</li>
+      <li>Segundo punto</li>
+    </ul>
+  </ac-expandable-basic>
+</section>
+
+<section>
+  <h2>Cabecera personalizada (<code>slot="header"</code>)</h2>
+  <ac-expandable-basic data-testid="expandable-custom">
+    <span slot="header">Cabecera con <strong>formato</strong> propio</span>
+    <p>La cabecera acepta cualquier contenido en línea.</p>
+  </ac-expandable-basic>
+</section>
+
+<section>
+  <h2>i18n (clave de locales.json)</h2>
+  <ac-expandable-basic data-testid="expandable-i18n" header="expandable-basic-details">
+    <p>El título de la cabecera se traduce al cambiar de idioma.</p>
+  </ac-expandable-basic>
+</section>

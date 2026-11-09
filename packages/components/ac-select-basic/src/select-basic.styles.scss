@@ -1,0 +1,186 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-select-basic {
+  /* Foco y error dependen del tema porque van directo sobre la página: tonos
+     claros sobre fondo oscuro, oscuros sobre fondo claro. Ver "Controles de
+     formulario y texto" en docs/CONVENTIONS.md. */
+  --ac-select-focus: var(--color-primary-500, #10b981);
+  --ac-select-error: #ff9b9b;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-select--secondary {
+  --ac-select-focus: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-select-basic {
+  --ac-select-focus: var(--color-primary-700, #047857);
+  --ac-select-error: #b42318;
+}
+
+:host-context([data-theme='light']) .ac-select--secondary {
+  --ac-select-focus: var(--color-accent-700, #b45309);
+}
+
+.ac-select-basic__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ac-select-basic__field {
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.55rem 2rem 0.55rem 0.75rem;
+  font: inherit;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 0.75rem center;
+  background-size: 0.65rem;
+  /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
+  border: 1px solid var(--color-subtext, #787a80);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.ac-select-basic__field:focus-visible {
+  outline: none;
+  border-color: var(--ac-select-focus);
+  box-shadow: 0 0 0 2px var(--ac-select-focus);
+}
+
+.ac-select--invalid .ac-select-basic__field,
+.ac-select--invalid .ac-select-basic__field:focus-visible {
+  border-color: var(--color-danger, #e05555);
+}
+
+.ac-select--invalid .ac-select-basic__field:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-danger, #e05555);
+}
+
+.ac-select-basic__field:disabled {
+  cursor: not-allowed;
+  color: var(--color-subtext, #787a80);
+  background-color: var(--color-muted, #313335);
+  border-color: var(--color-muted, #313335);
+}
+
+.ac-select-basic__message {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-select-basic__message--error {
+  color: var(--ac-select-error);
+  font-weight: 600;
+}
+
+/* En navegadores con `appearance: base-select` (Chromium) se estiliza también
+   la lista desplegable; en el resto queda el <select> nativo de arriba. */
+@supports (appearance: base-select) {
+  .ac-select-basic__field,
+  .ac-select-basic__field::picker(select) {
+    appearance: base-select;
+  }
+
+  .ac-select-basic__field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.85rem;
+    background: var(--color-surface, #2b2b2b);
+  }
+
+  .ac-select-basic__field:disabled {
+    background: var(--color-muted, #313335);
+  }
+
+  .ac-select-basic__field::picker-icon {
+    content: '';
+    flex-shrink: 0;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-top: -0.2rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    rotate: 45deg;
+    transition:
+      rotate 150ms ease,
+      margin-top 150ms ease;
+  }
+
+  .ac-select-basic__field:open::picker-icon {
+    margin-top: 0.2rem;
+    rotate: 225deg;
+  }
+
+  .ac-select-basic__field::picker(select) {
+    width: anchor-size(width);
+    max-height: 20rem;
+    margin-block: 0.4rem;
+    padding: 0.4rem;
+    color: var(--color-text, #bcbec4);
+    background: var(--color-surface, #2b2b2b);
+    border: 1px solid var(--color-muted, #313335);
+    border-radius: 0.85rem;
+    box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
+  }
+
+  .ac-select-basic__field option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.55rem;
+    font-size: 0.9rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  .ac-select-basic__field option:hover,
+  .ac-select-basic__field option:focus-visible {
+    background: color-mix(in srgb, var(--color-primary-500, #10b981) 20%, transparent);
+  }
+
+  .ac-select-basic__field option:checked {
+    font-weight: 600;
+    background: var(--color-primary-700, #047857);
+    color: var(--color-primary-50, #ecfdf5);
+  }
+
+  .ac-select-basic__field option:disabled {
+    cursor: not-allowed;
+    color: var(--color-subtext, #787a80);
+  }
+
+  .ac-select-basic__field option::checkmark {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-select-basic__field,
+  .ac-select-basic__field::picker-icon {
+    transition: none;
+  }
+}

@@ -23,7 +23,10 @@ ac-lit/
 │       ├── ac-text-basic/
 │       ├── ac-input-basic/
 │       ├── ac-checkbox-basic/
-│       └── ac-switch-basic/
+│       ├── ac-switch-basic/
+│       ├── ac-select-basic/
+│       ├── ac-slider-basic/
+│       └── ac-expandable-basic/
 ├── docs/
 ├── pnpm-workspace.yaml
 └── package.json
@@ -70,7 +73,7 @@ Siempre en la raíz del paquete del componente (nunca en subcarpetas), con esta 
 
 Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atributo, ej. `name`) **solo coordina con otros controles del mismo shadow root**. Cada instancia de un componente vive en su propio shadow root, así que ese agrupado nativo **no funciona** entre instancias distintas — confirmado en Firefox, Chromium y Safari actuales.
 
-`ac-radio-basic` resuelve esto con un registro propio en memoria (`Map<name, Set<instancia>>` a nivel de módulo): al marcarse una instancia, desmarca manualmente a las demás del mismo grupo. Cualquier componente futuro que necesite coordinación entre instancias (ej. un acordeón de "solo un panel abierto a la vez", pestañas) debe usar el mismo patrón — un registro en memoria por una clave de agrupación, no depender del navegador para coordinar estado entre shadow roots distintos.
+`ac-radio-basic` resuelve esto con un registro propio en memoria (`Map<name, Set<instancia>>` a nivel de módulo): al marcarse una instancia, desmarca manualmente a las demás del mismo grupo. `ac-expandable-basic` lo reutiliza para su `group` (acordeón: al abrirse un panel, cierra a los demás del grupo; el panel cerrado por el grupo también emite su evento `-toggle`, y una instancia sale del registro en `disconnectedCallback`). Cualquier componente futuro que necesite coordinación entre instancias (ej. pestañas) debe usar el mismo patrón — un registro en memoria por una clave de agrupación, no depender del navegador para coordinar estado entre shadow roots distintos.
 
 ## Controles de formulario y texto (checkbox, switch, input, text)
 
@@ -84,7 +87,11 @@ Patrones comunes de `ac-checkbox-basic`, `ac-switch-basic`, `ac-input-basic` y `
 - **Placeholder** con `color-mix()` (no `opacity`), para que el contraste se calcule contra el fondo del campo.
 - **Texto traducible (`this.t()`)**: `t()` solo conoce el `locales.json` del propio componente y, si no encuentra la clave, devuelve la clave misma. Los campos de texto de los controles (`label`, `placeholder`, `hint`, `error`, `text`) pasan por `this.t()`, así que aceptan tanto una clave como un literal. Para traducir claves **de la aplicación**, `ac-text-basic` exporta `addTextTranslations({ 'es-PE': { clave: 'texto' } })` y acepta la propiedad `translations` por instancia (orden: instancia → app → `locales.json` → la propia clave).
 - **Listas blancas** para valores que llegan a un template o atributo (`tag` en `ac-text-basic` va a `unsafeStatic`; `type` en `ac-input-basic`): un valor fuera de la lista cae al valor por defecto, nunca se usa tal cual.
-- **E2E**: `isFocused()` de WDIO mira el `document`, no el shadow root del componente — para saber si el campo interno tiene el foco, `browser.execute` con `host.shadowRoot.activeElement`.
+- **E2E**: `isFocused()` de WDIO mira el `document`, no el shadow root del componente — para saber si el campo interno tiene el foco, `browser.execute` con `host.shadowRoot.activeElement`. Tampoco se debe hacer `click()` al **centro** de un control que contiene hijos _slotted_ (ej. `<strong slot="header">`): WebDriver responde `element click intercepted` porque el hijo slotted no es descendiente del botón en el árbol del DOM, y dónde cae el centro depende de las métricas de la fuente (pasaba en local y fallaba en CI Linux). Se hace click con offset hacia una zona propia del control (ej. el chevron).
+- **`ac-select-basic`**: `<select>` nativo dentro del shadow root con el mismo estilo `appearance: base-select` de `ac-demo-content` (con fallback nativo). Las opciones llegan por `options` (JSON o array; un string es valor y texto) **o** como hijos `<option>` por slot (se leen en `slotchange`; `options` gana si ambos existen). Dos trampas: (1) `.value` en un `<select>` se asigna antes de que existan sus `<option>` (Lit confirma las partes en orden), así que la selección inicial va con `?selected` en cada opción; (2) `selected` solo vale hasta que el usuario interactúa, por eso `updated()` sincroniza `select.value` a mano cuando cambian `value`/`options`.
+- **`ac-slider-basic`**: `<input type="range">` nativo. Los pseudo-elementos de WebKit/Blink (`::-webkit-slider-*`) y Firefox (`::-moz-range-*`) **no se pueden agrupar** en una sola regla (un selector desconocido invalida toda la regla). El tramo relleno de la pista en WebKit se pinta con un `linear-gradient` controlado por `--ac-slider-percent` (inline en el input). En Lit, `.value` va **después** de `min`/`max`/`step` en el template, o el rango por defecto (0–100) recorta el valor. En E2E el valor se mueve con el teclado (`Home`/`End`/flechas tras un click que enfoca) — es determinista; un click mueve el valor al punto pulsado.
+- **`ac-expandable-basic`**: la altura se anima con `grid-template-rows: 0fr → 1fr` (no hace falta conocer la altura del contenido). Cerrado, el panel lleva `inert` + `visibility: hidden` (con retardo para dejar terminar la animación): así su contenido no recibe foco ni se lee. El evento `-toggle` se emite en `updated()` cada vez que `open` cambia (usuario, `show()`/`hide()` o grupo) **excepto** en la primera renderización (`changed.get('open') === undefined`).
+- **`aria-label` que contiene el texto visible (WCAG 2.5.3 / axe `label-content-name-mismatch`)**: si un botón muestra un número (ej. el contador del botón de eventos de `ac-demo-content`), el `aria-label` debe incluirlo como **palabra suelta** — `"Ver eventos disparados: 1"` pasa, `"Ver eventos disparados (1)"` falla (encontrado al disparar un evento antes del chequeo axe en `ac-expandable-basic`).
 
 ## Dark-mode y colores de fondo sólido
 
@@ -140,7 +147,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **Nunca apliques `opacity` a texto** para "atenuarlo" (ver la sección de Dark-mode más arriba) — mismo motivo, mismo riesgo de romper contraste WCAG, y el mismo patrón apareció de nuevo acá en el link de "Documentación" (color pensado para fondo oscuro, usado directo sobre la página sin caja propia — mismo fix que en `ac-link-basic`: oscurecer con `:host-context([data-theme='light'])`).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
-> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`, `ac-text-basic`, `ac-input-basic`, `ac-checkbox-basic`, `ac-switch-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
+> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`, `ac-text-basic`, `ac-input-basic`, `ac-checkbox-basic`, `ac-switch-basic`, `ac-select-basic`, `ac-slider-basic`, `ac-expandable-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
 
 ## CLI (`ac`)
 

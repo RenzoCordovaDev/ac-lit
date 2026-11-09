@@ -1,0 +1,38 @@
+<section>
+  <h2>Acordeón (<code>group="faq"</code>): solo uno abierto a la vez</h2>
+  <ac-expandable-basic
+    data-testid="expandable-faq-1"
+    group="faq"
+    header="expandable-basic-faq-shipping"
+    open
+  >
+    <p>Entre 3 y 5 días hábiles.</p>
+  </ac-expandable-basic>
+  <ac-expandable-basic
+    data-testid="expandable-faq-2"
+    group="faq"
+    header="expandable-basic-faq-returns"
+  >
+    <p>Sí, dentro de los 30 días posteriores a la compra.</p>
+  </ac-expandable-basic>
+  <ac-expandable-basic data-testid="expandable-faq-3" group="faq" header="Otra pregunta">
+    <p>Una tercera respuesta del mismo grupo.</p>
+  </ac-expandable-basic>
+</section>
+
+<section>
+  <h2>Deshabilitado</h2>
+  <ac-expandable-basic data-testid="expandable-disabled" header="Bloqueado" disabled>
+    <p>No se puede abrir.</p>
+  </ac-expandable-basic>
+</section>
+
+<section>
+  <h2>Independientes (sin <code>group</code>)</h2>
+  <ac-expandable-basic data-testid="expandable-free-1" header="Panel libre 1" open>
+    <p>Este panel no pertenece a ningún grupo.</p>
+  </ac-expandable-basic>
+  <ac-expandable-basic data-testid="expandable-free-2" header="Panel libre 2" open>
+    <p>Pueden estar abiertos a la vez.</p>
+  </ac-expandable-basic>
+</section>

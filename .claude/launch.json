@@ -50,6 +50,24 @@
       "port": 5173
     },
     {
+      "name": "ac-select-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-select-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-slider-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-slider-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-expandable-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-expandable-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "ac-demo-content-demo",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],

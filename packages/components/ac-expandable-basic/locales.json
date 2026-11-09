@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "expandable-basic-details": "Más detalles",
+    "expandable-basic-faq-shipping": "¿Cuánto tarda el envío?",
+    "expandable-basic-faq-returns": "¿Puedo devolver un producto?"
+  },
+  "en-EN": {
+    "expandable-basic-details": "More details",
+    "expandable-basic-faq-shipping": "How long does shipping take?",
+    "expandable-basic-faq-returns": "Can I return a product?"
+  },
+  "pt-BR": {
+    "expandable-basic-details": "Mais detalhes",
+    "expandable-basic-faq-shipping": "Quanto tempo leva o envio?",
+    "expandable-basic-faq-returns": "Posso devolver um produto?"
+  }
+}
