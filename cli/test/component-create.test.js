@@ -39,7 +39,7 @@ describe('componentCreate', () => {
 
     const pkg = JSON.parse(fs.readFileSync(path.join(destDir, 'package.json'), 'utf8'));
     assert.equal(pkg.name, '@ac-components/ac-foo-basic');
-    assert.ok(pkg.scripts['test:e2e']);
+    assert.ok(pkg.scripts['component:test:e2e']);
     assert.ok(pkg.devDependencies['@ac-base/ac-e2e-testing']);
   });
 
@@ -49,7 +49,8 @@ describe('componentCreate', () => {
     assert.ok(!fs.existsSync(path.join(destDir, 'test_e2e')));
 
     const pkg = JSON.parse(fs.readFileSync(path.join(destDir, 'package.json'), 'utf8'));
-    assert.equal(pkg.scripts['test:e2e'], undefined);
+    const e2eScripts = Object.keys(pkg.scripts).filter(name => name.includes(':test:e2e'));
+    assert.deepEqual(e2eScripts, []);
     assert.equal(pkg.devDependencies['@ac-base/ac-e2e-testing'], undefined);
   });
 

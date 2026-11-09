@@ -70,11 +70,11 @@ Deliberadamente **no usa Shadow DOM**: el HTML de `href` participa del CSS globa
 ## Desarrollo
 
 ```bash
-pnpm --filter @ac-base/ac-demo-content dev    # demo en http://localhost:5173 (usa un botón de prueba propio, ver demo/sample-button.js)
-pnpm --filter @ac-base/ac-demo-content test
-pnpm --filter @ac-base/ac-demo-content build
-pnpm --filter @ac-base/ac-demo-content test:e2e
-pnpm --filter @ac-base/ac-demo-content test:e2e:a11y
+pnpm --filter @ac-base/ac-demo-content component:serve    # demo en http://localhost:5173 (usa un botón de prueba propio, ver demo/sample-button.js)
+pnpm --filter @ac-base/ac-demo-content component:test
+pnpm --filter @ac-base/ac-demo-content component:build
+pnpm --filter @ac-base/ac-demo-content component:test:e2e
+pnpm --filter @ac-base/ac-demo-content component:test:e2e:a11y
 ```
 
-> `src/demo-content.styles.js` se genera a partir de `src/demo-content.styles.scss` (`build:styles`, corre automáticamente antes de `dev`/`build`/`test`) y no se versiona en git. Durante `dev` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.
+> `src/demo-content.styles.js` se genera a partir de `src/demo-content.styles.scss` (`component:build:styles`, corre automáticamente antes de `component:serve`/`component:build`/`component:test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

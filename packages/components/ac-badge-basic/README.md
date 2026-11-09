@@ -45,10 +45,10 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 
 ```bash
 pnpm --filter @ac-components/ac-badge-basic component:serve    # demo en http://localhost:5173
-pnpm --filter @ac-components/ac-badge-basic test
-pnpm --filter @ac-components/ac-badge-basic build
-pnpm --filter @ac-components/ac-badge-basic test:e2e        # funcional (WebdriverIO + Cucumber)
-pnpm --filter @ac-components/ac-badge-basic test:e2e:a11y   # accesibilidad (axe-core)
+pnpm --filter @ac-components/ac-badge-basic component:test
+pnpm --filter @ac-components/ac-badge-basic component:build
+pnpm --filter @ac-components/ac-badge-basic component:test:e2e        # funcional (WebdriverIO + Cucumber)
+pnpm --filter @ac-components/ac-badge-basic component:test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/badge-basic.styles.js` se genera a partir de `src/badge-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.
+> `src/badge-basic.styles.js` se genera a partir de `src/badge-basic.styles.scss` (`component:build:styles`, corre automáticamente antes de `component:serve`/`component:build`/`component:test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

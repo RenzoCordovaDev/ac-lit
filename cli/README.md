@@ -36,17 +36,18 @@ Los comandos propios (`component:create`, `app:create`) se declaran en `src/comm
 Cualquier otro comando es un passthrough directo a `pnpm run <nombre>` en el directorio actual:
 
 ```bash
-ac test               # = pnpm run test
-ac lint                # = pnpm run lint
-ac test:e2e             # = pnpm run test:e2e
-ac test:e2e:a11y        # = pnpm run test:e2e:a11y
-ac build                # = pnpm run build
-ac component:serve      # = pnpm run component:serve — levanta el demo con Vite en http://localhost:5173
+ac component:serve           # = pnpm run component:serve — levanta el demo con Vite en http://localhost:5173
+ac component:build           # = pnpm run component:build
+ac component:preview         # = pnpm run component:preview
+ac component:test            # = pnpm run component:test
+ac component:test:e2e        # = pnpm run component:test:e2e
+ac component:test:e2e:a11y   # = pnpm run component:test:e2e:a11y
+ac lint                      # = pnpm run lint (donde exista ese script)
 ```
 
-El CLI no mantiene una lista de scripts conocidos — cualquier script que exista en el `package.json` del directorio actual queda disponible automáticamente.
+El CLI no mantiene una lista de scripts conocidos — cualquier script que exista en el `package.json` del directorio actual queda disponible automáticamente (`ac help` lista los del directorio actual).
 
-`component:serve` es el nombre convencional para levantar el servidor de desarrollo de un **componente** (`src/`+`demo/`). Cuando `ac app:create` esté implementado, los proyectos de tipo **app** usarán `app:serve` como su equivalente — son comandos separados a propósito, porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa).
+Los scripts de un paquete con estructura de componente (`src/`+`demo/`) usan el prefijo `component:` — ver "Scripts de paquete (`component:*`)" en [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md) para el juego completo. Cuando `ac app:create` esté implementado, los proyectos de tipo **app** usarán el prefijo `app:` (`app:serve`, etc.) — son comandos separados a propósito, porque sirven cosas distintas (un componente aislado con su demo vs. una aplicación completa).
 
 ## Templates
 

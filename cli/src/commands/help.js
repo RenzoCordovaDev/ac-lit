@@ -3,8 +3,9 @@ import path from 'node:path';
 import { COMMANDS } from './registry.js';
 
 const COMMON_TASKS = [
-  ['ac test', 'ac lint', 'ac build'],
-  ['ac test:e2e', 'ac test:e2e:a11y', 'ac component:serve'],
+  ['ac component:serve', 'ac component:build', 'ac component:preview'],
+  ['ac component:test', 'ac component:test:e2e', 'ac component:test:e2e:a11y'],
+  ['ac component:build:styles', 'ac component:build:styles:watch'],
 ];
 
 function readScripts(cwd) {

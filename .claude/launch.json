@@ -28,7 +28,7 @@
     {
       "name": "ac-demo-content-demo",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "dev"],
+      "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],
       "port": 5173
     }
   ]
