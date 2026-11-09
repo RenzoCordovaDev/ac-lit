@@ -1,8 +1,8 @@
 import { LitElement, html, nothing } from 'lit';
 import { ComponentMixin } from '@ac-base/ac-component-mixin';
 // Authored in button-basic.styles.scss, compiled to button-basic.styles.js by
-// `pnpm run build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
-// is gitignored — run `pnpm install` then `pnpm build` or `pnpm dev` to generate it.
+// `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
+// is gitignored — run `pnpm install` then `pnpm component:build` or `pnpm component:serve` to generate it.
 import { ButtonBasicStyles } from './button-basic.styles.js';
 
 export class ButtonBasic extends ComponentMixin(LitElement) {

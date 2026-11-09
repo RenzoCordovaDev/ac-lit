@@ -54,10 +54,10 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 
 ```bash
 pnpm --filter @ac-components/ac-link-basic component:serve    # demo en http://localhost:5173
-pnpm --filter @ac-components/ac-link-basic test
-pnpm --filter @ac-components/ac-link-basic build
-pnpm --filter @ac-components/ac-link-basic test:e2e        # funcional (WebdriverIO + Cucumber)
-pnpm --filter @ac-components/ac-link-basic test:e2e:a11y   # accesibilidad (axe-core)
+pnpm --filter @ac-components/ac-link-basic component:test
+pnpm --filter @ac-components/ac-link-basic component:build
+pnpm --filter @ac-components/ac-link-basic component:test:e2e        # funcional (WebdriverIO + Cucumber)
+pnpm --filter @ac-components/ac-link-basic component:test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/link-basic.styles.js` se genera a partir de `src/link-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.
+> `src/link-basic.styles.js` se genera a partir de `src/link-basic.styles.scss` (`component:build:styles`, corre automáticamente antes de `component:serve`/`component:build`/`component:test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

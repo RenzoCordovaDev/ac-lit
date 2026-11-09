@@ -50,8 +50,10 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 
 ```bash
 pnpm --filter @ac-components/ac-button-basic component:serve    # demo en http://localhost:5173
-pnpm --filter @ac-components/ac-button-basic test
-pnpm --filter @ac-components/ac-button-basic build
+pnpm --filter @ac-components/ac-button-basic component:test
+pnpm --filter @ac-components/ac-button-basic component:build
+pnpm --filter @ac-components/ac-button-basic component:test:e2e        # funcional (WebdriverIO + Cucumber)
+pnpm --filter @ac-components/ac-button-basic component:test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`build:styles`, corre automáticamente antes de `component:serve`/`build`/`test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.
+> `src/button-basic.styles.js` se genera a partir de `src/button-basic.styles.scss` (`component:build:styles`, corre automáticamente antes de `component:serve`/`component:build`/`component:test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

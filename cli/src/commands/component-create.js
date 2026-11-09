@@ -35,7 +35,12 @@ function stripE2eFromPackageJson(destDir) {
   const pkgPath = path.join(destDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 
-  for (const script of ['test:e2e', 'test:e2e:run', 'test:e2e:a11y', 'test:e2e:a11y:run']) {
+  for (const script of [
+    'component:test:e2e',
+    'component:test:e2e:run',
+    'component:test:e2e:a11y',
+    'component:test:e2e:a11y:run',
+  ]) {
     delete pkg.scripts[script];
   }
   delete pkg.devDependencies['@ac-base/ac-e2e-testing'];

@@ -18,16 +18,16 @@
     "access": "public"
   },
   "scripts": {
-    "build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles",
-    "build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles --watch",
-    "component:serve": "pnpm run build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run build:styles:watch\" \"vite demo\"",
-    "build": "pnpm run build:styles && vite build",
-    "preview": "vite preview",
-    "test": "pnpm run build:styles && web-test-runner \"test/**/*.test.js\"",
-    "test:e2e": "pnpm run build && start-server-and-test preview http://localhost:4173 test:e2e:run",
-    "test:e2e:run": "wdio run test_e2e/wdio.conf.js",
-    "test:e2e:a11y": "pnpm run build && start-server-and-test preview http://localhost:4173 test:e2e:a11y:run",
-    "test:e2e:a11y:run": "wdio run test_e2e/wdio.a11y.conf.js"
+    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles",
+    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles --watch",
+    "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run component:build:styles:watch\" \"vite demo\"",
+    "component:build": "pnpm run component:build:styles && vite build",
+    "component:preview": "vite preview",
+    "component:test": "pnpm run component:build:styles && web-test-runner \"test/**/*.test.js\"",
+    "component:test:e2e": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:run",
+    "component:test:e2e:run": "wdio run test_e2e/wdio.conf.js",
+    "component:test:e2e:a11y": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:a11y:run",
+    "component:test:e2e:a11y:run": "wdio run test_e2e/wdio.a11y.conf.js"
   },
   "dependencies": {
     "@ac-base/ac-component-mixin": "workspace:^",
