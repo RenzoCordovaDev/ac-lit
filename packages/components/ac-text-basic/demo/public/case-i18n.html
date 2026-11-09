@@ -1,0 +1,31 @@
+<section>
+  <h2>Clave de <code>locales.json</code> del componente</h2>
+  <div class="row">
+    <ac-text-basic data-testid="text-builtin" text="text-basic-label"></ac-text-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Traducciones de la aplicación (<code>addTextTranslations</code>)</h2>
+  <div class="row">
+    <ac-text-basic data-testid="text-app" text="demo-welcome"></ac-text-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Con parámetros (<code>params</code>)</h2>
+  <div class="row">
+    <ac-text-basic
+      data-testid="text-params"
+      text="demo-greeting"
+      params='{"name":"Renzo","count":3}'
+    ></ac-text-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Sin traducción: se muestra el literal</h2>
+  <div class="row">
+    <ac-text-basic data-testid="text-literal" text="Texto sin traducción"></ac-text-basic>
+  </div>
+</section>

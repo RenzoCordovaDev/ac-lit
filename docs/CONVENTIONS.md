@@ -19,7 +19,11 @@ ac-lit/
 │       ├── ac-button-basic/      # @ac-components/ac-button-basic
 │       ├── ac-link-basic/
 │       ├── ac-badge-basic/
-│       └── ac-radio-basic/
+│       ├── ac-radio-basic/
+│       ├── ac-text-basic/
+│       ├── ac-input-basic/
+│       ├── ac-checkbox-basic/
+│       └── ac-switch-basic/
 ├── docs/
 ├── pnpm-workspace.yaml
 └── package.json
@@ -67,6 +71,20 @@ Siempre en la raíz del paquete del componente (nunca en subcarpetas), con esta 
 Un `<input type="radio">` (o cualquier otro control nativo que agrupe por atributo, ej. `name`) **solo coordina con otros controles del mismo shadow root**. Cada instancia de un componente vive en su propio shadow root, así que ese agrupado nativo **no funciona** entre instancias distintas — confirmado en Firefox, Chromium y Safari actuales.
 
 `ac-radio-basic` resuelve esto con un registro propio en memoria (`Map<name, Set<instancia>>` a nivel de módulo): al marcarse una instancia, desmarca manualmente a las demás del mismo grupo. Cualquier componente futuro que necesite coordinación entre instancias (ej. un acordeón de "solo un panel abierto a la vez", pestañas) debe usar el mismo patrón — un registro en memoria por una clave de agrupación, no depender del navegador para coordinar estado entre shadow roots distintos.
+
+## Controles de formulario y texto (checkbox, switch, input, text)
+
+Patrones comunes de `ac-checkbox-basic`, `ac-switch-basic`, `ac-input-basic` y `ac-text-basic`:
+
+- **Control nativo real, superpuesto y transparente** (no `display:none`/`visibility:hidden`): el `<input type="checkbox">` (o `role="switch"`) queda encima del control visual con `opacity: 0` — conserva foco, teclado y semántica; el control visual es `aria-hidden`. Mismo patrón que `ac-radio-basic`.
+- **Un `<input>` dentro de un shadow root no participa de un `<form>` nativo.** Por eso cada control expone `name`/`value`/`checked` como propiedades y emite un evento (`ac-<componente>-change`, y `-input` en el campo de texto) con el valor en `detail`.
+- **`ambient` en controles**: `primary` (por defecto) y `secondary`. El estado "activo" (marcado/encendido) usa **fondo sólido + glifo de color fijo** (`--color-primary-700`/`--color-primary-50`, y `--color-accent-700` con glifo blanco para `secondary`); `--color-accent-700` no existe en la paleta de `ac-core`, se usa su fallback `#b45309`. Los bordes de los controles (elementos de interfaz) usan `--color-subtext` porque cumplen 3:1 contra el fondo en ambos temas (el texto con `--color-subtext` **no** cumple AA, por eso no se usa para texto activo).
+- **Estado deshabilitado sin `opacity` sobre texto**: se cambia el color (`--color-subtext` para texto, `--color-muted` para fondos/bordes). Los controles deshabilitados están exentos de contraste en WCAG.
+- **Foco y errores que dependen del tema**: cuando el color va directo sobre la página (borde de foco, texto de error), se define una variable CSS por tema con `:host-context([data-theme='light'])` (ej. `--ac-input-focus`, `--ac-input-error` en `ac-input-basic`): tonos claros sobre fondo oscuro, oscuros sobre fondo claro. El rojo `--color-danger` solo sirve como borde, no como color de texto (no llega a 4.5:1 sobre las superficies).
+- **Placeholder** con `color-mix()` (no `opacity`), para que el contraste se calcule contra el fondo del campo.
+- **Texto traducible (`this.t()`)**: `t()` solo conoce el `locales.json` del propio componente y, si no encuentra la clave, devuelve la clave misma. Los campos de texto de los controles (`label`, `placeholder`, `hint`, `error`, `text`) pasan por `this.t()`, así que aceptan tanto una clave como un literal. Para traducir claves **de la aplicación**, `ac-text-basic` exporta `addTextTranslations({ 'es-PE': { clave: 'texto' } })` y acepta la propiedad `translations` por instancia (orden: instancia → app → `locales.json` → la propia clave).
+- **Listas blancas** para valores que llegan a un template o atributo (`tag` en `ac-text-basic` va a `unsafeStatic`; `type` en `ac-input-basic`): un valor fuera de la lista cae al valor por defecto, nunca se usa tal cual.
+- **E2E**: `isFocused()` de WDIO mira el `document`, no el shadow root del componente — para saber si el campo interno tiene el foco, `browser.execute` con `host.shadowRoot.activeElement`.
 
 ## Dark-mode y colores de fondo sólido
 
@@ -122,7 +140,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **Nunca apliques `opacity` a texto** para "atenuarlo" (ver la sección de Dark-mode más arriba) — mismo motivo, mismo riesgo de romper contraste WCAG, y el mismo patrón apareció de nuevo acá en el link de "Documentación" (color pensado para fondo oscuro, usado directo sobre la página sin caja propia — mismo fix que en `ac-link-basic`: oscurecer con `:host-context([data-theme='light'])`).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
-> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
+> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`, `ac-text-basic`, `ac-input-basic`, `ac-checkbox-basic`, `ac-switch-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
 
 ## CLI (`ac`)
 

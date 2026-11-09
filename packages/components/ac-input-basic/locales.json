@@ -1,0 +1,20 @@
+{
+  "es-PE": {
+    "input-basic-email-label": "Correo electrónico",
+    "input-basic-email-placeholder": "nombre@empresa.com",
+    "input-basic-email-hint": "Usaremos este correo solo para avisarte.",
+    "input-basic-email-error": "Ingresa un correo válido."
+  },
+  "en-EN": {
+    "input-basic-email-label": "Email",
+    "input-basic-email-placeholder": "name@company.com",
+    "input-basic-email-hint": "We will only use this email to notify you.",
+    "input-basic-email-error": "Enter a valid email."
+  },
+  "pt-BR": {
+    "input-basic-email-label": "E-mail",
+    "input-basic-email-placeholder": "nome@empresa.com",
+    "input-basic-email-hint": "Usaremos este e-mail apenas para avisar você.",
+    "input-basic-email-error": "Digite um e-mail válido."
+  }
+}
