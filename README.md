@@ -14,10 +14,10 @@ Ver [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) para la estructura completa d
 
 ```bash
 cd packages/components
-node ../../cli/bin/ac.js component create ac-mi-componente   # o `ac component create ...` una vez instalado
+node ../../cli/bin/ac.js component:create ac-mi-componente   # o `ac component:create ...` una vez instalado
 ```
 
-Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`ac component create`, passthrough genérico `ac <script>`, etc.).
+Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`ac help`, `ac component:create`, passthrough genérico `ac <script>`, etc.).
 
 ## Desarrollo local
 
