@@ -147,6 +147,22 @@ El script para levantar el demo de un componente con Vite se llama **`component:
 
 > Esto resuelve el `.scss`. Los archivos `demo/public/*.html` (los `href` de cada `ac-demo-case`) siguen sin recargarse solos — `ac-demo-case` los carga una sola vez con `fetch()`, no son un módulo que Vite rastree. Ahí todavía hace falta recargar la pestaña a mano después de editarlos.
 
+### Consumir un paquete de `ac-lit` desde un proyecto externo (sin publicar a npm)
+
+Mientras ningún paquete esté publicado, un proyecto fuera de este monorepo (ej. un componente personal armado con `ac component create` en otra carpeta, usando componentes del catálogo como dependencia) los consume con el protocolo `link:` de pnpm en vez de una versión real:
+
+```json
+"dependencies": {
+  "@ac-components/ac-button-basic": "link:G:/ac-lit/packages/components/ac-button-basic"
+}
+```
+
+Dos cosas a tener en cuenta, encontradas armando el primer componente personal así:
+
+- **Cada `"workspace:^"` del `package.json` generado por el scaffold hay que reemplazarlo por un `link:`** apuntando a la ruta real dentro de `ac-lit` — `workspace:^` solo se resuelve dentro del workspace de pnpm de `ac-lit`. Esto incluye los 5 paquetes base que usa cualquier componente (`ac-component-mixin`, `ac-intl-mixin`, `ac-core`, `ac-demo-content`, `ac-e2e-testing`), más los componentes reales que se quieran usar.
+- **Los scripts `build:styles`/`build:styles:watch` generados usan una ruta relativa** (`../../../scripts/compile-scss-to-lit.cjs`) que asume que el componente vive 3 niveles adentro de `ac-lit` (`packages/components/x/`). Afuera del monorepo hay que cambiarla a la ruta absoluta del script (`node G:/ac-lit/scripts/compile-scss-to-lit.cjs ...`).
+- **`src/*.styles.js` es un archivo generado y gitignorado** — no existe hasta que alguien corre `build:styles`/`build`/`test`/`component:serve` para ese paquete _dentro de `ac-lit`_. Un proyecto externo que linkea un componente que nunca se construyó ahí se va a encontrar con `Failed to resolve import "./x.styles.js"` al levantar su demo. **No hay un hook automático que lo resuelva**: se probó agregar un script `prepare` (el mecanismo estándar de npm para "compilar antes de ser consumido") y pnpm **no lo corre para dependencias `link:`** — solo lo corre para paquetes del propio workspace. Mientras no se publiquen los paquetes de verdad (con el build incluido en lo que se publica), la regla práctica es: antes de linkear un paquete desde afuera, asegurate de haber corrido al menos una vez `pnpm build` (o `pnpm run build:styles`) para ese paquete dentro de `ac-lit`.
+
 ## Testing
 
 - `@open-wc/testing` + `@web/test-runner`, un archivo `*.test.js` por componente en `test/`.
