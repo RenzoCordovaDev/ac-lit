@@ -1,0 +1,34 @@
+<section>
+  <h2>Etiquetas desde <code>locales.json</code></h2>
+  <ac-tabs-basic
+    data-testid="tabs-i18n"
+    a11y-label="Cuenta"
+    tabs='[{"id":"profile","label":"tabs-basic-profile"},{"id":"security","label":"tabs-basic-security"},{"id":"billing","label":"tabs-basic-billing"}]'
+  >
+    <div slot="profile">Datos del perfil.</div>
+    <div slot="security">Contraseña y verificación en dos pasos.</div>
+    <div slot="billing">Métodos de pago y facturas.</div>
+  </ac-tabs-basic>
+</section>
+
+<section>
+  <h2>Muchas pestañas (la lista hace scroll horizontal)</h2>
+  <ac-tabs-basic
+    data-testid="tabs-many"
+    a11y-label="Muchas pestañas"
+    tabs='["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]'
+  >
+    <div slot="Enero">Resumen de enero.</div>
+    <div slot="Febrero">Resumen de febrero.</div>
+    <div slot="Marzo">Resumen de marzo.</div>
+    <div slot="Abril">Resumen de abril.</div>
+    <div slot="Mayo">Resumen de mayo.</div>
+    <div slot="Junio">Resumen de junio.</div>
+    <div slot="Julio">Resumen de julio.</div>
+    <div slot="Agosto">Resumen de agosto.</div>
+    <div slot="Septiembre">Resumen de septiembre.</div>
+    <div slot="Octubre">Resumen de octubre.</div>
+    <div slot="Noviembre">Resumen de noviembre.</div>
+    <div slot="Diciembre">Resumen de diciembre.</div>
+  </ac-tabs-basic>
+</section>

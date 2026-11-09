@@ -1,0 +1,42 @@
+<section>
+  <h2>Tamaños (<code>size</code>)</h2>
+  <div class="row">
+    <ac-button-basic data-testid="open-offset" data-open-modal="modal-offset"
+      >Con espacio arriba (offset)</ac-button-basic
+    >
+    <ac-button-basic data-testid="open-half" data-open-modal="modal-half"
+      >Media pantalla (half)</ac-button-basic
+    >
+    <ac-button-basic data-testid="open-full" data-open-modal="modal-full"
+      >Pantalla completa (full)</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-modal-basic id="modal-offset" data-testid="modal-offset" header="Con espacio arriba">
+  <p>
+    El tamaño <code>offset</code> (por defecto) deja un hueco arriba, controlado con
+    <code>--ac-modal-basic-offset</code>.
+  </p>
+</ac-modal-basic>
+
+<ac-modal-basic id="modal-half" data-testid="modal-half" size="half" header="Media pantalla">
+  <p>El tamaño <code>half</code> ocupa hasta la mitad de la pantalla.</p>
+</ac-modal-basic>
+
+<ac-modal-basic id="modal-full" data-testid="modal-full" size="full" header="Pantalla completa">
+  <p>El tamaño <code>full</code> cubre toda la altura de la pantalla.</p>
+</ac-modal-basic>
+
+<section>
+  <h2>Título por defecto</h2>
+  <div class="row">
+    <ac-button-basic data-testid="open-default-title" data-open-modal="modal-default-title"
+      >Modal sin <code>header</code></ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-modal-basic id="modal-default-title" data-testid="modal-default-title" size="half">
+  <p>Sin la propiedad <code>header</code>, el título es un texto por defecto traducido.</p>
+</ac-modal-basic>

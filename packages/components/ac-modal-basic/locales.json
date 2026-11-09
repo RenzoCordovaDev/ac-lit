@@ -1,0 +1,23 @@
+{
+  "es-PE": {
+    "modal-basic-title": "Título",
+    "modal-basic-close": "Cerrar",
+    "modal-basic-accept": "Aceptar",
+    "modal-basic-cancel": "Cancelar",
+    "modal-basic-learn-more": "Saber más"
+  },
+  "en-EN": {
+    "modal-basic-title": "Title",
+    "modal-basic-close": "Close",
+    "modal-basic-accept": "Accept",
+    "modal-basic-cancel": "Cancel",
+    "modal-basic-learn-more": "Learn more"
+  },
+  "pt-BR": {
+    "modal-basic-title": "Título",
+    "modal-basic-close": "Fechar",
+    "modal-basic-accept": "Aceitar",
+    "modal-basic-cancel": "Cancelar",
+    "modal-basic-learn-more": "Saiba mais"
+  }
+}

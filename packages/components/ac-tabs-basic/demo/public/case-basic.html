@@ -1,0 +1,29 @@
+<section>
+  <h2>Pestañas con paneles por slot</h2>
+  <ac-tabs-basic
+    data-testid="tabs-basic"
+    a11y-label="Ajustes de la cuenta"
+    tabs='[{"id":"general","label":"General"},{"id":"notifications","label":"Notificaciones"},{"id":"advanced","label":"Avanzado","disabled":true},{"id":"about","label":"Acerca de"}]'
+  >
+    <div slot="general"><p data-testid="panel-general">Ajustes generales de la cuenta.</p></div>
+    <div slot="notifications">
+      <p data-testid="panel-notifications">Elige qué avisos recibes.</p>
+    </div>
+    <div slot="advanced"><p>Panel de una pestaña deshabilitada.</p></div>
+    <div slot="about"><p data-testid="panel-about">Versión y licencias.</p></div>
+  </ac-tabs-basic>
+</section>
+
+<section>
+  <h2>Pestaña inicial (<code>selected</code>)</h2>
+  <ac-tabs-basic
+    data-testid="tabs-selected"
+    selected="two"
+    a11y-label="Ejemplo con pestaña inicial"
+    tabs='["one","two","three"]'
+  >
+    <div slot="one">Contenido de one</div>
+    <div slot="two"><span data-testid="panel-two">Contenido de two</span></div>
+    <div slot="three">Contenido de three</div>
+  </ac-tabs-basic>
+</section>

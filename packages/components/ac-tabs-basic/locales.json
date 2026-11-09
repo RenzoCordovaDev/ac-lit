@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "tabs-basic-profile": "Perfil",
+    "tabs-basic-security": "Seguridad",
+    "tabs-basic-billing": "Facturación"
+  },
+  "en-EN": {
+    "tabs-basic-profile": "Profile",
+    "tabs-basic-security": "Security",
+    "tabs-basic-billing": "Billing"
+  },
+  "pt-BR": {
+    "tabs-basic-profile": "Perfil",
+    "tabs-basic-security": "Segurança",
+    "tabs-basic-billing": "Faturamento"
+  }
+}

@@ -1,0 +1,70 @@
+<section>
+  <h2>Pie con botones y enlace</h2>
+  <div class="row">
+    <ac-button-basic data-testid="open-footer" data-open-modal="modal-footer"
+      >Abrir con pie</ac-button-basic
+    >
+    <ac-button-basic data-testid="open-persistent" data-open-modal="modal-persistent"
+      >Persistente</ac-button-basic
+    >
+    <ac-button-basic data-testid="open-long" data-open-modal="modal-long"
+      >Contenido largo</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-modal-basic
+  id="modal-footer"
+  data-testid="modal-footer"
+  data-close-on-primary
+  data-close-on-secondary
+  size="half"
+  header="Confirmar acción"
+  primary-text="modal-basic-accept"
+  secondary-text="modal-basic-cancel"
+  link-text="modal-basic-learn-more"
+  link-href="#condiciones"
+>
+  <p>
+    El pie admite hasta dos botones y un enlace, todos configurados por propiedades. Cada uno
+    dispara su propio evento.
+  </p>
+</ac-modal-basic>
+
+<ac-modal-basic
+  id="modal-persistent"
+  data-testid="modal-persistent"
+  data-close-on-primary
+  persistent
+  size="half"
+  header="Modal persistente"
+  primary-text="Entendido"
+>
+  <p>
+    Con <code>persistent</code> no se cierra con Esc ni al pulsar fuera; solo con su botón de cerrar
+    o desde el código.
+  </p>
+</ac-modal-basic>
+
+<ac-modal-basic
+  id="modal-long"
+  data-testid="modal-long"
+  header="Contenido largo"
+  primary-text="modal-basic-accept"
+  primary-disabled
+  secondary-text="modal-basic-cancel"
+  data-close-on-secondary
+>
+  <p>El cuerpo hace scroll cuando el contenido no entra, y la cabecera y el pie quedan fijos.</p>
+  <p>Párrafo 2: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  <p>Párrafo 3: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <p>Párrafo 4: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+  <p>Párrafo 5: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+  <p>Párrafo 6: Excepteur sint occaecat cupidatat non proident, sunt in culpa.</p>
+  <p>Párrafo 7: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+  <p>Párrafo 8: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <p>Párrafo 9: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+  <p>Párrafo 10: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+  <p>Párrafo 11: Excepteur sint occaecat cupidatat non proident, sunt in culpa.</p>
+  <p>Párrafo 12: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+</ac-modal-basic>

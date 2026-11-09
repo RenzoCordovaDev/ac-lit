@@ -26,7 +26,10 @@ ac-lit/
 │       ├── ac-switch-basic/
 │       ├── ac-select-basic/
 │       ├── ac-slider-basic/
-│       └── ac-expandable-basic/
+│       ├── ac-expandable-basic/
+│       ├── ac-modal-basic/
+│       ├── ac-toast-basic/
+│       └── ac-tabs-basic/
 ├── docs/
 ├── pnpm-workspace.yaml
 └── package.json
@@ -93,6 +96,21 @@ Patrones comunes de `ac-checkbox-basic`, `ac-switch-basic`, `ac-input-basic` y `
 - **`ac-expandable-basic`**: la altura se anima con `grid-template-rows: 0fr → 1fr` (no hace falta conocer la altura del contenido). Cerrado, el panel lleva `inert` + `visibility: hidden` (con retardo para dejar terminar la animación): así su contenido no recibe foco ni se lee. El evento `-toggle` se emite en `updated()` cada vez que `open` cambia (usuario, `show()`/`hide()` o grupo) **excepto** en la primera renderización (`changed.get('open') === undefined`).
 - **`aria-label` que contiene el texto visible (WCAG 2.5.3 / axe `label-content-name-mismatch`)**: si un botón muestra un número (ej. el contador del botón de eventos de `ac-demo-content`), el `aria-label` debe incluirlo como **palabra suelta** — `"Ver eventos disparados: 1"` pasa, `"Ver eventos disparados (1)"` falla (encontrado al disparar un evento antes del chequeo axe en `ac-expandable-basic`).
 
+## Superposiciones y navegación (modal, toast, tabs)
+
+Patrones de `ac-modal-basic`, `ac-toast-basic` y `ac-tabs-basic`:
+
+- **Capa superior nativa en vez de `z-index`**: el modal usa `<dialog>.showModal()` (foco atrapado, `Escape`, fondo inerte, foco devuelto al cerrar) y el toast usa `popover="manual"` + `showPopover()`. Un `<dialog>`/`[popover]` cerrado lleva `display: none` del navegador: el `display` propio del toast se declara **solo en `:popover-open`**, o quedaría siempre visible.
+- **Animación de salida**: un `<dialog>`/`popover` no se puede animar al cerrar si se llama `close()`/`hidePopover()` de inmediato. El componente pone una clase `--closing`, espera `animationend` (filtrando `event.target`, porque burbujean los de los hijos) y recién entonces cierra, con un tope por `setTimeout` por si el evento no llega. Con `prefers-reduced-motion` (`animationDuration` calculada = 0) cierra de inmediato. Reabrir durante la salida la cancela (token de cierre). La clase se maneja con `classList` y no con un binding de Lit, para que un re-render no la borre.
+- **`open` y su evento**: la propiedad `open` (reflejada) es la fuente de verdad y `updated()` hace el trabajo de DOM. El evento de apertura/cierre se emite en `updated()` cuando `open` cambia, **excepto** en la primera renderización (`changed.get('open') === undefined`). El motivo del cierre (`reason`: `close-button`, `escape`, `backdrop`, `timeout`, `api`, `native`) se guarda antes de poner `open = false`.
+- **Dependencias entre componentes del catálogo**: `ac-modal-basic` reutiliza `ac-button-basic` y `ac-link-basic` con `import '@ac-components/ac-button-basic'` (el `index.js` de cada uno se registra como efecto) y `"workspace:^"` en `dependencies`. Los eventos internos (`ac-button-basic-click`) se detienen con `stopPropagation()` y el modal expone los suyos (`-primary-click`, `-secondary-click`, `-link-click`): la API pública es la del componente contenedor, no la de sus piezas. Texto de botones/enlace: el modal lo traduce con su propio `this.t()` y se lo pasa ya traducido.
+- **Modal — `size`**: `offset` (hueco superior, por defecto), `half` (mitad de la pantalla) y `full`. Se miden contra la **pantalla**: un `<dialog>` modal vive en la capa superior, no dentro de su contenedor en el DOM. Los botones del pie no cierran el modal por sí solos (el consumidor decide).
+- **Toast — región viva siempre presente**: un elemento que aparece ya con su texto no se anuncia de forma fiable, así que el mensaje se anuncia desde un `role="status"` (o `role="alert"` para `danger`) que existe siempre y cuyo contenido cambia; el texto visible va `aria-hidden`. El cierre automático se **pausa** con puntero encima o foco dentro (WCAG 2.2.1). Los fondos son los tokens semánticos fijos de `ac-badge-basic` con su color de texto calculado.
+- **Toast — apilado**: registro en memoria por posición (`top`/`bottom`), mismo patrón de "Componentes con estado compartido": cada toast se desplaza según la altura de los anteriores y se reacomoda cuando uno se cierra o sale del DOM.
+- **Tabs**: panel por **slot con el nombre del `id`** de la pestaña (`<div slot="general">`), sin componentes hijos. Patrón WAI-ARIA completo (roles, _roving tabindex_, flechas con vuelta, `Home`/`End`, saltando deshabilitadas, activación automática, paneles enfocables). `ac-tabs-basic-change` solo se emite por interacción del usuario (como un `change` nativo); `selected` asignado desde código no lo emite.
+- **Demos con superposiciones**: los casos se cargan con `fetch` + `innerHTML`, así que **no pueden traer `<script>`**. El cableado (abrir un modal, mostrar un toast) se hace en el `demo.js` por delegación de eventos con atributos de datos (`data-open-modal`, `data-show-toast`). Al abrir un modal, la capa superior tapa el panel de eventos de `ac-demo-content`: en E2E hay que cerrarlo antes de leer el log.
+- **E2E**: `[part="x"]` puede coincidir con un `part` homónimo **dentro** de otro componente (ej. `ac-link-basic` también tiene `part="link"`) y WDIO falla por modo estricto: se acota por etiqueta (`ac-link-basic[part="link"]`). Un desplazamiento animado (apilado del toast) se espera con `waitUntil`, no se mide al instante. Para leer la pestaña activa o el foco en un shadow root se usa `browser.execute`.
+
 ## Dark-mode y colores de fondo sólido
 
 Un componente que pinta un fondo sólido con un color de texto **fijo** (ej. un badge: fondo de color + texto blanco/negro) debe usar los tokens semánticos fijos (`--color-neutral`, `--color-success`, `--color-warning`, `--color-danger` — no se redefinen en `modern-warm-palette-light.css`), **nunca** `--color-muted`/`--color-bg`/`--color-surface` (que sí cambian entre `dark-mode` claro/oscuro). Si no, el contraste se rompe al activar modo claro — encontrado así en `ac-badge-basic` (ver `packages/base/ac-core/README.md`).
@@ -147,7 +165,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **Nunca apliques `opacity` a texto** para "atenuarlo" (ver la sección de Dark-mode más arriba) — mismo motivo, mismo riesgo de romper contraste WCAG, y el mismo patrón apareció de nuevo acá en el link de "Documentación" (color pensado para fondo oscuro, usado directo sobre la página sin caja propia — mismo fix que en `ac-link-basic`: oscurecer con `:host-context([data-theme='light'])`).
 - Ver [`packages/base/ac-demo-content/README.md`](../packages/base/ac-demo-content/README.md) para la API completa.
 
-> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`, `ac-text-basic`, `ac-input-basic`, `ac-checkbox-basic`, `ac-switch-basic`, `ac-select-basic`, `ac-slider-basic`, `ac-expandable-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
+> `ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`, `ac-text-basic`, `ac-input-basic`, `ac-checkbox-basic`, `ac-switch-basic`, `ac-select-basic`, `ac-slider-basic`, `ac-expandable-basic`, `ac-modal-basic`, `ac-toast-basic`, `ac-tabs-basic` y el template del CLI ya usan `ac-demo-content` (demos a mano + `variant` eliminados). Cualquier componente nuevo parte de esto por defecto vía `ac component:create`.
 
 ## CLI (`ac`)
 
