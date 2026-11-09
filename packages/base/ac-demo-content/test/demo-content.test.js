@@ -271,6 +271,22 @@ suite('ac-demo-content', () => {
     expect(text).to.include('"value": 1');
   });
 
+  test('exposes the event count as a standalone word in the events button label', async () => {
+    const el = await fixture(
+      html`<ac-demo-content events="ac-test-count-event"></ac-demo-content>`,
+    );
+    document.dispatchEvent(new CustomEvent('ac-test-count-event', { detail: {} }));
+    await aTimeout(10);
+    await el.updateComplete;
+
+    // El conteo visible ("1") debe ser una palabra suelta del nombre accesible: con
+    // "(1)" axe marca label-content-name-mismatch (WCAG 2.5.3).
+    const label = el.shadowRoot
+      .querySelector('.ac-demo-content__events-button')
+      .getAttribute('aria-label');
+    expect(label.split(/\s+/)).to.include('1');
+  });
+
   test('does not render a header without `name`/`tech`/`package-name`/`docs-href`', async () => {
     const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
     expect(el.shadowRoot.querySelector('.ac-demo-content__header')).to.not.exist;

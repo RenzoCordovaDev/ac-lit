@@ -1,0 +1,41 @@
+<section>
+  <h2>Obligatorio con error</h2>
+  <ac-select-basic
+    data-testid="select-error"
+    label="Plan"
+    required
+    placeholder="Elige un plan"
+    error="Selecciona un plan para continuar."
+    options='["Mensual","Anual"]'
+  ></ac-select-basic>
+</section>
+
+<section>
+  <h2>Opción deshabilitada</h2>
+  <ac-select-basic
+    data-testid="select-option-disabled"
+    label="Plan"
+    value="monthly"
+    options='[{"value":"monthly","label":"Mensual"},{"value":"annual","label":"Anual (agotado)","disabled":true}]'
+  ></ac-select-basic>
+</section>
+
+<section>
+  <h2>Deshabilitado</h2>
+  <ac-select-basic
+    data-testid="select-disabled"
+    label="Plan"
+    value="annual"
+    disabled
+    options='[{"value":"monthly","label":"Mensual"},{"value":"annual","label":"Anual"}]'
+  ></ac-select-basic>
+</section>
+
+<section>
+  <h2>Sin etiqueta visible (<code>a11y-label</code>)</h2>
+  <ac-select-basic
+    data-testid="select-a11y-label"
+    a11y-label="Idioma"
+    options='["Español","English"]'
+  ></ac-select-basic>
+</section>

@@ -1,0 +1,114 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-expandable-basic {
+  /* El foco depende del tema porque se dibuja sobre superficies que cambian
+     entre claro/oscuro. Ver "Controles de formulario y texto" en
+     docs/CONVENTIONS.md. */
+  --ac-expandable-accent: var(--color-primary-700, #047857);
+  --ac-expandable-focus: var(--color-primary-500, #10b981);
+
+  overflow: hidden;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: 0.65rem;
+}
+
+.ac-expandable--secondary {
+  --ac-expandable-accent: var(--color-accent-700, #b45309);
+  --ac-expandable-focus: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-expandable-basic {
+  --ac-expandable-focus: var(--color-primary-700, #047857);
+}
+
+:host-context([data-theme='light']) .ac-expandable--secondary {
+  --ac-expandable-focus: var(--color-accent-700, #b45309);
+}
+
+.ac-expandable-basic__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: none;
+  /* Franja de acento a la izquierda: indica qué panel está abierto. */
+  border-left: 3px solid transparent;
+  cursor: pointer;
+}
+
+:host([open]) .ac-expandable-basic__header {
+  border-left-color: var(--ac-expandable-accent);
+}
+
+.ac-expandable-basic__header:focus-visible {
+  outline: 2px solid var(--ac-expandable-focus);
+  outline-offset: -2px;
+}
+
+.ac-expandable-basic__header:disabled {
+  cursor: not-allowed;
+  color: var(--color-subtext, #787a80);
+}
+
+.ac-expandable-basic__chevron {
+  flex-shrink: 0;
+  transition: transform 200ms ease;
+}
+
+:host([open]) .ac-expandable-basic__chevron {
+  transform: rotate(180deg);
+}
+
+/* Animación de altura con grid (0fr → 1fr): no hace falta conocer la altura del
+   contenido. Cerrado, `visibility: hidden` (con retardo para dejar terminar la
+   animación) + `inert` sacan el contenido del foco y del árbol de accesibilidad. */
+.ac-expandable-basic__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 250ms ease,
+    visibility 0s linear 250ms;
+}
+
+:host([open]) .ac-expandable-basic__panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 250ms ease,
+    visibility 0s linear 0s;
+}
+
+.ac-expandable-basic__clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ac-expandable-basic__content {
+  padding: 0.25rem 1rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-expandable-basic__panel,
+  :host([open]) .ac-expandable-basic__panel,
+  .ac-expandable-basic__chevron {
+    transition: none;
+  }
+}

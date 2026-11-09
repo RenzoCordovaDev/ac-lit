@@ -1,0 +1,145 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-slider-basic {
+  /* Colores de relleno y foco: tokens fijos para el relleno; el foco depende
+     del tema porque se dibuja sobre la página. Ver "Controles de formulario y
+     texto" en docs/CONVENTIONS.md. */
+  --ac-slider-fill: var(--color-primary-700, #047857);
+  --ac-slider-thumb: var(--color-primary-50, #ecfdf5);
+  --ac-slider-focus: var(--color-primary-500, #10b981);
+  --ac-slider-track: var(--color-subtext, #787a80);
+  --ac-slider-percent: 0%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-slider--secondary {
+  --ac-slider-fill: var(--color-accent-700, #b45309);
+  --ac-slider-thumb: #fff;
+  --ac-slider-focus: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-slider-basic {
+  --ac-slider-focus: var(--color-primary-700, #047857);
+}
+
+:host-context([data-theme='light']) .ac-slider--secondary {
+  --ac-slider-focus: var(--color-accent-700, #b45309);
+}
+
+.ac-slider-basic__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ac-slider-basic__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ac-slider-basic__value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ac-slider-basic__field {
+  appearance: none;
+  width: 100%;
+  height: 1.5rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ac-slider-basic__field:focus-visible {
+  outline: none;
+}
+
+/* Pista: tramo relleno (hasta --ac-slider-percent) + tramo vacío. WebKit/Blink
+   y Firefox usan pseudo-elementos distintos y NO se pueden agrupar en una sola
+   regla (un selector desconocido invalida la regla entera). */
+.ac-slider-basic__field::-webkit-slider-runnable-track {
+  height: 0.4rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--ac-slider-fill) var(--ac-slider-percent),
+    var(--ac-slider-track) var(--ac-slider-percent)
+  );
+}
+
+.ac-slider-basic__field::-moz-range-track {
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--ac-slider-track);
+}
+
+.ac-slider-basic__field::-moz-range-progress {
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--ac-slider-fill);
+}
+
+.ac-slider-basic__field::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -0.425rem;
+  border-radius: 50%;
+  background: var(--ac-slider-thumb);
+  border: 2px solid var(--ac-slider-fill);
+  box-sizing: border-box;
+  transition: box-shadow 120ms ease;
+}
+
+.ac-slider-basic__field::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--ac-slider-thumb);
+  border: 2px solid var(--ac-slider-fill);
+  box-sizing: border-box;
+  transition: box-shadow 120ms ease;
+}
+
+.ac-slider-basic__field:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--ac-slider-focus);
+}
+
+.ac-slider-basic__field:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--ac-slider-focus);
+}
+
+.ac-slider-basic__hint {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+/* Deshabilitado: se cambian los colores, no se aplica opacity al texto (ver
+   docs/CONVENTIONS.md). Los controles deshabilitados están exentos de contraste. */
+.ac-slider-basic__field:disabled {
+  cursor: not-allowed;
+  --ac-slider-fill: var(--color-subtext, #787a80);
+  --ac-slider-thumb: var(--color-muted, #313335);
+  --ac-slider-track: var(--color-muted, #313335);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-slider-basic__field::-webkit-slider-thumb,
+  .ac-slider-basic__field::-moz-range-thumb {
+    transition: none;
+  }
+}

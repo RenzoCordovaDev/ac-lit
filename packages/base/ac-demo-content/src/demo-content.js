@@ -548,7 +548,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       <button
         type="button"
         class="ac-demo-content__events-button"
-        aria-label="Ver eventos disparados (${this._eventLog.length})"
+        aria-label="Ver eventos disparados: ${this._eventLog.length}"
         @click=${this._onEventsButtonClick}
       >
         <svg

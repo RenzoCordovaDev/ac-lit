@@ -290,6 +290,46 @@ importers:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
 
+  packages/components/ac-expandable-basic:
+    dependencies:
+      '@ac-base/ac-component-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-component-mixin
+      '@ac-base/ac-intl-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-intl-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-base/ac-e2e-testing':
+        specifier: workspace:^
+        version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      concurrently:
+        specifier: ^9.1.0
+        version: 9.2.5
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      sass:
+        specifier: ^1.79.4
+        version: 1.108.1
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
   packages/components/ac-input-basic:
     dependencies:
       '@ac-base/ac-component-mixin':
@@ -371,6 +411,86 @@ importers:
         version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
 
   packages/components/ac-radio-basic:
+    dependencies:
+      '@ac-base/ac-component-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-component-mixin
+      '@ac-base/ac-intl-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-intl-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-base/ac-e2e-testing':
+        specifier: workspace:^
+        version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      concurrently:
+        specifier: ^9.1.0
+        version: 9.2.5
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      sass:
+        specifier: ^1.79.4
+        version: 1.108.1
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-select-basic:
+    dependencies:
+      '@ac-base/ac-component-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-component-mixin
+      '@ac-base/ac-intl-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-intl-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-base/ac-e2e-testing':
+        specifier: workspace:^
+        version: link:../../base/ac-e2e-testing
+      '@ac-base/cli':
+        specifier: workspace:^
+        version: link:../../../cli
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      concurrently:
+        specifier: ^9.1.0
+        version: 9.2.5
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      sass:
+        specifier: ^1.79.4
+        version: 1.108.1
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-slider-basic:
     dependencies:
       '@ac-base/ac-component-mixin':
         specifier: workspace:^
