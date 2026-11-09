@@ -9,6 +9,7 @@
   },
   "files": [
     "bin",
+    "scripts",
     "src",
     "templates"
   ],
@@ -19,6 +20,7 @@
     "test": "node --test \"test/**/*.test.js\""
   },
   "dependencies": {
-    "commander": "^15.1.0"
+    "commander": "^15.1.0",
+    "sass": "^1.79.4"
   }
 }

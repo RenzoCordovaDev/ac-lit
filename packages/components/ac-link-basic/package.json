@@ -18,8 +18,8 @@
     "access": "public"
   },
   "scripts": {
-    "build:styles": "node ../../../scripts/compile-scss-to-lit.cjs src/link-basic.styles.scss src/link-basic.styles.js LinkBasicStyles",
-    "build:styles:watch": "node ../../../scripts/compile-scss-to-lit.cjs src/link-basic.styles.scss src/link-basic.styles.js LinkBasicStyles --watch",
+    "build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/link-basic.styles.scss src/link-basic.styles.js LinkBasicStyles",
+    "build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/link-basic.styles.scss src/link-basic.styles.js LinkBasicStyles --watch",
     "component:serve": "pnpm run build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run build:styles:watch\" \"vite demo\"",
     "build": "pnpm run build:styles && vite build",
     "preview": "vite preview",
@@ -40,6 +40,7 @@
     "@ac-base/ac-core": "workspace:^",
     "@ac-base/ac-demo-content": "workspace:^",
     "@ac-base/ac-e2e-testing": "workspace:^",
+    "@ac-base/cli": "workspace:^",
     "@open-wc/testing": "^4.0.0",
     "@web/test-runner": "^0.18.0",
     "concurrently": "^9.1.0",

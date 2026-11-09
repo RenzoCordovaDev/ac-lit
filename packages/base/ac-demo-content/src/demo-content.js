@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit';
 import { ComponentMixin } from '@ac-base/ac-component-mixin';
 import { setGlobalLocale } from '@ac-base/ac-intl-mixin';
 // Authored in demo-content.styles.scss, compiled to demo-content.styles.js by
-// `pnpm run build:styles` (scripts/compile-scss-to-lit.cjs). The compiled file
+// `pnpm run build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
 // is gitignored — run `pnpm install` then `pnpm build` or `pnpm dev` to generate it.
 import { DemoContentStyles } from './demo-content.styles.js';
 
