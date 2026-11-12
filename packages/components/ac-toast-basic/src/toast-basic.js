@@ -349,11 +349,18 @@ export class ToastBasic extends ComponentMixin(LitElement) {
       this._boundaryObserver.observe(boundary);
     }
     window.addEventListener('resize', this._onViewportChange);
+    // El marco de dispositivo es un elemento normal (no top-layer): si la
+    // página scrollea, se mueve. El ancla ya fijada no se puede recalcular
+    // mientras el toast sigue abierto (ver nota de `_syncContainedPosition`),
+    // pero sí mantiene la referencia al día para la próxima apertura.
+    // `capture` porque el scroll no burbujea.
+    window.addEventListener('scroll', this._onViewportChange, { passive: true, capture: true });
   }
 
   _stopBoundaryTracking() {
     this._boundaryObserver?.disconnect();
     window.removeEventListener('resize', this._onViewportChange);
+    window.removeEventListener('scroll', this._onViewportChange, { capture: true });
   }
 
   // Cierre automático. Se pausa mientras el puntero está encima o el foco está

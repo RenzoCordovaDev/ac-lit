@@ -260,7 +260,11 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     // Se recorta contra el viewport REAL: un dispositivo simulado más alto que
     // la ventana real (ej. "móvil" con ventanas de navegador bajas) no debe
     // producir un modal con contenido fuera de lo que se puede ver/alcanzar
-    // (`position: fixed` no se desplaza con el scroll de la página).
+    // (`position: fixed` no se desplaza con el scroll de la página, así que
+    // nada más allá del borde de la ventana es alcanzable de ningún modo).
+    // Con el seguimiento de scroll (`_startBoundaryTracking`), esto se
+    // recalcula en cada scroll: dejar de recortar en cuanto el borde real del
+    // marco entra en pantalla es automático.
     const top = Math.max(rect.top, 0);
     const left = Math.max(rect.left, 0);
     const width = Math.max(Math.min(rect.right, window.innerWidth) - left, 0);
@@ -281,11 +285,17 @@ export class ModalBasic extends ComponentMixin(LitElement) {
       this._boundaryObserver.observe(boundary);
     }
     window.addEventListener('resize', this._onViewportChange);
+    // El marco de dispositivo es un elemento normal (no top-layer): si la
+    // página scrollea, se mueve — y el modal, fijo al viewport real, se
+    // quedaría atrás si no se recalcula. `capture` porque el scroll no
+    // burbujea (hace falta también el de un contenedor interno).
+    window.addEventListener('scroll', this._onViewportChange, { passive: true, capture: true });
   }
 
   _stopBoundaryTracking() {
     this._boundaryObserver?.disconnect();
     window.removeEventListener('resize', this._onViewportChange);
+    window.removeEventListener('scroll', this._onViewportChange, { capture: true });
   }
 
   _onCancel(event) {
