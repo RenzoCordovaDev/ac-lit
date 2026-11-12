@@ -40,6 +40,36 @@
   bottom: auto;
 }
 
+/* Modo "contenido": sigue usando `showPopover()` (capa superior nativa intacta
+   — ver "Superposiciones" en CONVENTIONS.md), solo cambia DÓNDE se dibuja: en
+   vez del viewport real, el área que el componente midió de `getBoundary()`.
+   El navegador fija top/left/bottom en el momento exacto de `showPopover()`
+   (cambiarlos después de abierto no mueve nada — probado empíricamente), así
+   que `_syncContainedPosition()` solo pone el ANCLA estática (`left`/`bottom`
+   o `top`, el borde del marco + el gap) ANTES de abrir. El centrado
+   horizontal (`translateX(-50%)`, no necesita saber el ancho propio) y el
+   desplazamiento del apilado (`--ac-toast-offset`, cambia mientras sigue
+   abierto) van en `transform`, que sí se actualiza en vivo — por eso también
+   tiene su propia variante de keyframes (abajo): no puede combinarse con un
+   `transform` fijo aparte, los keyframes reemplazan la propiedad entera. */
+:host([contained]) .ac-toast-basic:popover-open {
+  left: var(--ac-toast-basic-contained-left, 0px);
+  right: auto;
+  bottom: var(--ac-toast-basic-contained-bottom, 0px);
+  transform: translateX(-50%) translateY(calc(var(--ac-toast-offset, 0px) * -1));
+  max-width: min(
+    var(--ac-toast-basic-max-width, 32rem),
+    var(--ac-toast-basic-contained-maxw, calc(100vw - 2rem))
+  );
+  margin: 0;
+}
+
+:host([contained][position='top']) .ac-toast-basic:popover-open {
+  top: var(--ac-toast-basic-contained-top, 0px);
+  bottom: auto;
+  transform: translateX(-50%) translateY(var(--ac-toast-offset, 0px));
+}
+
 /* Fondos sólidos con texto fijo: tokens semánticos que NO cambian entre temas, y el
    color del texto calculado contra ESE fondo (mismos valores que ac-badge-basic). */
 .ac-toast--neutral {
@@ -172,6 +202,65 @@
   }
 }
 
+/* Variantes para `[contained]`: mismo movimiento de entrada/salida, pero
+   combinado en la MISMA propiedad `transform` con el centrado horizontal y el
+   offset de apilado (ver el comentario de la regla `:host([contained])` de
+   arriba) — un keyframe reemplaza `transform` entero, no se puede animar solo
+   una parte y dejar la otra fija. */
+/* No referencian `--ac-toast-offset` (a diferencia del `transform` estático de
+   la regla `:host([contained])`): un keyframe con un `calc()` sobre una
+   variable no asienta bien en los navegadores probados (queda congelado en el
+   valor de "from"). El costo es cosmético — un toast apilado puede animar su
+   entrada sin su offset y "saltar" a su sitio ya con la animación terminada —
+   y solo mientras dura la animación (~250ms). */
+@keyframes ac-toast-in-bottom-contained {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes ac-toast-out-bottom-contained {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(1.25rem);
+  }
+}
+
+@keyframes ac-toast-in-top-contained {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes ac-toast-out-top-contained {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-1.25rem);
+  }
+}
+
 .ac-toast-basic:popover-open {
   animation: ac-toast-in-bottom 250ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
@@ -180,12 +269,28 @@
   animation-name: ac-toast-in-top;
 }
 
+:host([contained]) .ac-toast-basic:popover-open {
+  animation-name: ac-toast-in-bottom-contained;
+}
+
+:host([contained][position='top']) .ac-toast-basic:popover-open {
+  animation-name: ac-toast-in-top-contained;
+}
+
 .ac-toast-basic:popover-open.ac-toast-basic--closing {
   animation: ac-toast-out-bottom 200ms ease-in forwards;
 }
 
 :host([position='top']) .ac-toast-basic:popover-open.ac-toast-basic--closing {
   animation-name: ac-toast-out-top;
+}
+
+:host([contained]) .ac-toast-basic:popover-open.ac-toast-basic--closing {
+  animation-name: ac-toast-out-bottom-contained;
+}
+
+:host([contained][position='top']) .ac-toast-basic:popover-open.ac-toast-basic--closing {
+  animation-name: ac-toast-out-top-contained;
 }
 
 @media (prefers-reduced-motion: reduce) {

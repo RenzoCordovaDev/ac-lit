@@ -45,8 +45,64 @@
   border-radius: 0;
 }
 
+/* Modo "contenido": sigue usando `showModal()` (foco/Escape/inert nativos
+   intactos — ver "Superposiciones" en CONVENTIONS.md), solo cambia DÓNDE se
+   dibuja: en vez del viewport real, el área que el componente midió de
+   `getBoundary()` (variables que pone `_syncContainedRect()`).
+   `right`/`bottom` se fuerzan a `auto` y el margen a 0: el valor por defecto
+   del navegador para `<dialog>` es `inset: 0`, y dejarlo puesto (junto con el
+   `margin: auto auto 0` de arriba) compite con nuestro `top`/`left`
+   explícitos y el navegador reparte el espacio sobrante contra el viewport
+   real, no contra el área medida. El centrado horizontal (cuando el ancho
+   del dispositivo supera `max-width`) se calcula aquí con `calc()/min()` en
+   vez de `margin: auto`, que tampoco puede centrar contra un rect
+   arbitrario. */
+:host([contained]) .ac-modal-basic {
+  position: fixed;
+  top: calc(var(--ac-modal-basic-contained-top, 0px) + var(--ac-modal-basic-offset, 3rem));
+  left: calc(
+    var(--ac-modal-basic-contained-left, 0px) +
+      (
+        var(--ac-modal-basic-contained-width, 100vw) - min(
+            var(--ac-modal-basic-contained-width, 100vw),
+            var(--ac-modal-basic-max-width, 48rem)
+          )
+      ) /
+      2
+  );
+  right: auto;
+  bottom: auto;
+  width: min(var(--ac-modal-basic-contained-width, 100vw), var(--ac-modal-basic-max-width, 48rem));
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) - var(--ac-modal-basic-offset, 3rem));
+  max-width: none;
+  margin: 0;
+}
+
+:host([contained][size='half']) .ac-modal-basic {
+  top: calc(
+    var(--ac-modal-basic-contained-top, 0px) + var(--ac-modal-basic-contained-height, 100vh) * 0.5
+  );
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) * 0.5);
+}
+
+:host([contained][size='full']) .ac-modal-basic {
+  top: var(--ac-modal-basic-contained-top, 0px);
+  left: var(--ac-modal-basic-contained-left, 0px);
+  width: var(--ac-modal-basic-contained-width, 100vw);
+  max-width: none;
+  height: var(--ac-modal-basic-contained-height, 100vh);
+}
+
 .ac-modal-basic::backdrop {
   background: rgba(0, 0, 0, 0.55);
+}
+
+:host([contained]) .ac-modal-basic::backdrop {
+  position: fixed;
+  top: var(--ac-modal-basic-contained-top, 0px);
+  left: var(--ac-modal-basic-contained-left, 0px);
+  width: var(--ac-modal-basic-contained-width, 100vw);
+  height: var(--ac-modal-basic-contained-height, 100vh);
 }
 
 .ac-modal-basic__panel {

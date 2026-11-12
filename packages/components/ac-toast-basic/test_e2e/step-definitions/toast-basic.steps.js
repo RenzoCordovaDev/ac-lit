@@ -83,18 +83,21 @@ Then('el toast {string} muestra el texto {string}', async function (testId, expe
 
 Then('el toast {string} aparece arriba de la pantalla', async function (testId) {
   const toast = componentProvider.find(ToastBasicPage, testId);
-  await browser.waitUntil(async () => (await toast.snapshot()).top < 100, {
-    timeout: 3000,
-    timeoutMsg: `El toast "${testId}" no aparece arriba`,
-  });
+  await browser.waitUntil(
+    async () => {
+      const { top, viewportTop } = await toast.snapshot();
+      return top - viewportTop < 100;
+    },
+    { timeout: 3000, timeoutMsg: `El toast "${testId}" no aparece arriba` },
+  );
 });
 
 Then('el toast {string} aparece abajo de la pantalla', async function (testId) {
   const toast = componentProvider.find(ToastBasicPage, testId);
   await browser.waitUntil(
     async () => {
-      const { bottom, viewportHeight } = await toast.snapshot();
-      return viewportHeight - bottom < 100;
+      const { bottom, viewportBottom } = await toast.snapshot();
+      return viewportBottom - bottom < 100;
     },
     { timeout: 3000, timeoutMsg: `El toast "${testId}" no aparece abajo` },
   );

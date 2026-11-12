@@ -8,15 +8,29 @@ export class ModalBasicPage extends ComponentObject {
   /** Datos del <dialog> interno, leídos en una sola llamada al navegador. */
   async snapshot() {
     return browser.execute(selector => {
-      const dialog = document.querySelector(selector).shadowRoot.querySelector('dialog');
+      const el = document.querySelector(selector);
+      const dialog = el.shadowRoot.querySelector('dialog');
       const rect = dialog.getBoundingClientRect();
+      // Si el modal está "contenido" (dentro de un ac-demo-content), se mide
+      // contra el marco de dispositivo simulado en vez del viewport real — ver
+      // "Superposiciones" en CONVENTIONS.md. Se leen las variables CSS que
+      // calcula `_syncContainedRect()` (ya recortadas al viewport real) en vez
+      // de medir `getBoundary()` de nuevo: deben coincidir con lo que el
+      // propio componente usó para dibujarse.
+      const px = value => parseFloat(value) || 0;
+      const style = el.contained ? getComputedStyle(el) : null;
       return {
         open: dialog.open,
         top: rect.top,
         height: rect.height,
         width: rect.width,
-        viewportHeight: window.innerHeight,
-        viewportWidth: window.innerWidth,
+        viewportTop: style ? px(style.getPropertyValue('--ac-modal-basic-contained-top')) : 0,
+        viewportHeight: style
+          ? px(style.getPropertyValue('--ac-modal-basic-contained-height'))
+          : window.innerHeight,
+        viewportWidth: style
+          ? px(style.getPropertyValue('--ac-modal-basic-contained-width'))
+          : window.innerWidth,
         title: dialog.querySelector('h2').textContent.trim(),
       };
     }, this.selector);

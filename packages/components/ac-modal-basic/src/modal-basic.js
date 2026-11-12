@@ -48,6 +48,7 @@ export class ModalBasic extends ComponentMixin(LitElement) {
       secondaryDisabled: { type: Boolean, attribute: 'secondary-disabled' },
       linkText: { type: String, attribute: 'link-text' },
       linkHref: { type: String, attribute: 'link-href' },
+      contained: { type: Boolean, reflect: true },
     };
   }
 
@@ -65,13 +66,23 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     this.linkText = '';
     this.linkHref = '';
     this.ambient = 'primary';
+    // `contained`: en vez del viewport real (lo que da `showModal()` por
+    // defecto), el modal se dibuja sobre el área que mide `getBoundary()` —
+    // pensado para que `ac-demo-content` simule un dispositivo acotado sin
+    // perder el foco/Escape/inert que da la capa superior nativa. Ver
+    // "Superposiciones" en CONVENTIONS.md.
+    this.contained = false;
+    this.getBoundary = null;
     this._closeReason = undefined;
     this._closeToken = 0;
     this._closeTimer = undefined;
+    this._boundaryObserver = undefined;
+    this._onViewportChange = this._syncContainedRect.bind(this);
   }
 
   disconnectedCallback() {
     clearTimeout(this._closeTimer);
+    this._stopBoundaryTracking();
     super.disconnectedCallback();
   }
 
@@ -102,6 +113,7 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     if (this.open) {
       this._cancelPendingClose();
       if (!dialog.open) dialog.showModal();
+      if (this.contained) this._startBoundaryTracking();
       // `undefined` = primera renderización: el estado inicial no es un cambio.
       if (previous !== undefined) this._emit('ac-modal-basic-open');
     } else if (dialog.open) {
@@ -220,6 +232,7 @@ export class ModalBasic extends ComponentMixin(LitElement) {
       clearTimeout(this._closeTimer);
       dialog.classList.remove(CLOSING_CLASS);
       if (dialog.open) dialog.close();
+      this._stopBoundaryTracking();
     };
 
     // Sin animación (prefers-reduced-motion) `animationend` nunca llega: se cierra ya.
@@ -236,6 +249,43 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     this._closeToken += 1;
     clearTimeout(this._closeTimer);
     this._dialog?.classList.remove(CLOSING_CLASS);
+  }
+
+  /** Mide `getBoundary()` y lo vuelca a variables CSS que usa `[contained]`. */
+  _syncContainedRect() {
+    if (typeof this.getBoundary !== 'function') return;
+    const boundary = this.getBoundary();
+    if (!boundary) return;
+    const rect = boundary.getBoundingClientRect();
+    // Se recorta contra el viewport REAL: un dispositivo simulado más alto que
+    // la ventana real (ej. "móvil" con ventanas de navegador bajas) no debe
+    // producir un modal con contenido fuera de lo que se puede ver/alcanzar
+    // (`position: fixed` no se desplaza con el scroll de la página).
+    const top = Math.max(rect.top, 0);
+    const left = Math.max(rect.left, 0);
+    const width = Math.max(Math.min(rect.right, window.innerWidth) - left, 0);
+    const height = Math.max(Math.min(rect.bottom, window.innerHeight) - top, 0);
+    this.style.setProperty('--ac-modal-basic-contained-top', `${top}px`);
+    this.style.setProperty('--ac-modal-basic-contained-left', `${left}px`);
+    this.style.setProperty('--ac-modal-basic-contained-width', `${width}px`);
+    this.style.setProperty('--ac-modal-basic-contained-height', `${height}px`);
+  }
+
+  _startBoundaryTracking() {
+    if (typeof this.getBoundary !== 'function') return;
+    this._syncContainedRect();
+    const boundary = this.getBoundary();
+    if (boundary) {
+      this._boundaryObserver ??= new ResizeObserver(this._onViewportChange);
+      this._boundaryObserver.disconnect();
+      this._boundaryObserver.observe(boundary);
+    }
+    window.addEventListener('resize', this._onViewportChange);
+  }
+
+  _stopBoundaryTracking() {
+    this._boundaryObserver?.disconnect();
+    window.removeEventListener('resize', this._onViewportChange);
   }
 
   _onCancel(event) {

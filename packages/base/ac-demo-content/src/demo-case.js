@@ -77,5 +77,8 @@ export class DemoCase extends HTMLElement {
     } catch (error) {
       this.textContent = `Error cargando "${this.href}": ${error.message}`;
     }
+    // ac-demo-content escucha esto para aplicar `contained`/`getBoundary` a los
+    // componentes recién insertados (ver "Superposiciones" en CONVENTIONS.md).
+    this.dispatchEvent(new CustomEvent('ac-demo-case-load', { bubbles: true }));
   }
 }
