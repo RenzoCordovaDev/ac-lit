@@ -1,0 +1,14 @@
+{
+  "es-PE": {
+    "transition-container-title": "Título",
+    "transition-container-back": "Volver"
+  },
+  "en-EN": {
+    "transition-container-title": "Title",
+    "transition-container-back": "Back"
+  },
+  "pt-BR": {
+    "transition-container-title": "Título",
+    "transition-container-back": "Voltar"
+  }
+}

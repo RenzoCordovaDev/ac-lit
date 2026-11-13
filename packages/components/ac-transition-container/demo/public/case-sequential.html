@@ -1,0 +1,42 @@
+<section>
+  <h2>Sub-pantalla (<code>header-type="first-level-sequential"</code>)</h2>
+  <div class="row">
+    <ac-button-basic data-testid="open-sequential" data-open-transition="transition-sequential"
+      >Abrir sub-pantalla</ac-button-basic
+    >
+    <ac-button-basic
+      data-testid="open-sequential-persistent"
+      data-open-transition="transition-sequential-persistent"
+      >Abrir sub-pantalla persistente</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-transition-container
+  id="transition-sequential"
+  data-testid="transition-sequential"
+  data-close-on-back
+  header-text="Zona de emergencia"
+  header-type="first-level-sequential"
+>
+  <p>
+    Con <code>header-type="first-level-sequential"</code> la cabecera muestra la flecha de volver.
+    El componente nunca se cierra solo al emitir
+    <code>ac-transition-container-header-back-icon-click</code> — este caso escucha ese evento en
+    <code>demo.js</code> (atributo <code>data-close-on-back</code>) y llama a <code>.hide()</code>
+    para cerrar la sub-pantalla.
+  </p>
+</ac-transition-container>
+
+<ac-transition-container
+  id="transition-sequential-persistent"
+  data-testid="transition-sequential-persistent"
+  header-text="Confirmación"
+  header-type="first-level-sequential"
+  persistent
+>
+  <p>
+    Con <code>persistent</code>, Escape no cierra la sub-pantalla; solo la flecha de volver (que
+    aquí no cierra nada por sí misma) o el código.
+  </p>
+</ac-transition-container>
