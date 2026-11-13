@@ -32,13 +32,25 @@
   --ac-transition-container-focus: var(--color-primary-700, #047857);
 }
 
-/* Modo "contenido": sigue usando `showModal()` (foco/Escape/inert nativos
-   intactos — ver "Superposiciones" en CONVENTIONS.md), solo cambia DÓNDE se
-   dibuja: en vez del viewport real, el área que el componente midió de
-   `getBoundary()` (variables que pone `_syncContainedRect()`). Sin variantes
-   de tamaño, siempre cubre el área medida entera. */
+/* Modo "contenido": renuncia a la capa superior nativa (`showModal()` bloquea
+   SIEMPRE toda la página real — ver "Superposiciones" en CONVENTIONS.md) y se
+   abre con `dialog.show()` (no modal), así el resto de la página real sigue
+   interactivo. La posición/tamaño siguen midiéndose por JS
+   (`_syncContainedRect()`, variables CSS de abajo) porque `position: fixed`
+   tampoco resuelve contra un ancestro a través del límite de shadow DOM. Sin
+   variantes de tamaño, el `<dialog>` siempre cubre el área medida entera —
+   pero es `.ac-transition-container__panel` quien anima la entrada/salida
+   (reglas más abajo), nunca el propio `<dialog>`: `position: fixed` no se
+   recorta por el overflow de ningún ancestro, así que si el `<dialog>`
+   animara siendo él mismo, se lo vería "salir" del marco simulado hacia la
+   página real durante la animación. El `overflow: hidden` del `<dialog>` (ya
+   puesto en la regla base) recorta al panel mientras desliza. */
 :host([contained]) .ac-transition-container {
   position: fixed;
+  /* Sin capa superior nativa ya no hay garantía automática de "siempre
+     encima" — se fuerza con z-index (antes no hacía falta: showModal() lo
+     daba gratis). */
+  z-index: 1000;
   top: var(--ac-transition-container-contained-top, 0px);
   left: var(--ac-transition-container-contained-left, 0px);
   width: var(--ac-transition-container-contained-width, 100vw);
@@ -47,16 +59,33 @@
   margin: 0;
 }
 
-.ac-transition-container::backdrop {
-  background: rgba(0, 0, 0, 0.55);
+:host([contained]) .ac-transition-container[open],
+:host([contained]) .ac-transition-container[open].ac-transition-container--closing {
+  /* La animación la hace `.ac-transition-container__panel` (reglas más abajo). */
+  animation: none;
 }
 
-:host([contained]) .ac-transition-container::backdrop {
-  position: fixed;
-  top: var(--ac-transition-container-contained-top, 0px);
-  left: var(--ac-transition-container-contained-left, 0px);
-  width: var(--ac-transition-container-contained-width, 100vw);
-  height: var(--ac-transition-container-contained-height, 100vh);
+:host([contained]) .ac-transition-container[open] .ac-transition-container__panel {
+  animation: ac-transition-container-slide-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+:host([contained])
+  .ac-transition-container[open].ac-transition-container--closing
+  .ac-transition-container__panel {
+  animation: ac-transition-container-slide-out 240ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host([contained]) .ac-transition-container[open] .ac-transition-container__panel,
+  :host([contained])
+    .ac-transition-container[open].ac-transition-container--closing
+    .ac-transition-container__panel {
+    animation: none;
+  }
+}
+
+.ac-transition-container::backdrop {
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .ac-transition-container__panel {

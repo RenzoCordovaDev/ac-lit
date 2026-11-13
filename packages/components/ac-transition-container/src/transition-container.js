@@ -1,5 +1,6 @@
 import { LitElement, html, nothing } from 'lit';
 import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { createFocusTrap } from '@ac-base/ac-core/utils';
 // Authored in transition-container.styles.scss, compiled to transition-container.styles.js by
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
 // is gitignored — run `pnpm install` then `pnpm component:build` or `pnpm component:serve` to generate it.
@@ -70,18 +71,24 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     this.hideMenuIcon = false;
     this.persistent = false;
     this.ambient = 'primary';
-    // `contained`: en vez del viewport real (lo que da `showModal()` por
-    // defecto), el contenedor se dibuja sobre el área que mide `getBoundary()` —
-    // pensado para que `ac-demo-content` simule un dispositivo acotado sin
-    // perder el foco/Escape/inert que da la capa superior nativa. Ver
-    // "Superposiciones" en CONVENTIONS.md.
+    // `contained`: en vez de la capa superior nativa (`showModal()`, que
+    // SIEMPRE bloquea toda la página real e ignora cualquier ancestro para
+    // medirse — ver "Superposiciones" en CONVENTIONS.md), el contenedor se
+    // abre con `dialog.show()` (no modal), así el resto de la página real
+    // sigue interactivo. La posición/tamaño del marco simulado se miden por
+    // JS (`getBoundary()`/`_syncContainedRect()`, variables CSS) porque
+    // `position: fixed` tampoco resuelve contra un ancestro a través del
+    // límite de shadow DOM. El foco atrapado/Escape que da `showModal()`
+    // gratis se reimplementan a mano para este camino.
     this.contained = false;
     this.getBoundary = null;
+    this._focusTrap = null;
     this._closeReason = undefined;
     this._closeToken = 0;
     this._closeTimer = undefined;
     this._boundaryObserver = undefined;
     this._onViewportChange = this._syncContainedRect.bind(this);
+    this._onContainedKeydown = this._onContainedKeydown.bind(this);
   }
 
   willUpdate(changed) {
@@ -92,7 +99,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
 
   disconnectedCallback() {
     clearTimeout(this._closeTimer);
-    this._stopBoundaryTracking();
+    this._deactivateContained();
     super.disconnectedCallback();
   }
 
@@ -118,8 +125,17 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
 
     if (this.visible) {
       this._cancelPendingClose();
-      if (!dialog.open) dialog.showModal();
-      if (this.contained) this._startBoundaryTracking();
+      if (!dialog.open) {
+        if (this.contained) {
+          dialog.show();
+          this._startBoundaryTracking();
+          this._focusTrap = createFocusTrap(dialog);
+          this._focusTrap.activate();
+          dialog.addEventListener('keydown', this._onContainedKeydown);
+        } else {
+          dialog.showModal();
+        }
+      }
       // `undefined` = primera renderización: el estado inicial no es un cambio.
       if (previous !== undefined) this._emit('ac-transition-container-open');
     } else if (dialog.open) {
@@ -212,7 +228,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
       clearTimeout(this._closeTimer);
       dialog.classList.remove(CLOSING_CLASS);
       if (dialog.open) dialog.close();
-      this._stopBoundaryTracking();
+      this._deactivateContained();
     };
 
     // Sin animación (prefers-reduced-motion) `animationend` nunca llega: se cierra ya.
@@ -278,9 +294,26 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     window.removeEventListener('scroll', this._onViewportChange, { capture: true });
   }
 
+  /** Desactiva el seguimiento del marco, el foco atrapado y el listener de
+   * Escape del camino `contained`. */
+  _deactivateContained() {
+    this._stopBoundaryTracking();
+    this._dialog?.removeEventListener('keydown', this._onContainedKeydown);
+    this._focusTrap?.deactivate();
+    this._focusTrap = null;
+  }
+
   _onCancel(event) {
-    // Esc: se cierra con animación en vez del cierre inmediato del navegador.
+    // Esc en el <dialog> MODAL (showModal()): se cierra con animación en vez
+    // del cierre inmediato del navegador. El camino `contained` (no modal) no
+    // dispara `cancel` — lo resuelve `_onContainedKeydown`.
     event.preventDefault();
+    if (!this.persistent) this._requestClose('escape');
+  }
+
+  _onContainedKeydown(event) {
+    if (event.key !== 'Escape') return;
+    event.stopPropagation();
     if (!this.persistent) this._requestClose('escape');
   }
 

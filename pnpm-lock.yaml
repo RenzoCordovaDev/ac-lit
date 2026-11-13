@@ -415,6 +415,9 @@ importers:
       '@ac-base/ac-component-mixin':
         specifier: workspace:^
         version: link:../../base/ac-component-mixin
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
       '@ac-base/ac-intl-mixin':
         specifier: workspace:^
         version: link:../../base/ac-intl-mixin
@@ -425,9 +428,6 @@ importers:
         specifier: workspace:^
         version: link:../ac-link-basic
     devDependencies:
-      '@ac-base/ac-core':
-        specifier: workspace:^
-        version: link:../../base/ac-core
       '@ac-base/ac-demo-content':
         specifier: workspace:^
         version: link:../../base/ac-demo-content
@@ -744,13 +744,13 @@ importers:
       '@ac-base/ac-component-mixin':
         specifier: workspace:^
         version: link:../../base/ac-component-mixin
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
       '@ac-base/ac-intl-mixin':
         specifier: workspace:^
         version: link:../../base/ac-intl-mixin
     devDependencies:
-      '@ac-base/ac-core':
-        specifier: workspace:^
-        version: link:../../base/ac-core
       '@ac-base/ac-demo-content':
         specifier: workspace:^
         version: link:../../base/ac-demo-content
