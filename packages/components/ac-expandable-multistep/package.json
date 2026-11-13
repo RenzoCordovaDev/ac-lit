@@ -1,0 +1,52 @@
+{
+  "name": "@ac-components/ac-expandable-multistep",
+  "version": "0.1.0",
+  "description": "ac-lit expandable-multistep Web Component",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./locales.json": "./locales.json"
+  },
+  "files": [
+    "/src/",
+    "index.js",
+    "locales.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/expandable-multistep.styles.scss src/expandable-multistep.styles.js ExpandableMultistepStyles",
+    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/expandable-multistep.styles.scss src/expandable-multistep.styles.js ExpandableMultistepStyles --watch",
+    "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run component:build:styles:watch\" \"vite demo\"",
+    "component:build": "pnpm run component:build:styles && vite build",
+    "component:preview": "vite preview",
+    "component:test": "pnpm run component:build:styles && web-test-runner \"test/**/*.test.js\"",
+    "component:test:e2e": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:run",
+    "component:test:e2e:run": "wdio run test_e2e/wdio.conf.js",
+    "component:test:e2e:a11y": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:a11y:run",
+    "component:test:e2e:a11y:run": "wdio run test_e2e/wdio.a11y.conf.js"
+  },
+  "dependencies": {
+    "@ac-base/ac-component-mixin": "workspace:^",
+    "@ac-base/ac-intl-mixin": "workspace:^",
+    "@ac-components/ac-expandable-step": "workspace:^"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-demo-content": "workspace:^",
+    "@ac-base/ac-e2e-testing": "workspace:^",
+    "@ac-base/cli": "workspace:^",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "concurrently": "^9.1.0",
+    "lit": "^3.0.0",
+    "sass": "^1.79.4",
+    "vite": "^5.4.8"
+  }
+}

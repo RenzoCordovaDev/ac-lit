@@ -1,0 +1,14 @@
+{
+  "es-PE": {
+    "expandable-step-edit-label": "Modificar",
+    "expandable-step-counter": "Paso {current} de {total}"
+  },
+  "en-EN": {
+    "expandable-step-edit-label": "Edit",
+    "expandable-step-counter": "Step {current} of {total}"
+  },
+  "pt-BR": {
+    "expandable-step-edit-label": "Modificar",
+    "expandable-step-counter": "Passo {current} de {total}"
+  }
+}

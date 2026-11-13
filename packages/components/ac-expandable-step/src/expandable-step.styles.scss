@@ -1,0 +1,116 @@
+:host {
+  display: block;
+}
+
+// Pendiente (ni `active` ni `completed`): no ocupa espacio ni pinta nada. El padre
+// multistep decide cuándo pasa a activo/completado asignando esas properties — este
+// componente no necesita condicionar `render()` para este caso porque el navegador ya
+// lo saca del flujo acá.
+:host(:not([active]):not([completed])) {
+  display: none;
+}
+
+.expandable-step {
+  border-radius: 0.65rem;
+}
+
+/* --- Colapsado (completado): fondo sólido + texto fijo, nunca --color-muted/
+   --color-bg/--color-surface (cambian entre temas claro/oscuro). Mismo patrón de
+   `ambient` que ac-checkbox-basic/ac-switch-basic. El fondo sólido cubre TODO el
+   paso colapsado (barra + resumen) — no solo la barra, para que el `<slot
+   name="summary">` no quede sobre el fondo transparente de la página. */
+.expandable-step--primary,
+.expandable-step--secondary {
+  background: var(--ac-expandable-step-bg);
+  color: var(--ac-expandable-step-text);
+}
+
+.expandable-step--primary {
+  --ac-expandable-step-bg: var(--color-primary-700, #047857);
+  --ac-expandable-step-text: var(--color-primary-50, #ecfdf5);
+}
+
+.expandable-step--secondary {
+  --ac-expandable-step-bg: var(--color-accent-700, #b45309);
+  --ac-expandable-step-text: #fff;
+}
+
+.expandable-step__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.expandable-step__header {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* El link "Modificar" reutiliza el mismo texto fijo que el título: contra el mismo
+   fondo sólido ya valida >= 4.5:1 (ver docs/CONVENTIONS.md "Dark-mode y colores de
+   fondo sólido"), así que no hace falta un tono aparte — el subrayado alcanza para
+   diferenciarlo del título como elemento interactivo. */
+.expandable-step__edit {
+  flex-shrink: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.expandable-step__edit:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.expandable-step__summary {
+  padding: 0 1rem 0.75rem;
+}
+
+/* El resumen lo rellena el consumidor vía slot: resuelve su propio contraste fijo
+   porque vive sobre el mismo fondo sólido del paso — no hereda el color del título
+   por accidente si el consumidor pisa `color` en su propio markup. */
+.expandable-step__summary ::slotted(*) {
+  margin: 0;
+  color: inherit;
+}
+
+/* --- Activo: superficie normal del documento. Estos tokens SÍ cambian con el tema
+   porque acá no es "fondo sólido con texto fijo", es la superficie normal de la
+   página (igual que ac-expandable-basic). --- */
+.expandable-step--active {
+  padding: 1rem;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+}
+
+.expandable-step--active .expandable-step__counter {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  /* Mismo color que el resto del texto: la jerarquía se marca con tamaño/peso, no con
+     un tono de menor contraste (--color-subtext no cumple AA para texto, ver
+     docs/CONVENTIONS.md) ni con `text-transform: uppercase` (WebDriver `getText()`
+     devuelve el texto ya transformado visualmente, así que rompería la comparación
+     contra la clave traducida tal cual en los E2E). */
+  color: var(--color-text, #bcbec4);
+}
+
+.expandable-step--active .expandable-step__header {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.expandable-step__content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
