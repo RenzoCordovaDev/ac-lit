@@ -54,6 +54,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
       visible: { type: Boolean, reflect: true },
       headerText: { type: String, attribute: 'header-text' },
       headerType: { type: String, attribute: 'header-type', reflect: true },
+      hideBackIcon: { type: Boolean, attribute: 'hide-back-icon', reflect: true },
       hideMenuIcon: { type: Boolean, attribute: 'hide-menu-icon', reflect: true },
       persistent: { type: Boolean, reflect: true },
       contained: { type: Boolean, reflect: true },
@@ -65,6 +66,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     this.visible = false;
     this.headerText = '';
     this.headerType = DEFAULT_HEADER_TYPE;
+    this.hideBackIcon = false;
     this.hideMenuIcon = false;
     this.persistent = false;
     this.ambient = 'primary';
@@ -108,10 +110,6 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     return this.renderRoot.querySelector('dialog');
   }
 
-  get _isSequential() {
-    return this.headerType === 'first-level-sequential';
-  }
-
   updated(changed) {
     if (!changed.has('visible')) return;
 
@@ -146,8 +144,9 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
           <header part="header" class="ac-transition-container__header">
             <div class="ac-transition-container__header-start">
               ${
-                this._isSequential
-                  ? html`<button
+                this.hideBackIcon
+                  ? nothing
+                  : html`<button
                       part="back"
                       class="ac-transition-container__back"
                       type="button"
@@ -156,7 +155,6 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
                     >
                       ${BACK_ICON}
                     </button>`
-                  : nothing
               }
             </div>
             <h2 part="title" id="title" class="ac-transition-container__title">

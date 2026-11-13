@@ -1,6 +1,6 @@
 # `@ac-components/ac-transition-container`
 
-Contenedor de pantalla completa construido sobre `<dialog>` nativo (foco atrapado, `Escape`, capa superior y fondo inerte sin trabajo extra), pensado para navegación tipo "entrar a una sub-pantalla" (ej. un sub-menú de ajustes) — no como un diálogo de confirmación. Entra deslizando de derecha a izquierda hasta cubrir toda la pantalla y sale deslizando de vuelta hacia la derecha. Tiene cabecera con título, un ícono de menú (hamburguesa) y, opcionalmente, una flecha para volver.
+Contenedor de pantalla completa construido sobre `<dialog>` nativo (foco atrapado, `Escape`, capa superior y fondo inerte sin trabajo extra), pensado para navegación tipo "entrar a una sub-pantalla" (ej. un sub-menú de ajustes) — no como un diálogo de confirmación. Entra deslizando de derecha a izquierda hasta cubrir toda la pantalla y sale deslizando de vuelta hacia la derecha. Tiene cabecera con título, flecha de volver e ícono de menú (hamburguesa) — ambos íconos son visibles por defecto, como característica propia del componente, y cada uno se puede ocultar individualmente.
 
 ## Instalación
 
@@ -36,18 +36,21 @@ import '@ac-components/ac-transition-container';
 </script>
 ```
 
+> La flecha de volver y el ícono de menú son siempre visibles por defecto (`hideBackIcon`/`hideMenuIcon` para ocultarlos individualmente); `header-type` no afecta su visibilidad.
+
 ## Propiedades
 
-| Propiedad      | Atributo         | Tipo     | Default                 | Descripción                                                                                                                                                                                               |
-| -------------- | ---------------- | -------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `visible`      | `visible`        | Boolean  | `false`                 | Contenedor visible (reflejado como atributo). Al pasar a `false` se anima la salida y luego se cierra el `<dialog>`.                                                                                      |
-| `headerText`   | `header-text`    | String   | `''`                    | Título. Pasa por `this.t()`, así que acepta tanto una clave de `locales.json` como un literal. Sin `header-text` se muestra un título por defecto traducido (`transition-container-title`).               |
-| `headerType`   | `header-type`    | String   | `'first-level-initial'` | **Lista blanca**: `'first-level-initial'` (sin flecha de volver, pantalla "raíz") o `'first-level-sequential'` (con flecha de volver en la cabecera). Cualquier otro valor cae a `'first-level-initial'`. |
-| `hideMenuIcon` | `hide-menu-icon` | Boolean  | `false`                 | Oculta el ícono de menú (hamburguesa) del lado derecho de la cabecera. Visible por defecto en ambos `header-type`.                                                                                        |
-| `persistent`   | `persistent`     | Boolean  | `false`                 | Si es `false`, `Escape` cierra el contenedor. Si es `true`, `Escape` no hace nada — solo se cierra con la flecha de volver (si la demo la cablea) o desde el código.                                      |
-| `contained`    | `contained`      | Boolean  | `false`                 | En vez del viewport real, se dibuja sobre el área que mide `getBoundary()` — pensado para que `ac-demo-content` lo simule dentro del marco de dispositivo.                                                |
-| `ambient`      | `ambient`        | String   | `'primary'`             | Heredado de `ComponentMixin`.                                                                                                                                                                             |
-| `getBoundary`  | —                | Function | `null`                  | Función que **devuelve el elemento** a medir cuando `contained` está activo (nunca un rect cacheado).                                                                                                     |
+| Propiedad      | Atributo         | Tipo     | Default                 | Descripción                                                                                                                                                                                                                                                                                 |
+| -------------- | ---------------- | -------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `visible`      | `visible`        | Boolean  | `false`                 | Contenedor visible (reflejado como atributo). Al pasar a `false` se anima la salida y luego se cierra el `<dialog>`.                                                                                                                                                                        |
+| `headerText`   | `header-text`    | String   | `''`                    | Título. Pasa por `this.t()`, así que acepta tanto una clave de `locales.json` como un literal. Sin `header-text` se muestra un título por defecto traducido (`transition-container-title`).                                                                                                 |
+| `headerType`   | `header-type`    | String   | `'first-level-initial'` | **Lista blanca**: `'first-level-initial'` o `'first-level-sequential'` (cualquier otro valor cae a `'first-level-initial'`). Reservada para uso futuro — **no** controla la flecha de volver ni el ícono de menú, que son siempre visibles por defecto (ver `hideBackIcon`/`hideMenuIcon`). |
+| `hideBackIcon` | `hide-back-icon` | Boolean  | `false`                 | Oculta la flecha de volver del lado izquierdo de la cabecera (ej. en la pantalla "raíz" de una navegación, que no tiene a dónde volver).                                                                                                                                                    |
+| `hideMenuIcon` | `hide-menu-icon` | Boolean  | `false`                 | Oculta el ícono de menú (hamburguesa) del lado derecho de la cabecera.                                                                                                                                                                                                                      |
+| `persistent`   | `persistent`     | Boolean  | `false`                 | Si es `false`, `Escape` cierra el contenedor. Si es `true`, `Escape` no hace nada — solo se cierra con la flecha de volver (si la demo la cablea) o desde el código.                                                                                                                        |
+| `contained`    | `contained`      | Boolean  | `false`                 | En vez del viewport real, se dibuja sobre el área que mide `getBoundary()` — pensado para que `ac-demo-content` lo simule dentro del marco de dispositivo.                                                                                                                                  |
+| `ambient`      | `ambient`        | String   | `'primary'`             | Heredado de `ComponentMixin`.                                                                                                                                                                                                                                                               |
+| `getBoundary`  | —                | Function | `null`                  | Función que **devuelve el elemento** a medir cuando `contained` está activo (nunca un rect cacheado).                                                                                                                                                                                       |
 
 Métodos: `show()` abre y `hide()` cierra (con animación).
 
@@ -64,12 +67,12 @@ Este componente **no implementa click en backdrop**: el panel ocupa el 100% del 
 
 Todos `bubbles` y `composed`.
 
-| Evento                                           | Cuándo                                                                                                | `detail`                                    |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `ac-transition-container-open`                   | El contenedor se vuelve visible (no se dispara por el estado inicial `visible` del HTML).             | `true`                                      |
-| `ac-transition-container-close`                  | El contenedor empieza a cerrarse.                                                                     | `{ reason: 'escape' \| 'api' \| 'native' }` |
-| `ac-transition-container-header-back-icon-click` | Click en la flecha de volver de la cabecera (solo existe con `header-type="first-level-sequential"`). | `true`                                      |
-| `ac-transition-container-header-menu-icon-click` | Click en el ícono de menú (hamburguesa) de la cabecera (visible por defecto salvo `hide-menu-icon`).  | `true`                                      |
+| Evento                                           | Cuándo                                                                                               | `detail`                                    |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `ac-transition-container-open`                   | El contenedor se vuelve visible (no se dispara por el estado inicial `visible` del HTML).            | `true`                                      |
+| `ac-transition-container-close`                  | El contenedor empieza a cerrarse.                                                                    | `{ reason: 'escape' \| 'api' \| 'native' }` |
+| `ac-transition-container-header-back-icon-click` | Click en la flecha de volver de la cabecera (visible por defecto salvo `hide-back-icon`).            | `true`                                      |
+| `ac-transition-container-header-menu-icon-click` | Click en el ícono de menú (hamburguesa) de la cabecera (visible por defecto salvo `hide-menu-icon`). | `true`                                      |
 
 Ni la flecha de volver ni el ícono de menú cierran el contenedor por sí solos — disparan su evento y quien lo consume decide (cerrar con `hide()`, abrir un menú lateral, navegar a otra pantalla, etc.), igual que los botones del pie de `ac-modal-basic` no lo cierran por sí solos.
 
@@ -92,7 +95,7 @@ Entrada (`slide-in`, 300 ms, de derecha a izquierda) y salida (`slide-out`, 240 
 
 - `<dialog>` modal: el resto de la página queda inerte, `Escape` cierra (salvo `persistent`), y el foco vuelve al elemento que lo abrió.
 - El `<dialog>` se nombra con su título (`aria-labelledby`) y el cuerpo es una `region` enfocable (puede hacer scroll).
-- El botón de la flecha de volver y el de menú llevan `aria-label` traducido (`transition-container-back`/`transition-container-menu`); los SVG son `aria-hidden`.
+- Los botones de la flecha de volver y del menú (visibles por defecto) llevan `aria-label` traducido (`transition-container-back`/`transition-container-menu`); los SVG son `aria-hidden`.
 - Foco y bordes cumplen contraste en ambos temas (claro/oscuro).
 
 ## i18n

@@ -1,5 +1,5 @@
 <section>
-  <h2>Sub-pantalla (<code>header-type="first-level-sequential"</code>)</h2>
+  <h2>Sub-pantalla con flecha de volver</h2>
   <div class="row">
     <ac-button-basic data-testid="open-sequential" data-open-transition="transition-sequential"
       >Abrir sub-pantalla</ac-button-basic
@@ -20,8 +20,8 @@
   header-type="first-level-sequential"
 >
   <p>
-    Con <code>header-type="first-level-sequential"</code> la cabecera muestra la flecha de volver.
-    El componente nunca se cierra solo al emitir
+    La flecha de volver es una característica siempre visible del componente (como el ícono de
+    menú). El componente nunca se cierra solo al emitir
     <code>ac-transition-container-header-back-icon-click</code> — este caso escucha ese evento en
     <code>demo.js</code> (atributo <code>data-close-on-back</code>) y llama a <code>.hide()</code>
     para cerrar la sub-pantalla.

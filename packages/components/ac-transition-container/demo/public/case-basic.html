@@ -1,5 +1,5 @@
 <section>
-  <h2>Pantalla inicial (<code>header-type="first-level-initial"</code>)</h2>
+  <h2>Pantalla raíz (<code>hide-back-icon</code>)</h2>
   <div class="row">
     <ac-button-basic data-testid="open-initial" data-open-transition="transition-initial"
       >Abrir pantalla inicial</ac-button-basic
@@ -11,10 +11,12 @@
   id="transition-initial"
   data-testid="transition-initial"
   header-text="Ajustes"
+  hide-back-icon
 >
   <p>
-    Con <code>header-type="first-level-initial"</code> (el valor por defecto) la cabecera no
-    muestra la flecha de volver: es la pantalla "raíz" de esta navegación.
+    La flecha de volver está visible por defecto (como el ícono de menú): esta pantalla "raíz" de
+    la navegación la oculta explícitamente con <code>hide-back-icon</code>, porque no hay a dónde
+    volver.
   </p>
   <p>El contenedor cubre toda la pantalla y se desliza de derecha a izquierda al abrirse.</p>
 </ac-transition-container>

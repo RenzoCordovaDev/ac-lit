@@ -56,12 +56,12 @@ suite('ac-transition-container', () => {
     expect(dialogOf(el).open).to.be.false;
   });
 
-  test('does not render the back icon with "first-level-initial"', async () => {
+  test('renders the back icon by default with "first-level-initial"', async () => {
     const el = await fixture(html`<ac-transition-container></ac-transition-container>`);
-    expect(backButtonOf(el)).to.not.exist;
+    expect(backButtonOf(el)).to.exist;
   });
 
-  test('renders the back icon with "first-level-sequential"', async () => {
+  test('renders the back icon by default with "first-level-sequential"', async () => {
     const el = await fixture(
       html`<ac-transition-container
         header-type="first-level-sequential"
@@ -70,15 +70,22 @@ suite('ac-transition-container', () => {
     expect(backButtonOf(el)).to.exist;
   });
 
+  test('hides the back icon with `hide-back-icon`', async () => {
+    const el = await fixture(
+      html`<ac-transition-container hide-back-icon></ac-transition-container>`,
+    );
+    expect(backButtonOf(el)).to.not.exist;
+  });
+
   test('clicking the back icon dispatches ac-transition-container-header-back-icon-click', async () => {
-    const el = await openContainer({ 'header-type': 'first-level-sequential' });
+    const el = await openContainer();
     setTimeout(() => backButtonOf(el).click());
     const event = await oneEvent(el, 'ac-transition-container-header-back-icon-click');
     expect(event.detail).to.be.true;
   });
 
   test('clicking the back icon does not close the container', async () => {
-    const el = await openContainer({ 'header-type': 'first-level-sequential' });
+    const el = await openContainer();
     backButtonOf(el).click();
     await aTimeout(0);
     expect(el.visible).to.be.true;
@@ -192,7 +199,7 @@ suite('ac-transition-container: events', () => {
   });
 
   test('container events bubble and are composed', async () => {
-    const el = await openContainer({ 'header-type': 'first-level-sequential' });
+    const el = await openContainer();
     const clicks = collectEvents(el, 'ac-transition-container-header-back-icon-click');
     backButtonOf(el).click();
     await aTimeout(0);

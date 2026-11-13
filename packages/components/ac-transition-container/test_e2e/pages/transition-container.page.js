@@ -13,6 +13,7 @@ export class TransitionContainerPage extends ComponentObject {
       return {
         visible: dialog.open,
         title: dialog.querySelector('h2').textContent.trim(),
+        hasBackIcon: Boolean(dialog.querySelector('[part="back"]')),
       };
     }, this.selector);
   }

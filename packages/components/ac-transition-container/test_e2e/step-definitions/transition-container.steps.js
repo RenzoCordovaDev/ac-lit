@@ -73,6 +73,18 @@ Then('el título del contenedor {string} es {string}', async function (testId, e
   });
 });
 
+Then('el contenedor {string} muestra la flecha de volver', async function (testId) {
+  const container = componentProvider.find(TransitionContainerPage, testId);
+  const { hasBackIcon } = await container.snapshot();
+  if (!hasBackIcon) throw new Error(`El contenedor "${testId}" no muestra la flecha de volver`);
+});
+
+Then('el contenedor {string} no muestra la flecha de volver', async function (testId) {
+  const container = componentProvider.find(TransitionContainerPage, testId);
+  const { hasBackIcon } = await container.snapshot();
+  if (hasBackIcon) throw new Error(`El contenedor "${testId}" muestra la flecha de volver`);
+});
+
 async function eventLogEntries() {
   const host = $('ac-demo-content');
   if (!(await host.$('.ac-demo-content__modal').isExisting())) {
