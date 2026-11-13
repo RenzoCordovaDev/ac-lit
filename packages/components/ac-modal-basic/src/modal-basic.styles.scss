@@ -96,13 +96,25 @@
   animation: none;
 }
 
+/* La altura se calcula contra `--ac-modal-basic-contained-height` (la misma
+   variable que mide el `<dialog>`), nunca contra `100%` del `<dialog>`: más
+   directo, sin depender de que el `<dialog>` resuelva su propio porcentaje
+   primero. La animación de entrada/salida del panel NO se hace con
+   `@keyframes`/`transform` en `%` — comprobado empíricamente que, en este
+   camino (panel absoluto dentro de un `<dialog>` fijo, con su propia altura
+   recién fijada por JS en el mismo cuadro), el `%`/`vh` de un `transform`
+   animado resuelve mal: el recorrido visible quedaba recortado a ~30-40 ms
+   en vez de los 300/240 ms declarados, con o sin unidades de viewport. En su
+   lugar, `_animateContainedOpen()`/`_animateContainedClose()` (en
+   modal-basic.js) usan la Web Animations API con un `translateY` en
+   píxeles, medido en el momento — ver esos métodos para el detalle. */
 :host([contained]) .ac-modal-basic__panel {
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - var(--ac-modal-basic-offset, 3rem));
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) - var(--ac-modal-basic-offset, 3rem));
   max-width: var(--ac-modal-basic-max-width, 48rem);
   margin: 0 auto;
   overflow: hidden;
@@ -115,29 +127,14 @@
 }
 
 :host([contained][size='half']) .ac-modal-basic__panel {
-  height: 50%;
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) * 0.5);
 }
 
 :host([contained][size='full']) .ac-modal-basic__panel {
-  height: 100%;
+  height: var(--ac-modal-basic-contained-height, 100vh);
   max-width: none;
   border: none;
   border-radius: 0;
-}
-
-:host([contained]) .ac-modal-basic[open] .ac-modal-basic__panel {
-  animation: ac-modal-slide-up 300ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-
-:host([contained]) .ac-modal-basic[open].ac-modal-basic--closing .ac-modal-basic__panel {
-  animation: ac-modal-slide-down 240ms ease-in forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :host([contained]) .ac-modal-basic[open] .ac-modal-basic__panel,
-  :host([contained]) .ac-modal-basic[open].ac-modal-basic--closing .ac-modal-basic__panel {
-    animation: none;
-  }
 }
 
 .ac-modal-basic::backdrop {

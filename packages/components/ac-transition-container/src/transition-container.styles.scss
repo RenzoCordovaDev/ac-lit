@@ -39,12 +39,19 @@
    (`_syncContainedRect()`, variables CSS de abajo) porque `position: fixed`
    tampoco resuelve contra un ancestro a través del límite de shadow DOM. Sin
    variantes de tamaño, el `<dialog>` siempre cubre el área medida entera —
-   pero es `.ac-transition-container__panel` quien anima la entrada/salida
-   (reglas más abajo), nunca el propio `<dialog>`: `position: fixed` no se
-   recorta por el overflow de ningún ancestro, así que si el `<dialog>`
-   animara siendo él mismo, se lo vería "salir" del marco simulado hacia la
-   página real durante la animación. El `overflow: hidden` del `<dialog>` (ya
-   puesto en la regla base) recorta al panel mientras desliza. */
+   pero es `.ac-transition-container__panel` quien anima la entrada/salida,
+   nunca el propio `<dialog>`: `position: fixed` no se recorta por el
+   overflow de ningún ancestro, así que si el `<dialog>` animara siendo él
+   mismo, se lo vería "salir" del marco simulado hacia la página real durante
+   la animación. El `overflow: hidden` del `<dialog>` (ya puesto en la regla
+   base) recorta al panel mientras desliza. La animación del panel NO se hace
+   con `@keyframes`/`transform` en `%` (comprobado empíricamente en
+   `ac-modal-basic`: en este camino — `<dialog>` fijo con tamaño recién fijado
+   por JS en el mismo cuadro — el `%` de un `transform` animado resuelve mal,
+   recortando el recorrido visible a ~30-40 ms en vez de los 300/240 ms
+   declarados): la hacen `_animateContainedOpen()`/`_animateContainedClose()`
+   (en transition-container.js) con la Web Animations API y un `translateX`
+   en píxeles medido en el momento. */
 :host([contained]) .ac-transition-container {
   position: fixed;
   /* Sin capa superior nativa ya no hay garantía automática de "siempre
@@ -61,27 +68,8 @@
 
 :host([contained]) .ac-transition-container[open],
 :host([contained]) .ac-transition-container[open].ac-transition-container--closing {
-  /* La animación la hace `.ac-transition-container__panel` (reglas más abajo). */
+  /* La animación la hace `_animateContainedOpen()`/`_animateContainedClose()`. */
   animation: none;
-}
-
-:host([contained]) .ac-transition-container[open] .ac-transition-container__panel {
-  animation: ac-transition-container-slide-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-
-:host([contained])
-  .ac-transition-container[open].ac-transition-container--closing
-  .ac-transition-container__panel {
-  animation: ac-transition-container-slide-out 240ms ease-in forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :host([contained]) .ac-transition-container[open] .ac-transition-container__panel,
-  :host([contained])
-    .ac-transition-container[open].ac-transition-container--closing
-    .ac-transition-container__panel {
-    animation: none;
-  }
 }
 
 .ac-transition-container::backdrop {

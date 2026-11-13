@@ -10,6 +10,13 @@ import { TransitionContainerStyles } from './transition-container.styles.js';
 // quedarse colgado: este tope fuerza `dialog.close()`.
 const CLOSE_FALLBACK_MS = 600;
 const CLOSING_CLASS = 'ac-transition-container--closing';
+// Entrada/salida del panel en el camino `contained` (Web Animations API, no
+// CSS — ver el comentario junto a `[contained] .ac-transition-container` en
+// transition-container.styles.scss).
+const PANEL_OPEN_DURATION_MS = 300;
+const PANEL_OPEN_EASING = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+const PANEL_CLOSE_DURATION_MS = 240;
+const PANEL_CLOSE_EASING = 'ease-in';
 
 const HEADER_TYPES = ['first-level-initial', 'first-level-sequential'];
 const DEFAULT_HEADER_TYPE = 'first-level-initial';
@@ -83,6 +90,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     this.contained = false;
     this.getBoundary = null;
     this._focusTrap = null;
+    this._closingAnimation = null;
     this._closeReason = undefined;
     this._closeToken = 0;
     this._closeTimer = undefined;
@@ -129,6 +137,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
         if (this.contained) {
           dialog.show();
           this._startBoundaryTracking();
+          this._animateContainedOpen(dialog);
           this._focusTrap = createFocusTrap(dialog);
           this._focusTrap.activate();
           dialog.addEventListener('keydown', this._onContainedKeydown);
@@ -217,13 +226,8 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
   _animateClose(dialog) {
     const token = ++this._closeToken;
     clearTimeout(this._closeTimer);
-    dialog.classList.add(CLOSING_CLASS);
 
-    const onEnd = event => {
-      if (event.target === dialog) finish();
-    };
     const finish = () => {
-      dialog.removeEventListener('animationend', onEnd);
       if (token !== this._closeToken) return;
       clearTimeout(this._closeTimer);
       dialog.classList.remove(CLOSING_CLASS);
@@ -231,6 +235,15 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
       this._deactivateContained();
     };
 
+    if (this.contained) {
+      this._animateContainedClose(dialog, finish);
+      return;
+    }
+
+    dialog.classList.add(CLOSING_CLASS);
+    const onEnd = event => {
+      if (event.target === dialog) finish();
+    };
     // Sin animación (prefers-reduced-motion) `animationend` nunca llega: se cierra ya.
     if (!parseFloat(getComputedStyle(dialog).animationDuration)) {
       finish();
@@ -241,10 +254,53 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     this._closeTimer = setTimeout(finish, CLOSE_FALLBACK_MS);
   }
 
+  /** Mide un valor seguro (en px) para el recorrido del panel: su propio
+   * ancho si ya está resuelto o, si no, la ventana entera — de sobra para
+   * que arranque/termine fuera del área visible del `<dialog>` `[contained]`,
+   * que lo recorta con `overflow: hidden`. */
+  _panelTravelPx(panel) {
+    return panel.getBoundingClientRect().width || window.innerWidth;
+  }
+
+  /** Entrada del panel en el camino `contained`: Web Animations API con un
+   * `translateX` en píxeles — ver el porqué junto a `[contained]
+   * .ac-transition-container` en transition-container.styles.scss. */
+  _animateContainedOpen(dialog) {
+    const panel = dialog.querySelector('.ac-transition-container__panel');
+    if (!panel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const distance = this._panelTravelPx(panel);
+    panel.animate([{ transform: `translateX(${distance}px)` }, { transform: 'translateX(0)' }], {
+      duration: PANEL_OPEN_DURATION_MS,
+      easing: PANEL_OPEN_EASING,
+    });
+  }
+
+  /** Salida del panel en el camino `contained`, con el mismo tope por
+   * timeout que el camino no contenido por si `finished` no llega. */
+  _animateContainedClose(dialog, finish) {
+    this._closingAnimation?.cancel();
+    this._closingAnimation = null;
+    const panel = dialog.querySelector('.ac-transition-container__panel');
+    if (!panel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finish();
+      return;
+    }
+    const distance = this._panelTravelPx(panel);
+    const animation = panel.animate(
+      [{ transform: 'translateX(0)' }, { transform: `translateX(${distance}px)` }],
+      { duration: PANEL_CLOSE_DURATION_MS, easing: PANEL_CLOSE_EASING, fill: 'forwards' },
+    );
+    this._closingAnimation = animation;
+    animation.finished.then(finish).catch(() => {});
+    this._closeTimer = setTimeout(finish, CLOSE_FALLBACK_MS);
+  }
+
   _cancelPendingClose() {
     this._closeToken += 1;
     clearTimeout(this._closeTimer);
     this._dialog?.classList.remove(CLOSING_CLASS);
+    this._closingAnimation?.cancel();
+    this._closingAnimation = null;
   }
 
   /** Mide `getBoundary()` y lo vuelca a variables CSS que usa `[contained]`. */
