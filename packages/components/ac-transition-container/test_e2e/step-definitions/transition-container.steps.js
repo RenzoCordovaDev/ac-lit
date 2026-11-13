@@ -43,6 +43,12 @@ When('el usuario pulsa la flecha de volver del contenedor {string}', async funct
   await container.backButton.click();
 });
 
+When('el usuario pulsa el ícono de menú del contenedor {string}', async function (testId) {
+  const container = componentProvider.find(TransitionContainerPage, testId);
+  await container.menuButton.waitForClickable();
+  await container.menuButton.click();
+});
+
 async function waitForContainerVisible(testId, expected) {
   const container = componentProvider.find(TransitionContainerPage, testId);
   await browser.waitUntil(async () => (await container.snapshot()).visible === expected, {

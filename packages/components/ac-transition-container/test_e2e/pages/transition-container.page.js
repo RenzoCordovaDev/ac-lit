@@ -21,6 +21,10 @@ export class TransitionContainerPage extends ComponentObject {
     return this.root.$('[part="back"]');
   }
 
+  get menuButton() {
+    return this.root.$('[part="menu"]');
+  }
+
   async property(name) {
     return browser.execute(
       (selector, prop) => document.querySelector(selector)[prop],

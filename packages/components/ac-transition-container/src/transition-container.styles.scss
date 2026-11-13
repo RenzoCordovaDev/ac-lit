@@ -81,7 +81,8 @@
   justify-content: flex-start;
 }
 
-.ac-transition-container__back {
+.ac-transition-container__back,
+.ac-transition-container__menu {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -95,11 +96,13 @@
   cursor: pointer;
 }
 
-.ac-transition-container__back:hover {
+.ac-transition-container__back:hover,
+.ac-transition-container__menu:hover {
   background: var(--color-muted, #313335);
 }
 
 .ac-transition-container__back:focus-visible,
+.ac-transition-container__menu:focus-visible,
 .ac-transition-container__body:focus-visible {
   outline: 2px solid var(--ac-transition-container-focus);
   outline-offset: -2px;
@@ -120,6 +123,7 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: flex-end;
+  gap: 0.25rem;
 }
 
 .ac-transition-container__body {

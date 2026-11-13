@@ -3,6 +3,7 @@ import '../index.js';
 
 const dialogOf = el => el.shadowRoot.querySelector('dialog');
 const backButtonOf = el => el.shadowRoot.querySelector('[part="back"]');
+const menuButtonOf = el => el.shadowRoot.querySelector('[part="menu"]');
 
 const waitClosed = el =>
   waitUntil(() => !dialogOf(el).open, 'the dialog should close', { timeout: 2000 });
@@ -100,6 +101,41 @@ suite('ac-transition-container', () => {
       html`<ac-transition-container><p>Contenido</p></ac-transition-container>`,
     );
     expect(el.querySelector('p').assignedSlot).to.exist;
+  });
+
+  test('renders the menu icon by default with "first-level-initial"', async () => {
+    const el = await fixture(html`<ac-transition-container></ac-transition-container>`);
+    expect(menuButtonOf(el)).to.exist;
+  });
+
+  test('renders the menu icon by default with "first-level-sequential"', async () => {
+    const el = await fixture(
+      html`<ac-transition-container
+        header-type="first-level-sequential"
+      ></ac-transition-container>`,
+    );
+    expect(menuButtonOf(el)).to.exist;
+  });
+
+  test('hides the menu icon with `hide-menu-icon`', async () => {
+    const el = await fixture(
+      html`<ac-transition-container hide-menu-icon></ac-transition-container>`,
+    );
+    expect(menuButtonOf(el)).to.not.exist;
+  });
+
+  test('clicking the menu icon dispatches ac-transition-container-header-menu-icon-click', async () => {
+    const el = await openContainer();
+    setTimeout(() => menuButtonOf(el).click());
+    const event = await oneEvent(el, 'ac-transition-container-header-menu-icon-click');
+    expect(event.detail).to.be.true;
+  });
+
+  test('clicking the menu icon does not close the container', async () => {
+    const el = await openContainer();
+    menuButtonOf(el).click();
+    await aTimeout(0);
+    expect(el.visible).to.be.true;
   });
 });
 

@@ -27,6 +27,19 @@ const BACK_ICON = html`<svg
   <path d="M15 6l-6 6 6 6" />
 </svg>`;
 
+const MENU_ICON = html`<svg
+  viewBox="0 0 24 24"
+  width="18"
+  height="18"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  aria-hidden="true"
+>
+  <path d="M4 6h16M4 12h16M4 18h16" />
+</svg>`;
+
 export class TransitionContainer extends ComponentMixin(LitElement) {
   static get is() {
     return 'ac-transition-container';
@@ -41,6 +54,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
       visible: { type: Boolean, reflect: true },
       headerText: { type: String, attribute: 'header-text' },
       headerType: { type: String, attribute: 'header-type', reflect: true },
+      hideMenuIcon: { type: Boolean, attribute: 'hide-menu-icon', reflect: true },
       persistent: { type: Boolean, reflect: true },
       contained: { type: Boolean, reflect: true },
     };
@@ -51,6 +65,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     this.visible = false;
     this.headerText = '';
     this.headerType = DEFAULT_HEADER_TYPE;
+    this.hideMenuIcon = false;
     this.persistent = false;
     this.ambient = 'primary';
     // `contained`: en vez del viewport real (lo que da `showModal()` por
@@ -149,6 +164,19 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
             </h2>
             <div class="ac-transition-container__header-end">
               <slot name="header-end"></slot>
+              ${
+                this.hideMenuIcon
+                  ? nothing
+                  : html`<button
+                      part="menu"
+                      class="ac-transition-container__menu"
+                      type="button"
+                      aria-label=${this.t('transition-container-menu')}
+                      @click=${this._onMenuClick}
+                    >
+                      ${MENU_ICON}
+                    </button>`
+              }
             </div>
           </header>
           <div
@@ -271,6 +299,12 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
     // La decisión de cerrar (o navegar) es de quien consume el componente —
     // el contenedor nunca se cierra solo al emitir este evento.
     this._emit('ac-transition-container-header-back-icon-click');
+  }
+
+  _onMenuClick() {
+    // Mismo criterio que la flecha de volver: el componente solo avisa, quien
+    // lo consume decide qué hacer (abrir un menú lateral, navegar, etc.).
+    this._emit('ac-transition-container-header-menu-icon-click');
   }
 
   _emit(name, detail = true) {

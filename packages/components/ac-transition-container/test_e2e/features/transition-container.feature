@@ -51,3 +51,10 @@ Feature: ac-transition-container - navegación de pantalla completa
     And el usuario pulsa la flecha de volver del contenedor "transition-sequential"
     Then el contenedor "transition-sequential" está cerrado
     And el evento "ac-transition-container-header-back-icon-click" se registra en el log
+
+  Scenario: El ícono de menú no cierra el contenedor y dispara su propio evento
+    When el usuario abre el contenedor con el botón "open-initial"
+    And el usuario pulsa el ícono de menú del contenedor "transition-initial"
+    Then el contenedor "transition-initial" está visible
+    When el usuario pulsa Escape
+    Then el evento "ac-transition-container-header-menu-icon-click" se registra en el log
