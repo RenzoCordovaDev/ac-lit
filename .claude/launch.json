@@ -90,6 +90,23 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],
       "port": 5173
+    },
+    {
+      "name": "ac-expandable-step-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-expandable-step", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-expandable-multistep-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@ac-components/ac-expandable-multistep",
+        "run",
+        "component:serve"
+      ],
+      "port": 5173
     }
   ]
 }

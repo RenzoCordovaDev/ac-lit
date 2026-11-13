@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+// Por el modelo de caja de Shadow DOM, el contenido distribuido por un <slot> dentro
+// de un contenedor flex/grid se trata como "aplanado": cada <ac-expandable-step>
+// asignado se convierte en un flex-item individual de este contenedor (no el <slot>
+// como un solo item) — así `gap` separa cada step entre sí sin tocar el CSS de
+// ac-expandable-step. Confirmado visualmente en el navegador.
+.expandable-multistep__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.expandable-multistep__confirmation[hidden] {
+  display: none;
+}
