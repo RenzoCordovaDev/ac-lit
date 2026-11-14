@@ -7,7 +7,7 @@
 }
 
 .__file_base__ {
-  font-size: 0.95rem;
+  font-size: var(--font-size-md, 0.95rem);
 }
 
 // TODO: agrega estilos por ambient, ej. .__file_base__--default { ... }

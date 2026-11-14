@@ -15,8 +15,8 @@
 
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.95rem;
+  gap: var(--space-1, 0.35rem);
+  font-size: var(--font-size-md, 0.95rem);
   color: var(--color-text, #bcbec4);
 }
 
@@ -34,20 +34,20 @@
 }
 
 .ac-input-basic__label {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
 }
 
 .ac-input-basic__field {
   box-sizing: border-box;
   width: 100%;
-  padding: 0.55rem 0.75rem;
+  padding: var(--space-2, 0.55rem) var(--space-3, 0.75rem);
   font: inherit;
   color: var(--color-text, #bcbec4);
   background: var(--color-surface, #2b2b2b);
   /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
   border: 1px solid var(--color-subtext, #787a80);
-  border-radius: 0.5rem;
+  border-radius: var(--radius, 0.5rem);
   transition:
     border-color 120ms ease,
     box-shadow 120ms ease;
@@ -86,13 +86,13 @@
 
 .ac-input-basic__message {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm, 0.8rem);
   color: var(--color-text, #bcbec4);
 }
 
 .ac-input-basic__message--error {
   color: var(--ac-input-error);
-  font-weight: 600;
+  font-weight: var(--font-weight-medium, 600);
 }
 
 @media (prefers-reduced-motion: reduce) {

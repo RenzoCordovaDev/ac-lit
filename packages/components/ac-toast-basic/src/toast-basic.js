@@ -1,5 +1,5 @@
 import { LitElement, html, nothing } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 // Authored in toast-basic.styles.scss, compiled to toast-basic.styles.js by
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
 // is gitignored — run `pnpm install` then `pnpm component:build` or `pnpm component:serve` to generate it.
@@ -56,7 +56,7 @@ export class ToastBasic extends ComponentMixin(LitElement) {
   }
 
   static get styles() {
-    return [ToastBasicStyles];
+    return [componentBaseStyles, ToastBasicStyles];
   }
 
   static get properties() {

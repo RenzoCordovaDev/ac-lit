@@ -111,6 +111,28 @@ Patrones de `ac-modal-basic`, `ac-toast-basic` y `ac-tabs-basic`:
 - **Demos con superposiciones**: los casos se cargan con `fetch` + `innerHTML`, así que **no pueden traer `<script>`**. El cableado (abrir un modal, mostrar un toast) se hace en el `demo.js` por delegación de eventos con atributos de datos (`data-open-modal`, `data-show-toast`). Al abrir un modal, la capa superior tapa el panel de eventos de `ac-demo-content`: en E2E hay que cerrarlo antes de leer el log.
 - **E2E**: `[part="x"]` puede coincidir con un `part` homónimo **dentro** de otro componente (ej. `ac-link-basic` también tiene `part="link"`) y WDIO falla por modo estricto: se acota por etiqueta (`ac-link-basic[part="link"]`). Un desplazamiento animado (apilado del toast) se espera con `waitUntil`, no se mide al instante. Para leer la pestaña activa o el foco en un shadow root se usa `browser.execute`.
 
+## Emerald Pro — sistema de diseño
+
+Nombre del lenguaje visual de `ac-lit` (ya estaba en un comentario de la paleta de color, nunca formalizado — ahora es la referencia oficial). Dirección: **profesional/utilitario**, no un estilo suave/decorativo — bordes chicos y consistentes, tipografía del sistema, nada de sombras/gradientes vistosos. Decidido con Renzo antes de construir más componentes, para que el catálogo tenga una identidad consistente en vez de que cada componente nuevo elija "a ojo".
+
+Todos los tokens no-color viven en **`@ac-base/ac-core/tokens/base.css`** (independiente de la paleta de color activa — se importa siempre, junto con `modern-warm-palette.css`/`-light.css`). El `tokens.js` que existía antes (objeto JS con `colors`/`spacing`/`typography`/`borderRadius`/`shadows`/`breakpoints`) era código muerto — ningún componente lo importaba nunca y sus colores (azul/gris genérico) ni siquiera coincidían con la paleta real — se eliminó junto con este trabajo.
+
+- **Radio de borde — la forma la decide la función, nunca el gusto**:
+  - `--radius-sm` (4px) — elementos chicos dentro de un control.
+  - `--radius` (6px) — default: botones, inputs, selects, cards, superficies (modal, toast, panels).
+  - `--radius-full` (9999px, pastilla/círculo) — **reservado para controles de estado binario/toggle y tags** (switch, radio, thumb de slider, badge). Nunca para una superficie o un contenedor.
+  - **Única excepción documentada a esa regla**: `ac-avatar-basic` es circular por convención casi universal de UI para representar a una persona — no es un control de estado binario, pero el círculo igual aplica porque la alternativa (avatar cuadrado) rompería una expectativa visual mucho más fuerte que la regla misma.
+  - Nunca un valor literal (`8px`, `0.375rem`, `50%`, etc.) hardcodeado en un componente nuevo — siempre la variable. Antes de este trabajo, el radio era literalmente "a ojo" por componente, sin ningún patrón (valores encontrados: `2px`, `0.3rem`, `0.5rem`, `0.65rem`, `0.75rem`, `1rem`, `999px`, `50%`, mezclados sin criterio, a veces dos valores distintos en el mismo archivo).
+- **Tipografía**:
+  - `--font-family`: pila del sistema (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif`) — decisión explícita de **no** cargar una fuente web: cero peso de red, cero riesgo de FOUT, se ve nativa en cada SO, y es coherente con la dirección "profesional/utilitario" (una fuente de marca cargada daría más identidad pero no es lo que se buscó acá). Se fija en `:host` vía `componentBaseStyles` (ver abajo) — **antes de esto ningún componente definía su propia tipografía**, todos la heredaban por CSS inheritance de lo que fuera que la página contenedora pusiera en `html`/`body`; fuera de los demos de este monorepo, un componente no tenía ninguna identidad tipográfica garantizada.
+  - `--font-size-xs` (0.75rem, badge/texto micro) / `--font-size-sm` (0.85rem, ayuda/hints) / `--font-size-md` (0.95rem, cuerpo — default) / `--font-size-lg` (1.1rem, títulos). Formaliza valores que ya convergían solos en la práctica antes de tokenizarlos.
+  - `--font-weight-medium` (600, énfasis medio: labels, títulos de control) / `--font-weight-bold` (700, énfasis fuerte: botones, badges, headers).
+  - `--line-height` (1.5, default) / `--line-height-tight` (1.4, texto compacto).
+- **Espaciado — grilla de 4px**: `--space-1` (4px) a `--space-6` (24px). Reemplaza valores orgánicos afinados a mano por componente (`0.35rem`, `0.55rem`, `0.6rem`, `0.65rem`, `0.7rem`, `0.85rem`, `0.9rem`...) que no caían en ninguna grilla — este es el eje que más cambió visualmente al retroquear los componentes existentes.
+- **Elevación**: `--elev-1`/`--elev-2` (sin cambios de valor, solo se movieron de la paleta de color a `base.css` porque no varían entre temas — no son parte de la "identidad de color").
+- **`componentBaseStyles`** (exportado por `@ac-base/ac-component-mixin`): fija `font-family` en `:host` y estila el skeleton compartido de `loading` (antes sin ningún CSS — `_skeletonTemplate` se renderizaba sin estilo). Todo componente lo incluye como primer elemento de `static get styles()`: `return [componentBaseStyles, XStyles];` — tanto el template de `ac component:create` como los componentes existentes siguen este patrón.
+- **Color**: sin cambios con este trabajo — la paleta (verde esmeralda + ámbar, semántico + neutrales + light/dark) ya era la parte más sólida del sistema antes de nombrarlo. Ver "Dark-mode y colores de fondo sólido" abajo para su regla de uso.
+
 ## Dark-mode y colores de fondo sólido
 
 Un componente que pinta un fondo sólido con un color de texto **fijo** (ej. un badge: fondo de color + texto blanco/negro) debe usar los tokens semánticos fijos (`--color-neutral`, `--color-success`, `--color-warning`, `--color-danger` — no se redefinen en `modern-warm-palette-light.css`), **nunca** `--color-muted`/`--color-bg`/`--color-surface` (que sí cambian entre `dark-mode` claro/oscuro). Si no, el contraste se rompe al activar modo claro — encontrado así en `ac-badge-basic` (ver `packages/base/ac-core/README.md`).
@@ -126,7 +148,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 
 ## Paquetes base
 
-- **`@ac-base/ac-core`** — design tokens, utilidades DOM, helpers. Exports: `./tokens`, `./utils`.
+- **`@ac-base/ac-core`** — design tokens (CSS, ver "Emerald Pro" arriba), utilidades DOM, helpers. Exports: `./tokens/base.css`, `./tokens/modern-warm-palette{,-light}.css`, `./utils`.
 - **`@ac-base/ac-component-mixin`** — mixin base: propiedades comunes (`ambient`, `mode`, `loading`), sanitización HTML (DOMPurify), skeleton de carga, `scopedElementsFromClasses()`. Integra los dos mixins siguientes.
 - **`@ac-base/ac-scoped-elements-mixin`** — aislamiento de custom elements para evitar colisiones de tag names.
 - **`@ac-base/ac-intl-mixin`** — API `t(key, params)`, `setLocale(locale)`, `loadTranslations(data)` sobre `locales.json`.
