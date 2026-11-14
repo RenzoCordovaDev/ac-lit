@@ -1,0 +1,44 @@
+<section>
+  <h2>Obligatorio</h2>
+  <ac-textarea-basic
+    data-testid="textarea-required"
+    label="Descripción"
+    name="description"
+    required
+  ></ac-textarea-basic>
+</section>
+
+<section>
+  <h2>Con error</h2>
+  <ac-textarea-basic
+    data-testid="textarea-error"
+    label="Comentario"
+    value="sin terminar"
+    error="Completá el comentario."
+  ></ac-textarea-basic>
+</section>
+
+<section>
+  <h2>Solo lectura y deshabilitado</h2>
+  <ac-textarea-basic
+    data-testid="textarea-readonly"
+    label="Solo lectura"
+    value="No editable"
+    readonly
+  ></ac-textarea-basic>
+  <ac-textarea-basic
+    data-testid="textarea-disabled"
+    label="Deshabilitado"
+    value="Bloqueado"
+    disabled
+  ></ac-textarea-basic>
+</section>
+
+<section>
+  <h2>Sin etiqueta visible (<code>a11y-label</code>)</h2>
+  <ac-textarea-basic
+    data-testid="textarea-search"
+    a11y-label="Buscar"
+    placeholder="Buscar..."
+  ></ac-textarea-basic>
+</section>
