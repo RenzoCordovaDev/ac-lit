@@ -160,6 +160,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this._copiedTimer = undefined;
     this._onEvent = this._onEvent.bind(this);
     this._onPanelKeydown = this._onPanelKeydown.bind(this);
+    this._onCaseLoad = this._onCaseLoad.bind(this);
   }
 
   get _languages() {
@@ -183,12 +184,14 @@ export class DemoContent extends ComponentMixin(LitElement) {
     for (const name of this._eventNames) {
       document.addEventListener(name, this._onEvent);
     }
+    this.addEventListener('ac-demo-case-load', this._onCaseLoad);
   }
 
   disconnectedCallback() {
     for (const name of this._eventNames) {
       document.removeEventListener(name, this._onEvent);
     }
+    this.removeEventListener('ac-demo-case-load', this._onCaseLoad);
     document.removeEventListener('keydown', this._onPanelKeydown);
     clearTimeout(this._copiedTimer);
     super.disconnectedCallback();
@@ -232,6 +235,31 @@ export class DemoContent extends ComponentMixin(LitElement) {
     for (const el of activeCase.querySelectorAll('*')) {
       if ('ambient' in el) {
         el.ambient = value;
+      }
+    }
+  }
+
+  // Un modal/toast/transition "contenido" de un caso renuncia a la capa
+  // superior nativa (`showModal()`/`popover` SIEMPRE bloquean toda la página
+  // real e ignoran cualquier ancestro para medirse — ver "Superposiciones" en
+  // CONVENTIONS.md) y se abre con `dialog.show()`/`popover="manual"` sin
+  // modal. Pero `position: absolute`/`fixed` tampoco resuelve contra un
+  // ancestro a través del límite de shadow DOM (probado empíricamente: el
+  // `offsetParent` de un `<dialog>` slotteado da `<body>`, no el div del
+  // viewport simulado, aun con ese div en `position: relative` y el host en
+  // `display: contents`) — así que el componente igual necesita medir el
+  // viewport simulado por JS. `getBoundary` es una función (no el elemento)
+  // porque ese div se reconstruye al alternar Visual/Código.
+  _onCaseLoad(event) {
+    this._applyContainment(event.target);
+  }
+
+  _applyContainment(caseEl) {
+    const getBoundary = () => this.renderRoot.querySelector('.ac-demo-content__viewport');
+    for (const el of caseEl.querySelectorAll('*')) {
+      if ('contained' in el) {
+        el.getBoundary = getBoundary;
+        el.contained = true;
       }
     }
   }

@@ -1,5 +1,6 @@
 import { LitElement, html, nothing } from 'lit';
 import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { createFocusTrap } from '@ac-base/ac-core/utils';
 // Dependencias del catálogo: se registran como efecto de importar su `index.js`.
 import '@ac-components/ac-button-basic';
 import '@ac-components/ac-link-basic';
@@ -12,6 +13,13 @@ import { ModalBasicStyles } from './modal-basic.styles.js';
 // quedarse colgado: este tope fuerza `dialog.close()`.
 const CLOSE_FALLBACK_MS = 600;
 const CLOSING_CLASS = 'ac-modal-basic--closing';
+// Entrada/salida del panel en el camino `contained` (Web Animations API, no
+// CSS — ver el comentario junto a `.ac-modal-basic__panel` en
+// modal-basic.styles.scss).
+const PANEL_OPEN_DURATION_MS = 300;
+const PANEL_OPEN_EASING = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+const PANEL_CLOSE_DURATION_MS = 240;
+const PANEL_CLOSE_EASING = 'ease-in';
 
 const CLOSE_ICON = html`<svg
   viewBox="0 0 24 24"
@@ -48,6 +56,7 @@ export class ModalBasic extends ComponentMixin(LitElement) {
       secondaryDisabled: { type: Boolean, attribute: 'secondary-disabled' },
       linkText: { type: String, attribute: 'link-text' },
       linkHref: { type: String, attribute: 'link-href' },
+      contained: { type: Boolean, reflect: true },
     };
   }
 
@@ -65,13 +74,32 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     this.linkText = '';
     this.linkHref = '';
     this.ambient = 'primary';
+    // `contained`: en vez de la capa superior nativa (`showModal()`, que
+    // SIEMPRE bloquea toda la página real e ignora cualquier ancestro para
+    // medirse — ver "Superposiciones" en CONVENTIONS.md), el modal se abre
+    // con `dialog.show()` (no modal), así el resto de la página real sigue
+    // interactivo. `position: fixed`/`absolute` tampoco resuelve contra un
+    // ancestro a través del límite de shadow DOM (probado empíricamente), así
+    // que igual hace falta medir el área del dispositivo simulado por JS vía
+    // `getBoundary()`, exactamente como antes. El foco atrapado/Escape/click-
+    // afuera que da `showModal()` gratis se reimplementan a mano para este
+    // camino.
+    this.contained = false;
+    this.getBoundary = null;
+    this._focusTrap = null;
+    this._closingAnimation = null;
     this._closeReason = undefined;
     this._closeToken = 0;
     this._closeTimer = undefined;
+    this._boundaryObserver = undefined;
+    this._onViewportChange = this._syncContainedRect.bind(this);
+    this._onContainedKeydown = this._onContainedKeydown.bind(this);
+    this._onContainedOutsideClick = this._onContainedOutsideClick.bind(this);
   }
 
   disconnectedCallback() {
     clearTimeout(this._closeTimer);
+    this._deactivateContained();
     super.disconnectedCallback();
   }
 
@@ -101,7 +129,19 @@ export class ModalBasic extends ComponentMixin(LitElement) {
 
     if (this.open) {
       this._cancelPendingClose();
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        if (this.contained) {
+          dialog.show();
+          this._startBoundaryTracking();
+          this._animateContainedOpen(dialog);
+          this._focusTrap = createFocusTrap(dialog);
+          this._focusTrap.activate();
+          dialog.addEventListener('keydown', this._onContainedKeydown);
+          document.addEventListener('click', this._onContainedOutsideClick, true);
+        } else {
+          dialog.showModal();
+        }
+      }
       // `undefined` = primera renderización: el estado inicial no es un cambio.
       if (previous !== undefined) this._emit('ac-modal-basic-open');
     } else if (dialog.open) {
@@ -209,19 +249,24 @@ export class ModalBasic extends ComponentMixin(LitElement) {
   _animateClose(dialog) {
     const token = ++this._closeToken;
     clearTimeout(this._closeTimer);
-    dialog.classList.add(CLOSING_CLASS);
 
-    const onEnd = event => {
-      if (event.target === dialog) finish();
-    };
     const finish = () => {
-      dialog.removeEventListener('animationend', onEnd);
       if (token !== this._closeToken) return;
       clearTimeout(this._closeTimer);
       dialog.classList.remove(CLOSING_CLASS);
       if (dialog.open) dialog.close();
+      this._deactivateContained();
     };
 
+    if (this.contained) {
+      this._animateContainedClose(dialog, finish);
+      return;
+    }
+
+    dialog.classList.add(CLOSING_CLASS);
+    const onEnd = event => {
+      if (event.target === dialog) finish();
+    };
     // Sin animación (prefers-reduced-motion) `animationend` nunca llega: se cierra ya.
     if (!parseFloat(getComputedStyle(dialog).animationDuration)) {
       finish();
@@ -232,16 +277,137 @@ export class ModalBasic extends ComponentMixin(LitElement) {
     this._closeTimer = setTimeout(finish, CLOSE_FALLBACK_MS);
   }
 
+  /** Mide un valor seguro (en px) para el recorrido del panel: su propia
+   * altura si ya está resuelta o, si no, la ventana entera — de sobra para
+   * que arranque/termine fuera del área visible del `<dialog>` `[contained]`,
+   * que lo recorta con `overflow: hidden`. */
+  _panelTravelPx(panel) {
+    return panel.getBoundingClientRect().height || window.innerHeight;
+  }
+
+  /** Entrada del panel en el camino `contained`: Web Animations API con un
+   * `translateY` en píxeles — ver el porqué junto a `.ac-modal-basic__panel`
+   * en modal-basic.styles.scss. */
+  _animateContainedOpen(dialog) {
+    const panel = dialog.querySelector('.ac-modal-basic__panel');
+    if (!panel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const distance = this._panelTravelPx(panel);
+    panel.animate([{ transform: `translateY(${distance}px)` }, { transform: 'translateY(0)' }], {
+      duration: PANEL_OPEN_DURATION_MS,
+      easing: PANEL_OPEN_EASING,
+    });
+  }
+
+  /** Salida del panel en el camino `contained`, con el mismo tope por
+   * timeout que el camino no contenido por si `finished` no llega. */
+  _animateContainedClose(dialog, finish) {
+    this._closingAnimation?.cancel();
+    this._closingAnimation = null;
+    const panel = dialog.querySelector('.ac-modal-basic__panel');
+    if (!panel || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finish();
+      return;
+    }
+    const distance = this._panelTravelPx(panel);
+    const animation = panel.animate(
+      [{ transform: 'translateY(0)' }, { transform: `translateY(${distance}px)` }],
+      { duration: PANEL_CLOSE_DURATION_MS, easing: PANEL_CLOSE_EASING, fill: 'forwards' },
+    );
+    this._closingAnimation = animation;
+    animation.finished.then(finish).catch(() => {});
+    this._closeTimer = setTimeout(finish, CLOSE_FALLBACK_MS);
+  }
+
   _cancelPendingClose() {
     this._closeToken += 1;
     clearTimeout(this._closeTimer);
     this._dialog?.classList.remove(CLOSING_CLASS);
+    this._closingAnimation?.cancel();
+    this._closingAnimation = null;
+  }
+
+  /** Mide `getBoundary()` y lo vuelca a variables CSS que usa `[contained]`. */
+  _syncContainedRect() {
+    if (typeof this.getBoundary !== 'function') return;
+    const boundary = this.getBoundary();
+    if (!boundary) return;
+    const rect = boundary.getBoundingClientRect();
+    // Se recorta contra el viewport REAL: un dispositivo simulado más alto que
+    // la ventana real (ej. "móvil" con ventanas de navegador bajas) no debe
+    // producir un modal con contenido fuera de lo que se puede ver/alcanzar
+    // (`position: fixed` no se desplaza con el scroll de la página, así que
+    // nada más allá del borde de la ventana es alcanzable de ningún modo).
+    // Con el seguimiento de scroll (`_startBoundaryTracking`), esto se
+    // recalcula en cada scroll: dejar de recortar en cuanto el borde real del
+    // marco entra en pantalla es automático.
+    const top = Math.max(rect.top, 0);
+    const left = Math.max(rect.left, 0);
+    const width = Math.max(Math.min(rect.right, window.innerWidth) - left, 0);
+    const height = Math.max(Math.min(rect.bottom, window.innerHeight) - top, 0);
+    this.style.setProperty('--ac-modal-basic-contained-top', `${top}px`);
+    this.style.setProperty('--ac-modal-basic-contained-left', `${left}px`);
+    this.style.setProperty('--ac-modal-basic-contained-width', `${width}px`);
+    this.style.setProperty('--ac-modal-basic-contained-height', `${height}px`);
+  }
+
+  _startBoundaryTracking() {
+    if (typeof this.getBoundary !== 'function') return;
+    this._syncContainedRect();
+    const boundary = this.getBoundary();
+    if (boundary) {
+      this._boundaryObserver ??= new ResizeObserver(this._onViewportChange);
+      this._boundaryObserver.disconnect();
+      this._boundaryObserver.observe(boundary);
+    }
+    window.addEventListener('resize', this._onViewportChange);
+    // El marco de dispositivo es un elemento normal (no top-layer): si la
+    // página scrollea, se mueve — y el modal, fijo al viewport real, se
+    // quedaría atrás si no se recalcula. `capture` porque el scroll no
+    // burbujea (hace falta también el de un contenedor interno).
+    window.addEventListener('scroll', this._onViewportChange, { passive: true, capture: true });
+  }
+
+  _stopBoundaryTracking() {
+    this._boundaryObserver?.disconnect();
+    window.removeEventListener('resize', this._onViewportChange);
+    window.removeEventListener('scroll', this._onViewportChange, { capture: true });
+  }
+
+  /** Desactiva el seguimiento del marco, el foco atrapado y los listeners de
+   * Escape/backdrop del camino `contained`. */
+  _deactivateContained() {
+    this._stopBoundaryTracking();
+    this._dialog?.removeEventListener('keydown', this._onContainedKeydown);
+    document.removeEventListener('click', this._onContainedOutsideClick, true);
+    this._focusTrap?.deactivate();
+    this._focusTrap = null;
   }
 
   _onCancel(event) {
-    // Esc: se cierra con animación en vez del cierre inmediato del navegador.
+    // Esc en el <dialog> MODAL (showModal()): se cierra con animación en vez
+    // del cierre inmediato del navegador. El camino `contained` (no modal) no
+    // dispara `cancel` — lo resuelve `_onContainedKeydown`.
     event.preventDefault();
     if (!this.persistent) this._requestClose('escape');
+  }
+
+  _onContainedKeydown(event) {
+    if (event.key !== 'Escape') return;
+    event.stopPropagation();
+    if (!this.persistent) this._requestClose('escape');
+  }
+
+  /** Equivalente al click en el `::backdrop` nativo, pero para el `<dialog>`
+   * no modal del camino `contained`: no tiene `::backdrop`, así que un click
+   * dentro del marco simulado pero fuera del propio `<dialog>` se detecta a
+   * mano (sin tocar nada fuera del marco — ver "Superposiciones" en
+   * CONVENTIONS.md). */
+  _onContainedOutsideClick(event) {
+    if (this.persistent) return;
+    const path = event.composedPath();
+    if (path.includes(this._dialog)) return;
+    const boundary = typeof this.getBoundary === 'function' ? this.getBoundary() : null;
+    if (boundary && path.includes(boundary)) this._requestClose('backdrop');
   }
 
   _onDialogClick(event) {

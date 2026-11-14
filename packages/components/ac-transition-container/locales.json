@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "transition-container-title": "Título",
+    "transition-container-back": "Volver",
+    "transition-container-menu": "Menú"
+  },
+  "en-EN": {
+    "transition-container-title": "Title",
+    "transition-container-back": "Back",
+    "transition-container-menu": "Menu"
+  },
+  "pt-BR": {
+    "transition-container-title": "Título",
+    "transition-container-back": "Voltar",
+    "transition-container-menu": "Menu"
+  }
+}

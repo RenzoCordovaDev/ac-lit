@@ -45,6 +45,98 @@
   border-radius: 0;
 }
 
+/* Modo "contenido": renuncia a la capa superior nativa (`showModal()` bloquea
+   SIEMPRE toda la página real, sin importar el tamaño CSS del `<dialog>` —
+   ver "Superposiciones" en CONVENTIONS.md) y se abre con `dialog.show()` (no
+   modal), así el resto de la página real sigue siendo interactivo. La
+   posición/tamaño del marco simulado se miden por JS (`_syncContainedRect()`,
+   variables CSS de abajo) porque ni `position: fixed` ni `absolute` resuelven
+   contra un ancestro a través del límite de shadow DOM (probado
+   empíricamente: el `offsetParent` de este `<dialog>` da `<body>`, nunca
+   `.ac-demo-content__viewport`). Clave: el `<dialog>` ocupa SIEMPRE el marco
+   entero, quieto (sin animación propia) — es `.ac-modal-basic__panel` quien
+   tiene el tamaño por `size` y la animación de entrada/salida, así el
+   `overflow: hidden` del propio `<dialog>` (ya puesto en la regla base, sin
+   necesitar nada cross-shadow) recorta al panel mientras todavía no terminó
+   de entrar/salir — si el panel animara siendo el propio `<dialog>` (como en
+   el camino no contenido, donde no hace falta recortar nada), se lo ve
+   "salir" por debajo del marco simulado hacia la página real durante la
+   animación (`position: fixed` nunca se recorta por el overflow de un
+   ancestro, tenga o no el `<dialog>` el tamaño "correcto" en cada instante).
+   Al no haber `::backdrop` (no existe para un `<dialog>` no modal), el click
+   "fuera" se detecta a mano (`_onContainedOutsideClick`). */
+:host([contained]) .ac-modal-basic {
+  position: fixed;
+  /* Sin capa superior nativa ya no hay garantía automática de "siempre
+     encima" — se fuerza con z-index (antes no hacía falta: showModal() lo
+     daba gratis). */
+  z-index: 1000;
+  top: var(--ac-modal-basic-contained-top, 0px);
+  left: var(--ac-modal-basic-contained-left, 0px);
+  width: var(--ac-modal-basic-contained-width, 100vw);
+  height: var(--ac-modal-basic-contained-height, 100vh);
+  max-width: none;
+  margin: 0;
+  /* El fondo/sombra/borde pasan al panel (ver más abajo): el `<dialog>` ahora
+     cubre el marco entero, así que de quedarse con fondo sólido taparía el
+     hueco del tamaño "offset"/"half" con su propio color en vez de dejar ver
+     lo que hay detrás, como pasaba antes de que el `<dialog>` tuviera el
+     tamaño del modal en vez del marco entero. */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+:host([contained]) .ac-modal-basic[open],
+:host([contained]) .ac-modal-basic[open]::backdrop,
+:host([contained]) .ac-modal-basic[open].ac-modal-basic--closing,
+:host([contained]) .ac-modal-basic[open].ac-modal-basic--closing::backdrop {
+  /* La animación la hace `.ac-modal-basic__panel` (reglas más abajo). */
+  animation: none;
+}
+
+/* La altura se calcula contra `--ac-modal-basic-contained-height` (la misma
+   variable que mide el `<dialog>`), nunca contra `100%` del `<dialog>`: más
+   directo, sin depender de que el `<dialog>` resuelva su propio porcentaje
+   primero. La animación de entrada/salida del panel NO se hace con
+   `@keyframes`/`transform` en `%` — comprobado empíricamente que, en este
+   camino (panel absoluto dentro de un `<dialog>` fijo, con su propia altura
+   recién fijada por JS en el mismo cuadro), el `%`/`vh` de un `transform`
+   animado resuelve mal: el recorrido visible quedaba recortado a ~30-40 ms
+   en vez de los 300/240 ms declarados, con o sin unidades de viewport. En su
+   lugar, `_animateContainedOpen()`/`_animateContainedClose()` (en
+   modal-basic.js) usan la Web Animations API con un `translateY` en
+   píxeles, medido en el momento — ver esos métodos para el detalle. */
+:host([contained]) .ac-modal-basic__panel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) - var(--ac-modal-basic-offset, 3rem));
+  max-width: var(--ac-modal-basic-max-width, 48rem);
+  margin: 0 auto;
+  overflow: hidden;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-bottom: none;
+  border-radius: 1rem 1rem 0 0;
+  box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
+}
+
+:host([contained][size='half']) .ac-modal-basic__panel {
+  height: calc(var(--ac-modal-basic-contained-height, 100vh) * 0.5);
+}
+
+:host([contained][size='full']) .ac-modal-basic__panel {
+  height: var(--ac-modal-basic-contained-height, 100vh);
+  max-width: none;
+  border: none;
+  border-radius: 0;
+}
+
 .ac-modal-basic::backdrop {
   background: rgba(0, 0, 0, 0.55);
 }
