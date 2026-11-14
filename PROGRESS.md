@@ -45,9 +45,10 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 
 ## Pendiente / siguiente paso concreto
 
-1. **Revisar el estilo visual de los 4 componentes en sí** (`ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`) — lo de `ac-demo-content` fue el _contenedor_ de la demo; los componentes reales (bordes, tipografía, espaciado) siguen con el estilo original. Siguiente tarea explícitamente acordada con Renzo.
-2. **`ac app:create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
-3. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
+1. **Adoptar filtrado por paquetes afectados en los scripts raíz y en `ci.yml`** (`pnpm --filter "...[origin/main]"` en vez de recorrer todo el workspace) — decisión tomada con Renzo para que el tiempo de CI no crezca linealmente con cada componente nuevo del catálogo (hoy ~12, pensado para escalar a ~50). Turborepo/cache de tareas queda como opción a evaluar más adelante, solo si el filtrado por afectados deja de alcanzar. Ver "CI es la validación completa; el trabajo local es acotado" en `docs/CONVENTIONS.md`. Implementarlo antes de que agregar componentes nuevos lo vuelva más costoso de retrofittear.
+2. **Revisar el estilo visual de los 4 componentes en sí** (`ac-button-basic`, `ac-link-basic`, `ac-badge-basic`, `ac-radio-basic`) — lo de `ac-demo-content` fue el _contenedor_ de la demo; los componentes reales (bordes, tipografía, espaciado) siguen con el estilo original. Siguiente tarea explícitamente acordada con Renzo.
+3. **`ac app:create <nombre>`** — queda como stub (`throw new Error(...)`) en `cli/src/commands/app-create.js`. Scaffold de un proyecto `ac-lit` completo nuevo — pieza grande e independiente, no empezada.
+4. **Promover el job `e2e` de CI a required status check** — hoy es `continue-on-error: true`, no bloqueante a propósito (decisión de Renzo: observar varias corridas estables antes de confiar en él). Aún no se ha pedido promoverlo.
 
 ## Bloqueado / fuera de este repo
 
@@ -62,5 +63,6 @@ Checklist de avance del proyecto, para retomar sin depender de la conversación.
 - Los archivos `href` de cada `ac-demo-case` van en `demo/public/`, no en `demo/` a secas (Vite solo copia `public/` al build) — y siguen necesitando recarga manual del navegador al editarlos (se cargan con `fetch()` en runtime, Vite no los rastrea).
 - Paleta de colores actual (verde esmeralda + ámbar) se mantiene — evaluada una paleta nueva con más identidad, Renzo decidió no cambiarla por ahora.
 - Cero rastro de Claude/IA en commits y PRs de este repo, salvo que Renzo pida lo contrario explícitamente.
+- **CI es la validación completa; el trabajo local solo valida el paquete que se está tocando.** Un fallo que aparece en un paquete no tocado directamente (típicamente por un cambio en un paquete base compartido) se arregla leyendo los logs de CI antes de mergear — no se repite la corrida completa del monorepo en local antes de cada commit/PR para adelantarse. Ver "CI es la validación completa; el trabajo local es acotado" en `docs/CONVENTIONS.md`.
 
 Ver `docs/CONVENTIONS.md` para arquitectura/naming, `CONTRIBUTING.md` para el flujo de ramas y commits.
