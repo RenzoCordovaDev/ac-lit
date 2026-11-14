@@ -1,0 +1,26 @@
+{
+  "es-PE": {
+    "notification-basic-dismiss": "Cerrar",
+    "notification-basic-example-entry": "Ganaste una entrada al sorteo semanal el 20 de octubre. Junta 20 puntos más para ganar otra.",
+    "notification-basic-example-points": "Ganaste 90 puntos por agregar un registro de salud.",
+    "notification-basic-example-record": "Tu registro de salud se actualizó. ¡Bien hecho!",
+    "notification-basic-example-goal": "¡Meta diaria cumplida!",
+    "notification-basic-example-error": "Uno o más aspectos de tu actualización de salud fallaron. Por favor, contactá a soporte si el problema persiste."
+  },
+  "en-EN": {
+    "notification-basic-dismiss": "Dismiss",
+    "notification-basic-example-entry": "You earned an entry into the weekly drawing on October 20. Collect 20 more points to earn another.",
+    "notification-basic-example-points": "You earned 90 points for adding a health record.",
+    "notification-basic-example-record": "Your health record has been updated. Well done!",
+    "notification-basic-example-goal": "Daily raid goal saved!",
+    "notification-basic-example-error": "One or more aspects of your health update failed. Please contact support if the issue persists."
+  },
+  "pt-BR": {
+    "notification-basic-dismiss": "Fechar",
+    "notification-basic-example-entry": "Você ganhou uma entrada no sorteio semanal em 20 de outubro. Junte mais 20 pontos para ganhar outra.",
+    "notification-basic-example-points": "Você ganhou 90 pontos por adicionar um registro de saúde.",
+    "notification-basic-example-record": "Seu registro de saúde foi atualizado. Muito bem!",
+    "notification-basic-example-goal": "Meta diária salva!",
+    "notification-basic-example-error": "Um ou mais aspectos da sua atualização de saúde falharam. Entre em contato com o suporte se o problema persistir."
+  }
+}

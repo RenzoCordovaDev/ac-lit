@@ -1,0 +1,35 @@
+<section>
+  <h2>Feed de notificaciones</h2>
+  <p>
+    Cada ítem se cierra solo con su propio botón — el componente nunca se remueve a sí mismo del
+    DOM, esta demo escucha <code>ac-notification-basic-dismiss-click</code> y saca el nodo (ver
+    <code>demo.js</code>).
+  </p>
+  <div class="column" data-testid="notification-feed">
+    <ac-notification-basic
+      data-testid="notification-neutral"
+      ambient="neutral"
+      message="notification-basic-example-entry"
+    ></ac-notification-basic>
+    <ac-notification-basic
+      data-testid="notification-success"
+      ambient="success"
+      message="notification-basic-example-points"
+    ></ac-notification-basic>
+    <ac-notification-basic
+      data-testid="notification-success-2"
+      ambient="success"
+      message="notification-basic-example-record"
+    ></ac-notification-basic>
+    <ac-notification-basic
+      data-testid="notification-warning"
+      ambient="warning"
+      message="notification-basic-example-goal"
+    ></ac-notification-basic>
+    <ac-notification-basic
+      data-testid="notification-danger"
+      ambient="danger"
+      message="notification-basic-example-error"
+    ></ac-notification-basic>
+  </div>
+</section>
