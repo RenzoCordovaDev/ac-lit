@@ -16,6 +16,10 @@
   /* Fila de lista/feed, nunca un toggle: radio de superficie default, jamás
      --radius-full (ver "Emerald Pro" en docs/CONVENTIONS.md). */
   border-radius: var(--radius, 0.375rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   font-size: var(--font-size-md, 0.95rem);
   line-height: var(--line-height, 1.5);
 }
@@ -70,6 +74,7 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-sm, 0.25rem);
+  corner-shape: squircle;
   cursor: pointer;
 }
 

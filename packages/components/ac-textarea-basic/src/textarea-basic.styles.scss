@@ -50,6 +50,10 @@
   /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
   border: 1px solid var(--color-subtext, #787a80);
   border-radius: var(--radius, 0.375rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   resize: vertical;
   transition:
     border-color 120ms ease,

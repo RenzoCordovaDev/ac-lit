@@ -18,6 +18,10 @@
   background: var(--color-surface, #2b2b2b);
   border: 1px solid var(--color-muted, #313335);
   border-radius: var(--radius, 0.65rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
 }
 
 .ac-expandable--secondary {
