@@ -26,7 +26,7 @@
 .ac-link-basic:focus-visible {
   outline: 3px solid rgba(0, 0, 0, 0.08);
   outline-offset: 3px;
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--radius-sm, 0.5rem);
   /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
      docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
      mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */

@@ -45,7 +45,7 @@
   background: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  border-radius: var(--radius, 0.5rem) var(--radius, 0.5rem) 0 0;
+  border-radius: var(--radius-md, 1rem) var(--radius-md, 1rem) 0 0;
   /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
      docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
      mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
