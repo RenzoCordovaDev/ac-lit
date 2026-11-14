@@ -64,6 +64,7 @@ Feature: ac-transition-container - navegación de pantalla completa
     And el usuario abre el contenedor con el botón "open-sequential"
     Then el contenedor "transition-sequential" muestra la flecha de volver
 
-  Scenario: Una pantalla raíz puede ocultar la flecha de volver con hide-back-icon
+  Scenario: La pantalla raíz se cierra con su flecha de volver
     When el usuario abre el contenedor con el botón "open-initial"
-    Then el contenedor "transition-initial" no muestra la flecha de volver
+    And el usuario pulsa la flecha de volver del contenedor "transition-initial"
+    Then el contenedor "transition-initial" está cerrado

@@ -70,11 +70,11 @@ suite('ac-transition-container', () => {
     expect(backButtonOf(el)).to.exist;
   });
 
-  test('hides the back icon with `hide-back-icon`', async () => {
+  test('always renders the back icon, even with a stray `hide-back-icon` attribute', async () => {
     const el = await fixture(
       html`<ac-transition-container hide-back-icon></ac-transition-container>`,
     );
-    expect(backButtonOf(el)).to.not.exist;
+    expect(backButtonOf(el)).to.exist;
   });
 
   test('clicking the back icon dispatches ac-transition-container-header-back-icon-click', async () => {
