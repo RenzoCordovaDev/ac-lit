@@ -55,10 +55,6 @@ docs(conventions): documentar convención de nombres de eventos
 chore: configurar husky y commitlint
 ```
 
-### Identidad de autor
-
-Todos los commits de este repositorio se firman únicamente con la identidad del mantenedor configurada en el `git config` local del proyecto. **No se agregan trailers de co-autoría de herramientas de IA** salvo que el mantenedor lo indique explícitamente para un commit puntual.
-
 ## Versionado y changelog (Changesets)
 
 Cada paquete en `packages/` y `cli/` versiona de forma **independiente** vía [Changesets](https://github.com/changesets/changesets).
@@ -71,7 +67,7 @@ pnpm changeset
 
 Esto te pregunta qué paquetes cambiaron, el tipo de bump (`patch`/`minor`/`major`) y genera un archivo en `.changeset/` que debe incluirse en el mismo PR.
 
-El bump de versión real y la actualización de `CHANGELOG.md` por paquete ocurre luego, en un PR automático generado por CI (`pnpm version-packages`). La publicación a npm (`pnpm release`) corre en CI al mergear ese PR.
+El bump de versión real y la actualización de `CHANGELOG.md` por paquete se generan corriendo `pnpm version-packages`. La publicación a npm (`pnpm release`) se corre después, una vez confirmados los cambios de versión — hoy este flujo es manual; automatizarlo vía CI (con un PR de versionado automático y publicación al mergearlo) está planeado pero todavía no implementado.
 
 ## Lint, formato y tests
 
