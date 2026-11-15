@@ -118,6 +118,12 @@
         "component:serve"
       ],
       "port": 5173
+    },
+    {
+      "name": "ac-profile-card-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-profile-card-basic", "run", "component:serve"],
+      "port": 5173
     }
   ]
 }
