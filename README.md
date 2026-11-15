@@ -1,25 +1,42 @@
 # ac-lit
 
-Framework y ecosistema propio, basado en **[Lit v3](https://lit.dev)**, para crear aplicaciones web y Web Components. Incluye una CLI de scaffolding (`ac`), paquetes base reutilizables (tokens, mixins) y un catálogo de componentes instalables de forma independiente vía npm/pnpm.
+Framework y ecosistema propio, basado en **[Lit v3](https://lit.dev)**, para crear aplicaciones web y Web Components. Incluye una CLI de scaffolding (`ac`), paquetes base reutilizables (tokens, mixins) y un catálogo de componentes instalables de forma independiente vía npm.
 
-Pensado como entorno de práctica real: un desarrollador puede clonar, instalar la CLI, generar componentes y levantar un servidor de desarrollo local tal como lo haría en un proyecto de producción.
+> La arquitectura y convenciones completas están documentadas en [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md).
 
-> Estado: en definición activa. La arquitectura y convenciones están documentadas en [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md); la implementación del CLI y los paquetes se está construyendo de forma incremental.
+## Usar un componente del catálogo
 
-## Estructura
+Todos los paquetes (`@ac-base/*`, `@ac-components/*`) están publicados en npm:
 
-Ver [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) para la estructura completa del monorepo, los scopes de npm (`@ac-base/*`, `@ac-components/*`) y las convenciones de naming.
+```bash
+pnpm add @ac-components/ac-button-basic lit
+# o: npm i @ac-components/ac-button-basic lit
+```
+
+```js
+import '@ac-components/ac-button-basic';
+```
+
+```html
+<ac-button-basic>Aceptar</ac-button-basic>
+```
+
+Cada componente trae su propio `README.md` con la API completa (propiedades, eventos, ejemplos) — ver `packages/components/`.
+
+## Estructura del monorepo
+
+Ver [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) para la estructura completa, los scopes de npm (`@ac-base/*`, `@ac-components/*`) y las convenciones de naming.
 
 ## CLI (`ac`)
 
 ```bash
 cd packages/components
-node ../../cli/bin/ac.js component:create ac-mi-componente   # o `ac component:create ...` una vez instalado
+ac component:create ac-mi-componente
 ```
 
 Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`ac help`, `ac component:create`, passthrough genérico `ac <script>`, etc.).
 
-## Desarrollo local
+## Desarrollo del repositorio
 
 Requisitos: Node.js >= 18 y pnpm (vía Corepack).
 
@@ -39,7 +56,7 @@ pnpm build           # build de todos los paquetes
 
 ## Contribuir
 
-Lee [`CONTRIBUTING.md`](./CONTRIBUTING.md) antes de abrir un PR: ahí está el flujo de ramas, la convención de commits ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)) y el proceso de versionado con Changesets.
+Lee [`CONTRIBUTING.md`](./CONTRIBUTING.md) antes de abrir un PR: ahí está el flujo de ramas, la convención de commits ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)) y el proceso de versionado con Changesets. Si usás un asistente de IA para contribuir, [`AGENTS.md`](./AGENTS.md) tiene el contexto base del proyecto.
 
 ## Licencia
 
