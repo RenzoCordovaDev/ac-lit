@@ -2,7 +2,7 @@
 
 Esta guía es el paso a paso **completo** para llevar un cambio desde una rama nueva hasta quedar publicado en npm, con tag y GitHub Release. Hoy el flujo es 100% manual — la sigue quien tenga acceso de publish a las organizaciones `ac-base`/`ac-components` en npm.
 
-Antes de empezar, necesitás:
+Antes de empezar, necesitas:
 
 - Acceso de publish a npm en las orgs `ac-base` y `ac-components`, con 2FA activo (hoy, llave de seguridad vía Windows Hello).
 - `gh` (GitHub CLI) autenticado, con permisos sobre `RenzoCordovaDev/ac-lit`.
@@ -25,15 +25,15 @@ git checkout main && git pull --ff-only origin main
 git checkout -b feat/mi-cambio   # o fix/, chore/, etc. — ver CONTRIBUTING.md
 ```
 
-Hacé el cambio. Si afecta uno o más paquetes publicables (cualquier cosa en `packages/` o `cli/`), agregá un changeset:
+Haz el cambio. Si afecta uno o más paquetes publicables (cualquier cosa en `packages/` o `cli/`), agrega un changeset:
 
 ```bash
 pnpm changeset
 ```
 
-Elegís qué paquetes cambiaron y el tipo de bump (`patch`/`minor`/`major`); esto genera un archivo en `.changeset/` que tenés que incluir en el mismo PR. Si un paquete nuevo con dependencias internas (`workspace:^`) necesita que esas dependencias también suban de versión, no hace falta declararlo a mano — `updateInternalDependencies: "patch"` en `.changeset/config.json` ya lo hace solo en el paso siguiente.
+Eliges qué paquetes cambiaron y el tipo de bump (`patch`/`minor`/`major`); esto genera un archivo en `.changeset/` que tienes que incluir en el mismo PR. Si un paquete nuevo con dependencias internas (`workspace:^`) necesita que esas dependencias también suban de versión, no hace falta declararlo a mano — `updateInternalDependencies: "patch"` en `.changeset/config.json` ya lo hace solo en el paso siguiente.
 
-Commiteá, pusheá, abrí el PR, esperá CI en verde y mergealo (squash).
+Commitea, pushea, abre el PR, espera CI en verde y mergéalo (squash).
 
 ## Paso 2 — Version bump
 
@@ -45,7 +45,7 @@ git checkout -b chore/release-x
 pnpm version-packages
 ```
 
-Esto corre `changeset version`: bumpea el `package.json` de cada paquete con un changeset pendiente, genera/actualiza su `CHANGELOG.md`, reescribe las dependencias internas afectadas a la nueva versión, y borra los archivos de `.changeset/` que consumió. Revisá el diff, commiteá, pusheá, abrí PR y mergealo — esta PR también pasa por CI y revisión como cualquier otra.
+Esto corre `changeset version`: bumpea el `package.json` de cada paquete con un changeset pendiente, genera/actualiza su `CHANGELOG.md`, reescribe las dependencias internas afectadas a la nueva versión, y borra los archivos de `.changeset/` que consumió. Revisa el diff, commitea, pushea, abre PR y mergéalo — esta PR también pasa por CI y revisión como cualquier otra.
 
 ## Paso 3 — Build
 
@@ -74,9 +74,9 @@ cd packages/components/<paquete>
 corepack pnpm@latest --pm-on-fail=ignore stage publish --access public
 ```
 
-Repetí esto por cada paquete que haya cambiado de versión en el commit del Paso 2 (`git show --stat <sha>` para ver cuáles).
+Repite esto por cada paquete que haya cambiado de versión en el commit del Paso 2 (`git show --stat <sha>` para ver cuáles).
 
-> **Verificación recomendada antes de pedir la aprobación**: bajá al menos un tarball recién stageado y mirá su `package.json` — sobre todo si hay paquetes que dependen entre sí dentro del mismo release (ej. un componente que usa otro componente del catálogo), para confirmar que la versión reescrita es la nueva, no la vieja publicada.
+> **Verificación recomendada antes de pedir la aprobación**: baja al menos un tarball recién stageado y mira su `package.json` — sobre todo si hay paquetes que dependen entre sí dentro del mismo release (ej. un componente que usa otro componente del catálogo), para confirmar que la versión reescrita es la nueva, no la vieja publicada.
 >
 > ```bash
 > npm stage download <id-del-stage>
