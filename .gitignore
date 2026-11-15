@@ -24,3 +24,17 @@ coverage/
 
 # changesets intermediate
 .changeset/pre.json
+
+# configuración personal de asistentes de IA — cada colaborador arma la suya
+# a partir de AGENTS.md (ver "Guía para agentes de IA" en AGENTS.md)
+CLAUDE.md
+.cursorrules
+.github/copilot-instructions.md
+GEMINI.md
+.windsurfrules
+
+# bitácora de continuidad personal entre sesiones, no es documentación pública
+PROGRESS.md
+
+# permisos locales de Claude Code (específicos de esta máquina)
+.claude/settings.local.json
