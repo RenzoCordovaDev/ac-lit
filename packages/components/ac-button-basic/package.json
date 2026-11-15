@@ -18,6 +18,7 @@
     "access": "public"
   },
   "scripts": {
+    "component:lint": "eslint .",
     "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/button-basic.styles.scss src/button-basic.styles.js ButtonBasicStyles",
     "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/button-basic.styles.scss src/button-basic.styles.js ButtonBasicStyles --watch",
     "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run component:build:styles:watch\" \"vite demo\"",

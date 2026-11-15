@@ -49,7 +49,7 @@ Formato:
 Ejemplos:
 
 ```
-feat(cli): agregar comando `ac generate component`
+feat(cli): agregar comando `aclit generate component`
 fix(button): corregir foco perdido al deshabilitar el botón
 docs(conventions): documentar convención de nombres de eventos
 chore: configurar husky y commitlint

@@ -10,6 +10,7 @@ const REPO_ROOT = path.join(here, '..', '..');
 // Los agregadores de la raíz usan `--if-present`: un script mal nombrado se omitiría sin error
 // y CI quedaría en verde sin ejecutar nada. Este test es la red de seguridad.
 const COMPONENT_SCRIPTS = [
+  'component:lint',
   'component:build:styles',
   'component:build:styles:watch',
   'component:serve',
