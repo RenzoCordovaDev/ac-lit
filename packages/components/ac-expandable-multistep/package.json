@@ -42,6 +42,7 @@
     "@ac-base/ac-demo-content": "workspace:^",
     "@ac-base/ac-e2e-testing": "workspace:^",
     "@ac-base/cli": "workspace:^",
+    "@ac-components/ac-button-basic": "workspace:^",
     "@open-wc/testing": "^4.0.0",
     "@web/test-runner": "^0.18.0",
     "concurrently": "^9.1.0",
