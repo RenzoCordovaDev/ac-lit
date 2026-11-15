@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "ac": "./bin/ac.js"
+    "ac": "bin/ac.js"
   },
   "files": [
     "bin",
