@@ -1,6 +1,6 @@
 {
   "name": "@ac-base/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI de ac-lit — comando `ac` para scaffolding de componentes/proyectos y passthrough de tareas comunes",
   "license": "MIT",
   "type": "module",
