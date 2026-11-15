@@ -62,4 +62,30 @@ describe('componentCreate', () => {
   it('throws for an invalid component name', () => {
     assert.throws(() => componentCreate('foo-basic'), /Debe ser kebab-case/);
   });
+
+  it('pins @ac-base/* deps to their real published version outside the ac-lit workspace', () => {
+    const destDir = componentCreate('ac-foo-basic');
+
+    const pkg = JSON.parse(fs.readFileSync(path.join(destDir, 'package.json'), 'utf8'));
+    assert.equal(pkg.dependencies['@ac-base/ac-component-mixin'], '^0.1.0');
+    assert.equal(pkg.dependencies['@ac-base/ac-intl-mixin'], '^0.1.0');
+    assert.equal(pkg.devDependencies['@ac-base/ac-core'], '^0.1.0');
+    assert.equal(pkg.devDependencies['@ac-base/ac-demo-content'], '^0.1.0');
+    assert.equal(pkg.devDependencies['@ac-base/ac-e2e-testing'], '^0.1.0');
+    assert.equal(pkg.devDependencies['@ac-base/cli'], '^0.1.0');
+  });
+
+  it('keeps workspace:^ for @ac-base/* deps inside the ac-lit workspace', () => {
+    fs.writeFileSync(path.join(tmpDir, 'pnpm-workspace.yaml'), "packages:\n  - 'packages/*'\n");
+    fs.writeFileSync(path.join(tmpDir, 'package.json'), JSON.stringify({ name: 'ac-lit' }));
+    const componentsDir = path.join(tmpDir, 'packages', 'components');
+    fs.mkdirSync(componentsDir, { recursive: true });
+    process.chdir(componentsDir);
+
+    const destDir = componentCreate('ac-foo-basic');
+
+    const pkg = JSON.parse(fs.readFileSync(path.join(destDir, 'package.json'), 'utf8'));
+    assert.equal(pkg.dependencies['@ac-base/ac-component-mixin'], 'workspace:^');
+    assert.equal(pkg.devDependencies['@ac-base/ac-core'], 'workspace:^');
+  });
 });
