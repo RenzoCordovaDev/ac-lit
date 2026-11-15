@@ -58,6 +58,8 @@ pnpm build           # build de todos los paquetes
 
 Lee [`CONTRIBUTING.md`](./CONTRIBUTING.md) antes de abrir un PR: ahí está el flujo de ramas, la convención de commits ([Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)) y el proceso de versionado con Changesets. Si usás un asistente de IA para contribuir, [`AGENTS.md`](./AGENTS.md) tiene el contexto base del proyecto.
 
+Para publicar un cambio en npm (versión, tag, release), seguí [`docs/RELEASING.md`](./docs/RELEASING.md).
+
 ## Licencia
 
 [MIT](./LICENSE)

@@ -67,7 +67,7 @@ pnpm changeset
 
 Esto te pregunta qué paquetes cambiaron, el tipo de bump (`patch`/`minor`/`major`) y genera un archivo en `.changeset/` que debe incluirse en el mismo PR.
 
-El bump de versión real y la actualización de `CHANGELOG.md` por paquete se generan corriendo `pnpm version-packages`. La publicación a npm (`pnpm release`) se corre después, una vez confirmados los cambios de versión — hoy este flujo es manual; automatizarlo vía CI (con un PR de versionado automático y publicación al mergearlo) está planeado pero todavía no implementado.
+El bump de versión real y la actualización de `CHANGELOG.md` por paquete se generan corriendo `pnpm version-packages`. La publicación a npm se corre después, una vez confirmados los cambios de versión — hoy este flujo es manual; automatizarlo vía CI (con un PR de versionado automático y publicación al mergearlo) está planeado pero todavía no implementado. Ver [`docs/RELEASING.md`](./docs/RELEASING.md) para el paso a paso completo de un release, incluida la publicación a npm.
 
 ## Lint, formato y tests
 
