@@ -29,3 +29,14 @@ En el mismo PR (no en uno aparte):
 3. Si el cambio afecta la API pública de un paquete (`@ac-base/*`, `@ac-components/*`), actualizá su `README.md`.
 
 No asumas que esto queda implícito — decilo explícitamente al pedir una tarea no trivial, por ejemplo: _"...y cuando termines, actualizá PROGRESS.md con lo que se hizo y docs/CONVENTIONS.md si encontraste algo nuevo, en el mismo commit."_
+
+## Cómo trabajar: planificá antes de ejecutar
+
+Para cualquier tarea no trivial (más de un archivo, más de un paso, o con incertidumbre real sobre la causa/solución), no improvises cambios amplios directo en el código:
+
+1. **Descomponé la tarea primero.** Antes de tocar archivos, dividila en piezas con un resultado verificable cada una (un archivo o módulo concreto, un criterio de "terminado" claro — qué test pasa, qué se ve en el navegador, qué comando corre sin error). Si vas a usar el modo agente, dale ese plan completo de entrada, no "arreglá esto" a secas.
+2. **Para debugging de causa incierta** (un bug que no se explica a la primera, código que hay que leer mucho para entender), primero investigá y confirmá la causa raíz con evidencia (un log, una prueba reproducible) antes de empezar a cambiar código a prueba y error — cada iteración sin diagnóstico cuesta más de lo que ahorra.
+3. **Piezas realmente independientes del trabajo pendiente** (componentes separados del catálogo, el `.gitignore` de `.styles.js`, etc.) conviene asignarlas por separado — como tarea de GitHub Copilot coding agent o como issue aparte — en vez de resolver todo en una sola sesión larga de edición.
+4. **Validá acotado mientras iterás, completo solo al cerrar.** Mientras trabajás en un paquete, corré solo sus propios tests (`pnpm --filter <paquete> run component:test...`). La corrida completa del monorepo (lint + build + unit + e2e + a11y de todos los paquetes) es el último paso antes de commitear/abrir PR, no algo para repetir en cada vuelta.
+
+Esto no es una preferencia de estilo — es la forma de trabajar por defecto en este repo mientras haya tareas complejas pendientes (catálogo de componentes, scaffolding del CLI, decisiones de arquitectura), precisamente para no gastar de más resolviendo todo sin un plan.

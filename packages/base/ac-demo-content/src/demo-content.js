@@ -239,11 +239,17 @@ export class DemoContent extends ComponentMixin(LitElement) {
     }
   }
 
-  // El modal/toast de un caso usan la capa superior nativa (ver "Superposiciones"
-  // en CONVENTIONS.md): para que se dibujen dentro del dispositivo simulado en
-  // vez del viewport real, les damos una forma de medir el área del viewport
-  // simulado. `getBoundary` es una función (no el elemento) porque ese div se
-  // reconstruye al alternar Visual/Código.
+  // Un modal/toast/transition "contenido" de un caso renuncia a la capa
+  // superior nativa (`showModal()`/`popover` SIEMPRE bloquean toda la página
+  // real e ignoran cualquier ancestro para medirse — ver "Superposiciones" en
+  // CONVENTIONS.md) y se abre con `dialog.show()`/`popover="manual"` sin
+  // modal. Pero `position: absolute`/`fixed` tampoco resuelve contra un
+  // ancestro a través del límite de shadow DOM (probado empíricamente: el
+  // `offsetParent` de un `<dialog>` slotteado da `<body>`, no el div del
+  // viewport simulado, aun con ese div en `position: relative` y el host en
+  // `display: contents`) — así que el componente igual necesita medir el
+  // viewport simulado por JS. `getBoundary` es una función (no el elemento)
+  // porque ese div se reconstruye al alternar Visual/Código.
   _onCaseLoad(event) {
     this._applyContainment(event.target);
   }

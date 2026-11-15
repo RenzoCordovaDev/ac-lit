@@ -90,6 +90,17 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-demo-content", "run", "component:serve"],
       "port": 5173
+    },
+    {
+      "name": "ac-transition-container-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@ac-components/ac-transition-container",
+        "run",
+        "component:serve"
+      ],
+      "port": 5173
     }
   ]
 }

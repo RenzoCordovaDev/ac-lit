@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@ac-base/ac-component-mixin": "workspace:^",
+    "@ac-base/ac-core": "workspace:^",
     "@ac-base/ac-intl-mixin": "workspace:^",
     "@ac-components/ac-button-basic": "workspace:^",
     "@ac-components/ac-link-basic": "workspace:^"
@@ -39,7 +40,6 @@
     "lit": "^3.0.0"
   },
   "devDependencies": {
-    "@ac-base/ac-core": "workspace:^",
     "@ac-base/ac-demo-content": "workspace:^",
     "@ac-base/ac-e2e-testing": "workspace:^",
     "@ac-base/cli": "workspace:^",
