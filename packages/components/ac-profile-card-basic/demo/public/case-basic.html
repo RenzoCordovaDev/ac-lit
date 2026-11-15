@@ -1,0 +1,36 @@
+<section>
+  <h2>Básico</h2>
+  <div class="row">
+    <ac-profile-card-basic
+      data-testid="profile-card-basic-default"
+      name="Ana Torres"
+      status-text="Activo"
+      status-ambient="success"
+      action-text="profile-card-basic-view-profile"
+    ></ac-profile-card-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Sin estado ni acción</h2>
+  <div class="row">
+    <ac-profile-card-basic
+      data-testid="profile-card-basic-minimal"
+      name="Juan Pérez"
+    ></ac-profile-card-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Con avatar (imagen)</h2>
+  <div class="row">
+    <ac-profile-card-basic
+      data-testid="profile-card-basic-avatar"
+      name="María López"
+      avatar-src="https://i.pravatar.cc/80?img=5"
+      status-text="Pendiente"
+      status-ambient="warning"
+      action-text="profile-card-basic-view-profile"
+    ></ac-profile-card-basic>
+  </div>
+</section>
