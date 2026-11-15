@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-slider-basic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ac-lit range slider Web Component",
   "license": "MIT",
   "type": "module",

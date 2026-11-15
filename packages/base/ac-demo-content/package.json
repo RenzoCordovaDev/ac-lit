@@ -1,6 +1,6 @@
 {
   "name": "@ac-base/ac-demo-content",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Contenedor centralizado para demos de componentes ac-lit (casos, idioma, ambient, modo oscuro, tamaños, panel de eventos)",
   "license": "MIT",
   "type": "module",

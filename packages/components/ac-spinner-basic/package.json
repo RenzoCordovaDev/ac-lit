@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-spinner-basic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ac-lit spinner-basic Web Component",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-transition-container",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ac-lit full-screen slide-in transition container Web Component",
   "license": "MIT",
   "type": "module",
