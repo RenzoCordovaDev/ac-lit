@@ -1,0 +1,30 @@
+<section>
+  <h2>Flujo de 3 pasos</h2>
+  <ac-expandable-multistep data-testid="expandable-multistep-basic">
+    <ac-expandable-step id="step-1" data-testid="step-1" header="Tipo de transferencia">
+      <p>Elegí si la transferencia es entre tus cuentas o a terceros.</p>
+      <button type="button" data-testid="continue-step-1" data-complete-step="step-1">
+        Continuar
+      </button>
+      <span slot="summary">Transferencia a terceros</span>
+    </ac-expandable-step>
+    <ac-expandable-step id="step-2" data-testid="step-2" header="Datos del destinatario">
+      <p>Ingresá cuenta, nombre y banco del destinatario.</p>
+      <button type="button" data-testid="continue-step-2" data-complete-step="step-2">
+        Continuar
+      </button>
+      <span slot="summary">Juan Pérez — BCP 191-1234567-0-12</span>
+    </ac-expandable-step>
+    <ac-expandable-step id="step-3" data-testid="step-3" header="Monto y confirmación">
+      <p>Ingresá el monto a transferir.</p>
+      <button type="button" data-testid="continue-step-3" data-complete-step="step-3">
+        Finalizar
+      </button>
+      <span slot="summary">S/ 250.00</span>
+    </ac-expandable-step>
+    <div slot="confirmation" data-testid="confirmation">
+      <h3>Transferencia realizada con éxito</h3>
+      <p>Te enviamos el comprobante a tu correo registrado.</p>
+    </div>
+  </ac-expandable-multistep>
+</section>
