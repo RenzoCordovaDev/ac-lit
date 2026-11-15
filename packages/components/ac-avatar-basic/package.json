@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-avatar-basic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ac-lit avatar-basic Web Component",
   "license": "MIT",
   "type": "module",
