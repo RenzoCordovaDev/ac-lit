@@ -5,7 +5,7 @@ import { formatHelp } from '../src/commands/help.js';
 import { runScript } from '../src/commands/run-script.js';
 
 const HELP_FLAGS = new Set(['-h', '--help']);
-// Namespaces que antes eran subcomandos con espacio (`ac component create`).
+// Namespaces que antes eran subcomandos con espacio (`aclit component create`).
 const LEGACY_NAMESPACES = new Set(['component', 'app']);
 
 const [, , first, ...rest] = process.argv;
@@ -22,7 +22,7 @@ if (findCommand(first)) {
 
 function runWithCommander() {
   const program = new Command();
-  program.name('ac').description('CLI de ac-lit');
+  program.name('aclit').description('CLI de ac-lit');
 
   for (const definition of COMMANDS) {
     const command = program
@@ -49,9 +49,9 @@ function runWithCommander() {
 function printLegacyHint(namespace, action) {
   const suggestion = action ? `${namespace}:${action}` : undefined;
   const hint =
-    suggestion && findCommand(suggestion) ? ` ¿Quisiste decir \`ac ${suggestion}\`?` : '';
+    suggestion && findCommand(suggestion) ? ` ¿Quisiste decir \`aclit ${suggestion}\`?` : '';
   console.error(
-    `\`ac ${namespace}\` ya no existe: los comandos usan la forma \`${namespace}:<accion>\`.${hint}\nEjecuta \`ac help\` para ver todos los comandos.`,
+    `\`aclit ${namespace}\` ya no existe: los comandos usan la forma \`${namespace}:<accion>\`.${hint}\nEjecuta \`aclit help\` para ver todos los comandos.`,
   );
   process.exitCode = 1;
 }

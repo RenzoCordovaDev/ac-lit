@@ -58,6 +58,7 @@ import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 ## Desarrollo
 
 ```bash
+pnpm --filter @ac-components/ac-radio-basic component:lint
 pnpm --filter @ac-components/ac-radio-basic component:serve    # demo en http://localhost:5173
 pnpm --filter @ac-components/ac-radio-basic component:test
 pnpm --filter @ac-components/ac-radio-basic component:build

@@ -7,13 +7,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const BIN = path.join(here, '..', 'bin', 'ac.js');
+const BIN = path.join(here, '..', 'bin', 'aclit.js');
 
 function runAc(args, cwd) {
   return spawnSync(process.execPath, [BIN, ...args], { cwd, encoding: 'utf8' });
 }
 
-describe('ac (bin)', () => {
+describe('aclit (bin)', () => {
   let tmpDir;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('ac (bin)', () => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
-  it('scaffolds a component via `ac component:create <name>`', () => {
+  it('scaffolds a component via `aclit component:create <name>`', () => {
     const result = runAc(['component:create', 'ac-foo-basic'], tmpDir);
 
     assert.equal(result.status, 0, result.stderr);
@@ -46,7 +46,7 @@ describe('ac (bin)', () => {
     assert.match(result.stdout + result.stderr, /Debe ser kebab-case/);
   });
 
-  it('exits non-zero with a clear message for `ac app:create` (not implemented yet)', () => {
+  it('exits non-zero with a clear message for `aclit app:create` (not implemented yet)', () => {
     const result = runAc(['app:create', 'mi-app'], tmpDir);
 
     assert.notEqual(result.status, 0);
@@ -57,7 +57,7 @@ describe('ac (bin)', () => {
     const result = runAc(['component', 'create', 'ac-foo-basic'], tmpDir);
 
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /¿Quisiste decir `ac component:create`\?/);
+    assert.match(result.stderr, /¿Quisiste decir `aclit component:create`\?/);
   });
 
   it('does not scaffold anything with the old space-separated syntax', () => {
@@ -78,7 +78,7 @@ describe('ac (bin)', () => {
     assert.match(result.stdout, /123/);
   });
 
-  it('passes through `ac component:serve` without trying to parse it as a subcommand', () => {
+  it('passes through `aclit component:serve` without trying to parse it as a subcommand', () => {
     fs.writeFileSync(
       path.join(tmpDir, 'package.json'),
       JSON.stringify({
@@ -97,13 +97,13 @@ describe('ac (bin)', () => {
     const result = runAc([], tmpDir);
 
     assert.equal(result.status, 0);
-    assert.match(result.stdout, /ac component:create/);
+    assert.match(result.stdout, /aclit component:create/);
   });
 
-  it('lists every built-in command with `ac help`', () => {
+  it('lists every built-in command with `aclit help`', () => {
     const result = runAc(['help'], tmpDir);
 
-    assert.match(result.stdout, /ac component:create .*\n.*ac app:create/);
+    assert.match(result.stdout, /aclit component:create .*\n.*aclit app:create/);
   });
 
   it('prints the same help for -h and --help', () => {
@@ -112,7 +112,7 @@ describe('ac (bin)', () => {
     assert.equal(new Set(outputs).size, 1);
   });
 
-  it('lists the scripts of the current package.json in `ac help`', () => {
+  it('lists the scripts of the current package.json in `aclit help`', () => {
     fs.writeFileSync(
       path.join(tmpDir, 'package.json'),
       JSON.stringify({ name: 'tmp', scripts: { 'my:task': 'node -e "1"' } }),
@@ -120,7 +120,7 @@ describe('ac (bin)', () => {
 
     const result = runAc(['help'], tmpDir);
 
-    assert.match(result.stdout, /ac my:task/);
+    assert.match(result.stdout, /aclit my:task/);
   });
 
   it('prefers the built-in `help` over a package script with the same name', () => {

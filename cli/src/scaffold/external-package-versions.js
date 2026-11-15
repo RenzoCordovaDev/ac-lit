@@ -1,6 +1,6 @@
 /**
  * Versión real publicada en npm de cada paquete `@ac-base/*` que el template
- * de `ac component:create` trae como dependencia. Se usa para reemplazar
+ * de `aclit component:create` trae como dependencia. Se usa para reemplazar
  * `workspace:^` cuando el scaffolding corre fuera del workspace de `ac-lit`
  * (ahí ese protocolo no resuelve — ver `docs/CONVENTIONS.md`).
  *

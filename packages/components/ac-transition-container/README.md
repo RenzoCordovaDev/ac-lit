@@ -104,11 +104,12 @@ Entrada (`slide-in`, 300 ms, de derecha a izquierda) y salida (`slide-out`, 240 
 ## Desarrollo
 
 ```bash
-ac component:serve           # o: pnpm --filter @ac-components/ac-transition-container component:serve    — demo en http://localhost:5173
-ac component:test
-ac component:build
-ac component:test:e2e        # funcional (WebdriverIO + Cucumber)
-ac component:test:e2e:a11y   # accesibilidad (axe-core)
+aclit component:lint
+aclit component:serve           # o: pnpm --filter @ac-components/ac-transition-container component:serve    — demo en http://localhost:5173
+aclit component:test
+aclit component:build
+aclit component:test:e2e        # funcional (WebdriverIO + Cucumber)
+aclit component:test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
 > `src/transition-container.styles.js` se genera a partir de `src/transition-container.styles.scss` (`component:build:styles`, corre automáticamente antes de `component:serve`/`component:build`/`component:test`) y no se versiona en git. Durante `component:serve` queda además en modo watch: cada guardado de `.scss` lo recompila y Vite recarga el navegador solo, sin reiniciar nada.

@@ -1,6 +1,6 @@
 # ac-lit
 
-Framework y ecosistema propio, basado en **[Lit v3](https://lit.dev)**, para crear aplicaciones web y Web Components. Incluye una CLI de scaffolding (`ac`), paquetes base reutilizables (tokens, mixins) y un catálogo de componentes instalables de forma independiente vía npm.
+Framework y ecosistema propio, basado en **[Lit v3](https://lit.dev)**, para crear aplicaciones web y Web Components. Incluye una CLI de scaffolding (`aclit`), paquetes base reutilizables (tokens, mixins) y un catálogo de componentes instalables de forma independiente vía npm.
 
 > La arquitectura y convenciones completas están documentadas en [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md).
 
@@ -27,14 +27,14 @@ Cada componente trae su propio `README.md` con la API completa (propiedades, eve
 
 Ver [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) para la estructura completa, los scopes de npm (`@ac-base/*`, `@ac-components/*`) y las convenciones de naming.
 
-## CLI (`ac`)
+## CLI (`aclit`)
 
 ```bash
 cd packages/components
-ac component:create ac-mi-componente
+aclit component:create ac-mi-componente
 ```
 
-Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`ac help`, `ac component:create`, passthrough genérico `ac <script>`, etc.).
+Ver [`cli/README.md`](./cli/README.md) para el detalle de comandos (`aclit help`, `aclit component:create`, passthrough genérico `aclit <script>`, etc.).
 
 ## Desarrollo del repositorio
 

@@ -48,6 +48,7 @@ El ícono de cada `ambient` es decorativo (`aria-hidden="true"`) — el color po
 ## Desarrollo
 
 ```bash
+pnpm --filter @ac-components/ac-notification-basic run component:lint   # lint
 pnpm --filter @ac-components/ac-notification-basic run component:serve   # demo en http://localhost:5173
 pnpm --filter @ac-components/ac-notification-basic run component:test   # unit
 ```
