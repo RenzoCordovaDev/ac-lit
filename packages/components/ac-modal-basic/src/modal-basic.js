@@ -1,5 +1,5 @@
 import { LitElement, html, nothing } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 // Dependencias del catálogo: se registran como efecto de importar su `index.js`.
 import '@ac-components/ac-button-basic';
 import '@ac-components/ac-link-basic';
@@ -32,7 +32,7 @@ export class ModalBasic extends ComponentMixin(LitElement) {
   }
 
   static get styles() {
-    return [ModalBasicStyles];
+    return [componentBaseStyles, ModalBasicStyles];
   }
 
   static get properties() {

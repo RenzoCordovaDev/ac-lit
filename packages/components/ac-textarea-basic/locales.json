@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "textarea-basic-comment-label": "Comentario",
+    "textarea-basic-comment-placeholder": "Contanos qué pasó",
+    "textarea-basic-comment-hint": "Máximo 500 caracteres."
+  },
+  "en-EN": {
+    "textarea-basic-comment-label": "Comment",
+    "textarea-basic-comment-placeholder": "Tell us what happened",
+    "textarea-basic-comment-hint": "500 characters max."
+  },
+  "pt-BR": {
+    "textarea-basic-comment-label": "Comentário",
+    "textarea-basic-comment-placeholder": "Conte o que aconteceu",
+    "textarea-basic-comment-hint": "Máximo de 500 caracteres."
+  }
+}
