@@ -34,6 +34,7 @@ function reflowStack(position) {
   for (const toast of stacks[position]) {
     toast.style.setProperty('--ac-toast-offset', `${offset}px`);
     offset += toast._height + STACK_GAP_PX;
+    if (toast.contained) toast._syncContainedPosition();
   }
 }
 
@@ -67,6 +68,7 @@ export class ToastBasic extends ComponentMixin(LitElement) {
       position: { type: String, reflect: true },
       hideClose: { type: Boolean, attribute: 'hide-close' },
       actionText: { type: String, attribute: 'action-text' },
+      contained: { type: Boolean, reflect: true },
     };
   }
 
@@ -79,6 +81,12 @@ export class ToastBasic extends ComponentMixin(LitElement) {
     this.hideClose = false;
     this.actionText = '';
     this.ambient = 'neutral';
+    // `contained`: igual que en ac-modal-basic, el toast sigue usando la capa
+    // superior nativa (`showPopover()`), solo cambia DÓNDE se dibuja — el área
+    // que mide `getBoundary()` en vez del viewport real. Ver "Superposiciones"
+    // en CONVENTIONS.md.
+    this.contained = false;
+    this.getBoundary = null;
     this._closeReason = undefined;
     this._closeToken = 0;
     this._closeTimer = undefined;
@@ -87,11 +95,14 @@ export class ToastBasic extends ComponentMixin(LitElement) {
     this._startedAt = 0;
     this._hovered = false;
     this._focused = false;
+    this._boundaryObserver = undefined;
+    this._onViewportChange = this._syncContainedPosition.bind(this);
   }
 
   disconnectedCallback() {
     clearTimeout(this._closeTimer);
     clearTimeout(this._dismissTimer);
+    this._stopBoundaryTracking();
     removeFromStack(this);
     reflowStack(this._position);
     super.disconnectedCallback();
@@ -148,6 +159,10 @@ export class ToastBasic extends ComponentMixin(LitElement) {
 
     if (this.open) {
       this._cancelPendingClose();
+      // El navegador "congela" la posición de un popover en el momento exacto
+      // de `showPopover()`: cambiar top/left/bottom DESPUÉS de abierto no
+      // mueve nada (probado empíricamente). Por eso el cálculo va ANTES.
+      if (this.contained) this._startBoundaryTracking();
       if (!popover.matches(':popover-open')) popover.showPopover();
       addToStack(this);
       reflowStack(this._position);
@@ -242,6 +257,7 @@ export class ToastBasic extends ComponentMixin(LitElement) {
       clearTimeout(this._closeTimer);
       popover.classList.remove(CLOSING_CLASS);
       if (popover.matches(':popover-open')) popover.hidePopover();
+      this._stopBoundaryTracking();
     };
 
     // Sin animación (prefers-reduced-motion) `animationend` nunca llega: se oculta ya.
@@ -258,6 +274,93 @@ export class ToastBasic extends ComponentMixin(LitElement) {
     this._closeToken += 1;
     clearTimeout(this._closeTimer);
     this._popover?.classList.remove(CLOSING_CLASS);
+  }
+
+  /**
+   * Mide `getBoundary()` y calcula dónde debe quedar el toast dentro de esa
+   * área (CSS puro no puede expresar "a 1rem del borde inferior de un
+   * elemento cualquiera", solo del viewport). Se reusa también desde
+   * `reflowStack()`: el apilado cambia la posición de todos los toasts de la
+   * misma posición, no solo del que abre/cierra.
+   */
+  _syncContainedPosition() {
+    if (typeof this.getBoundary !== 'function') return;
+    const boundary = this.getBoundary();
+    const popover = this._popover;
+    if (!boundary || !popover) return;
+
+    const rawRect = boundary.getBoundingClientRect();
+    // Se recorta contra el viewport REAL: un dispositivo simulado más alto que
+    // la ventana real (ej. "móvil" con ventanas de navegador bajas) no debe
+    // dejar el toast fuera de lo que se puede ver/alcanzar (`position: fixed`
+    // no se desplaza con el scroll de la página).
+    const boundaryRect = {
+      top: Math.max(rawRect.top, 0),
+      left: Math.max(rawRect.left, 0),
+      bottom: Math.min(rawRect.bottom, window.innerHeight),
+      right: Math.min(rawRect.right, window.innerWidth),
+    };
+    boundaryRect.width = Math.max(boundaryRect.right - boundaryRect.left, 0);
+
+    const gap = 16; // 1rem, asumiendo el root font-size por defecto
+    // El navegador fija top/left/bottom en el momento exacto de
+    // `showPopover()` (comprobado empíricamente: cambiarlos después de
+    // abierto no mueve nada) — por eso este cálculo corre ANTES de abrir, lo
+    // que impide usar el tamaño propio del popover (todavía no se pintó) o el
+    // offset de apilado (cambia mientras sigue abierto). Por eso solo fija el
+    // ANCLA estática (borde del marco + gap); el centrado horizontal y el
+    // desplazamiento del apilado van en `transform` (sí se actualiza en vivo,
+    // como ya hacía la animación de cierre) con `translateX(-50%)` y
+    // referenciando `--ac-toast-offset` directamente — ver el CSS.
+    const anchor =
+      this._position === 'top'
+        ? boundaryRect.top + gap
+        : window.innerHeight - boundaryRect.bottom + gap;
+    const centerX = boundaryRect.left + boundaryRect.width / 2;
+
+    this.style.setProperty(
+      this._position === 'top'
+        ? '--ac-toast-basic-contained-top'
+        : '--ac-toast-basic-contained-bottom',
+      `${anchor}px`,
+    );
+    this.style.setProperty('--ac-toast-basic-contained-left', `${centerX}px`);
+    this.style.setProperty(
+      '--ac-toast-basic-contained-maxw',
+      `${Math.max(boundaryRect.width - 32, 0)}px`,
+    );
+    // No las usa ningún selector CSS: existen para que las pruebas e2e puedan
+    // comparar el toast contra el mismo rect (ya recortado) que usó para
+    // posicionarse, sin tener que volver a calcularlo.
+    this.style.setProperty('--ac-toast-basic-contained-boundary-top', `${boundaryRect.top}px`);
+    this.style.setProperty(
+      '--ac-toast-basic-contained-boundary-bottom',
+      `${boundaryRect.bottom}px`,
+    );
+  }
+
+  _startBoundaryTracking() {
+    if (typeof this.getBoundary !== 'function') return;
+    this._syncContainedPosition();
+    const boundary = this.getBoundary();
+    if (boundary) {
+      this._boundaryObserver ??= new ResizeObserver(this._onViewportChange);
+      this._boundaryObserver.disconnect();
+      this._boundaryObserver.observe(boundary);
+    }
+    window.addEventListener('resize', this._onViewportChange);
+    // El marco de dispositivo es un elemento normal (no top-layer): si la
+    // página scrollea, se mueve. El ancla ya fijada no se puede recalcular
+    // mientras el toast sigue abierto (ver nota de `_syncContainedPosition`),
+    // pero sí mantiene la referencia al día para la próxima apertura.
+    // `capture` porque el scroll no burbujea.
+    window.addEventListener('scroll', this._onViewportChange, { passive: true, capture: true });
+  }
+
+  _stopBoundaryTracking() {
+    this._boundaryObserver?.disconnect();
+    window.removeEventListener('resize', this._onViewportChange);
+    window.removeEventListener('scroll', this._onViewportChange, { capture: true });
   }
 
   // Cierre automático. Se pausa mientras el puntero está encima o el foco está
