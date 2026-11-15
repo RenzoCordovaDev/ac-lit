@@ -44,9 +44,21 @@ When('el usuario pulsa Escape', async function () {
 });
 
 When('el usuario hace click fuera del modal', async function () {
-  // La esquina superior izquierda del viewport es el backdrop (el modal "offset" deja
-  // un hueco arriba).
-  await browser.action('pointer').move({ x: 5, y: 5, origin: 'viewport' }).down().up().perform();
+  // La esquina superior izquierda del marco (el modal "offset" deja un hueco
+  // arriba) es el backdrop. Si el modal está "contenido" dentro de un
+  // ac-demo-content, ese marco es el dispositivo simulado, no el viewport real.
+  const corner = await browser.execute(() => {
+    const demoContent = document.querySelector('ac-demo-content');
+    const viewport = demoContent?.shadowRoot.querySelector('.ac-demo-content__viewport');
+    const rect = (viewport ?? document.documentElement).getBoundingClientRect();
+    return { x: rect.left + 10, y: rect.top + 10 };
+  });
+  await browser
+    .action('pointer')
+    .move({ x: Math.round(corner.x), y: Math.round(corner.y), origin: 'viewport' })
+    .down()
+    .up()
+    .perform();
 });
 
 When('el usuario cierra el modal {string} con su botón de cerrar', async function (testId) {
@@ -123,8 +135,8 @@ Then('el modal {string} deja un espacio arriba', async function (testId) {
   const modal = componentProvider.find(ModalBasicPage, testId);
   await browser.waitUntil(
     async () => {
-      const { top, height, viewportHeight } = await modal.snapshot();
-      return top > 8 && height < viewportHeight;
+      const { top, viewportTop, height, viewportHeight } = await modal.snapshot();
+      return top - viewportTop > 8 && height < viewportHeight;
     },
     { timeout: 3000, timeoutMsg: `El modal "${testId}" no deja espacio arriba` },
   );

@@ -1,0 +1,221 @@
+:host {
+  display: contents;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* Este contenedor siempre es pantalla completa: a diferencia de ac-modal-basic
+   no existen variantes de tamaño (`size`). */
+.ac-transition-container {
+  /* El foco depende del tema porque se dibuja sobre la superficie del
+     contenedor. Ver "Controles de formulario y texto" en docs/CONVENTIONS.md. */
+  --ac-transition-container-focus: var(--color-primary-500, #10b981);
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: none;
+  border-radius: 0;
+  inset: 0;
+}
+
+:host-context([data-theme='light']) .ac-transition-container {
+  --ac-transition-container-focus: var(--color-primary-700, #047857);
+}
+
+/* Modo "contenido": renuncia a la capa superior nativa (`showModal()` bloquea
+   SIEMPRE toda la página real — ver "Superposiciones" en CONVENTIONS.md) y se
+   abre con `dialog.show()` (no modal), así el resto de la página real sigue
+   interactivo. La posición/tamaño siguen midiéndose por JS
+   (`_syncContainedRect()`, variables CSS de abajo) porque `position: fixed`
+   tampoco resuelve contra un ancestro a través del límite de shadow DOM. Sin
+   variantes de tamaño, el `<dialog>` siempre cubre el área medida entera —
+   pero es `.ac-transition-container__panel` quien anima la entrada/salida,
+   nunca el propio `<dialog>`: `position: fixed` no se recorta por el
+   overflow de ningún ancestro, así que si el `<dialog>` animara siendo él
+   mismo, se lo vería "salir" del marco simulado hacia la página real durante
+   la animación. El `overflow: hidden` del `<dialog>` (ya puesto en la regla
+   base) recorta al panel mientras desliza. La animación del panel NO se hace
+   con `@keyframes`/`transform` en `%` (comprobado empíricamente en
+   `ac-modal-basic`: en este camino — `<dialog>` fijo con tamaño recién fijado
+   por JS en el mismo cuadro — el `%` de un `transform` animado resuelve mal,
+   recortando el recorrido visible a ~30-40 ms en vez de los 300/240 ms
+   declarados): la hacen `_animateContainedOpen()`/`_animateContainedClose()`
+   (en transition-container.js) con la Web Animations API y un `translateX`
+   en píxeles medido en el momento. */
+:host([contained]) .ac-transition-container {
+  position: fixed;
+  /* Sin capa superior nativa ya no hay garantía automática de "siempre
+     encima" — se fuerza con z-index (antes no hacía falta: showModal() lo
+     daba gratis). */
+  z-index: 1000;
+  top: var(--ac-transition-container-contained-top, 0px);
+  left: var(--ac-transition-container-contained-left, 0px);
+  width: var(--ac-transition-container-contained-width, 100vw);
+  height: var(--ac-transition-container-contained-height, 100vh);
+  max-width: none;
+  margin: 0;
+}
+
+:host([contained]) .ac-transition-container[open],
+:host([contained]) .ac-transition-container[open].ac-transition-container--closing {
+  /* La animación la hace `_animateContainedOpen()`/`_animateContainedClose()`. */
+  animation: none;
+}
+
+.ac-transition-container::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.ac-transition-container__panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ac-transition-container__header {
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: 2.5rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.ac-transition-container__header-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ac-transition-container__back,
+.ac-transition-container__menu {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.ac-transition-container__back:hover,
+.ac-transition-container__menu:hover {
+  background: var(--color-muted, #313335);
+}
+
+.ac-transition-container__back:focus-visible,
+.ac-transition-container__menu:focus-visible,
+.ac-transition-container__body:focus-visible {
+  outline: 2px solid var(--ac-transition-container-focus);
+  outline-offset: -2px;
+}
+
+.ac-transition-container__title {
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ac-transition-container__header-end {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.ac-transition-container__body {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Entrada: de derecha hacia izquierda. Salida: de izquierda hacia derecha (la
+   clase --closing la pone el componente y quita el <dialog> al terminar). */
+@keyframes ac-transition-container-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ac-transition-container-slide-out {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes ac-transition-container-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ac-transition-container-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.ac-transition-container[open] {
+  animation: ac-transition-container-slide-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+.ac-transition-container[open]::backdrop {
+  animation: ac-transition-container-fade-in 300ms ease backwards;
+}
+
+.ac-transition-container[open].ac-transition-container--closing {
+  animation: ac-transition-container-slide-out 240ms ease-in forwards;
+}
+
+.ac-transition-container[open].ac-transition-container--closing::backdrop {
+  animation: ac-transition-container-fade-out 240ms ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-transition-container[open],
+  .ac-transition-container[open]::backdrop,
+  .ac-transition-container[open].ac-transition-container--closing,
+  .ac-transition-container[open].ac-transition-container--closing::backdrop {
+    animation: none;
+  }
+}

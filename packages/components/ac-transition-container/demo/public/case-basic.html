@@ -1,0 +1,38 @@
+<section>
+  <h2>Pantalla raíz (la flecha cierra)</h2>
+  <div class="row">
+    <ac-button-basic data-testid="open-initial" data-open-transition="transition-initial"
+      >Abrir pantalla inicial</ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-transition-container
+  id="transition-initial"
+  data-testid="transition-initial"
+  data-close-on-back
+  header-text="Ajustes"
+>
+  <p>
+    La flecha de volver es siempre visible y no se puede ocultar: en esta pantalla "raíz" (que no
+    tiene a dónde volver) funciona como botón de cerrar, cableada igual que en
+    <code>case-sequential.html</code> con el atributo <code>data-close-on-back</code> que escucha
+    <code>demo.js</code>.
+  </p>
+  <p>El contenedor cubre toda la pantalla y se desliza de derecha a izquierda al abrirse.</p>
+</ac-transition-container>
+
+<section>
+  <h2>Título por defecto</h2>
+  <div class="row">
+    <ac-button-basic
+      data-testid="open-default-title"
+      data-open-transition="transition-default-title"
+      >Abrir sin <code>header-text</code></ac-button-basic
+    >
+  </div>
+</section>
+
+<ac-transition-container id="transition-default-title" data-testid="transition-default-title">
+  <p>Sin la propiedad <code>header-text</code>, el título es un texto por defecto traducido.</p>
+</ac-transition-container>
