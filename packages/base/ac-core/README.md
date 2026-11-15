@@ -11,7 +11,6 @@ pnpm add @ac-base/ac-core
 ## Uso
 
 ```js
-import { tokens } from '@ac-base/ac-core/tokens';
 import {
   dispatchCustomEvent,
   debounce,
@@ -20,18 +19,20 @@ import {
   isInViewport,
 } from '@ac-base/ac-core/utils';
 
-console.log(tokens.colors.primary);
-
 dispatchCustomEvent(this, 'ac-button-click', { value: 42 });
 ```
 
-También se puede importar la paleta de tokens CSS lista para usar:
+Los tokens de diseño ("Emerald Pro" — ver `docs/CONVENTIONS.md`) son CSS, no JS. Se importan tal cual:
 
 ```js
+// Tokens de forma/tipografía/espaciado/elevación — siempre, sin importar la paleta de color activa.
+import '@ac-base/ac-core/tokens/base.css';
+
+// Paleta de color.
 import '@ac-base/ac-core/tokens/modern-warm-palette.css';
 ```
 
-Para soportar modo oscuro/claro, importa además la variante clara — se activa poniendo `data-theme="light"` en `<html>` (los componentes no necesitan cambiar nada: las custom properties CSS cruzan el shadow DOM por herencia):
+Para soportar modo oscuro/claro, importa además la variante clara de la paleta — se activa poniendo `data-theme="light"` en `<html>` (los componentes no necesitan cambiar nada: las custom properties CSS cruzan el shadow DOM por herencia):
 
 ```js
 import '@ac-base/ac-core/tokens/modern-warm-palette-light.css';
@@ -43,7 +44,8 @@ document.documentElement.setAttribute('data-theme', 'light'); // o 'dark' para v
 
 ## API pública
 
-- **`tokens`** — objeto JS con `colors`, `spacing`, `typography`, `borderRadius`, `shadows`, `breakpoints`.
+- **`tokens/base.css`** — radio de borde (`--radius-sm`/`--radius`/`--radius-full`), tipografía (`--font-family`, `--font-size-xs/sm/md/lg`, `--font-weight-medium/bold`, `--line-height`/`--line-height-tight`), espaciado (`--space-1` a `--space-6`, grilla de 4px) y elevación (`--elev-1`/`--elev-2`). Ver "Emerald Pro" en `docs/CONVENTIONS.md` para la regla de uso de cada uno.
+- **`tokens/modern-warm-palette.css`** / **`-light.css`** — paleta de color (ver más abajo).
 - **`dispatchCustomEvent(element, eventName, detail?, options?)`** — despacha un `CustomEvent` con `bubbles: true, composed: true` por defecto (acorde a la convención de eventos `ac-*`).
 - **`debounce(func, wait?)`**
 - **`throttle(func, limit?)`**

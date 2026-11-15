@@ -1,0 +1,72 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* Círculo: excepción deliberada a "pastilla/círculo solo para toggles" (ver
+   "Emerald Pro" en docs/CONVENTIONS.md) — un avatar es, por convención casi
+   universal de UI, siempre circular para representar a una persona; no es un
+   control de estado binario, pero la alternativa (avatar cuadrado) rompería
+   una expectativa visual mucho más fuerte que la regla misma. */
+.ac-avatar-basic {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--radius-full, 9999px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+}
+
+.ac-avatar--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+.ac-avatar--md {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.ac-avatar--lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--font-size-lg, 1.1rem);
+}
+
+.ac-avatar-basic__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fondo sólido + texto fijo: mismo criterio que ac-badge-basic (ver
+   "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). Los tokens
+   de marca (--color-primary-500/--color-accent-500) no se redefinen en
+   modern-warm-palette-light.css, así que el avatar se ve igual en los dos
+   temas. El color de texto (#000) está elegido por contraste real contra
+   cada fondo (ambos pasan 4.5:1 con negro; ninguno pasa con blanco), igual
+   que hace ac-badge-basic — no es un valor "a ojo". */
+.ac-avatar--primary .ac-avatar-basic__fallback {
+  background: var(--color-primary-500, #10b981);
+  color: #000;
+}
+
+.ac-avatar--secondary .ac-avatar-basic__fallback {
+  background: var(--color-accent-500, #f59e0b);
+  color: #000;
+}
+
+.ac-avatar-basic__fallback {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}

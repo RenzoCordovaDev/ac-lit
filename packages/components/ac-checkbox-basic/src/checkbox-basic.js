@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 // Authored in checkbox-basic.styles.scss, compiled to checkbox-basic.styles.js by
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
 // is gitignored — run `pnpm install` then `pnpm component:build` or `pnpm component:serve` to generate it.
@@ -27,7 +27,7 @@ export class CheckboxBasic extends ComponentMixin(LitElement) {
   }
 
   static get styles() {
-    return [CheckboxBasicStyles];
+    return [componentBaseStyles, CheckboxBasicStyles];
   }
 
   static get properties() {

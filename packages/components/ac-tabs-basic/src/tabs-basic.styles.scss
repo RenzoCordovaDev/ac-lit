@@ -29,7 +29,7 @@
 
 .ac-tabs-basic__list {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--space-1, 0.25rem);
   overflow-x: auto;
   border-bottom: 1px solid var(--color-muted, #313335);
 }
@@ -37,15 +37,19 @@
 .ac-tabs-basic__tab {
   flex-shrink: 0;
   margin-bottom: -1px;
-  padding: 0.65rem 1rem;
+  padding: var(--space-3, 0.65rem) var(--space-4, 1rem);
   font: inherit;
-  font-weight: 600;
+  font-weight: var(--font-weight-medium, 600);
   color: inherit;
   white-space: nowrap;
   background: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  border-radius: 0.5rem 0.5rem 0 0;
+  border-radius: var(--radius-md, 1rem) var(--radius-md, 1rem) 0 0;
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   cursor: pointer;
 }
 
@@ -54,7 +58,7 @@
 }
 
 .ac-tabs-basic__tab[aria-selected='true'] {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold, 700);
   border-bottom-color: var(--ac-tabs-accent);
 }
 
@@ -72,9 +76,9 @@
 }
 
 .ac-tabs-basic__panel {
-  padding: 1rem 0.25rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  padding: var(--space-4, 1rem) var(--space-1, 0.25rem);
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
 }
 
 .ac-tabs-basic__panel[hidden] {

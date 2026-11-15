@@ -24,8 +24,4 @@
   --color-success: #499c54;
   --color-warning: #e8a400;
   --color-danger: #e05555;
-
-  /* Elevation */
-  --elev-1: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.45);
 }

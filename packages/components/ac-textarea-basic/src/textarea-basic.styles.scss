@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-textarea-basic {
+  /* Foco y error dependen del tema porque el texto/borde va sobre la página:
+     tonos claros sobre fondo oscuro, tonos oscuros sobre fondo claro. Ver
+     "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md. */
+  --ac-textarea-focus: var(--color-primary-500, #10b981);
+  --ac-textarea-error: #ff9b9b;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--font-size-md, 0.95rem);
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-textarea--secondary {
+  --ac-textarea-focus: var(--color-accent-500, #f59e0b);
+}
+
+:host-context([data-theme='light']) .ac-textarea-basic {
+  --ac-textarea-focus: var(--color-primary-700, #047857);
+  --ac-textarea-error: #b42318;
+}
+
+:host-context([data-theme='light']) .ac-textarea--secondary {
+  --ac-textarea-focus: var(--color-accent-700, #b45309);
+}
+
+.ac-textarea-basic__label {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+}
+
+.ac-textarea-basic__field {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(1.5em * 3);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  font: inherit;
+  line-height: var(--line-height, 1.5);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
+  border: 1px solid var(--color-subtext, #787a80);
+  border-radius: var(--radius-md, 1rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
+  resize: vertical;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.ac-textarea-basic__field::placeholder {
+  /* Mezcla (no opacity): el contraste se calcula contra el fondo del campo. */
+  color: color-mix(in srgb, var(--color-text, #bcbec4) 70%, var(--color-surface, #2b2b2b));
+}
+
+.ac-textarea-basic__field:focus-visible {
+  outline: none;
+  border-color: var(--ac-textarea-focus);
+  box-shadow: 0 0 0 2px var(--ac-textarea-focus);
+}
+
+.ac-textarea--invalid .ac-textarea-basic__field {
+  border-color: var(--color-danger, #e05555);
+}
+
+.ac-textarea--invalid .ac-textarea-basic__field:focus-visible {
+  border-color: var(--color-danger, #e05555);
+  box-shadow: 0 0 0 2px var(--color-danger, #e05555);
+}
+
+.ac-textarea-basic__field[readonly] {
+  border-style: dashed;
+  resize: none;
+}
+
+.ac-textarea-basic__field:disabled {
+  cursor: not-allowed;
+  resize: none;
+  color: var(--color-subtext, #787a80);
+  background: var(--color-muted, #313335);
+  border-color: var(--color-muted, #313335);
+}
+
+.ac-textarea-basic__message {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text, #bcbec4);
+}
+
+.ac-textarea-basic__message--error {
+  color: var(--ac-textarea-error);
+  font-weight: var(--font-weight-medium, 600);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-textarea-basic__field {
+    transition: none;
+  }
+}

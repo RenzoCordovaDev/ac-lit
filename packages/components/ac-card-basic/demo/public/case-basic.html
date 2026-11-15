@@ -1,0 +1,25 @@
+<section>
+  <h2>Surface con título y acciones</h2>
+  <div class="row">
+    <ac-card-basic
+      data-testid="card-surface"
+      ambient="surface"
+      header-text="card-basic-example-title"
+    >
+      <p>El saldo disponible es de $1,250.00.</p>
+      <ac-button-basic slot="footer" data-testid="card-surface-action" ambient="primary"
+        >Ver detalle</ac-button-basic
+      >
+      <ac-button-basic slot="footer" ambient="secondary">Cerrar</ac-button-basic>
+    </ac-card-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Outlined sin título ni pie</h2>
+  <div class="row">
+    <ac-card-basic data-testid="card-outlined" ambient="outlined">
+      <p>Contenedor simple, sin título ni acciones — solo un borde visible.</p>
+    </ac-card-basic>
+  </div>
+</section>
