@@ -26,7 +26,11 @@
   background: var(--color-surface, #2b2b2b);
   border: 1px solid var(--color-muted, #313335);
   border-bottom: none;
-  border-radius: 1rem 1rem 0 0;
+  border-radius: var(--radius-xl, 2rem) var(--radius-xl, 2rem) 0 0;
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
 }
 
@@ -122,7 +126,11 @@
   background: var(--color-surface, #2b2b2b);
   border: 1px solid var(--color-muted, #313335);
   border-bottom: none;
-  border-radius: 1rem 1rem 0 0;
+  border-radius: var(--radius-xl, 2rem) var(--radius-xl, 2rem) 0 0;
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
 }
 
@@ -152,15 +160,15 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1.25rem;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   border-bottom: 1px solid var(--color-muted, #313335);
 }
 
 .ac-modal-basic__title {
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 700);
 }
 
 .ac-modal-basic__close {
@@ -173,7 +181,8 @@
   color: inherit;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm, 0.5rem);
+  corner-shape: squircle;
   cursor: pointer;
 }
 
@@ -190,11 +199,11 @@
 .ac-modal-basic__body {
   flex: 1;
   min-height: 0;
-  padding: 1rem 1.25rem;
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
 }
 
 .ac-modal-basic__footer {
@@ -203,15 +212,15 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
-  padding: 0.9rem 1.25rem;
+  gap: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   border-top: 1px solid var(--color-muted, #313335);
 }
 
 .ac-modal-basic__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2, 0.5rem);
   margin-left: auto;
 }
 

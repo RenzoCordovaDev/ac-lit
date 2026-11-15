@@ -19,17 +19,22 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3, 0.75rem);
   width: max-content;
   max-width: min(var(--ac-toast-basic-max-width, 32rem), calc(100vw - 2rem));
   margin: 0 auto;
-  padding: 0.7rem 0.75rem 0.7rem 1rem;
+  padding: var(--space-3, 0.7rem) var(--space-3, 0.75rem) var(--space-3, 0.7rem)
+    var(--space-4, 1rem);
   overflow: visible;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg, 1.5rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
   box-shadow: var(--elev-2, 0 8px 24px rgba(0, 0, 0, 0.45));
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-size: var(--font-size-md, 0.9rem);
+  line-height: var(--line-height-tight, 1.4);
   transition:
     bottom 200ms ease,
     top 200ms ease;
@@ -105,13 +110,14 @@
   color: inherit;
   background: transparent;
   border: 1px solid currentColor;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm, 0.5rem);
+  corner-shape: squircle;
   cursor: pointer;
 }
 
 .ac-toast-basic__action {
-  padding: 0.3rem 0.7rem;
-  font-weight: 700;
+  padding: var(--space-1, 0.3rem) var(--space-3, 0.7rem);
+  font-weight: var(--font-weight-bold, 700);
 }
 
 .ac-toast-basic__close {

@@ -1,7 +1,73 @@
-import { html } from 'lit';
+import { html, css } from 'lit';
 import DOMPurify from 'dompurify';
 import { IntlMixin, getRegisteredTranslations } from '@ac-base/ac-intl-mixin';
 import { ScopedElementsMixin } from '@ac-base/ac-scoped-elements-mixin';
+
+/**
+ * Tokens base ("Emerald Pro", ver docs/CONVENTIONS.md) que todo componente
+ * del catálogo incluye en su `static get styles()`: `return [componentBaseStyles, XStyles];`.
+ * `font-family` se fija acá en vez de depender de que la heredara por CSS
+ * inheritance de la página que lo contiene (ningún componente lo declaraba
+ * antes) — así un componente se ve igual sin importar la app que lo consuma.
+ * También da estilo al skeleton de `loading` (antes sin ningún CSS propio).
+ */
+export const componentBaseStyles = css`
+  :host {
+    font-family: var(
+      --font-family,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Arial,
+      sans-serif
+    );
+  }
+
+  .skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  .skeleton-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+  }
+
+  .skeleton-line {
+    height: 0.85em;
+    background: var(--color-muted, #313335);
+    border-radius: var(--radius-sm, 0.25rem);
+    animation: ac-skeleton-pulse 1.2s ease-in-out infinite;
+  }
+
+  .skeleton-line:nth-child(2) {
+    width: 80%;
+  }
+
+  .skeleton-line:nth-child(3) {
+    width: 60%;
+  }
+
+  @keyframes ac-skeleton-pulse {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-line {
+      animation: none;
+    }
+  }
+`;
 
 /**
  * ComponentMixin - base mixin every ac-lit component extends.

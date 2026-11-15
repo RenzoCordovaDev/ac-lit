@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 
 import { __styles_export__ } from './__file_base__.styles.js';
 
@@ -8,8 +8,10 @@ export class __class_name__ extends ComponentMixin(LitElement) {
     return '__tag__';
   }
 
+  // componentBaseStyles primero: fija `font-family` y el skeleton de `loading`
+  // (tokens "Emerald Pro", ver docs/CONVENTIONS.md) — no lo quites.
   static get styles() {
-    return [__styles_export__];
+    return [componentBaseStyles, __styles_export__];
   }
 
   static get properties() {

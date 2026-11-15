@@ -4,18 +4,26 @@ Mixin base que extienden **todos** los componentes del catálogo `@ac-components
 
 - Propiedades comunes: `ambient`, `mode`, `loading`, `loadingA11yLabel`, `mediaRangeConfig`.
 - `sanitizeHtml(content, allowedTags?, tagNameCheck?)` — sanitización real con [DOMPurify](https://github.com/cure53/DOMPurify).
-- `_skeletonTemplate` — plantilla de carga por defecto, mostrada mientras `loading` es `true`.
+- `_skeletonTemplate` — plantilla de carga por defecto, mostrada mientras `loading` es `true`. Se estila con `componentBaseStyles` (ver abajo) — sin incluirlo en `static styles`, el skeleton se renderiza sin ningún CSS.
 - Carga automática de `locales.json` (ver `@ac-base/ac-intl-mixin`): primero busca traducciones registradas en build time, si no existen intenta un `fetch` a rutas relativas comunes.
 
 ## Uso
 
 ```js
 import { LitElement, html } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
+import { MyComponentStyles } from './my-component.styles.js';
 
 class MyComponent extends ComponentMixin(LitElement) {
   static get is() {
     return 'ac-my-component';
+  }
+
+  // componentBaseStyles primero: fija `font-family` en `:host` (tokens
+  // "Emerald Pro", ver docs/CONVENTIONS.md) y estila el skeleton de arriba.
+  // Todo componente nuevo lo incluye así, nunca solo sus propios estilos.
+  static get styles() {
+    return [componentBaseStyles, MyComponentStyles];
   }
 
   static get scopedElements() {

@@ -1,0 +1,10 @@
+{
+  "es-PE": {
+    "spinner-basic-loading": "Cargando…",
+    "spinner-basic-saving": "Guardando cambios…"
+  },
+  "en-EN": {
+    "spinner-basic-loading": "Loading…",
+    "spinner-basic-saving": "Saving changes…"
+  }
+}

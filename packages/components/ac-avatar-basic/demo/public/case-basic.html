@@ -1,0 +1,47 @@
+<section>
+  <h2>Con imagen</h2>
+  <div class="row">
+    <ac-avatar-basic
+      data-testid="avatar-image"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23047857'/%3E%3Ccircle cx='40' cy='32' r='16' fill='%23ecfdf5'/%3E%3Cellipse cx='40' cy='78' rx='28' ry='22' fill='%23ecfdf5'/%3E%3C/svg%3E"
+      name="Grace Hopper"
+    ></ac-avatar-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Imagen rota (cae al fallback de iniciales)</h2>
+  <div class="row">
+    <ac-avatar-basic
+      data-testid="avatar-broken"
+      src="./does-not-exist.png"
+      name="Grace Hopper"
+    ></ac-avatar-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Sin imagen — iniciales</h2>
+  <div class="row">
+    <ac-avatar-basic
+      data-testid="avatar-two-words"
+      name="Ada Lovelace"
+      ambient="primary"
+    ></ac-avatar-basic>
+    <ac-avatar-basic
+      data-testid="avatar-one-word"
+      name="Plato"
+      ambient="secondary"
+    ></ac-avatar-basic>
+    <ac-avatar-basic data-testid="avatar-unknown" name=""></ac-avatar-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Tamaños</h2>
+  <div class="row">
+    <ac-avatar-basic data-testid="avatar-sm" name="Ada Lovelace" size="sm"></ac-avatar-basic>
+    <ac-avatar-basic data-testid="avatar-md" name="Ada Lovelace" size="md"></ac-avatar-basic>
+    <ac-avatar-basic data-testid="avatar-lg" name="Ada Lovelace" size="lg"></ac-avatar-basic>
+  </div>
+</section>

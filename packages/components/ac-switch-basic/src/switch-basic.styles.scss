@@ -10,9 +10,9 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: var(--space-2, 0.6rem);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: var(--font-size-md, 0.95rem);
   color: var(--color-text, #bcbec4);
 }
 
@@ -38,7 +38,7 @@
   width: 2.5rem;
   height: 1.4rem;
   box-sizing: border-box;
-  border-radius: 999px;
+  border-radius: var(--radius-full, 999px);
   /* El borde (elemento de interfaz) cumple 3:1 contra el fondo en ambos temas. */
   border: 2px solid var(--color-subtext, #787a80);
   background: var(--color-muted, #313335);

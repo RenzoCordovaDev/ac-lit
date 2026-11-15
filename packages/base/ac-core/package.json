@@ -7,7 +7,6 @@
   "main": "index.js",
   "exports": {
     ".": "./index.js",
-    "./tokens": "./src/tokens.js",
     "./utils": "./src/utils.js",
     "./tokens/modern-warm-palette.css": "./src/tokens/modern-warm-palette.css",
     "./tokens/*": "./src/tokens/*"
