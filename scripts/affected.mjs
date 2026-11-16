@@ -169,10 +169,9 @@ function runEslint(argv) {
     }
   }
 
-  const res = spawnSync('eslint', targets, {
-    stdio: 'inherit',
-    shell: process.platform === 'win32',
-  });
+  // `pnpm exec` resuelve el binario desde node_modules/.bin del workspace,
+  // sin depender de que `eslint` esté en el PATH del shell.
+  const res = spawnSync('pnpm', ['exec', 'eslint', ...targets], { stdio: 'inherit' });
   process.exit(res.status ?? 1);
 }
 
