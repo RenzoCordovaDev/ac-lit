@@ -1,5 +1,5 @@
 import { LitElement, html, nothing } from 'lit';
-import { ComponentMixin } from '@ac-base/ac-component-mixin';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 import { createFocusTrap } from '@ac-base/ac-core/utils';
 // Authored in transition-container.styles.scss, compiled to transition-container.styles.js by
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
@@ -54,7 +54,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
   }
 
   static get styles() {
-    return [TransitionContainerStyles];
+    return [componentBaseStyles, TransitionContainerStyles];
   }
 
   static get properties() {
