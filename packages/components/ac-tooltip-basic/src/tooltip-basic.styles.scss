@@ -1,0 +1,71 @@
+:host {
+  position: relative;
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+// El globo es un `position: absolute` normal dentro del stacking context del
+// host (no capa superior nativa como ac-modal-basic/ac-toast-basic — ver
+// "Límite conocido" en el README). Nunca `display: none` para poder medir y
+// transicionar: se oculta con `visibility`/`opacity`.
+.ac-tooltip-basic__bubble {
+  position: absolute;
+  z-index: 1;
+  visibility: hidden;
+  opacity: 0;
+  max-width: 16rem;
+  width: max-content;
+  background: var(--color-neutral, #44433d);
+  color: #fff;
+  border-radius: var(--radius-sm, 0.5rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: var(--line-height-tight, 1.4);
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  box-shadow: var(--elev-1, 0 1px 3px rgba(0, 0, 0, 0.3));
+  transition:
+    opacity 0.15s ease,
+    visibility 0.15s ease;
+  pointer-events: none;
+}
+
+.ac-tooltip-basic__bubble--visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-tooltip-basic__bubble {
+    transition: none;
+  }
+}
+
+// Las 4 variantes de posición se resuelven contra el atributo `position` que
+// el propio componente escribe en el globo (valor ya validado por `_position`,
+// nunca el `position` crudo del host — así un valor inválido en el atributo
+// del host nunca deja el globo sin ninguna regla de posicionamiento).
+.ac-tooltip-basic__bubble[position='top'] {
+  bottom: calc(100% + var(--space-1, 0.25rem));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ac-tooltip-basic__bubble[position='bottom'] {
+  top: calc(100% + var(--space-1, 0.25rem));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ac-tooltip-basic__bubble[position='left'] {
+  right: calc(100% + var(--space-1, 0.25rem));
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ac-tooltip-basic__bubble[position='right'] {
+  left: calc(100% + var(--space-1, 0.25rem));
+  top: 50%;
+  transform: translateY(-50%);
+}
