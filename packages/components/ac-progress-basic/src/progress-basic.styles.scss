@@ -1,0 +1,103 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-progress-basic-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  width: 100%;
+}
+
+.ac-progress-basic__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+}
+
+.ac-progress-basic__label {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+}
+
+.ac-progress-basic__value {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  white-space: nowrap;
+}
+
+.ac-progress-basic {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: 0.5rem;
+  background: var(--color-muted, #313335);
+  border-radius: var(--radius-full, 9999px);
+}
+
+.ac-progress-basic__fill {
+  height: 100%;
+  border-radius: var(--radius-full, 9999px);
+  transition: width 0.2s ease;
+}
+
+/* Colores por ambient — fondo sólido de la pista relleno, mismos tokens
+   semánticos que ac-badge-basic (fijos, no cambian entre temas) para
+   success/warning/danger. `primary` no es un estado semántico: es la marca,
+   así que usa --color-primary-700/-500 (ver ac-spinner-basic/ac-slider-basic)
+   en vez de --color-neutral. */
+.ac-progress--primary .ac-progress-basic__fill {
+  background: var(--color-primary-500, #10b981);
+}
+
+:host-context([data-theme='light']) .ac-progress--primary .ac-progress-basic__fill {
+  background: var(--color-primary-700, #047857);
+}
+
+.ac-progress--success .ac-progress-basic__fill {
+  background: var(--color-success, #499c54);
+}
+
+.ac-progress--warning .ac-progress-basic__fill {
+  background: var(--color-warning, #e8a400);
+}
+
+.ac-progress--danger .ac-progress-basic__fill {
+  background: var(--color-danger, #e05555);
+}
+
+/* Indeterminado: franja más corta (40% del ancho) que se desliza de lado a
+   lado — mismo criterio de accesibilidad de movimiento que ac-spinner-basic
+   (ver @media prefers-reduced-motion más abajo). */
+.ac-progress-basic--indeterminate .ac-progress-basic__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  animation: ac-progress-basic-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes ac-progress-basic-slide {
+  from {
+    left: -40%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-progress-basic--indeterminate .ac-progress-basic__fill {
+    /* Mismo criterio que ac-spinner-basic: se silencia la animación, pero se
+       muestra la franja estática en vez de ocultar la barra entera. */
+    animation: none;
+    left: 0;
+  }
+}
