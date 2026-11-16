@@ -77,18 +77,82 @@
     </header>
 
     <main class="catalog__home" id="view-home">
-      <div class="catalog__home-content">
-        <span class="catalog__tech-badge">Lit v3</span>
-        <h1 class="catalog__home-title">Bienvenido a ac-lit</h1>
-        <p class="catalog__home-text">
-          Un catálogo de Web Components listos para usar, con la demo real e interactiva de cada uno
-          — elige un componente y pruébalo en los dos temas, en distintos tamaños de pantalla, con
-          su código fuente a la vista.
-        </p>
-        <button type="button" class="catalog__cta" id="catalog-cta">
-          Ver catálogo de componentes
-        </button>
+      <div class="catalog__home-scroll">
+        <div class="catalog__home-content">
+          <span class="catalog__tech-badge">Lit v3</span>
+          <h1 class="catalog__home-title">Bienvenido a ac-lit</h1>
+          <p class="catalog__home-text">
+            Un catálogo de Web Components listos para usar, con la demo real e interactiva de cada
+            uno — elige un componente y pruébalo en los dos temas, en distintos tamaños de pantalla,
+            con su código fuente a la vista.
+          </p>
+          <button type="button" class="catalog__cta" id="catalog-cta">
+            Ver catálogo de componentes
+          </button>
+        </div>
+
+        <ul class="catalog__home-features">
+          <li>23 Web Components listos para usar, agrupados en un solo catálogo</li>
+          <li>Accesibilidad verificada con axe-core en cada componente</li>
+          <li>Modo claro y oscuro en cada demo, sin configuración adicional</li>
+          <li>Código fuente de cada caso de demo, a la vista</li>
+        </ul>
+
+        <div class="catalog__terminal" role="group" aria-label="Comandos de ejemplo del CLI aclit">
+          <div class="catalog__terminal-titlebar">
+            <span class="catalog__terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="catalog__terminal-filename">terminal — aclit</span>
+          </div>
+          <div class="catalog__terminal-body">
+            <p class="catalog__terminal-line">
+              <span class="catalog__terminal-prompt">$</span>
+              <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
+            </p>
+            <p class="catalog__terminal-line">
+              <span class="catalog__terminal-prompt">$</span>
+              <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
+            </p>
+            <p class="catalog__terminal-line catalog__terminal-line--comment">
+              # Componente creado en ./ac-mi-componente
+            </p>
+            <p class="catalog__terminal-line">
+              <span class="catalog__terminal-prompt">$</span>
+              <span class="catalog__terminal-cmd">aclit component:serve</span>
+            </p>
+            <p class="catalog__terminal-line catalog__terminal-line--comment">
+              # levanta la demo con Vite en http://localhost:5173
+            </p>
+            <p class="catalog__terminal-line">
+              <span class="catalog__terminal-prompt">$</span>
+              <span class="catalog__terminal-cmd">aclit help</span>
+            </p>
+            <p class="catalog__terminal-line catalog__terminal-line--comment">
+              # lista todos los comandos disponibles
+            </p>
+          </div>
+        </div>
+
+        <div class="catalog__home-links">
+          <a class="catalog__home-link" href="https://lit.dev" target="_blank" rel="noopener"
+            >Documentación de Lit ↗</a
+          >
+          <a
+            class="catalog__home-link"
+            href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/cli/README.md"
+            target="_blank"
+            rel="noopener"
+            >Documentación del CLI ↗</a
+          >
+        </div>
       </div>
+
+      <footer class="catalog__footer">
+        © 2026
+        <a href="https://github.com/RenzoCordovaDev" target="_blank" rel="noopener"
+          >RenzoCordovaDev</a
+        >
+        — ac-lit es software libre (MIT)
+      </footer>
     </main>
 
     <div class="catalog__body" id="view-catalog" hidden>
@@ -108,9 +172,14 @@
       <main class="catalog__main">
         <p class="catalog__empty-state" id="catalog-empty">Cargando catálogo…</p>
         <div class="catalog__skeleton" id="catalog-skeleton" hidden>
-          <div class="catalog__skeleton-line"></div>
-          <div class="catalog__skeleton-line"></div>
-          <div class="catalog__skeleton-line"></div>
+          <!-- El preset de tamaño por defecto de cada demo (ac-demo-content) es
+               "Móvil" -- el marco acá referencia ese mismo tamaño simulado. -->
+          <div class="catalog__skeleton-phone">
+            <span class="catalog__skeleton-phone-notch"></span>
+            <span class="catalog__skeleton-line catalog__skeleton-line--1"></span>
+            <span class="catalog__skeleton-line catalog__skeleton-line--2"></span>
+            <span class="catalog__skeleton-line catalog__skeleton-line--3"></span>
+          </div>
         </div>
         <iframe
           class="catalog__frame"

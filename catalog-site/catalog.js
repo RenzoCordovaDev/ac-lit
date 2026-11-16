@@ -19,6 +19,13 @@ const searchInput = document.querySelector('.catalog__search-input');
 let components = [];
 let activeId = null;
 
+// El skeleton se muestra siempre al menos este tiempo, aunque el iframe
+// cargue antes -- sin esto, en una demo liviana el skeleton alcanza a
+// parpadear en vez de leerse como una transición intencional.
+const MIN_SKELETON_MS = 450;
+let skeletonToken = 0;
+let skeletonShownAt = 0;
+
 // Ícono simple por componente -- solo referencial, no busca ser un ícono
 // "oficial" de cada uno. Fallback genérico (círculo) para cualquier
 // componente nuevo que no esté todavía en este mapa.
@@ -90,6 +97,8 @@ function selectComponent(id, { updateHash = true } = {}) {
 
   // Skeleton mientras carga el iframe nuevo -- evita el "de golpe" al
   // cambiar de componente.
+  skeletonToken += 1;
+  skeletonShownAt = performance.now();
   skeletonEl.hidden = false;
   frameEl.hidden = true;
   emptyStateEl.hidden = true;
@@ -105,8 +114,16 @@ function selectComponent(id, { updateHash = true } = {}) {
 }
 
 frameEl.addEventListener('load', () => {
-  skeletonEl.hidden = true;
-  frameEl.hidden = false;
+  const token = skeletonToken;
+  const elapsed = performance.now() - skeletonShownAt;
+  const remaining = Math.max(MIN_SKELETON_MS - elapsed, 0);
+  setTimeout(() => {
+    // Si mientras esperábamos se seleccionó otro componente, ese nuevo
+    // ciclo de carga es quien decide cuándo ocultar el skeleton.
+    if (token !== skeletonToken) return;
+    skeletonEl.hidden = true;
+    frameEl.hidden = false;
+  }, remaining);
 });
 
 function renderList(filterText = '') {
