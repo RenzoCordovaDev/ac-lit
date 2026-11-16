@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-radio-basic",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ac-lit basic radio button Web Component",
   "license": "MIT",
   "type": "module",
