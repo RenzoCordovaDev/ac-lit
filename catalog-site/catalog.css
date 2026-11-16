@@ -68,6 +68,11 @@ body {
   border: none;
   padding: 0;
   cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.catalog__brand:hover {
+  opacity: 0.8;
 }
 
 .catalog__page-title {
@@ -108,6 +113,7 @@ body {
      abajo (ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). */
   color: var(--color-primary-500, #10b981);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 :root[data-theme='light'] .catalog__docs-link {
@@ -143,6 +149,9 @@ body {
   border: none;
   padding: var(--space-2, 0.4rem) var(--space-3, 0.75rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .catalog__segmented-button[aria-pressed='true'] {
@@ -164,14 +173,22 @@ body {
   flex-direction: column;
   align-items: center;
   gap: var(--space-4, 1rem);
-  max-width: 480px;
+  max-width: 520px;
+  padding: var(--space-6, 1.5rem);
   text-align: center;
+  background: var(--color-surface, #2b2b2b);
+  border-radius: var(--radius-lg, 1.5rem);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 .catalog__home-title {
   margin: 0;
-  font-size: var(--font-size-lg, 1.75rem);
+  /* Hero: la única superficie del catálogo que necesita un título más grande
+     que --font-size-lg (reservado para "títulos" en general) -- se deriva del
+     mismo token en vez de inventar un tamaño suelto. */
+  font-size: calc(var(--font-size-lg, 1.1rem) * 1.8);
   font-weight: var(--font-weight-bold, 700);
+  line-height: var(--line-height-tight, 1.4);
   color: var(--color-text, #bcbec4);
 }
 
@@ -192,10 +209,16 @@ body {
   border-radius: var(--radius-full, 999px);
   padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .catalog__cta:hover {
   background: var(--color-primary-500, #10b981);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 /* Cuerpo: sidebar + iframe */
@@ -225,6 +248,9 @@ body {
   border: 1px solid var(--color-muted, #313335);
   border-radius: var(--radius-sm, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .catalog__search-input:focus-visible {
@@ -256,15 +282,20 @@ body {
   border-radius: var(--radius-sm, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .catalog__item-button:hover {
   background: var(--color-surface, #2b2b2b);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 .catalog__item-button[aria-current='true'] {
   background: var(--color-primary-700, #047857);
   color: var(--color-primary-50, #ecfdf5);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 .catalog__item-row {
@@ -372,6 +403,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .catalog__skeleton-line {
     animation: none;
+  }
+
+  .catalog__brand,
+  .catalog__docs-link,
+  .catalog__segmented-button,
+  .catalog__search-input,
+  .catalog__item-button,
+  .catalog__cta {
+    transition: none;
   }
 }
 
