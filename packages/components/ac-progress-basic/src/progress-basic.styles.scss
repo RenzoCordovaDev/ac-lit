@@ -1,5 +1,14 @@
+/* `width: 100%` explícito, no solo `display: block` -- sin esto, dentro de
+   un contenedor flex (ej. el `.row` de los demos) un `<ac-progress-basic>`
+   sin `label`/`show-value` (sin texto propio, todo el contenido interno usa
+   `width: 100%`) colapsa a 0px de ancho: un ancho porcentual no aporta nada
+   al cálculo de "shrink-to-fit" del tamaño intrínseco de un ítem flex sin
+   ancho propio, así que termina resolviendo a 0 -- confirmado comparando el
+   caso "Determinado" (sin header, colapsaba) contra "Con label" (el texto
+   del label sí aporta ancho intrínseco, por eso ese caso sí se veía). */
 :host {
   display: block;
+  width: 100%;
 }
 
 :host([hidden]) {
