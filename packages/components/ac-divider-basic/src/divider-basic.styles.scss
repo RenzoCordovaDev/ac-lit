@@ -1,0 +1,78 @@
+:host {
+  display: block;
+}
+
+/* En orientación vertical el host pasa a inline-flex + align-self: stretch
+   para poder vivir dentro de un contenedor flex en fila y heredar su alto
+   (ver demo "vertical"). Esto NO fija un alto propio: si el contenedor no
+   tiene un alto explícito (o no es flex), el divisor vertical puede no
+   mostrarse porque su alto resuelto es 0 — hace falta un alto explícito en
+   el host o en su contenedor en ese caso. */
+:host([orientation='vertical']) {
+  display: inline-flex;
+  align-self: stretch;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* El label va sin caja propia, directo sobre el fondo de la página (ver
+   "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md) — por eso NO
+   usa `--color-subtext` tal cual: ese token ya falla WCAG AA (4.5:1) por su
+   cuenta contra `--color-bg` en modo oscuro (~3.9:1, confirmado con axe en
+   el E2E de accesibilidad), aunque sí cumple en modo claro. Variable propia
+   redefinida por tema, mismo patrón que `--ac-radio-active`/`ac-link-basic`.
+   El valor de modo claro reutiliza `--color-subtext` (ahí sí cumple). */
+:host {
+  --ac-divider-basic-label: #9496a0;
+}
+
+:host-context([data-theme='light']) {
+  --ac-divider-basic-label: var(--color-subtext, #5f5e58);
+}
+
+.ac-divider-basic {
+  display: flex;
+  align-items: center;
+}
+
+.ac-divider-basic--horizontal {
+  width: 100%;
+}
+
+.ac-divider-basic--vertical {
+  flex-direction: column;
+  height: 100%;
+}
+
+.ac-divider-basic__line {
+  flex: 1 1 auto;
+  background: var(--color-muted, #313335);
+}
+
+.ac-divider-basic--horizontal .ac-divider-basic__line {
+  height: 1px;
+}
+
+.ac-divider-basic--vertical .ac-divider-basic__line {
+  width: 1px;
+}
+
+/* Sin contenido en el slot: el label queda oculto y las dos líneas, sin gap
+   entre ellas, se ven como una sola línea continua. */
+.ac-divider-basic__label {
+  display: none;
+}
+
+/* El label solo se muestra en horizontal con contenido real en el slot — en
+   vertical se ignora visualmente aunque el slot tenga contenido (ver
+   docs/CONVENTIONS.md y el README del componente). */
+.ac-divider-basic--horizontal.ac-divider-basic--with-label .ac-divider-basic__label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-3, 0.75rem);
+  color: var(--ac-divider-basic-label);
+  font-size: var(--font-size-sm, 0.85rem);
+  white-space: nowrap;
+}

@@ -1,0 +1,43 @@
+<section>
+  <h2>Horizontal, sin label</h2>
+  <div class="row">
+    <ac-divider-basic
+      data-testid="divider-basic-no-label"
+      orientation="horizontal"
+    ></ac-divider-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Horizontal, con label corto</h2>
+  <div class="row">
+    <ac-divider-basic data-testid="divider-basic-short-label" orientation="horizontal"
+      >o</ac-divider-basic
+    >
+  </div>
+</section>
+
+<section>
+  <h2>Horizontal, con label más largo</h2>
+  <div class="row">
+    <ac-divider-basic data-testid="divider-basic-long-label" orientation="horizontal"
+      >Sección 2</ac-divider-basic
+    >
+  </div>
+</section>
+
+<section>
+  <h2>Vertical, sin label</h2>
+  <div class="row" data-testid="divider-basic-vertical-row" style="align-items: stretch">
+    <div>
+      <p>Columna izquierda.<br />Contenido de ejemplo para darle alto al contenedor.</p>
+    </div>
+    <ac-divider-basic
+      data-testid="divider-basic-vertical"
+      orientation="vertical"
+    ></ac-divider-basic>
+    <div>
+      <p>Columna derecha.<br />Mismo bloque, para contrastar contra el divisor vertical.</p>
+    </div>
+  </div>
+</section>
