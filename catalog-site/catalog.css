@@ -1,0 +1,256 @@
+/* Mismo lenguaje visual que @ac-base/ac-demo-content (ver su .styles.scss) --
+   header con borde inferior, control segmentado de pastilla para el tema,
+   mismos tokens de color/radio/espaciado/tipografía de "Emerald Pro". */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: var(
+    --font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Arial,
+    sans-serif
+  );
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+}
+
+.catalog__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Header */
+.catalog__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.6rem);
+}
+
+.catalog__name {
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 700);
+  margin: 0;
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__tech-badge {
+  font-size: var(--font-size-xs, 0.7rem);
+  font-weight: var(--font-weight-medium, 600);
+  padding: var(--space-1, 0.2rem) var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.catalog__header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__docs-link {
+  font-size: var(--font-size-sm, 0.8rem);
+  font-weight: var(--font-weight-medium, 600);
+  /* --color-primary-500 está pensado para fondo oscuro -- en modo claro el
+     link va directo sobre la página, sin caja propia, así que se oscurece
+     abajo (ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). */
+  color: var(--color-primary-500, #10b981);
+  text-decoration: none;
+}
+
+:root[data-theme='light'] .catalog__docs-link {
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__docs-link:hover {
+  text-decoration: underline;
+}
+
+/* Control segmentado (idéntico en espíritu al de ac-demo-content) */
+.catalog__segmented {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  overflow: hidden;
+}
+
+.catalog__segmented-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-muted, #313335);
+}
+
+.catalog__segmented-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  padding: var(--space-2, 0.4rem) var(--space-3, 0.75rem);
+  cursor: pointer;
+}
+
+.catalog__segmented-button[aria-pressed='true'] {
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+/* Cuerpo: sidebar + iframe */
+.catalog__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.catalog__sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-muted, #313335);
+  padding: var(--space-4, 1rem);
+  gap: var(--space-3, 0.75rem);
+  overflow-y: auto;
+}
+
+.catalog__search-input {
+  width: 100%;
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-sm, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+}
+
+.catalog__search-input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary-500, #10b981);
+  box-shadow: 0 0 0 2px var(--color-primary-700, #047857);
+}
+
+.catalog__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.catalog__item-button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1, 0.2rem);
+  font: inherit;
+  text-align: left;
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  cursor: pointer;
+}
+
+.catalog__item-button:hover {
+  background: var(--color-surface, #2b2b2b);
+}
+
+.catalog__item-button[aria-current='true'] {
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.catalog__item-name {
+  font-size: var(--font-size-md, 0.9rem);
+  font-weight: var(--font-weight-medium, 600);
+}
+
+.catalog__item-description {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-subtext, #787a80);
+}
+
+.catalog__item-button[aria-current='true'] .catalog__item-description {
+  /* Texto fijo sobre fondo sólido -- mismo criterio que el resto del
+     catálogo (ver "Dark-mode y colores de fondo sólido" en CONVENTIONS.md). */
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.catalog__list-empty {
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-subtext, #787a80);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+}
+
+/* Main: el iframe con la demo real del componente */
+.catalog__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.catalog__empty-state {
+  margin: auto;
+  color: var(--color-subtext, #787a80);
+  font-size: var(--font-size-md, 0.9rem);
+}
+
+.catalog__frame {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 720px) {
+  .catalog__body {
+    flex-direction: column;
+  }
+
+  .catalog__sidebar {
+    width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--color-muted, #313335);
+  }
+}

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de componentes — ac-lit</title>
+    <link rel="stylesheet" href="./tokens/base.css" />
+    <link rel="stylesheet" href="./tokens/modern-warm-palette.css" />
+    <link rel="stylesheet" href="./tokens/modern-warm-palette-light.css" />
+    <link rel="stylesheet" href="./catalog.css" />
+    <script type="module" src="./catalog.js"></script>
+  </head>
+  <body>
+    <header class="catalog__header">
+      <div class="catalog__header-title">
+        <h1 class="catalog__name">ac-lit</h1>
+        <span class="catalog__tech-badge">Lit v3</span>
+      </div>
+      <div class="catalog__header-meta">
+        <a
+          class="catalog__docs-link"
+          href="https://github.com/RenzoCordovaDev/ac-lit"
+          target="_blank"
+          rel="noopener"
+          >Repositorio</a
+        >
+        <div class="catalog__segmented catalog__theme-switcher" role="group" aria-label="Tema">
+          <button
+            type="button"
+            class="catalog__segmented-button"
+            data-theme-value="light"
+            aria-pressed="true"
+            aria-label="Modo claro"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+              />
+            </svg>
+          </button>
+          <span class="catalog__segmented-divider"></span>
+          <button
+            type="button"
+            class="catalog__segmented-button"
+            data-theme-value="dark"
+            aria-pressed="false"
+            aria-label="Modo oscuro"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="catalog__body">
+      <nav class="catalog__sidebar" aria-label="Lista de componentes">
+        <label class="catalog__search-field">
+          <span class="catalog__visually-hidden">Buscar componente</span>
+          <input
+            type="search"
+            class="catalog__search-input"
+            placeholder="Buscar..."
+            autocomplete="off"
+          />
+        </label>
+        <ul class="catalog__list" id="catalog-list" aria-live="polite"></ul>
+      </nav>
+
+      <main class="catalog__main">
+        <p class="catalog__empty-state" id="catalog-empty">Cargando catálogo…</p>
+        <iframe
+          class="catalog__frame"
+          id="catalog-frame"
+          title="Demo del componente seleccionado"
+          hidden
+        ></iframe>
+      </main>
+    </div>
+  </body>
+</html>
