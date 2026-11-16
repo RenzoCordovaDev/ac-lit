@@ -159,13 +159,23 @@ body {
   color: var(--color-primary-50, #ecfdf5);
 }
 
-/* Home: bienvenida + botón central hacia el catálogo */
+/* Home: bienvenida, comandos del CLI, info adicional y pie con copyright */
 .catalog__home {
   flex: 1;
+  min-height: 0;
   display: flex;
+  flex-direction: column;
+}
+
+.catalog__home-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--space-6, 2rem);
+  gap: var(--space-6, 1.5rem);
+  padding: var(--space-6, 2rem) var(--space-4, 1rem);
 }
 
 .catalog__home-content {
@@ -173,6 +183,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: var(--space-4, 1rem);
+  width: 100%;
   max-width: 520px;
   padding: var(--space-6, 1.5rem);
   text-align: center;
@@ -219,6 +230,180 @@ body {
   background: var(--color-primary-500, #10b981);
   transform: translateY(-1px);
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+/* Home: info adicional (features) */
+.catalog__home-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 640px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__home-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-subtext, #787a80);
+  background: var(--color-surface, #2b2b2b);
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-3, 0.75rem);
+}
+
+.catalog__home-features li::before {
+  content: '✓';
+  flex-shrink: 0;
+  color: var(--color-primary-500, #10b981);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+@media (max-width: 640px) {
+  .catalog__home-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Home: mockup de terminal con comandos del CLI -- paleta FIJA (oscura en
+   ambos temas, como un terminal real), mismo criterio y mismos colores que
+   el editor de código de @ac-base/ac-demo-content (ver su .styles.scss). */
+.catalog__terminal {
+  --term-bg: #1f2430;
+  --term-titlebar-bg: #171b26;
+  --term-border: #2d3446;
+  --term-text: #d4d9e6;
+  --term-comment: #8fa37a;
+
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+  background: var(--term-bg);
+  border: 1px solid var(--term-border);
+  border-radius: var(--radius-lg, 0.75rem);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+  text-align: left;
+}
+
+.catalog__terminal-titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-2, 0.55rem) var(--space-3, 0.85rem);
+  background: var(--term-titlebar-bg);
+  border-bottom: 1px solid var(--term-border);
+  color: var(--term-text);
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+.catalog__terminal-dots {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.catalog__terminal-dots i {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: var(--radius-full, 50%);
+  background: var(--term-border);
+}
+
+.catalog__terminal-dots i:nth-child(1) {
+  background: #ff6b6b;
+}
+
+.catalog__terminal-dots i:nth-child(2) {
+  background: #ffd166;
+}
+
+.catalog__terminal-dots i:nth-child(3) {
+  background: #5fd39a;
+}
+
+.catalog__terminal-filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalog__terminal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.3rem);
+  padding: var(--space-4, 1rem);
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-sm, 0.8rem);
+  line-height: 1.7;
+}
+
+.catalog__terminal-line {
+  margin: 0;
+  color: var(--term-text);
+  word-break: break-word;
+}
+
+.catalog__terminal-line--comment {
+  padding-left: 1.4rem;
+  color: var(--term-comment);
+  font-style: italic;
+}
+
+.catalog__terminal-prompt {
+  margin-right: 0.5rem;
+  color: var(--color-primary-500, #10b981);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* Home: links a documentación externa */
+.catalog__home-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4, 1rem);
+}
+
+.catalog__home-link {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-primary-500, #10b981);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+:root[data-theme='light'] .catalog__home-link {
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__home-link:hover {
+  text-decoration: underline;
+}
+
+/* Home: pie de página con copyright */
+.catalog__footer {
+  flex-shrink: 0;
+  padding: var(--space-4, 1rem);
+  text-align: center;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-subtext, #787a80);
+  border-top: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__footer a {
+  color: var(--color-primary-500, #10b981);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium, 600);
+}
+
+:root[data-theme='light'] .catalog__footer a {
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__footer a:hover {
+  text-decoration: underline;
 }
 
 /* Cuerpo: sidebar + iframe */
@@ -358,35 +543,58 @@ body {
 
 /* Skeleton mientras carga la demo del componente elegido -- mismo criterio
    que el skeleton de "loading" de @ac-base/ac-component-mixin (componentBaseStyles),
-   para que el cambio entre componentes no se sienta "de golpe". */
+   para que el cambio entre componentes no se sienta "de golpe". Con forma de
+   marco de celular porque el preset de tamaño por defecto de cada demo
+   (ac-demo-content) es "Móvil" -- el skeleton referencia ese mismo tamaño. */
 .catalog__skeleton {
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
   padding: var(--space-6, 2rem);
-  gap: var(--space-2, 0.5rem);
   background: var(--color-bg, #1e1e1e);
 }
 
+.catalog__skeleton-phone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  width: 220px;
+  padding: var(--space-5, 1.25rem) var(--space-3, 0.75rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 2px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.catalog__skeleton-phone-notch {
+  width: 35%;
+  height: 0.4rem;
+  margin-bottom: var(--space-2, 0.5rem);
+  background: var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+}
+
 .catalog__skeleton-line {
+  width: 100%;
   height: 0.9rem;
   background: var(--color-muted, #313335);
   border-radius: var(--radius-sm, 0.5rem);
   animation: catalog-skeleton-pulse 1.2s ease-in-out infinite;
 }
 
-.catalog__skeleton-line:nth-child(1) {
-  width: 45%;
+.catalog__skeleton-line--1 {
+  width: 85%;
 }
 
-.catalog__skeleton-line:nth-child(2) {
-  width: 75%;
+.catalog__skeleton-line--2 {
+  width: 55%;
 }
 
-.catalog__skeleton-line:nth-child(3) {
-  width: 60%;
+.catalog__skeleton-line--3 {
+  width: 70%;
 }
 
 @keyframes catalog-skeleton-pulse {
