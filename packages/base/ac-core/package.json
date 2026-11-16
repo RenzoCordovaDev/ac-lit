@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/ac-core",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-core"
+  },
   "description": "Design tokens, DOM utilities and helpers shared across the ac-lit ecosystem",
   "license": "MIT",
   "type": "module",

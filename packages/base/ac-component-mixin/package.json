@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/ac-component-mixin",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-component-mixin"
+  },
   "description": "Base mixin for ac-lit components: i18n, scoped elements, loading state and HTML sanitization",
   "license": "MIT",
   "type": "module",

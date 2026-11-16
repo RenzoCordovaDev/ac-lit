@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-select-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-select-basic"
+  },
   "description": "ac-lit select (dropdown list) Web Component",
   "license": "MIT",
   "type": "module",

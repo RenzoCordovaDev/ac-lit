@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/ac-intl-mixin",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-intl-mixin"
+  },
   "description": "Mixin to translate components from a locales.json file with a shared global locale",
   "license": "MIT",
   "type": "module",

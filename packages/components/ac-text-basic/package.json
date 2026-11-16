@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-text-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-text-basic"
+  },
   "description": "ac-lit translatable text Web Component",
   "license": "MIT",
   "type": "module",

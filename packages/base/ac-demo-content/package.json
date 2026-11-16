@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/ac-demo-content",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-demo-content"
+  },
   "description": "Contenedor centralizado para demos de componentes ac-lit (casos, idioma, ambient, modo oscuro, tamaños, panel de eventos)",
   "license": "MIT",
   "type": "module",
