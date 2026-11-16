@@ -68,8 +68,13 @@ jobs:
       # npm que trae el Node.js 22 de `actions/setup-node` es más vieja que
       # eso, así que la fijamos a mano antes de que `changesets/action` llegue
       # al paso de publish (que termina llamando a `npm publish` por debajo).
+      # Importante: fijar la rama 11.x, NO `@latest` (npm 12) — pnpm 9.15.9
+      # (la versión del repo) reenvía mal `--no-git-checks` a npm como
+      # `--git-checks`, y npm 12 lo rechaza duro (`EUNKNOWNCONFIG`), mientras
+      # que npm 11.x solo lo advierte y sigue (confirmado en la primera
+      # corrida real del publish, que falló así con npm 12).
       - name: Actualizar npm (Trusted Publishing requiere npm >= 11.5.1)
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Instalar dependencias
         run: pnpm install --frozen-lockfile
