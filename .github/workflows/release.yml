@@ -97,10 +97,17 @@ jobs:
       # variable `NODE_AUTH_TOKEN` igual (por compatibilidad con el flujo viejo
       # basado en token), se deja vacía/sin configurar a propósito: no hace
       # falta configurarla con Trusted Publishing.
+      # El mensaje de commit/PR por defecto de la action ("Version Packages")
+      # no cumple Conventional Commits — el hook `commit-msg` de Husky
+      # (commitlint) lo rechaza y el workflow falla antes de llegar siquiera
+      # a la etapa de publish (confirmado: así falló la primera corrida real
+      # de este workflow). Se fija un mensaje/título compatible.
       - name: Versionar o publicar
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
           publish: pnpm release
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
