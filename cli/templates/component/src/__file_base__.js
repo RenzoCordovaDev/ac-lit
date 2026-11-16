@@ -8,8 +8,6 @@ export class __class_name__ extends ComponentMixin(LitElement) {
     return '__tag__';
   }
 
-  // componentBaseStyles primero: fija `font-family` y el skeleton de `loading`
-  // (tokens "Emerald Pro", ver docs/CONVENTIONS.md) — no lo quites.
   static get styles() {
     return [componentBaseStyles, __styles_export__];
   }
