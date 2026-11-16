@@ -12,10 +12,11 @@
   </head>
   <body>
     <header class="catalog__header">
-      <div class="catalog__header-title">
-        <h1 class="catalog__name">ac-lit</h1>
+      <button type="button" class="catalog__brand" id="catalog-home-link">
+        <span class="catalog__name">ac-lit</span>
         <span class="catalog__tech-badge">Lit v3</span>
-      </div>
+      </button>
+      <h2 class="catalog__page-title" id="catalog-page-title" hidden>Catálogo de componentes</h2>
       <div class="catalog__header-meta">
         <a
           class="catalog__docs-link"
@@ -75,7 +76,22 @@
       </div>
     </header>
 
-    <div class="catalog__body">
+    <main class="catalog__home" id="view-home">
+      <div class="catalog__home-content">
+        <span class="catalog__tech-badge">Lit v3</span>
+        <h1 class="catalog__home-title">Bienvenido a ac-lit</h1>
+        <p class="catalog__home-text">
+          Un catálogo de Web Components listos para usar, con la demo real e interactiva de cada uno
+          — elige un componente y pruébalo en los dos temas, en distintos tamaños de pantalla, con
+          su código fuente a la vista.
+        </p>
+        <button type="button" class="catalog__cta" id="catalog-cta">
+          Ver catálogo de componentes
+        </button>
+      </div>
+    </main>
+
+    <div class="catalog__body" id="view-catalog" hidden>
       <nav class="catalog__sidebar" aria-label="Lista de componentes">
         <label class="catalog__search-field">
           <span class="catalog__visually-hidden">Buscar componente</span>
@@ -91,6 +107,11 @@
 
       <main class="catalog__main">
         <p class="catalog__empty-state" id="catalog-empty">Cargando catálogo…</p>
+        <div class="catalog__skeleton" id="catalog-skeleton" hidden>
+          <div class="catalog__skeleton-line"></div>
+          <div class="catalog__skeleton-line"></div>
+          <div class="catalog__skeleton-line"></div>
+        </div>
         <iframe
           class="catalog__frame"
           id="catalog-frame"

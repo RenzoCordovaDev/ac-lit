@@ -6,6 +6,13 @@
   box-sizing: border-box;
 }
 
+/* `.catalog__home`/`.catalog__body` fijan su propio `display` -- sin esto,
+   esa regla le gana al `display: none` del atributo `hidden` (misma
+   especificidad, gana la hoja de estilos propia sobre la del navegador). */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -52,10 +59,27 @@ body {
   border-bottom: 1px solid var(--color-muted, #313335);
 }
 
-.catalog__header-title {
+.catalog__brand {
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.6rem);
+  font: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.catalog__brand:hover {
+  opacity: 0.8;
+}
+
+.catalog__page-title {
+  margin: 0;
+  font-size: var(--font-size-md, 1rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-subtext, #787a80);
 }
 
 .catalog__name {
@@ -89,6 +113,7 @@ body {
      abajo (ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). */
   color: var(--color-primary-500, #10b981);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 :root[data-theme='light'] .catalog__docs-link {
@@ -124,11 +149,76 @@ body {
   border: none;
   padding: var(--space-2, 0.4rem) var(--space-3, 0.75rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .catalog__segmented-button[aria-pressed='true'] {
   background: var(--color-primary-700, #047857);
   color: var(--color-primary-50, #ecfdf5);
+}
+
+/* Home: bienvenida + botón central hacia el catálogo */
+.catalog__home {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6, 2rem);
+}
+
+.catalog__home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  max-width: 520px;
+  padding: var(--space-6, 1.5rem);
+  text-align: center;
+  background: var(--color-surface, #2b2b2b);
+  border-radius: var(--radius-lg, 1.5rem);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.catalog__home-title {
+  margin: 0;
+  /* Hero: la única superficie del catálogo que necesita un título más grande
+     que --font-size-lg (reservado para "títulos" en general) -- se deriva del
+     mismo token en vez de inventar un tamaño suelto. */
+  font-size: calc(var(--font-size-lg, 1.1rem) * 1.8);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: var(--line-height-tight, 1.4);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-text {
+  margin: 0;
+  color: var(--color-subtext, #787a80);
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
+}
+
+.catalog__cta {
+  font: inherit;
+  font-size: var(--font-size-md, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-primary-50, #ecfdf5);
+  background: var(--color-primary-700, #047857);
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.catalog__cta:hover {
+  background: var(--color-primary-500, #10b981);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 /* Cuerpo: sidebar + iframe */
@@ -158,6 +248,9 @@ body {
   border: 1px solid var(--color-muted, #313335);
   border-radius: var(--radius-sm, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .catalog__search-input:focus-visible {
@@ -189,14 +282,34 @@ body {
   border-radius: var(--radius-sm, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .catalog__item-button:hover {
   background: var(--color-surface, #2b2b2b);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 .catalog__item-button[aria-current='true'] {
   background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.catalog__item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__item-icon {
+  flex-shrink: 0;
+  color: var(--color-subtext, #787a80);
+}
+
+.catalog__item-button[aria-current='true'] .catalog__item-icon {
   color: var(--color-primary-50, #ecfdf5);
 }
 
@@ -224,6 +337,7 @@ body {
 
 /* Main: el iframe con la demo real del componente */
 .catalog__main {
+  position: relative;
   flex: 1;
   min-width: 0;
   display: flex;
@@ -240,6 +354,65 @@ body {
   border: none;
   width: 100%;
   height: 100%;
+}
+
+/* Skeleton mientras carga la demo del componente elegido -- mismo criterio
+   que el skeleton de "loading" de @ac-base/ac-component-mixin (componentBaseStyles),
+   para que el cambio entre componentes no se sienta "de golpe". */
+.catalog__skeleton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-6, 2rem);
+  gap: var(--space-2, 0.5rem);
+  background: var(--color-bg, #1e1e1e);
+}
+
+.catalog__skeleton-line {
+  height: 0.9rem;
+  background: var(--color-muted, #313335);
+  border-radius: var(--radius-sm, 0.5rem);
+  animation: catalog-skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.catalog__skeleton-line:nth-child(1) {
+  width: 45%;
+}
+
+.catalog__skeleton-line:nth-child(2) {
+  width: 75%;
+}
+
+.catalog__skeleton-line:nth-child(3) {
+  width: 60%;
+}
+
+@keyframes catalog-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog__skeleton-line {
+    animation: none;
+  }
+
+  .catalog__brand,
+  .catalog__docs-link,
+  .catalog__segmented-button,
+  .catalog__search-input,
+  .catalog__item-button,
+  .catalog__cta {
+    transition: none;
+  }
 }
 
 @media (max-width: 720px) {
