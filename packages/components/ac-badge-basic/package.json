@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-badge-basic",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ac-lit basic badge/status indicator Web Component",
   "license": "MIT",
   "type": "module",
