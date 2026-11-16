@@ -1,0 +1,106 @@
+name: Release
+
+# Se dispara en cada push a `main` (es decir, después de cada merge de PR).
+#
+# La action `changesets/action` decide sola qué hacer según el estado de `.changeset/`:
+#   - Si hay changesets pendientes sin consumir: abre (o actualiza) una PR de
+#     "Version Packages" con el bump de versión + CHANGELOG, sin publicar nada.
+#   - Si no hay changesets pendientes (típicamente porque esa misma PR de versión
+#     se acaba de mergear a `main`): corre el comando de publish (`pnpm release`).
+#
+# Nota de diseño: este workflow vive separado de `ci.yml` a propósito, en vez de
+# integrarse como un job más ahí, por dos motivos:
+#   1. Disparadores distintos: `ci.yml` corre en `pull_request` + `push` a `main`
+#      (verificación de cada cambio); este workflow solo tiene sentido en `push`
+#      a `main` (es el único evento donde puede corresponder abrir la PR de
+#      versión o publicar). Mezclarlos forzaría condicionales artificiales.
+#   2. Principio de mínimo privilegio: este job necesita permisos sensibles
+#      (`contents: write`, `pull-requests: write`, `id-token: write` para el
+#      OIDC de npm) que el CI normal (lint/test/build de cada PR, incluidas PRs
+#      de forks) no necesita ni debería tener. Mantenerlos en workflows
+#      separados evita otorgarle esos permisos de más al job de CI.
+on:
+  push:
+    branches: [main]
+
+# Evita que dos ejecuciones de este workflow corran en paralelo sobre `main`
+# (por ejemplo, dos pushes seguidos) y se pisen al abrir/actualizar la PR de
+# versión o al publicar.
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      # Para que la action pueda commitear en la rama de la PR de versión y
+      # (en el caso de publish) crear los tags de git de cada paquete publicado.
+      contents: write
+      # Para que la action pueda abrir/actualizar la PR de "Version Packages".
+      pull-requests: write
+      # Para el OIDC de npm Trusted Publishing: el token de identidad que npm
+      # usa para verificar, sin secret ni 2FA, que el publish viene de este
+      # workflow de GitHub Actions. Ver el comentario junto al paso de publish
+      # más abajo para el estado real de esto hoy.
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # changesets/action necesita el historial completo (no un shallow
+          # clone) para poder generar correctamente el diff de versiones.
+          fetch-depth: 0
+
+      - name: Configurar pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      # npm Trusted Publishing (OIDC) requiere npm >= 11.5.1. La versión de
+      # npm que trae el Node.js 22 de `actions/setup-node` es más vieja que
+      # eso, así que la fijamos a mano antes de que `changesets/action` llegue
+      # al paso de publish (que termina llamando a `npm publish` por debajo).
+      - name: Actualizar npm (Trusted Publishing requiere npm >= 11.5.1)
+        run: npm install -g npm@latest
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      # changesets/action hace ambas cosas según corresponda (ver el comentario
+      # de arriba de `on:`): si hay changesets pendientes, corre `version` y
+      # abre/actualiza la PR de "Version Packages"; si no hay pendientes, corre
+      # `publish`.
+      #
+      # IMPORTANTE — estado real de esto hoy:
+      #   (a) La parte de "version" (abrir/actualizar la PR de Version Packages)
+      #       funciona de entrada, sin ninguna configuración previa en npmjs.com,
+      #       apenas se mergea este workflow a `main`.
+      #   (b) La parte de "publish" (este paso `pnpm release`, que internamente
+      #       corre `changeset publish` → `npm publish` por paquete) todavía NO
+      #       va a funcionar hasta que cada paquete de las orgs `ac-base` y
+      #       `ac-components` tenga este repo/workflow configurado como
+      #       "Trusted Publisher" desde la página de ese paquete en npmjs.com.
+      #       Esa configuración es manual, por paquete, y solo la puede hacer
+      #       quien tiene la cuenta de npm con permiso de publish — no se puede
+      #       hacer ni simular desde este workflow ni desde CI.
+      #       Hasta que eso esté hecho para todos los paquetes del release,
+      #       este paso va a fallar en el intento de publish (402/403 de npm).
+      #
+      # No hace falta ningún secret de npm token (`NPM_TOKEN`/`NODE_AUTH_TOKEN`):
+      # con Trusted Publishing, npm autentica el publish vía el token OIDC de
+      # `id-token: write` arriba, no con un token de npm guardado como secret.
+      # Si en algún momento `changesets/action` o `npm publish` exigieran la
+      # variable `NODE_AUTH_TOKEN` igual (por compatibilidad con el flujo viejo
+      # basado en token), se deja vacía/sin configurar a propósito: no hace
+      # falta configurarla con Trusted Publishing.
+      - name: Versionar o publicar
+        uses: changesets/action@v1
+        with:
+          version: pnpm version-packages
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
