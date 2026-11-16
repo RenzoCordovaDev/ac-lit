@@ -9,9 +9,28 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    env:
+      # Ref contra el que se calculan los paquetes afectados (ver
+      # scripts/affected.mjs y "CI es la validación completa..." en
+      # docs/CONVENTIONS.md). En un PR, la base real es `origin/<base_ref>`
+      # (normalmente `origin/main`); en un push directo a `main` (post-merge),
+      # es el commit previo de `main` (`github.event.before`) — diffear
+      # contra `origin/main` en ese caso compararía main contra sí mismo (0
+      # paquetes afectados) y dejaría sin validar lo que el push acaba de
+      # traer.
+      AFFECTED_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Historia completa: pnpm necesita poder resolver el merge-base
+          # contra `origin/main` (o el commit previo, en un push) para
+          # calcular los paquetes afectados. `actions/checkout` solo trae el
+          # último commit por defecto, lo que rompería ese cálculo.
+          fetch-depth: 0
+
+      - name: Fetch main para calcular paquetes afectados
+        run: git fetch origin main
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -42,9 +61,16 @@ jobs:
     # No bloqueante todavía: no es (ni debe agregarse a) un required status check
     # de `main` hasta que la suite demuestre estabilidad en varias corridas.
     continue-on-error: true
+    env:
+      AFFECTED_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch main para calcular paquetes afectados
+        run: git fetch origin main
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

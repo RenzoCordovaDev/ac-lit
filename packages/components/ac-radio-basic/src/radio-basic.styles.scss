@@ -17,6 +17,16 @@
   gap: var(--space-2, 0.5rem);
   cursor: pointer;
   font-size: var(--font-size-md, 0.95rem);
+  /* Color del punto/borde cuando está marcado: el control no tiene caja
+     propia (va directo sobre el fondo de la página), así que el tono de
+     marca se redefine por tema más abajo — mismo criterio que
+     ac-link-basic/ac-spinner-basic (ver "Dark-mode y colores de fondo
+     sólido" en docs/CONVENTIONS.md). */
+  --ac-radio-active: var(--color-primary-500, #10b981);
+}
+
+:host-context([data-theme='light']) .ac-radio-basic {
+  --ac-radio-active: var(--color-primary-700, #047857);
 }
 
 /* Input nativo real, visualmente oculto pero superpuesto al control custom
@@ -39,7 +49,10 @@
   justify-content: center;
   width: 1.25rem;
   height: 1.25rem;
-  border-radius: 50%;
+  /* Pastilla/círculo de un control de estado binario: --radius-full, igual
+     que ac-switch-basic/ac-checkbox-basic (ver "Emerald Pro" en
+     docs/CONVENTIONS.md) — nunca un 50% hardcodeado. */
+  border-radius: var(--radius-full, 9999px);
   border: 2px solid var(--color-subtext, #787a80);
   background: transparent;
   transition: border-color 150ms ease;
@@ -47,16 +60,19 @@
 
 .ac-radio-basic__control::after {
   content: '';
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 50%;
-  background: var(--color-primary-500, #10b981);
+  /* 0.5rem (8px): cae en la grilla de 4px (ver "Emerald Pro" en
+     docs/CONVENTIONS.md) — antes era 0.6rem, un valor orgánico que no
+     pertenecía a ninguna grilla. */
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--ac-radio-active);
   transform: scale(0);
   transition: transform 150ms ease;
 }
 
 .ac-radio-basic__input:checked + .ac-radio-basic__control {
-  border-color: var(--color-primary-500, #10b981);
+  border-color: var(--ac-radio-active);
 }
 
 .ac-radio-basic__input:checked + .ac-radio-basic__control::after {
@@ -64,7 +80,11 @@
 }
 
 .ac-radio-basic__input:focus-visible + .ac-radio-basic__control {
-  outline: 3px solid rgba(16, 185, 129, 0.35);
+  /* Anillo sólido con token de marca, igual que ac-checkbox-basic/
+     ac-switch-basic — nunca el verde traslúcido anterior
+     (rgba(16, 185, 129, 0.35)), que se diluía casi hasta ser invisible
+     sobre el fondo de página claro (no pasaba 3:1 no-textual, WCAG 1.4.11). */
+  outline: 2px solid var(--color-primary-700, #047857);
   outline-offset: 2px;
 }
 
