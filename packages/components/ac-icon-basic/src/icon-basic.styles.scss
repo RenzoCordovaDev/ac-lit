@@ -1,0 +1,30 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-icon-basic {
+  // Todo el color viene de `currentColor` (heredado del elemento padre) —
+  // el componente nunca define su propio color ni usa `ambient`, igual
+  // criterio que los íconos inline de ac-notification-basic.
+  display: block;
+  flex-shrink: 0;
+}
+
+.ac-icon-basic--sm {
+  width: 16px;
+  height: 16px;
+}
+
+.ac-icon-basic--md {
+  width: 20px;
+  height: 20px;
+}
+
+.ac-icon-basic--lg {
+  width: 24px;
+  height: 24px;
+}
