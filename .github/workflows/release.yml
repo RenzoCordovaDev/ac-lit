@@ -50,6 +50,10 @@ jobs:
           # changesets/action necesita el historial completo (no un shallow
           # clone) para poder generar correctamente el diff de versiones.
           fetch-depth: 0
+          # Token de un Personal Access Token (secret RELEASE_GH_TOKEN), no el
+          # GITHUB_TOKEN por defecto — ver el comentario junto al paso de
+          # "Versionar o publicar" más abajo sobre por qué hace falta.
+          token: ${{ secrets.RELEASE_GH_TOKEN }}
 
       - name: Configurar pnpm
         uses: pnpm/action-setup@v4
@@ -75,21 +79,6 @@ jobs:
       # abre/actualiza la PR de "Version Packages"; si no hay pendientes, corre
       # `publish`.
       #
-      # IMPORTANTE — estado real de esto hoy:
-      #   (a) La parte de "version" (abrir/actualizar la PR de Version Packages)
-      #       funciona de entrada, sin ninguna configuración previa en npmjs.com,
-      #       apenas se mergea este workflow a `main`.
-      #   (b) La parte de "publish" (este paso `pnpm release`, que internamente
-      #       corre `changeset publish` → `npm publish` por paquete) todavía NO
-      #       va a funcionar hasta que cada paquete de las orgs `ac-base` y
-      #       `ac-components` tenga este repo/workflow configurado como
-      #       "Trusted Publisher" desde la página de ese paquete en npmjs.com.
-      #       Esa configuración es manual, por paquete, y solo la puede hacer
-      #       quien tiene la cuenta de npm con permiso de publish — no se puede
-      #       hacer ni simular desde este workflow ni desde CI.
-      #       Hasta que eso esté hecho para todos los paquetes del release,
-      #       este paso va a fallar en el intento de publish (402/403 de npm).
-      #
       # No hace falta ningún secret de npm token (`NPM_TOKEN`/`NODE_AUTH_TOKEN`):
       # con Trusted Publishing, npm autentica el publish vía el token OIDC de
       # `id-token: write` arriba, no con un token de npm guardado como secret.
@@ -97,11 +86,24 @@ jobs:
       # variable `NODE_AUTH_TOKEN` igual (por compatibilidad con el flujo viejo
       # basado en token), se deja vacía/sin configurar a propósito: no hace
       # falta configurarla con Trusted Publishing.
+      #
       # El mensaje de commit/PR por defecto de la action ("Version Packages")
       # no cumple Conventional Commits — el hook `commit-msg` de Husky
       # (commitlint) lo rechaza y el workflow falla antes de llegar siquiera
-      # a la etapa de publish (confirmado: así falló la primera corrida real
-      # de este workflow). Se fija un mensaje/título compatible.
+      # a la etapa de publish (encontrado en la primera corrida real de este
+      # workflow). Se fija un mensaje/título compatible.
+      #
+      # GITHUB_TOKEN acá es un Personal Access Token (secret RELEASE_GH_TOKEN),
+      # NO el `secrets.GITHUB_TOKEN` por defecto de Actions — encontrado
+      # también en la primera corrida real: una PR abierta/actualizada con el
+      # GITHUB_TOKEN por defecto queda atribuida al bot de Actions, y GitHub
+      # no dispara OTROS workflows (como `ci.yml`, que corre en `pull_request`)
+      # a partir de un push/PR hecho con ese token — es la protección nativa
+      # contra loops infinitos de Actions. El resultado real: la PR de
+      # "Version Packages" quedaba sin el check requerido `lint-and-test`
+      # (nunca corrió, no es que haya fallado) y `main` la bloqueaba para
+      # mergear. Con un PAT, el push/PR queda atribuido a una cuenta real y
+      # `ci.yml` se dispara normalmente, como cualquier otra PR.
       - name: Versionar o publicar
         uses: changesets/action@v1
         with:
@@ -110,4 +112,4 @@ jobs:
           commit: 'chore(release): version packages'
           title: 'chore(release): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GH_TOKEN }}
