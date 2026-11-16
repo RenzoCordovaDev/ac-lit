@@ -17,6 +17,12 @@ export function componentCreate(rawName, { e2e = true } = {}) {
     throw new Error(`La carpeta "${names.folder}" ya existe en ${process.cwd()}.`);
   }
 
+  const insideWorkspace = isInsideAcLitWorkspace(process.cwd());
+  // @ac-base/ac-e2e-testing es `private` a propósito, nunca se publicó a npm
+  // -- fuera del workspace esa dependencia no se puede instalar nunca, así
+  // que el e2e se desactiva solo, sin que haga falta pasar --no-e2e a mano.
+  const effectiveE2e = e2e && insideWorkspace;
+
   copyTemplateDir(TEMPLATE_DIR, destDir, {
     tag: names.tag,
     file_base: names.fileBase,
@@ -25,12 +31,12 @@ export function componentCreate(rawName, { e2e = true } = {}) {
     package_name: names.packageName,
   });
 
-  if (!e2e) {
+  if (!effectiveE2e) {
     fs.rmSync(path.join(destDir, 'test_e2e'), { recursive: true, force: true });
     stripE2eFromPackageJson(destDir);
   }
 
-  if (!isInsideAcLitWorkspace(process.cwd())) {
+  if (!insideWorkspace) {
     pinExternalPackageVersions(destDir);
   }
 

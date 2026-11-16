@@ -29,7 +29,9 @@ describe('aclit (bin)', () => {
 
     assert.equal(result.status, 0, result.stderr);
     assert.ok(fs.existsSync(path.join(tmpDir, 'ac-foo-basic', 'src', 'foo-basic.js')));
-    assert.ok(fs.existsSync(path.join(tmpDir, 'ac-foo-basic', 'test_e2e')));
+    // tmpDir no es el workspace de ac-lit -- el e2e se desactiva solo, sin
+    // --no-e2e (ver cli/test/component-create.test.js para el porqué).
+    assert.ok(!fs.existsSync(path.join(tmpDir, 'ac-foo-basic', 'test_e2e')));
   });
 
   it('honors --no-e2e', () => {

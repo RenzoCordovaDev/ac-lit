@@ -12,6 +12,11 @@ export const EXTERNAL_BASE_PACKAGE_RANGES = {
   '@ac-base/ac-intl-mixin': '^0.1.0',
   '@ac-base/ac-core': '^0.1.0',
   '@ac-base/ac-demo-content': '^0.1.0',
-  '@ac-base/ac-e2e-testing': '^0.1.0',
-  '@ac-base/cli': '^0.1.0',
+  '@ac-base/cli': '^0.2.0',
 };
+
+// @ac-base/ac-e2e-testing no está acá a propósito: es `private`, nunca se
+// publicó a npm, así que no hay ningún rango real que poner. `componentCreate`
+// desactiva el e2e automáticamente fuera del workspace antes de llegar a este
+// mapa (ver cli/src/commands/component-create.js) -- esa dependencia nunca
+// queda en el package.json generado afuera del monorepo.
