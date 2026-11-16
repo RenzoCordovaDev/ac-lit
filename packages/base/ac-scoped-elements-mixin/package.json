@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/ac-scoped-elements-mixin",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-scoped-elements-mixin"
+  },
   "description": "Mixin to register a component's custom element dependencies without global name collisions",
   "license": "MIT",
   "type": "module",

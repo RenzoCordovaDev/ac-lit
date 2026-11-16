@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-modal-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-modal-basic"
+  },
   "description": "ac-lit modal dialog Web Component",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-expandable-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-expandable-basic"
+  },
   "description": "ac-lit expandable panel Web Component",
   "license": "MIT",
   "type": "module",

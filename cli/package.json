@@ -1,6 +1,11 @@
 {
   "name": "@ac-base/cli",
   "version": "0.2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "cli"
+  },
   "description": "CLI de ac-lit — comando `aclit` para scaffolding de componentes/proyectos y passthrough de tareas comunes",
   "license": "MIT",
   "type": "module",

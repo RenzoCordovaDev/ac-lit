@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-tabs-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-tabs-basic"
+  },
   "description": "ac-lit tabs Web Component",
   "license": "MIT",
   "type": "module",

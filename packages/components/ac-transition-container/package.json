@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-transition-container",
   "version": "0.1.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-transition-container"
+  },
   "description": "ac-lit full-screen slide-in transition container Web Component",
   "license": "MIT",
   "type": "module",

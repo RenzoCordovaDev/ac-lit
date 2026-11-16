@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-button-basic",
   "version": "0.1.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-button-basic"
+  },
   "description": "ac-lit basic button Web Component",
   "license": "MIT",
   "type": "module",

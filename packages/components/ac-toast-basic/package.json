@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-toast-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-toast-basic"
+  },
   "description": "ac-lit toast notification Web Component",
   "license": "MIT",
   "type": "module",

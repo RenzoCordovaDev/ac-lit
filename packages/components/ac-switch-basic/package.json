@@ -1,6 +1,11 @@
 {
   "name": "@ac-components/ac-switch-basic",
   "version": "0.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/components/ac-switch-basic"
+  },
   "description": "ac-lit toggle switch Web Component",
   "license": "MIT",
   "type": "module",
