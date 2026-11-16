@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from 'lit';
+import { LitElement, html, svg, nothing } from 'lit';
 import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 // Authored in icon-basic.styles.scss, compiled to icon-basic.styles.js by
 // `pnpm run component:build:styles` (@ac-base/cli/scripts/compile-scss-to-lit.cjs). The compiled file
@@ -15,26 +15,38 @@ const DEFAULT_SIZE = 'md';
 // `danger` son deliberadamente idénticos a los de ac-notification-basic (ver
 // docs/CONVENTIONS.md) para mantener consistencia visual exacta, no una
 // reinterpretación.
+//
+// Importante: estos fragmentos van con la función `svg` de lit, NO `html`.
+// Son `<path>`/`<circle>` sueltos, sin su propio `<svg>` envolvente (a
+// diferencia de ICON_MAP/CLOSE_ICON de ac-notification-basic, que sí son un
+// `<svg>` completo cada uno) -- con `html`, lit-html parsea el fragmento en
+// un namespace HTML (nunca ven un `<svg>` ancestro en su propio template),
+// así que el `<path>`/`<circle>` resultante queda en el namespace HTML
+// (`http://www.w3.org/1999/xhtml`), no el de SVG, y el navegador no lo pinta
+// aunque todos sus atributos estén bien -- aunque se inserte después como
+// hijo de un `<svg>` real, los elementos no se re-asignan de namespace al
+// moverse en el DOM. `svg` le dice a lit-html que clone el fragmento con el
+// wrapper de namespace SVG correcto.
 const ICON_MAP = {
-  check: html`<path d="M5 13l4 4L19 7" />`,
-  close: html`<path d="M6 6l12 12M18 6L6 18" />`,
-  info: html`<circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8v.01" />`,
-  success: html`<circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" />`,
-  warning: html`<path d="M12 4.5l9 15.5H3l9-15.5z" /><path d="M12 10.5v3.5M12 17v.01" />`,
-  danger: html`<circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16v.01" />`,
-  'chevron-down': html`<path d="M6 9l6 6 6-6" />`,
-  'chevron-up': html`<path d="M6 15l6-6 6 6" />`,
-  'chevron-left': html`<path d="M15 6l-6 6 6 6" />`,
-  'chevron-right': html`<path d="M9 6l6 6-6 6" />`,
-  search: html`<circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />`,
-  menu: html`<path d="M4 6h16M4 12h16M4 18h16" />`,
-  'arrow-left': html`<path d="M19 12H5M11 18l-6-6 6-6" />`,
-  'arrow-right': html`<path d="M5 12h14M13 6l6 6-6 6" />`,
+  check: svg`<path d="M5 13l4 4L19 7" />`,
+  close: svg`<path d="M6 6l12 12M18 6L6 18" />`,
+  info: svg`<circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8v.01" />`,
+  success: svg`<circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" />`,
+  warning: svg`<path d="M12 4.5l9 15.5H3l9-15.5z" /><path d="M12 10.5v3.5M12 17v.01" />`,
+  danger: svg`<circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16v.01" />`,
+  'chevron-down': svg`<path d="M6 9l6 6 6-6" />`,
+  'chevron-up': svg`<path d="M6 15l6-6 6 6" />`,
+  'chevron-left': svg`<path d="M15 6l-6 6 6 6" />`,
+  'chevron-right': svg`<path d="M9 6l6 6-6 6" />`,
+  search: svg`<circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />`,
+  menu: svg`<path d="M4 6h16M4 12h16M4 18h16" />`,
+  'arrow-left': svg`<path d="M19 12H5M11 18l-6-6 6-6" />`,
+  'arrow-right': svg`<path d="M5 12h14M13 6l6 6-6 6" />`,
 };
 
 // Fallback para cualquier `name` fuera de la whitelist de arriba — un círculo
 // simple, el ícono nunca queda vacío/roto.
-const FALLBACK_ICON = html`<circle cx="12" cy="12" r="9" />`;
+const FALLBACK_ICON = svg`<circle cx="12" cy="12" r="9" />`;
 
 export class IconBasic extends ComponentMixin(LitElement) {
   static get is() {

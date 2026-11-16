@@ -9,6 +9,17 @@ suite('ac-icon-basic', () => {
     expect(svgOf(el).querySelector('path').getAttribute('d')).to.equal('M5 13l4 4L19 7');
   });
 
+  // Regresión: con `html` en vez de `svg` para los fragmentos de ICON_MAP,
+  // el <path>/<circle> queda creado en el namespace HTML (no el de SVG) y el
+  // navegador no lo pinta, aunque todos los atributos estén bien puestos
+  // (lo que hacía que los tests de arriba, que solo miran atributos, pasaran
+  // igual con el bug presente). `instanceof SVGElement` es la única forma
+  // real de detectarlo.
+  test('renders the icon path as a real SVG element, not an HTML one', async () => {
+    const el = await fixture(html`<ac-icon-basic name="check"></ac-icon-basic>`);
+    expect(svgOf(el).querySelector('path')).to.be.instanceOf(SVGElement);
+  });
+
   test('falls back to a simple circle with an unknown name', async () => {
     const el = await fixture(html`<ac-icon-basic name="nombre-inexistente"></ac-icon-basic>`);
     expect(svgOf(el).querySelector('circle')).to.exist;

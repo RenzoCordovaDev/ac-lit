@@ -52,4 +52,17 @@ suite('ac-progress-basic', () => {
     const track = el.shadowRoot.querySelector('[role="progressbar"]');
     expect(track.getAttribute('aria-label')).to.equal('Progreso');
   });
+
+  // Regresión: dentro de un contenedor flex (igual que `.row` en los demos),
+  // sin `label`/`show-value` el único contenido interno usa `width: 100%` --
+  // un ancho porcentual no aporta nada al cálculo de "shrink-to-fit" de un
+  // ítem flex sin ancho propio, así que el host entero colapsaba a 0px si
+  // `:host` no fijaba su propio `width: 100%` (solo tenía `display: block`).
+  test('renders with a non-zero width inside a flex container, with no label/show-value', async () => {
+    const wrapper = await fixture(html`
+      <div style="display: flex;"><ac-progress-basic value="50"></ac-progress-basic></div>
+    `);
+    const el = wrapper.querySelector('ac-progress-basic');
+    expect(el.getBoundingClientRect().width).to.be.greaterThan(0);
+  });
 });

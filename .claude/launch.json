@@ -126,6 +126,36 @@
       "port": 5173
     },
     {
+      "name": "ac-icon-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-icon-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-icon-button-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-icon-button-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-divider-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-divider-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-tooltip-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-tooltip-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-progress-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-progress-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "catalog-site",
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4300", "--directory", "catalog-dist"],
