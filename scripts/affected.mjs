@@ -111,6 +111,48 @@ function parseArgs(argv) {
   return { positional, flags };
 }
 
+// Paquetes afectados como lista de directorios (relativos a la raíz), vía
+// `pnpm ... list --depth -1 --json` — no depende de que el paquete tenga
+// ningún script propio (a diferencia de `--if-present run <script>`), así
+// que sirve igual para paquetes sin `component:lint`/`lint` (ac-core, los
+// mixins, el cli). Devuelve `null` si no se pudo resolver la lista (el
+// comando falló o la salida no fue JSON válido — incluye el caso en que
+// pnpm no encontró ningún paquete y, en vez de `[]`, imprime un mensaje
+// de texto plano).
+function affectedPackageDirs(ref) {
+  const res = run('pnpm', ['--filter', `...[${ref}]`, 'list', '--depth', '-1', '--json']);
+  if (res.status !== 0) return null;
+  try {
+    const pkgs = JSON.parse(res.stdout);
+    return pkgs.map(p => relative(ROOT, p.path)).filter(dir => dir !== '');
+  } catch {
+    return null;
+  }
+}
+
+// Confirma, de forma independiente a `pnpm --filter run`, que el filtro
+// realmente selecciona al menos un paquete antes de confiar en modo
+// filtrado. Si no se puede confirmar (falla el comando, o devuelve una
+// lista vacía) se degrada a corrida completa — correr de más es seguro,
+// correr de menos silenciosamente no lo es. Esto es lo que protege contra,
+// por ejemplo, un ref que pnpm no puede resolver bien en el entorno desde
+// el que se corre (ver el límite conocido documentado en
+// docs/CONVENTIONS.md, "CI es la validación completa...").
+function confirmFilteredOrFallback(decision) {
+  if (decision.mode !== 'filtered') return { ...decision, dirs: null };
+  const dirs = affectedPackageDirs(decision.ref);
+  if (dirs === null || dirs.length === 0) {
+    return {
+      mode: 'full',
+      reason:
+        dirs === null
+          ? `no se pudo confirmar la lista de paquetes afectados contra "${decision.ref}"`
+          : `el filtro no encontró ningún paquete afectado contra "${decision.ref}" pese a haber archivos cambiados`,
+    };
+  }
+  return { ...decision, dirs };
+}
+
 function runPnpmRun(argv) {
   const { positional: scripts, flags } = parseArgs(argv);
   if (scripts.length === 0) {
@@ -119,7 +161,8 @@ function runPnpmRun(argv) {
     );
     process.exit(1);
   }
-  const decision = decideMode({ forceAll: Boolean(flags.all) });
+  let decision = decideMode({ forceAll: Boolean(flags.all) });
+  decision = confirmFilteredOrFallback(decision);
   logDecision(`pnpm-run ${scripts.join(', ')}`, decision);
 
   const baseArgs = decision.mode === 'filtered' ? ['--filter', `...[${decision.ref}]`] : ['-r'];
@@ -132,42 +175,13 @@ function runPnpmRun(argv) {
   }
 }
 
-// Paquetes afectados como lista de directorios (relativos a la raíz), vía
-// `pnpm ... list --depth -1 --json` — no depende de que el paquete tenga
-// ningún script propio (a diferencia de `--if-present run <script>`), así
-// que sirve igual para paquetes sin `component:lint`/`lint` (ac-core, los
-// mixins, el cli).
-function affectedPackageDirs(ref) {
-  const res = run('pnpm', ['--filter', `...[${ref}]`, 'list', '--depth', '-1', '--json']);
-  if (res.status !== 0) return null;
-  try {
-    const pkgs = JSON.parse(res.stdout);
-    return pkgs.map(p => relative(ROOT, p.path)).filter(dir => dir !== '');
-  } catch {
-    return null;
-  }
-}
-
 function runEslint(argv) {
   const { flags } = parseArgs(argv);
-  const decision = decideMode({ forceAll: Boolean(flags.all) });
+  let decision = decideMode({ forceAll: Boolean(flags.all) });
+  decision = confirmFilteredOrFallback(decision);
   logDecision('eslint', decision);
 
-  let targets = ['.'];
-  if (decision.mode === 'filtered') {
-    const dirs = affectedPackageDirs(decision.ref);
-    if (dirs === null) {
-      console.log(
-        '[affected] eslint: no se pudo resolver la lista de paquetes afectados, corriendo sobre todo el repo',
-      );
-      targets = ['.'];
-    } else if (dirs.length === 0) {
-      console.log('[affected] eslint: ningún paquete afectado, nada que lintear');
-      return;
-    } else {
-      targets = dirs;
-    }
-  }
+  const targets = decision.mode === 'filtered' ? decision.dirs : ['.'];
 
   // `pnpm exec` resuelve el binario desde node_modules/.bin del workspace,
   // sin depender de que `eslint` esté en el PATH del shell.
