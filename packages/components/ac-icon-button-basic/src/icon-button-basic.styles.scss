@@ -1,0 +1,85 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-icon-button-basic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 120ms ease;
+}
+
+// Tamaños — mismo criterio de escala que el radio de borde (más grande =
+// más padding, nunca --radius-full: ver "Emerald Pro" en docs/CONVENTIONS.md).
+// El tamaño total crece junto con el ícono interno (16/20/24px de
+// ac-icon-basic), nunca al revés.
+.ac-icon-button--sm {
+  padding: var(--space-2, 0.5rem);
+  border-radius: var(--radius-sm, 0.5rem);
+  corner-shape: squircle;
+}
+
+.ac-icon-button--md {
+  padding: var(--space-3, 0.75rem);
+  border-radius: var(--radius-md, 1rem);
+  corner-shape: squircle;
+}
+
+.ac-icon-button--lg {
+  padding: var(--space-4, 1rem);
+  border-radius: var(--radius-lg, 1.5rem);
+  corner-shape: squircle;
+}
+
+// Ambients — mismos tokens que ac-button-basic para primary/secondary
+// (ver button-basic.styles.scss), + danger con --color-danger (mismo
+// fondo + texto negro ya validado en ac-badge-basic para ese token).
+.ac-icon-button--primary {
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-icon-button--secondary {
+  background: var(--color-accent-500, #f59e0b);
+  // Texto oscuro: tonos más claros sobre #f59e0b no cumplen contraste WCAG AA
+  color: var(--color-accent-900, #451a03);
+}
+
+.ac-icon-button--danger {
+  background: var(--color-danger, #e05555);
+  color: #000;
+}
+
+// Hover / active
+.ac-icon-button-basic:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.ac-icon-button-basic:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.ac-icon-button-basic:focus {
+  outline: 3px solid rgba(0, 0, 0, 0.08);
+  outline-offset: 3px;
+}
+
+// Disabled — nunca `opacity` sobre texto (rompe contraste WCAG de forma
+// impredecible, ver docs/CONVENTIONS.md); acá no hay texto, solo un ícono
+// vectorial de color fijo, así que atenuar con opacity el control entero
+// (no una porción de texto) es aceptable, mismo criterio que ac-button-basic.
+.ac-icon-button-basic[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
