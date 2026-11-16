@@ -12,6 +12,7 @@
   "scripts": {
     "component:serve": "pnpm --filter=@ac-components/* run component:serve",
     "catalog:serve": "node scripts/catalog-serve.mjs",
+    "catalog:build": "node scripts/build-catalog.mjs",
     "build": "node scripts/affected.mjs pnpm-run component:build",
     "build:all": "node scripts/affected.mjs pnpm-run component:build --all",
     "test": "node scripts/affected.mjs pnpm-run test component:test --concurrency=1",
