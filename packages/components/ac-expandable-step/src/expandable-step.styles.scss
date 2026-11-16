@@ -11,7 +11,11 @@
 }
 
 .expandable-step {
-  border-radius: 0.65rem;
+  border-radius: var(--radius-lg, 1.5rem);
+  /* corner-shape: squircle (soportado en Chromium, ver "Emerald Pro" en
+     docs/CONVENTIONS.md) suaviza la curva junto a --radius/--radius-sm —
+     mejora progresiva, sin @supports: se ignora sola donde no se reconoce. */
+  corner-shape: squircle;
 }
 
 /* --- Colapsado (completado): fondo sólido + texto fijo, nunca --color-muted/
@@ -39,12 +43,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
 }
 
 .expandable-step__header {
-  font-weight: 600;
+  font-weight: var(--font-weight-medium, 600);
   overflow-wrap: anywhere;
 }
 
@@ -56,7 +60,7 @@
   flex-shrink: 0;
   padding: 0;
   font: inherit;
-  font-weight: 600;
+  font-weight: var(--font-weight-medium, 600);
   color: inherit;
   text-decoration: underline;
   background: transparent;
@@ -70,7 +74,7 @@
 }
 
 .expandable-step__summary {
-  padding: 0 1rem 0.75rem;
+  padding: 0 var(--space-4, 1rem) var(--space-3, 0.75rem);
 }
 
 /* El resumen lo rellena el consumidor vía slot: resuelve su propio contraste fijo
@@ -85,7 +89,7 @@
    porque acá no es "fondo sólido con texto fijo", es la superficie normal de la
    página (igual que ac-expandable-basic). --- */
 .expandable-step--active {
-  padding: 1rem;
+  padding: var(--space-4, 1rem);
   color: var(--color-text, #bcbec4);
   background: var(--color-surface, #2b2b2b);
   border: 1px solid var(--color-muted, #313335);
@@ -93,9 +97,9 @@
 
 .expandable-step--active .expandable-step__counter {
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 600;
+  margin-bottom: var(--space-1, 0.25rem);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
   /* Mismo color que el resto del texto: la jerarquía se marca con tamaño/peso, no con
      un tono de menor contraste (--color-subtext no cumple AA para texto, ver
      docs/CONVENTIONS.md) ni con `text-transform: uppercase` (WebDriver `getText()`
@@ -105,12 +109,12 @@
 }
 
 .expandable-step--active .expandable-step__header {
-  margin: 0 0 0.75rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin: 0 0 var(--space-3, 0.75rem);
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-medium, 600);
 }
 
 .expandable-step__content {
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
 }

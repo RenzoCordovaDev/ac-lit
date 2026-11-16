@@ -87,8 +87,8 @@
   flex-shrink: 0;
   grid-template-columns: 2.5rem 1fr auto;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.9rem 1.25rem;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   border-bottom: 1px solid var(--color-muted, #313335);
 }
 
@@ -109,7 +109,8 @@
   color: inherit;
   background: transparent;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm, 0.5rem);
+  corner-shape: squircle;
   cursor: pointer;
 }
 
@@ -128,8 +129,8 @@
 .ac-transition-container__title {
   margin: 0;
   overflow: hidden;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 700);
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -140,17 +141,17 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.25rem;
+  gap: var(--space-1, 0.25rem);
 }
 
 .ac-transition-container__body {
   flex: 1;
   min-height: 0;
-  padding: 1rem 1.25rem;
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
 }
 
 /* Entrada: de derecha hacia izquierda. Salida: de izquierda hacia derecha (la

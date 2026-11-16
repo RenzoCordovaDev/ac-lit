@@ -14,7 +14,7 @@
 .expandable-multistep__steps {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4, 1rem);
 }
 
 .expandable-multistep__confirmation[hidden] {
