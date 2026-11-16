@@ -46,6 +46,19 @@ function run(cmd, args, opts = {}) {
   return spawnSync(cmd, args, { encoding: 'utf8', ...opts });
 }
 
+// En Windows, `pnpm` es un shim (.cmd/.ps1) de Corepack: spawnSync no lo
+// encuentra sin pasar por una shell (da ENOENT aunque `pnpm` funcione
+// perfecto desde la terminal) — confirmado al validar este script. `git`
+// no tiene este problema (es un .exe real), así que esto se aplica solo
+// a los llamados a pnpm.
+function runPnpm(args, opts = {}) {
+  return spawnSync('pnpm', args, {
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    ...opts,
+  });
+}
+
 function resolveBaseRef() {
   return process.env.AFFECTED_BASE_REF?.trim() || 'origin/main';
 }
@@ -120,7 +133,7 @@ function parseArgs(argv) {
 // pnpm no encontró ningún paquete y, en vez de `[]`, imprime un mensaje
 // de texto plano).
 function affectedPackageDirs(ref) {
-  const res = run('pnpm', ['--filter', `...[${ref}]`, 'list', '--depth', '-1', '--json']);
+  const res = runPnpm(['--filter', `...[${ref}]`, 'list', '--depth', '-1', '--json']);
   if (res.status !== 0) return null;
   try {
     const pkgs = JSON.parse(res.stdout);
@@ -170,7 +183,7 @@ function runPnpmRun(argv) {
   baseArgs.push('--if-present');
 
   for (const script of scripts) {
-    const res = spawnSync('pnpm', [...baseArgs, 'run', script], { stdio: 'inherit' });
+    const res = runPnpm([...baseArgs, 'run', script], { stdio: 'inherit' });
     if (res.status !== 0) process.exit(res.status ?? 1);
   }
 }
@@ -185,7 +198,7 @@ function runEslint(argv) {
 
   // `pnpm exec` resuelve el binario desde node_modules/.bin del workspace,
   // sin depender de que `eslint` esté en el PATH del shell.
-  const res = spawnSync('pnpm', ['exec', 'eslint', ...targets], { stdio: 'inherit' });
+  const res = runPnpm(['exec', 'eslint', ...targets], { stdio: 'inherit' });
   process.exit(res.status ?? 1);
 }
 
