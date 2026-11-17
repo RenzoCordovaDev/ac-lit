@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./catalog.css" />
     <script type="module" src="./catalog.js"></script>
   </head>
-  <body>
+  <body data-view="home">
     <aside class="catalog__sidebar" id="catalog-sidebar" aria-label="Navegación del catálogo">
       <button type="button" class="catalog__brand" id="catalog-home-link">
         <svg class="catalog__logo" viewBox="0 0 48 48" width="44" height="44" aria-hidden="true">
@@ -59,26 +59,120 @@
         <div id="catalog-groups" aria-live="polite"></div>
       </nav>
 
-      <button type="button" class="catalog__sidebar-home" id="catalog-sidebar-home">
-        <span class="catalog__sidebar-home-text">
-          <span class="catalog__sidebar-home-title">Inicio</span>
-          <span class="catalog__sidebar-home-subtitle">Bienvenida y comandos del CLI</span>
-        </span>
-        <svg
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+      <div class="catalog__sidebar-shortcuts">
+        <button type="button" class="catalog__sidebar-shortcut" id="catalog-sidebar-home">
+          <span class="catalog__sidebar-shortcut-text">
+            <span class="catalog__sidebar-shortcut-title">Inicio</span>
+            <span class="catalog__sidebar-shortcut-subtitle">Bienvenida del catálogo</span>
+          </span>
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="catalog__sidebar-shortcut"
+          id="catalog-sidebar-commands"
+          aria-haspopup="dialog"
         >
-          <path d="M9 6l6 6-6 6" />
-        </svg>
-      </button>
+          <span class="catalog__sidebar-shortcut-text">
+            <span class="catalog__sidebar-shortcut-title">Comandos</span>
+            <span class="catalog__sidebar-shortcut-subtitle">Referencia rápida del CLI</span>
+          </span>
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 6l-2 12" />
+          </svg>
+        </button>
+      </div>
     </aside>
+
+    <dialog class="catalog__commands-dialog" id="catalog-commands-dialog" aria-labelledby="catalog-commands-title">
+      <div class="catalog__commands-body">
+      <div class="catalog__commands-head">
+        <h2 class="catalog__commands-title" id="catalog-commands-title">Comandos del CLI</h2>
+        <button
+          type="button"
+          class="catalog__icon-button"
+          id="catalog-commands-close"
+          aria-label="Cerrar"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <div class="catalog__terminal" role="group" aria-label="Comandos de ejemplo del CLI aclit">
+        <div class="catalog__terminal-titlebar">
+          <span class="catalog__terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="catalog__terminal-filename">terminal — aclit</span>
+        </div>
+        <div class="catalog__terminal-body">
+          <p class="catalog__terminal-line">
+            <span class="catalog__terminal-prompt">$</span>
+            <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
+          </p>
+          <p class="catalog__terminal-line">
+            <span class="catalog__terminal-prompt">$</span>
+            <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
+          </p>
+          <p class="catalog__terminal-line catalog__terminal-line--comment">
+            # Componente creado en ./ac-mi-componente
+          </p>
+          <p class="catalog__terminal-line">
+            <span class="catalog__terminal-prompt">$</span>
+            <span class="catalog__terminal-cmd">aclit component:serve</span>
+          </p>
+          <p class="catalog__terminal-line catalog__terminal-line--comment">
+            # levanta la demo con Vite en http://localhost:5173
+          </p>
+          <p class="catalog__terminal-line">
+            <span class="catalog__terminal-prompt">$</span>
+            <span class="catalog__terminal-cmd">aclit component:build</span>
+          </p>
+          <p class="catalog__terminal-line catalog__terminal-line--comment">
+            # compila el componente a ./dist
+          </p>
+          <p class="catalog__terminal-line">
+            <span class="catalog__terminal-prompt">$</span>
+            <span class="catalog__terminal-cmd">aclit help</span>
+          </p>
+          <p class="catalog__terminal-line catalog__terminal-line--comment">
+            # lista todos los comandos disponibles
+          </p>
+        </div>
+      </div>
+      </div>
+    </dialog>
 
     <div class="catalog__backdrop" id="catalog-backdrop" hidden></div>
 
@@ -174,68 +268,280 @@
 
       <main class="catalog__home" id="view-home">
         <div class="catalog__home-scroll">
-          <div class="catalog__home-content">
+          <section class="catalog__home-hero">
             <span class="catalog__tech-badge">Lit v3</span>
-            <h1 class="catalog__home-title">Bienvenido a ac-lit</h1>
+            <h1 class="catalog__home-title">
+              Aprende a construir Web Components profesionales, paso a paso.
+            </h1>
             <p class="catalog__home-text">
-              Un catálogo de Web Components listos para usar, con la demo real e interactiva de cada
-              uno — elige un componente y pruébalo en los dos temas, en distintos tamaños de
-              pantalla, con su código fuente a la vista.
+              ac-lit es un entorno de formación: un espacio para practicar arquitectura de
+              componentes, testing en tres niveles, accesibilidad y un flujo de trabajo completo
+              de CLI a CI/CD — con Lit v3 como base.
             </p>
-            <button type="button" class="catalog__cta" id="catalog-cta">
-              Ver catálogo de componentes
-            </button>
-          </div>
-
-          <ul class="catalog__home-features">
-            <li>
-              <span
-                ><span id="catalog-count">Varios</span> Web Components listos para usar, agrupados
-                en un solo catálogo</span
-              >
-            </li>
-            <li>Accesibilidad verificada con axe-core en cada componente</li>
-            <li>Modo claro y oscuro en cada demo, sin configuración adicional</li>
-            <li>Código fuente de cada caso de demo, a la vista</li>
-          </ul>
-
-          <div
-            class="catalog__terminal"
-            role="group"
-            aria-label="Comandos de ejemplo del CLI aclit"
-          >
-            <div class="catalog__terminal-titlebar">
-              <span class="catalog__terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="catalog__terminal-filename">terminal — aclit</span>
+            <div class="catalog__home-actions">
+              <button type="button" class="catalog__cta" id="catalog-cta">
+                Explorar los componentes →
+              </button>
+              <a class="catalog__home-cta-ghost" href="#cli-quickstart">Inicio rápido (CLI)</a>
             </div>
-            <div class="catalog__terminal-body">
-              <p class="catalog__terminal-line">
-                <span class="catalog__terminal-prompt">$</span>
-                <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
-              </p>
-              <p class="catalog__terminal-line">
-                <span class="catalog__terminal-prompt">$</span>
-                <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
-              </p>
-              <p class="catalog__terminal-line catalog__terminal-line--comment">
-                # Componente creado en ./ac-mi-componente
-              </p>
-              <p class="catalog__terminal-line">
-                <span class="catalog__terminal-prompt">$</span>
-                <span class="catalog__terminal-cmd">aclit component:serve</span>
-              </p>
-              <p class="catalog__terminal-line catalog__terminal-line--comment">
-                # levanta la demo con Vite en http://localhost:5173
-              </p>
-              <p class="catalog__terminal-line">
-                <span class="catalog__terminal-prompt">$</span>
-                <span class="catalog__terminal-cmd">aclit help</span>
-              </p>
-              <p class="catalog__terminal-line catalog__terminal-line--comment">
-                # lista todos los comandos disponibles
-              </p>
+            <p class="catalog__home-stats">
+              <span id="catalog-count">Varios</span> componentes de práctica · tests unitarios +
+              E2E + a11y · CLI de scaffolding propio · Licencia MIT
+            </p>
+          </section>
+
+          <section class="catalog__home-section" aria-labelledby="home-goals-title">
+            <h2 class="catalog__home-section-title" id="home-goals-title">
+              Objetivos de este entorno de formación
+            </h2>
+            <p class="catalog__home-section-intro">
+              Cada componente del catálogo es, a la vez, un ejemplo de producción y un ejercicio:
+              así se ve una arquitectura de Web Components pensada para durar.
+            </p>
+            <ul class="catalog__home-goals">
+              <li class="catalog__home-goal">
+                <svg
+                  class="catalog__home-goal-icon"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="4" y="4" width="16" height="6" rx="1.5" />
+                  <rect x="4" y="14" width="16" height="6" rx="1.5" />
+                </svg>
+                <h3 class="catalog__home-goal-title">Arquitectura con Lit v3</h3>
+                <p class="catalog__home-goal-text">
+                  Mixins reutilizables, tokens de diseño y convenciones de naming consistentes en
+                  los 28 componentes del catálogo.
+                </p>
+              </li>
+              <li class="catalog__home-goal">
+                <svg
+                  class="catalog__home-goal-icon"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M9 12l2 2 4-4" />
+                  <circle cx="12" cy="12" r="9" />
+                </svg>
+                <h3 class="catalog__home-goal-title">Testing en tres niveles</h3>
+                <p class="catalog__home-goal-text">
+                  Cada componente trae tests unitarios, E2E y de accesibilidad (axe-core) —
+                  practica a escribirlos y a leerlos.
+                </p>
+              </li>
+              <li class="catalog__home-goal">
+                <svg
+                  class="catalog__home-goal-icon"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 6l-2 12" />
+                </svg>
+                <h3 class="catalog__home-goal-title">Flujo de trabajo real</h3>
+                <p class="catalog__home-goal-text">
+                  Un CLI propio (<code>aclit</code>) para crear componentes, y un pipeline de
+                  CI/CD con Conventional Commits y versionado por Changesets.
+                </p>
+              </li>
+              <li class="catalog__home-goal">
+                <svg
+                  class="catalog__home-goal-icon"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <h3 class="catalog__home-goal-title">Accesibilidad primero</h3>
+                <p class="catalog__home-goal-text">
+                  0 errores de axe-core en cada componente: la accesibilidad no es una fase final,
+                  es parte del diseño.
+                </p>
+              </li>
+              <li class="catalog__home-goal">
+                <svg
+                  class="catalog__home-goal-icon"
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z" />
+                </svg>
+                <h3 class="catalog__home-goal-title">Buenas prácticas y estándares</h3>
+                <p class="catalog__home-goal-text">
+                  Convenciones de código, estructura de carpetas y revisión en cada PR, alineadas
+                  con la
+                  <a
+                    class="catalog__home-link"
+                    href="https://lit.dev"
+                    target="_blank"
+                    rel="noopener"
+                    >documentación oficial de Lit ↗</a
+                  >.
+                </p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="catalog__home-section" aria-labelledby="home-previews-title">
+            <h2 class="catalog__home-section-title" id="home-previews-title">Así se ve en la práctica</h2>
+            <p class="catalog__home-section-intro">
+              Ejemplos reales tomados de las demos del catálogo: formularios, temas y feedback.
+            </p>
+            <ul class="catalog__home-previews">
+              <li class="catalog__home-preview">
+                <h3 class="catalog__home-preview-title">Formularios</h3>
+                <div class="catalog__home-preview-box">
+                  <div class="catalog__home-mock" aria-hidden="true">
+                    <span class="catalog__home-mock-btn">Botón</span>
+                    <span class="catalog__home-mock-field">
+                      <span class="catalog__home-mock-label">Nombre</span>
+                      <span class="catalog__home-mock-input">Campo de texto</span>
+                    </span>
+                    <span class="catalog__home-mock-row">
+                      <span class="catalog__home-mock-switch"><i></i></span>
+                      <span>Activo</span>
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <li class="catalog__home-preview">
+                <h3 class="catalog__home-preview-title">Tema y tamaños</h3>
+                <div class="catalog__home-preview-box">
+                  <div class="catalog__home-mock" aria-hidden="true">
+                    <span class="catalog__home-mock-toggle">
+                      <span class="is-active">
+                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                          <circle cx="12" cy="12" r="4" />
+                          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                        </svg>
+                      </span>
+                      <span>
+                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+                        </svg>
+                      </span>
+                    </span>
+                    <span class="catalog__home-mock-devices">
+                      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <rect x="2" y="4" width="20" height="13" rx="2" />
+                        <path d="M8 21h8M12 17v4" />
+                      </svg>
+                      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <rect x="5" y="3" width="14" height="18" rx="2" />
+                        <path d="M11 18h2" />
+                      </svg>
+                      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <rect x="7" y="2" width="10" height="20" rx="2" />
+                        <path d="M11 18h2" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <li class="catalog__home-preview">
+                <h3 class="catalog__home-preview-title">Feedback</h3>
+                <div class="catalog__home-preview-box">
+                  <div class="catalog__home-mock catalog__home-mock--dark" aria-hidden="true">
+                    <span class="catalog__home-mock-chip">Modal</span>
+                    <span class="catalog__home-mock-btn catalog__home-mock-btn--small">Ver código</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </section>
+
+          <section class="catalog__home-section" id="cli-quickstart" aria-labelledby="home-cli-title">
+            <h2 class="catalog__home-section-title" id="home-cli-title">
+              Tu primer ejercicio: crear un componente
+            </h2>
+            <p class="catalog__home-section-intro">
+              Instala el CLI, crea tu primer componente y levanta su demo — los mismos comandos
+              que se usan para construir todo este catálogo.
+            </p>
+            <div
+              class="catalog__terminal"
+              role="group"
+              aria-label="Comandos de ejemplo del CLI aclit"
+            >
+              <div class="catalog__terminal-titlebar">
+                <span class="catalog__terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="catalog__terminal-filename">terminal — aclit</span>
+              </div>
+              <div class="catalog__terminal-body">
+                <p class="catalog__terminal-line">
+                  <span class="catalog__terminal-prompt">$</span>
+                  <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
+                </p>
+                <p class="catalog__terminal-line">
+                  <span class="catalog__terminal-prompt">$</span>
+                  <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
+                </p>
+                <p class="catalog__terminal-line catalog__terminal-line--comment">
+                  # Componente creado en ./ac-mi-componente
+                </p>
+                <p class="catalog__terminal-line">
+                  <span class="catalog__terminal-prompt">$</span>
+                  <span class="catalog__terminal-cmd">aclit component:serve</span>
+                </p>
+                <p class="catalog__terminal-line catalog__terminal-line--comment">
+                  # levanta la demo con Vite en http://localhost:5173
+                </p>
+                <p class="catalog__terminal-line">
+                  <span class="catalog__terminal-prompt">$</span>
+                  <span class="catalog__terminal-cmd">aclit help</span>
+                </p>
+                <p class="catalog__terminal-line catalog__terminal-line--comment">
+                  # lista todos los comandos disponibles
+                </p>
+              </div>
             </div>
-          </div>
+          </section>
+
+          <section class="catalog__home-section" aria-labelledby="home-categories-title">
+            <h2 class="catalog__home-section-title" id="home-categories-title">
+              Ruta de aprendizaje por módulos
+            </h2>
+            <p class="catalog__home-section-intro">
+              Cada categoría agrupa componentes que comparten patrones de diseño y API. Explóralas
+              en el orden que prefieras — no hay un camino único.
+            </p>
+            <div class="catalog__home-categories" id="catalog-home-categories"></div>
+          </section>
 
           <div class="catalog__home-links">
             <a class="catalog__home-link" href="https://lit.dev" target="_blank" rel="noopener"
@@ -248,15 +554,64 @@
               rel="noopener"
               >Documentación del CLI ↗</a
             >
+            <a
+              class="catalog__home-link"
+              href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/docs/CONVENTIONS.md"
+              target="_blank"
+              rel="noopener"
+              >Convenciones del proyecto ↗</a
+            >
           </div>
         </div>
 
         <footer class="catalog__footer">
-          © 2026
-          <a href="https://github.com/RenzoCordovaDev" target="_blank" rel="noopener"
-            >RenzoCordovaDev</a
-          >
-          — ac-lit es software libre (MIT)
+          <p class="catalog__footer-line">
+            Recursos:
+            <a href="https://github.com/RenzoCordovaDev/ac-lit#readme" target="_blank" rel="noopener"
+              >Documentación</a
+            >
+            ·
+            <a
+              href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener"
+              >Guía de contribución</a
+            >
+            ·
+            <a
+              href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/cli/CHANGELOG.md"
+              target="_blank"
+              rel="noopener"
+              >Changelog del CLI</a
+            >
+          </p>
+          <p class="catalog__footer-line">
+            Comunidad:
+            <a href="https://github.com/RenzoCordovaDev/ac-lit" target="_blank" rel="noopener"
+              >GitHub</a
+            >
+            ·
+            <a
+              href="https://github.com/RenzoCordovaDev/ac-lit/issues"
+              target="_blank"
+              rel="noopener"
+              >Issues</a
+            >
+            ·
+            <a
+              href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/CONTRIBUTING.md"
+              target="_blank"
+              rel="noopener"
+              >Contribuir</a
+            >
+          </p>
+          <p class="catalog__footer-line">
+            © 2026
+            <a href="https://github.com/RenzoCordovaDev" target="_blank" rel="noopener"
+              >RenzoCordovaDev</a
+            >
+            — ac-lit es software libre (MIT)
+          </p>
         </footer>
       </main>
 
@@ -437,6 +792,84 @@
             hidden
           ></iframe>
           <ul class="catalog__examples" id="catalog-examples"></ul>
+        </div>
+
+        <div class="catalog__api" id="catalog-api" hidden>
+          <details class="catalog__api-section" open>
+            <summary class="catalog__api-summary">
+              <svg
+                class="catalog__api-summary-icon"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                <rect x="14" y="14" width="7" height="7" rx="1.5" />
+              </svg>
+              <span class="catalog__api-summary-title">Propiedades públicas</span>
+              <span class="catalog__api-summary-count" id="catalog-api-props-count">0</span>
+              <svg
+                class="catalog__api-summary-chevron"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </summary>
+            <div class="catalog__api-content" id="catalog-api-props-content"></div>
+          </details>
+
+          <details class="catalog__api-section">
+            <summary class="catalog__api-summary">
+              <svg
+                class="catalog__api-summary-icon"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 2a6 6 0 0 0-6 6v3.5c0 .9-.4 1.7-1 2.3L4 15h16l-1-1.2c-.6-.6-1-1.4-1-2.3V8a6 6 0 0 0-6-6Z" />
+                <path d="M9 19a3 3 0 0 0 6 0" />
+              </svg>
+              <span class="catalog__api-summary-title">Eventos</span>
+              <span class="catalog__api-summary-count" id="catalog-api-events-count">0</span>
+              <svg
+                class="catalog__api-summary-chevron"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </summary>
+            <div class="catalog__api-content" id="catalog-api-events-content"></div>
+          </details>
         </div>
       </main>
     </div>

@@ -55,6 +55,22 @@ body {
   --catalog-active-subtext: var(--color-subtext, #5f5e58);
 }
 
+/* Home y catálogo son páginas separadas: en Home no hay lista de componentes
+   que navegar, así que la sidebar no se muestra (ni siquiera colapsada) y el
+   grid pasa a una sola columna. `data-view` lo fija catalog.js en
+   showHome()/showCatalog(). */
+body[data-view='home'] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body[data-view='home'] .catalog__sidebar {
+  display: none;
+}
+
+body[data-view='home'] .catalog__menu-button {
+  display: none !important;
+}
+
 .catalog__visually-hidden {
   position: absolute;
   width: 1px;
@@ -356,11 +372,18 @@ body {
   padding: var(--space-3, 0.75rem);
 }
 
-.catalog__sidebar-home {
+.catalog__sidebar-shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__sidebar-shortcut {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3, 0.75rem);
+  width: 100%;
   font: inherit;
   text-align: left;
   color: var(--sidebar-text);
@@ -372,21 +395,21 @@ body {
   transition: border-color 0.15s ease;
 }
 
-.catalog__sidebar-home:hover {
+.catalog__sidebar-shortcut:hover {
   border-color: var(--sidebar-text);
 }
 
-.catalog__sidebar-home-text {
+.catalog__sidebar-shortcut-text {
   display: flex;
   flex-direction: column;
 }
 
-.catalog__sidebar-home-title {
+.catalog__sidebar-shortcut-title {
   font-size: var(--font-size-sm, 0.85rem);
   font-weight: var(--font-weight-bold, 700);
 }
 
-.catalog__sidebar-home-subtitle {
+.catalog__sidebar-shortcut-subtitle {
   font-size: var(--font-size-xs, 0.75rem);
   color: var(--sidebar-subtext);
 }
@@ -396,6 +419,56 @@ body {
   inset: 0;
   z-index: 9;
   background: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal de "Comandos": atajo de la sidebar para ver los comandos del CLI sin
+   salir del componente que se está mirando (mismo contenido que el terminal
+   del Home, ver catalog.js). <dialog> nativo: showModal()/close() ya traen
+   foco atrapado y cierre con Escape gratis. */
+.catalog__commands-dialog {
+  width: min(32rem, calc(100vw - var(--space-6, 1.5rem) * 2));
+  margin: auto;
+  padding: 0;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.catalog__commands-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.catalog__commands-dialog:not([open]) {
+  display: none;
+}
+
+/* El padding va en este wrapper (no en el <dialog>) a propósito: así un click
+   dentro del <dialog> SIEMPRE cae en algún descendiente, nunca en el propio
+   elemento <dialog> -- lo que permite cerrar con un click en el backdrop real
+   comparando `event.target === dialog` en catalog.js sin falsos positivos al
+   clickear el padding. */
+.catalog__commands-body {
+  padding: var(--space-5, 1.25rem);
+}
+
+.catalog__commands-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.catalog__commands-title {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__commands-dialog .catalog__terminal {
+  max-width: none;
 }
 
 /* Columna de contenido */
@@ -490,7 +563,7 @@ body {
   text-decoration: underline;
 }
 
-/* Home: bienvenida, comandos del CLI, info adicional y pie con copyright */
+/* Home: hero centrado, vista previa, CLI, categorías y pie con copyright */
 .catalog__home {
   flex: 1;
   min-height: 0;
@@ -509,22 +582,20 @@ body {
   padding: var(--space-6, 2rem) var(--space-4, 1rem);
 }
 
-.catalog__home-content {
+/* Hero y secciones: columna centrada de ancho máximo fijo. */
+.catalog__home-hero,
+.catalog__home-section {
+  width: 100%;
+  max-width: 760px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-4, 1rem);
-  width: 100%;
-  max-width: 520px;
-  padding: var(--space-6, 1.5rem);
   text-align: center;
-  background: var(--color-surface, #2b2b2b);
-  border-radius: var(--radius-lg, 1.5rem);
-  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-.catalog__home-content .catalog__tech-badge {
-  align-self: center;
+.catalog__home-hero {
+  padding-top: var(--space-4, 1rem);
 }
 
 .catalog__home-title {
@@ -536,13 +607,24 @@ body {
   font-weight: var(--font-weight-bold, 700);
   line-height: var(--line-height-tight, 1.4);
   color: var(--color-text, #bcbec4);
+  max-width: 30ch;
+  text-wrap: balance;
 }
 
 .catalog__home-text {
   margin: 0;
+  max-width: 60ch;
   color: var(--catalog-subtext);
   font-size: var(--font-size-md, 0.95rem);
   line-height: var(--line-height, 1.5);
+}
+
+.catalog__home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
 }
 
 .catalog__cta {
@@ -565,34 +647,312 @@ body {
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-/* Home: info adicional (features) */
-.catalog__home-features {
+/* Hero: botón fantasma (outline) junto al primario. */
+.catalog__home-cta-ghost {
+  font: inherit;
+  font-size: var(--font-size-md, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__home-cta-ghost:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__home-stats {
+  margin: 0;
+  color: var(--catalog-subtext);
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: 1.6;
+}
+
+.catalog__home-section-title {
+  margin: 0;
+  font-size: var(--font-size-lg, 1.1rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-section-intro {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--catalog-subtext);
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: var(--line-height, 1.5);
+}
+
+/* Objetivos de formación: grid 2x2 de tarjetas (1 columna en mobile, ver media query). */
+.catalog__home-goals {
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 640px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3, 0.75rem);
+  text-align: left;
 }
 
-.catalog__home-features li {
+.catalog__home-goal {
+  margin: 0;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: var(--space-2, 0.5rem);
+  padding: var(--space-4, 1rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 1rem);
+  text-align: center;
+}
+
+/* La última tarjeta queda sola en su fila (5 tarjetas en un grid de 2
+   columnas) -- se centra ocupando el ancho de una sola columna, en vez de
+   quedar pegada a la izquierda, para mantener la armonía del conjunto. */
+.catalog__home-goal:last-child {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: calc(50% - var(--space-3, 0.75rem) / 2);
+  margin: 0 auto;
+}
+
+.catalog__home-goal-icon {
+  color: var(--catalog-accent);
+}
+
+.catalog__home-goal-title {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-goal-text {
+  margin: 0;
+  color: var(--catalog-subtext);
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: var(--line-height, 1.5);
+}
+
+.catalog__home-goal-text code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.9em;
+}
+
+/* Vista previa: 3 tarjetas decorativas (mockups estáticos, no son componentes reales). */
+.catalog__home-previews {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3, 0.75rem);
+  text-align: left;
+}
+
+.catalog__home-preview {
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__home-preview-title {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-preview-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 11rem;
+  padding: var(--space-4, 1rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.catalog__home-mock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  color: var(--color-text, #bcbec4);
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.catalog__home-mock-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  color: var(--color-primary-50, #ecfdf5);
+  background: var(--color-primary-700, #047857);
+  border-radius: var(--radius-md, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__home-mock-btn--small {
+  padding: 0.2rem 0.7rem;
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+.catalog__home-mock-field {
+  width: 100%;
+  max-width: 14rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.catalog__home-mock-label {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__home-mock-input {
+  display: block;
+  padding: 0.4rem 0.6rem;
   font-size: var(--font-size-sm, 0.85rem);
   color: var(--catalog-subtext);
-  background: var(--color-surface, #2b2b2b);
-  border-radius: var(--radius-md, 1rem);
-  padding: var(--space-3, 0.75rem);
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-sm, 0.5rem);
 }
 
-.catalog__home-features li::before {
-  content: '✓';
-  flex-shrink: 0;
-  color: var(--catalog-accent);
-  font-weight: var(--font-weight-bold, 700);
+.catalog__home-mock-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.catalog__home-mock-switch {
+  position: relative;
+  display: inline-block;
+  width: 2.2rem;
+  height: 1.25rem;
+  background: var(--color-primary-700, #047857);
+  border-radius: var(--radius-full, 999px);
+}
+
+.catalog__home-mock-switch i {
+  position: absolute;
+  top: 0.125rem;
+  right: 0.125rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-50, #ecfdf5);
+}
+
+.catalog__home-mock-toggle {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+}
+
+.catalog__home-mock-toggle > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.6rem;
+  border-radius: var(--radius-full, 999px);
+  color: var(--catalog-subtext);
+}
+
+.catalog__home-mock-toggle > .is-active {
+  background: var(--catalog-active-bg);
+  color: var(--catalog-active-text);
+}
+
+.catalog__home-mock-toggle svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.catalog__home-mock-devices {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-mock-devices svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Mockup oscuro FIJO (no depende del tema), mismo criterio que el terminal. */
+.catalog__home-mock--dark {
+  padding: var(--space-4, 1rem);
+  background: #1f2430;
+  border: 1px solid #2d3446;
+  border-radius: var(--radius-md, 1rem);
+  color: #d4d9e6;
+}
+
+.catalog__home-mock-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: #d4d9e6;
+  background: #2d3446;
+  border-radius: var(--radius-full, 999px);
+}
+
+/* Categorías: contenedor de chips que se llena desde JS (queda vacío por ahora). */
+.catalog__home-categories {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__home-category-pill {
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__home-category-pill:hover {
+  border-color: var(--catalog-accent);
+}
+
+#cli-quickstart {
+  scroll-margin-top: var(--space-6, 1.5rem);
 }
 
 /* Home: mockup de terminal con comandos del CLI -- paleta FIJA (oscura en
@@ -704,7 +1064,7 @@ body {
   text-decoration: underline;
 }
 
-/* Home: pie de página con copyright */
+/* Home: pie de página con links y copyright */
 .catalog__footer {
   flex-shrink: 0;
   padding: var(--space-4, 1rem);
@@ -712,6 +1072,15 @@ body {
   font-size: var(--font-size-xs, 0.75rem);
   color: var(--catalog-subtext);
   border-top: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__footer-line {
+  margin: 0 0 var(--space-2, 0.5rem);
+  line-height: 1.6;
+}
+
+.catalog__footer-line:last-child {
+  margin-bottom: 0;
 }
 
 .catalog__footer a {
@@ -1110,6 +1479,150 @@ body {
   transform: translateX(0);
 }
 
+/* Propiedades/Eventos: dos expandibles debajo del stage, solo visibles en la
+   pestaña Código (ver setTab() en catalog.js). <details>/<summary> nativos:
+   el toggle y el foco por teclado vienen gratis: solo se estiliza. Misma
+   estructura de cabecera para los dos, el contenido de adentro difiere
+   (tabla de propiedades vs. lista de eventos). */
+.catalog__api {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__api-section {
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1rem);
+  overflow: hidden;
+}
+
+.catalog__api-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.catalog__api-summary::-webkit-details-marker {
+  display: none;
+}
+
+.catalog__api-summary-icon {
+  flex-shrink: 0;
+  color: var(--catalog-accent);
+}
+
+.catalog__api-summary-title {
+  flex: 1;
+}
+
+.catalog__api-summary-count {
+  min-width: 1.4rem;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  border-radius: var(--radius-full, 999px);
+  padding: 0.1rem var(--space-2, 0.5rem);
+  background: var(--color-muted, #313335);
+  color: var(--catalog-subtext);
+}
+
+.catalog__api-summary-chevron {
+  flex-shrink: 0;
+  color: var(--catalog-subtext);
+  transition: transform 0.15s ease;
+}
+
+.catalog__api-section[open] > .catalog__api-summary .catalog__api-summary-chevron {
+  transform: rotate(90deg);
+}
+
+.catalog__api-content {
+  padding: 0 var(--space-4, 1rem) var(--space-4, 1rem);
+  border-top: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__api-empty {
+  margin: 0;
+  padding-top: var(--space-3, 0.75rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__api-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-3, 0.75rem);
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.catalog__api-table th,
+.catalog__api-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__api-table th {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-subtext);
+  white-space: nowrap;
+}
+
+.catalog__api-table tr:last-child td {
+  border-bottom: none;
+}
+
+.catalog__api-table code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--catalog-accent);
+}
+
+.catalog__api-table td:last-child {
+  color: var(--catalog-subtext);
+}
+
+.catalog__api-events {
+  list-style: none;
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__api-event-name {
+  display: block;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+}
+
+.catalog__api-event-detail {
+  display: block;
+  margin-top: 2px;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--catalog-subtext);
+  overflow-wrap: anywhere;
+}
+
+.catalog__api-event-description {
+  display: block;
+  margin-top: var(--space-1, 0.25rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text, #bcbec4);
+}
+
 /* Skeleton mientras carga la demo del componente elegido -- reproduce la
    estructura real de .ac-demo-content__stage (ver su .styles.scss): mismo
    fondo/padding exterior y mismo marco de dispositivo (ancho máximo, radios,
@@ -1298,14 +1811,17 @@ body {
   .catalog__group-button,
   .catalog__group-chevron,
   .catalog__item-button,
-  .catalog__sidebar-home,
+  .catalog__sidebar-shortcut,
   .catalog__icon-button,
   .catalog__cta,
+  .catalog__home-cta-ghost,
+  .catalog__home-category-pill,
   .catalog__button,
   .catalog__segmented-button,
   .catalog__events-button,
   .catalog__tab,
-  .catalog__example {
+  .catalog__example,
+  .catalog__api-summary-chevron {
     transition: none;
   }
 }
@@ -1355,7 +1871,30 @@ body {
     height: 4rem;
   }
 
-  .catalog__home-features {
+  .catalog__home-previews,
+  .catalog__home-goals {
     grid-template-columns: 1fr;
+  }
+
+  .catalog__home-goal:last-child {
+    max-width: none;
+  }
+
+  .catalog__home-preview-box {
+    min-height: 0;
+  }
+
+  .catalog__home-cta-ghost,
+  .catalog__cta {
+    padding-left: var(--space-4, 1rem);
+    padding-right: var(--space-4, 1rem);
+  }
+
+  .catalog__api-content {
+    overflow-x: auto;
+  }
+
+  .catalog__commands-dialog {
+    width: calc(100vw - var(--space-4, 1rem) * 2);
   }
 }

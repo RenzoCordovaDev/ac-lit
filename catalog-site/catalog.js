@@ -9,6 +9,7 @@
 // vacío = Home.
 
 import { GROUPS, FALLBACK_GROUP_ID, FALLBACK_ICON, COMPONENT_META } from './catalog-meta.js';
+import { COMPONENT_API } from './catalog-api.js';
 
 const REPO_URL = 'https://github.com/RenzoCordovaDev/ac-lit';
 const COPIED_FEEDBACK_MS = 1600;
@@ -53,6 +54,16 @@ const skeletonEl = document.getElementById('catalog-skeleton');
 const skeletonFrameEl = document.getElementById('catalog-skeleton-frame');
 const emptyStateEl = document.getElementById('catalog-empty');
 const examplesEl = document.getElementById('catalog-examples');
+
+const apiEl = document.getElementById('catalog-api');
+const apiPropsContentEl = document.getElementById('catalog-api-props-content');
+const apiEventsContentEl = document.getElementById('catalog-api-events-content');
+const apiPropsCountEl = document.getElementById('catalog-api-props-count');
+const apiEventsCountEl = document.getElementById('catalog-api-events-count');
+
+const homeCategoriesEl = document.getElementById('catalog-home-categories');
+
+const commandsDialog = document.getElementById('catalog-commands-dialog');
 
 let components = [];
 let activeId = null;
@@ -209,6 +220,7 @@ function renderBreadcrumb(parts) {
 /* Vistas */
 
 function showHome() {
+  document.body.dataset.view = 'home';
   homeViewEl.hidden = false;
   catalogViewEl.hidden = true;
   activeId = null;
@@ -225,6 +237,7 @@ function showHome() {
 }
 
 function showCatalog() {
+  document.body.dataset.view = 'catalog';
   homeViewEl.hidden = true;
   catalogViewEl.hidden = false;
 }
@@ -252,6 +265,7 @@ function selectComponent(id, { updateHash = true } = {}) {
   // cargar, sin ningún piso artificial por timeout.
   controlsEl.hidden = true;
   examplesEl.replaceChildren();
+  renderApiInfo(component.id);
   setTab('demo');
   // El marco del skeleton usa el mismo preset elegido para la demo anterior
   // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
@@ -466,6 +480,94 @@ function renderExamples(state) {
   );
 }
 
+/* Propiedades/Eventos: dos expandibles debajo del stage, con la API pública
+   del componente elegido (ver catalog-api.js, transcrita a mano de cada
+   README). Solo se muestran en la pestaña Código (ver setTab() más abajo). */
+
+function apiCell(text, { code = false } = {}) {
+  const cell = create('td');
+  if (!text) {
+    cell.append(create('span', '', '—'));
+    return cell;
+  }
+  if (code) {
+    const codeEl = document.createElement('code');
+    codeEl.textContent = text;
+    cell.append(codeEl);
+  } else {
+    cell.textContent = text;
+  }
+  return cell;
+}
+
+function renderApiInfo(id) {
+  const api = COMPONENT_API[id] ?? { properties: [], events: [] };
+  const properties = api.properties ?? [];
+  const events = api.events ?? [];
+
+  apiPropsCountEl.textContent = String(properties.length);
+  apiEventsCountEl.textContent = String(events.length);
+
+  apiPropsContentEl.replaceChildren();
+  if (properties.length === 0) {
+    apiPropsContentEl.append(
+      create(
+        'p',
+        'catalog__api-empty',
+        'Este componente no expone propiedades públicas configurables.',
+      ),
+    );
+  } else {
+    const table = create('table', 'catalog__api-table');
+    const headRow = create('tr');
+    headRow.append(
+      create('th', '', 'Propiedad'),
+      create('th', '', 'Atributo'),
+      create('th', '', 'Tipo'),
+      create('th', '', 'Default'),
+      create('th', '', 'Descripción'),
+    );
+    const thead = create('thead');
+    thead.append(headRow);
+    const tbody = create('tbody');
+    for (const prop of properties) {
+      const row = create('tr');
+      row.append(
+        apiCell(prop.name, { code: true }),
+        apiCell(prop.attribute, { code: true }),
+        apiCell(prop.type),
+        apiCell(prop.default, { code: true }),
+        apiCell(prop.description),
+      );
+      tbody.append(row);
+    }
+    table.append(thead, tbody);
+    apiPropsContentEl.append(table);
+  }
+
+  apiEventsContentEl.replaceChildren();
+  if (events.length === 0) {
+    apiEventsContentEl.append(
+      create('p', 'catalog__api-empty', 'Este componente no dispara eventos propios.'),
+    );
+  } else {
+    const list = create('ul', 'catalog__api-events');
+    for (const event of events) {
+      const item = create('li');
+      const nameEl = create('span', 'catalog__api-event-name', event.name);
+      item.append(nameEl);
+      if (event.detail) {
+        item.append(create('span', 'catalog__api-event-detail', event.detail));
+      }
+      if (event.description) {
+        item.append(create('span', 'catalog__api-event-description', event.description));
+      }
+      list.append(item);
+    }
+    apiEventsContentEl.append(list);
+  }
+}
+
 /* Pestañas: Demo y Código son las dos vistas de la demo embebida; Ejemplos
    lista sus casos. */
 
@@ -478,6 +580,7 @@ function setTab(tab) {
   stageEl.dataset.tab = tab;
   stageEl.setAttribute('aria-labelledby', `catalog-tab-${tab}`);
   if (tab !== 'examples') demo?.selectViewMode(tab === 'code' ? 'code' : 'visual');
+  apiEl.hidden = tab !== 'code';
 }
 
 for (const tabEl of tabEls) {
@@ -522,6 +625,46 @@ themeToggle.addEventListener('click', () => {
   demoPrefs.theme = theme;
   if (demo?.demoState.darkMode) demo.selectTheme(theme);
 });
+
+/* Comandos: atajo de la sidebar que abre un modal con los mismos comandos del
+   CLI que ya se muestran en el Home -- para no tener que ir hasta ahí
+   mientras se está mirando un componente. */
+
+document.getElementById('catalog-sidebar-commands').addEventListener('click', () => {
+  commandsDialog.showModal();
+});
+document.getElementById('catalog-commands-close').addEventListener('click', () => {
+  commandsDialog.close();
+});
+commandsDialog.addEventListener('click', event => {
+  // Ver comentario de .catalog__commands-body en catalog.css: el padding vive
+  // en un wrapper interno, así que target === commandsDialog solo pasa al
+  // clickear el backdrop real.
+  if (event.target === commandsDialog) commandsDialog.close();
+});
+
+/* Home: categorías con el conteo real de componentes de cada grupo (mismos
+   GROUPS que arma la sidebar) -- lleva directo al primer componente del
+   grupo elegido. */
+
+function renderHomeCategories() {
+  const entries = groupComponents(components);
+  homeCategoriesEl.replaceChildren(
+    ...entries.map(({ group, items }) => {
+      const pill = create(
+        'button',
+        'catalog__home-category-pill',
+        `${group.label} (${items.length})`,
+      );
+      pill.type = 'button';
+      pill.addEventListener('click', () => {
+        showCatalog();
+        selectComponent(items[0].id);
+      });
+      return pill;
+    }),
+  );
+}
 
 /* Navegación */
 
@@ -578,6 +721,7 @@ async function init() {
   const data = await response.json();
   components = data.components;
   countEl.textContent = String(components.length);
+  renderHomeCategories();
 
   const fromHash = normalizeHash();
   if (fromHash && components.some(c => c.id === fromHash)) {
