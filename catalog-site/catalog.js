@@ -50,6 +50,7 @@ const tabEls = [...document.querySelectorAll('.catalog__tab')];
 const stageEl = document.getElementById('catalog-stage');
 const frameEl = document.getElementById('catalog-frame');
 const skeletonEl = document.getElementById('catalog-skeleton');
+const skeletonFrameEl = document.getElementById('catalog-skeleton-frame');
 const emptyStateEl = document.getElementById('catalog-empty');
 const examplesEl = document.getElementById('catalog-examples');
 
@@ -252,6 +253,11 @@ function selectComponent(id, { updateHash = true } = {}) {
   controlsEl.hidden = true;
   examplesEl.replaceChildren();
   setTab('demo');
+  // El marco del skeleton usa el mismo preset elegido para la demo anterior
+  // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
+  // tamaño dos veces (skeleton -> otro tamaño -> real) si ya se había elegido
+  // Tablet/Desktop.
+  skeletonFrameEl.dataset.device = demoPrefs.device;
   skeletonEl.hidden = false;
   frameEl.hidden = true;
   emptyStateEl.hidden = true;
@@ -392,6 +398,7 @@ function renderControls(state) {
       })),
       onSelect: key => {
         demoPrefs.device = key;
+        skeletonFrameEl.dataset.device = key;
         demo?.selectDevice(key);
       },
     }),
@@ -426,6 +433,9 @@ function syncDemoState(state) {
   renderExamples(state);
 }
 
+const ARROW_ICON = '<path d="M5 12h14M13 6l6 6-6 6"/>';
+const CHECK_ICON = '<path d="M5 12.5l4.5 4.5L15 7.5" stroke-width="2.5"/>';
+
 function renderExamples(state) {
   examplesEl.replaceChildren(
     ...state.cases.map(caseInfo => {
@@ -433,10 +443,16 @@ function renderExamples(state) {
       const button = create('button', 'catalog__example');
       button.type = 'button';
       button.setAttribute('aria-current', String(active));
-      button.append(
-        create('span', 'catalog__example-index', `Ejemplo ${caseInfo.index + 1}`),
+      button.innerHTML = `<span class="catalog__example-badge">${caseInfo.index + 1}</span>`;
+      const body = create('span', 'catalog__example-body');
+      body.append(
         create('span', 'catalog__example-title', caseInfo.header),
         create('span', 'catalog__example-status', active ? 'En la demo ahora' : 'Ver en la demo'),
+      );
+      button.append(body);
+      button.insertAdjacentHTML(
+        'beforeend',
+        `<span class="catalog__example-icon">${icon(active ? CHECK_ICON : ARROW_ICON, 16)}</span>`,
       );
       button.addEventListener('click', () => {
         demo?.selectCase(caseInfo.index);

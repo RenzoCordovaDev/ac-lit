@@ -45,6 +45,7 @@ export const GROUPS = [
       'ac-expandable-basic',
       'ac-expandable-step',
       'ac-expandable-multistep',
+      'ac-transition-container',
     ],
   },
   {
@@ -76,7 +77,9 @@ export const GROUPS = [
     id: FALLBACK_GROUP_ID,
     label: 'Otros',
     icon: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
-    members: ['ac-transition-container'],
+    // Vacío a propósito: catch-all para cualquier componente nuevo que
+    // todavía no se haya agregado al grupo que le corresponde más arriba.
+    members: [],
   },
 ];
 
