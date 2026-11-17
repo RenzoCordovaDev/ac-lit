@@ -1,52 +1,119 @@
-<ac-api-auth id="apiAuth" version="0" timeout="1200"></ac-api-auth>
+<ac-api-auth id="apiComponent" version="0" timeout="1200"></ac-api-auth>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
-  <p>Token actual: <code id="currentToken">(ninguno)</code></p>
+<section class="api-doc">
+  <p class="api-doc__summary">Simula login, registro, logout, validación y refresco de token.</p>
 </section>
 
-<section>
-  <h2>Login — <code>iniciarSesion(email, password)</code></h2>
-  <div class="row">
-    <input type="text" id="loginEmail" value="ana.torres@mail.com" aria-label="email" />
-    <input type="password" id="loginClave" value="1234" aria-label="clave" />
-    <ac-button-basic id="btnLogin">Iniciar sesión</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Registro — <code>registrarCuenta(objetoCuenta)</code></h2>
-  <div class="row">
-    <input type="text" id="registerNombre" value="Cuenta nueva" aria-label="nombre" />
-    <input type="text" id="registerEmail" value="nueva@mail.com" aria-label="email" />
-    <input type="password" id="registerClave" value="xyz1" aria-label="clave" />
-    <ac-button-basic id="btnRegister">Registrarse</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>iniciarSesion(email, password)</code>
+      <p>Valida email/clave contra el mock y devuelve { token, usuario }.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-login-success / ac-api-auth-login-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarCuenta(objetoCuenta)</code>
+      <p>
+        Crea una cuenta (nombre/email/clave obligatorios, email único) y la deja autenticada — mismo
+        resultado que iniciarSesion.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-register-success / ac-api-auth-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>cerrarSesion(token)</code>
+      <p>Invalida el token; falla si la sesión no existe o ya expiró.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-logout-success / ac-api-auth-logout-error</code></span
+      >
+    </li>
+    <li>
+      <code>validarSesion(token)</code>
+      <p>Comprueba que el token siga activo y devuelve el usuario asociado.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-validate-success / ac-api-auth-validate-error</code></span
+      >
+    </li>
+    <li>
+      <code>refrescarToken(token)</code>
+      <p>Invalida el token anterior y entrega uno nuevo para el mismo usuario.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-refresh-success / ac-api-auth-refresh-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Validar sesión — <code>validarSesion(token)</code></h2>
-  <div class="row">
-    <ac-button-basic id="btnValidate">Validar token actual</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-auth-login-success</code>, <code>ac-api-auth-login-error</code>,
+    <code>ac-api-auth-register-success</code>, <code>ac-api-auth-register-error</code>,
+    <code>ac-api-auth-logout-success</code>, <code>ac-api-auth-logout-error</code>,
+    <code>ac-api-auth-validate-success</code>, <code>ac-api-auth-validate-error</code>,
+    <code>ac-api-auth-refresh-success</code>, <code>ac-api-auth-refresh-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Refrescar token — <code>refrescarToken(token)</code></h2>
-  <div class="row">
-    <ac-button-basic id="btnRefresh">Refrescar token actual</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Logout — <code>cerrarSesion(token)</code></h2>
-  <div class="row">
-    <ac-button-basic id="btnLogout">Cerrar sesión</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      A diferencia de <code>ac-api-users</code>, este componente es dueño del ciclo de vida completo
+      de la sesión (login, registro, logout, validación, refresco de token) — las sesiones activas
+      (tokens) viven en memoria mientras la instancia está montada.
+    </li>
+    <li>
+      Es un mock de autenticación (sin hash ni backend real): nunca usarlo como ejemplo de login de
+      producción.
+    </li>
+  </ul>
 </section>

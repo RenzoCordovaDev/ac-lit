@@ -1,64 +1,140 @@
-<ac-api-operaciones id="apiOperaciones" version="0" timeout="1200"></ac-api-operaciones>
+<ac-api-operaciones id="apiComponent" version="0" timeout="1200"></ac-api-operaciones>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula saldo, historial, compras, transferencias, depósitos y retiros.
+  </p>
 </section>
 
-<section>
-  <h2>Consultar saldo — <code>consultarSaldo(cuentaId)</code></h2>
-  <div class="row">
-    <input type="number" id="balanceCuentaId" value="1" aria-label="cuentaId" />
-    <ac-button-basic id="btnBalance">Consultar saldo</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Historial — <code>obtenerHistorial(cuentaId)</code></h2>
-  <div class="row">
-    <input type="number" id="historyCuentaId" value="1" aria-label="cuentaId" />
-    <ac-button-basic id="btnHistory">Ver historial</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>consultarSaldo(cuentaId)</code>
+      <p>Devuelve el saldo actual de una cuenta del mock.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-balance-success / ac-api-operaciones-balance-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerHistorial(cuentaId, queryParams = {})</code>
+      <p>
+        Lista los movimientos de una cuenta. <code>queryParams</code>: tipo, sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-history-success / ac-api-operaciones-history-error</code></span
+      >
+    </li>
+    <li>
+      <code>comprar(productoId, cantidad = 1)</code>
+      <p>
+        Debita la cuenta principal (id 1) según un mock interno de precios; falla si no hay saldo
+        suficiente.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-operaciones-buy-success / ac-api-operaciones-buy-error</code></span
+      >
+    </li>
+    <li>
+      <code>transferir(cuentaOrigenId, cuentaDestinoId, monto)</code>
+      <p>
+        Mueve dinero entre dos cuentas del mock; falla si la cuenta origen no tiene saldo
+        suficiente.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-transfer-success / ac-api-operaciones-transfer-error</code></span
+      >
+    </li>
+    <li>
+      <code>depositar(cuentaId, monto)</code>
+      <p>Suma <code>monto</code> al saldo de la cuenta.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-deposit-success / ac-api-operaciones-deposit-error</code></span
+      >
+    </li>
+    <li>
+      <code>retirar(cuentaId, monto)</code>
+      <p>Resta <code>monto</code> al saldo de la cuenta; falla si no hay saldo suficiente.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-withdraw-success / ac-api-operaciones-withdraw-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Comprar — <code>comprar(productoId, cantidad)</code></h2>
-  <div class="row">
-    <input type="number" id="buyProductoId" value="2" aria-label="productoId" />
-    <input type="number" id="buyCantidad" value="2" aria-label="cantidad" />
-    <ac-button-basic id="btnBuy">Comprar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-operaciones-balance-success</code>, <code>ac-api-operaciones-balance-error</code>,
+    <code>ac-api-operaciones-history-success</code>, <code>ac-api-operaciones-history-error</code>,
+    <code>ac-api-operaciones-buy-success</code>, <code>ac-api-operaciones-buy-error</code>,
+    <code>ac-api-operaciones-transfer-success</code>,
+    <code>ac-api-operaciones-transfer-error</code>, <code>ac-api-operaciones-deposit-success</code>,
+    <code>ac-api-operaciones-deposit-error</code>, <code>ac-api-operaciones-withdraw-success</code>,
+    <code>ac-api-operaciones-withdraw-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Transferir — <code>transferir(cuentaOrigenId, cuentaDestinoId, monto)</code></h2>
-  <div class="row">
-    <input type="number" id="transferOrigenId" value="2" aria-label="origen" />
-    <input type="number" id="transferDestinoId" value="1" aria-label="destino" />
-    <input type="number" id="transferMonto" value="500" aria-label="monto" />
-    <ac-button-basic id="btnTransfer">Transferir</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Depositar — <code>depositar(cuentaId, monto)</code></h2>
-  <div class="row">
-    <input type="number" id="depositCuentaId" value="1" aria-label="cuentaId" />
-    <input type="number" id="depositMonto" value="100" aria-label="monto" />
-    <ac-button-basic id="btnDeposit">Depositar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Retirar — <code>retirar(cuentaId, monto)</code></h2>
-  <div class="row">
-    <input type="number" id="withdrawCuentaId" value="1" aria-label="cuentaId" />
-    <input type="number" id="withdrawMonto" value="100" aria-label="monto" />
-    <ac-button-basic id="btnWithdraw">Retirar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      Es el componente con más estado de la familia: saldos y movimientos viven en memoria mientras
+      la instancia está montada (dos cuentas mock) y se reinician al recargar o recrear el elemento.
+    </li>
+    <li>
+      <code>comprar</code> usa una tabla de precios mock interna, independiente de
+      <code>ac-api-productos</code> — los dos componentes no comparten catálogo ni id de producto.
+    </li>
+  </ul>
 </section>

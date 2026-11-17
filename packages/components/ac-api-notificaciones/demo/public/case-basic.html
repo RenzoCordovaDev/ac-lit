@@ -1,52 +1,132 @@
-<ac-api-notificaciones id="apiNotificaciones" version="0" timeout="1200"></ac-api-notificaciones>
+<ac-api-notificaciones id="apiComponent" version="0" timeout="1200"></ac-api-notificaciones>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de notificaciones: enviar, listar, leer y eliminar.
+  </p>
 </section>
 
-<section>
-  <h2>Enviar — <code>enviarNotificacion(objetoNotificacion)</code></h2>
-  <div class="row">
-    <input type="text" id="sendTitulo" value="Nueva notificación" aria-label="titulo" />
-    <input type="text" id="sendMensaje" value="Mensaje de prueba" aria-label="mensaje" />
-    <ac-button-basic id="btnSend">Enviar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Listar — <code>listarNotificaciones(queryParams)</code></h2>
-  <div class="row">
-    <input type="text" id="listStatus" placeholder="unread | read (opcional)" aria-label="status" />
-    <ac-button-basic id="btnList">Listar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>enviarNotificacion(objetoNotificacion)</code>
+      <p>
+        Crea una notificación nueva (no leída). <code>titulo</code> y <code>mensaje</code> son
+        obligatorios; <code>tipo</code> por defecto es "general".
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-send-success / ac-api-notificaciones-send-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarNotificaciones(queryParams = {})</code>
+      <p>
+        Lista notificaciones. <code>queryParams</code>: tipo, leida/status (read/unread),
+        sortBy/sortDir (orden por defecto: fecha desc), pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-list-success / ac-api-notificaciones-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerNotificacion(id)</code>
+      <p>Obtiene una notificación por id.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-get-success / ac-api-notificaciones-get-error</code></span
+      >
+    </li>
+    <li>
+      <code>marcarLeida(id)</code>
+      <p>Marca una notificación como leída.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code
+          >ac-api-notificaciones-mark-read-success / ac-api-notificaciones-mark-read-error</code
+        ></span
+      >
+    </li>
+    <li>
+      <code>eliminarNotificacion(id)</code>
+      <p>Elimina una notificación por id.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-delete-success / ac-api-notificaciones-delete-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Obtener — <code>obtenerNotificacion(id)</code></h2>
-  <div class="row">
-    <input type="number" id="getId" value="1" aria-label="id" />
-    <ac-button-basic id="btnGet">Obtener</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-notificaciones-send-success</code>, <code>ac-api-notificaciones-send-error</code>,
+    <code>ac-api-notificaciones-list-success</code>, <code>ac-api-notificaciones-list-error</code>,
+    <code>ac-api-notificaciones-get-success</code>, <code>ac-api-notificaciones-get-error</code>,
+    <code>ac-api-notificaciones-mark-read-success</code>,
+    <code>ac-api-notificaciones-mark-read-error</code>,
+    <code>ac-api-notificaciones-delete-success</code>,
+    <code>ac-api-notificaciones-delete-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Marcar leída — <code>marcarLeida(id)</code></h2>
-  <div class="row">
-    <input type="number" id="markReadId" value="1" aria-label="id" />
-    <ac-button-basic id="btnMarkRead">Marcar leída</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Eliminar — <code>eliminarNotificacion(id)</code></h2>
-  <div class="row">
-    <input type="number" id="deleteId" value="3" aria-label="id" />
-    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      El orden por defecto de <code>listarNotificaciones</code> es por fecha descendente (la más
+      reciente primero), a diferencia del resto de la familia (que no ordena si no se pide sortBy).
+    </li>
+    <li>
+      El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página
+      o recrear el elemento.
+    </li>
+  </ul>
 </section>

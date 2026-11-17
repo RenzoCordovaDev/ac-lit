@@ -33,3 +33,57 @@ section h2 {
   gap: 0.75rem;
   align-items: center;
 }
+
+/* Documentación estática del caso (propiedades/métodos/eventos/consideraciones) --
+   este componente no renderiza nada, así que su demo no tiene controles ni
+   elementos visuales que probar: esta ficha es la documentación real. */
+.api-doc__summary {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.api-doc__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  line-height: 1.5;
+}
+
+.api-doc__list p {
+  margin: 0.2rem 0 0;
+}
+
+.api-doc__list code,
+.api-doc__events-list code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--color-primary-400, #8ab4f8);
+}
+
+.api-doc__meta {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-muted-foreground, #8a8d93);
+}
+
+.api-doc__event {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-muted-foreground, #8a8d93);
+}
+
+.api-doc__event code {
+  font-size: 0.85em;
+}
+
+.api-doc__events-list {
+  margin: 0;
+  line-height: 1.8;
+}
+
+.api-doc__events-list code {
+  margin-right: 0.4rem;
+}

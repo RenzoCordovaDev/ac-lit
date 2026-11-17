@@ -1,52 +1,135 @@
-<ac-api-archivos id="apiArchivos" version="0" timeout="1200"></ac-api-archivos>
+<ac-api-archivos id="apiComponent" version="0" timeout="1200"></ac-api-archivos>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.
+  </p>
 </section>
 
-<section>
-  <h2>Listar — <code>listarArchivos()</code></h2>
-  <div class="row">
-    <ac-button-basic id="btnList">Listar archivos</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Obtener — <code>obtenerArchivo(id)</code></h2>
-  <div class="row">
-    <input type="number" id="getId" value="1" aria-label="id" />
-    <ac-button-basic id="btnGet">Obtener</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarArchivos(queryParams = {})</code>
+      <p>
+        Lista archivos. <code>queryParams</code>: tipo, sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-list-success / ac-api-archivos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerArchivo(id)</code>
+      <p>Obtiene los metadatos de un archivo por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-get-success / ac-api-archivos-get-error</code></span
+      >
+    </li>
+    <li>
+      <code>subirArchivo(objetoArchivo)</code>
+      <p>
+        <code>nombre</code> es obligatorio. No usa el orquestador simple: antes del evento final
+        emite 4 eventos intermedios de progreso (25/50/75/100%).
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code
+          >ac-api-archivos-upload-progress (×4) y luego ac-api-archivos-upload-success /
+          ac-api-archivos-upload-error</code
+        ></span
+      >
+    </li>
+    <li>
+      <code>eliminarArchivo(id)</code>
+      <p>Elimina un archivo por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-delete-success / ac-api-archivos-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>descargarArchivo(id)</code>
+      <p>Devuelve { id, nombre, contenidoBase64 } con un mock de contenido codificado en base64.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-archivos-download-success / ac-api-archivos-download-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Subir — <code>subirArchivo(objetoArchivo)</code></h2>
-  <div class="row">
-    <input type="text" id="uploadNombre" value="nuevo.pdf" aria-label="nombre" />
-    <input type="number" id="uploadTamanio" value="128" aria-label="tamanioKb" />
-    <ac-button-basic id="btnUpload">Subir</ac-button-basic>
-    <span>Progreso: <code id="uploadProgress">0%</code></span>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-archivos-list-success</code>, <code>ac-api-archivos-list-error</code>,
+    <code>ac-api-archivos-get-success</code>, <code>ac-api-archivos-get-error</code>,
+    <code>ac-api-archivos-upload-progress</code>, <code>ac-api-archivos-upload-success</code>,
+    <code>ac-api-archivos-upload-error</code>, <code>ac-api-archivos-delete-success</code>,
+    <code>ac-api-archivos-delete-error</code>, <code>ac-api-archivos-download-success</code>,
+    <code>ac-api-archivos-download-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Descargar — <code>descargarArchivo(id)</code></h2>
-  <div class="row">
-    <input type="number" id="downloadId" value="1" aria-label="id" />
-    <ac-button-basic id="btnDownload">Descargar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Eliminar — <code>eliminarArchivo(id)</code></h2>
-  <div class="row">
-    <input type="number" id="deleteId" value="2" aria-label="id" />
-    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      <code>subirArchivo</code> es el único método de toda la familia que no usa el orquestador
+      genérico <code>_simulateCall</code> del mixin: arma su propio flujo con
+      <code>_wait</code>/<code>_emit</code> para poder emitir los eventos de progreso intermedios
+      antes del evento final.
+    </li>
+    <li>
+      Los eventos de progreso de una subida se emiten completos (los 4) incluso cuando
+      <code>simulateError</code> hace fallar esa subida — el error solo llega al final, en el evento
+      <code>upload-error</code>.
+    </li>
+    <li>
+      El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página
+      o recrear el elemento.
+    </li>
+  </ul>
 </section>

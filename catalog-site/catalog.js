@@ -59,8 +59,12 @@ const codeListEl = document.getElementById('catalog-code-list');
 const apiEl = document.getElementById('catalog-api');
 const apiPropsContentEl = document.getElementById('catalog-api-props-content');
 const apiEventsContentEl = document.getElementById('catalog-api-events-content');
+const apiMethodsContentEl = document.getElementById('catalog-api-methods-content');
+const apiConsiderationsContentEl = document.getElementById('catalog-api-considerations-content');
 const apiPropsCountEl = document.getElementById('catalog-api-props-count');
 const apiEventsCountEl = document.getElementById('catalog-api-events-count');
+const apiMethodsCountEl = document.getElementById('catalog-api-methods-count');
+const apiConsiderationsCountEl = document.getElementById('catalog-api-considerations-count');
 
 const homeCategoriesEl = document.getElementById('catalog-home-categories');
 
@@ -486,9 +490,13 @@ function renderExamples(state) {
   );
 }
 
-/* Propiedades/Eventos: dos expandibles debajo del stage, con la API pública
-   del componente elegido (ver catalog-api.js, transcrita a mano de cada
-   README). Solo se muestran en la pestaña Código (ver setTab() más abajo). */
+/* Propiedades/Métodos/Eventos/Consideraciones: cuatro expandibles debajo del
+   stage, con la API pública del componente elegido (ver catalog-api.js,
+   transcrita a mano de cada README). Solo se muestran en la pestaña Código
+   (ver setTab() más abajo). Métodos y Consideraciones suelen quedar vacíos
+   para los componentes visuales -- son las secciones clave para la familia
+   sin UI `ac-api-*` (ver docs/CONVENTIONS.md), donde no hay controles que
+   mostrar en la demo y esta es la documentación real del componente. */
 
 function apiCell(text, { code = false } = {}) {
   const cell = create('td');
@@ -507,12 +515,16 @@ function apiCell(text, { code = false } = {}) {
 }
 
 function renderApiInfo(id) {
-  const api = COMPONENT_API[id] ?? { properties: [], events: [] };
+  const api = COMPONENT_API[id] ?? {};
   const properties = api.properties ?? [];
   const events = api.events ?? [];
+  const methods = api.methods ?? [];
+  const considerations = api.considerations ?? [];
 
   apiPropsCountEl.textContent = String(properties.length);
   apiEventsCountEl.textContent = String(events.length);
+  apiMethodsCountEl.textContent = String(methods.length);
+  apiConsiderationsCountEl.textContent = String(considerations.length);
 
   apiPropsContentEl.replaceChildren();
   if (properties.length === 0) {
@@ -571,6 +583,42 @@ function renderApiInfo(id) {
       list.append(item);
     }
     apiEventsContentEl.append(list);
+  }
+
+  apiMethodsContentEl.replaceChildren();
+  if (methods.length === 0) {
+    apiMethodsContentEl.append(
+      create('p', 'catalog__api-empty', 'Este componente no expone métodos públicos propios.'),
+    );
+  } else {
+    const list = create('ul', 'catalog__api-methods');
+    for (const method of methods) {
+      const item = create('li');
+      item.append(create('span', 'catalog__api-method-signature', method.signature ?? method.name));
+      if (method.description) {
+        item.append(create('span', 'catalog__api-method-description', method.description));
+      }
+      if (method.event) {
+        const eventLine = create('span', 'catalog__api-method-event');
+        eventLine.append(create('span', '', 'Dispara: '), create('code', '', method.event));
+        item.append(eventLine);
+      }
+      list.append(item);
+    }
+    apiMethodsContentEl.append(list);
+  }
+
+  apiConsiderationsContentEl.replaceChildren();
+  if (considerations.length === 0) {
+    apiConsiderationsContentEl.append(
+      create('p', 'catalog__api-empty', 'Sin consideraciones adicionales para este componente.'),
+    );
+  } else {
+    const list = create('ul', 'catalog__api-considerations');
+    for (const consideration of considerations) {
+      list.append(create('li', '', consideration));
+    }
+    apiConsiderationsContentEl.append(list);
   }
 }
 

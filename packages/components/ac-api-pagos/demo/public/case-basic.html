@@ -1,52 +1,128 @@
-<ac-api-pagos id="apiPagos" version="0" timeout="1200"></ac-api-pagos>
+<ac-api-pagos id="apiComponent" version="0" timeout="1200"></ac-api-pagos>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de métodos de pago: listar, agregar, eliminar y procesar un pago.
+  </p>
 </section>
 
-<section>
-  <h2>Listar — <code>listarMetodosPago()</code></h2>
-  <div class="row">
-    <ac-button-basic id="btnList">Listar métodos</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Agregar — <code>agregarMetodoPago(objetoMetodo)</code></h2>
-  <div class="row">
-    <input type="text" id="addMarca" value="Amex" aria-label="marca" />
-    <input type="text" id="addNumero" value="340000000000009" aria-label="numero" />
-    <ac-button-basic id="btnAdd">Agregar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarMetodosPago(queryParams = {})</code>
+      <p>
+        Lista métodos de pago guardados (sin exponer el número completo). <code>queryParams</code>:
+        sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-list-success / ac-api-pagos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>agregarMetodoPago(objetoMetodo)</code>
+      <p>
+        <code>marca</code> y <code>numero</code> son obligatorios; el número se enmascara en toda
+        respuesta (solo se guardan los últimos 4 dígitos como <code>ultimosDigitos</code>).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-add-success / ac-api-pagos-add-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarMetodoPago(id)</code>
+      <p>Elimina un método de pago por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-delete-success / ac-api-pagos-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>marcarMetodoPredeterminado(id)</code>
+      <p>Marca un método de pago como predeterminado; desmarca cualquier otro.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-pagos-mark-default-success / ac-api-pagos-mark-default-error</code></span
+      >
+    </li>
+    <li>
+      <code>procesarPago(monto, metodoId)</code>
+      <p>
+        Procesa un pago con un método existente; falla si <code>monto</code> no es mayor a 0 o el
+        método no existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-process-success / ac-api-pagos-process-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Marcar predeterminado — <code>marcarMetodoPredeterminado(id)</code></h2>
-  <div class="row">
-    <input type="number" id="markDefaultId" value="2" aria-label="id" />
-    <ac-button-basic id="btnMarkDefault">Marcar predeterminado</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-pagos-list-success</code>, <code>ac-api-pagos-list-error</code>,
+    <code>ac-api-pagos-add-success</code>, <code>ac-api-pagos-add-error</code>,
+    <code>ac-api-pagos-delete-success</code>, <code>ac-api-pagos-delete-error</code>,
+    <code>ac-api-pagos-mark-default-success</code>, <code>ac-api-pagos-mark-default-error</code>,
+    <code>ac-api-pagos-process-success</code>, <code>ac-api-pagos-process-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Procesar pago — <code>procesarPago(monto, metodoId)</code></h2>
-  <div class="row">
-    <input type="number" id="processMonto" value="150" aria-label="monto" />
-    <input type="number" id="processMetodoId" value="1" aria-label="metodoId" />
-    <ac-button-basic id="btnProcess">Procesar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Eliminar — <code>eliminarMetodoPago(id)</code></h2>
-  <div class="row">
-    <input type="number" id="deleteId" value="2" aria-label="id" />
-    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      El número de tarjeta nunca se expone, ni siquiera en el mock devuelto: toda respuesta
+      reemplaza <code>numero</code> por <code>ultimosDigitos</code> (los últimos 4 dígitos) —
+      pensado como ejemplo de diseño consciente de datos sensibles.
+    </li>
+    <li>
+      El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página
+      o recrear el elemento.
+    </li>
+  </ul>
 </section>

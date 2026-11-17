@@ -1,83 +1,158 @@
-<ac-api-users id="apiUsers" version="0" timeout="1200"></ac-api-users>
+<ac-api-users id="apiComponent" version="0" timeout="1200"></ac-api-users>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de usuarios: obtener, listar, buscar, crear, editar y eliminar.
+  </p>
 </section>
 
-<section>
-  <h2>Obtener un usuario — <code>obtenerDatosUsuario(id)</code></h2>
-  <div class="row">
-    <input type="number" id="getUserId" value="1" aria-label="id" />
-    <ac-button-basic id="btnGetUser">Obtener usuario</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Listar usuarios — <code>listarUsuarios(queryParams)</code></h2>
-  <div class="row">
-    <input
-      type="number"
-      id="listPagination"
-      placeholder="pagination (opcional)"
-      aria-label="pagination"
-    />
-    <ac-button-basic id="btnList">Listar usuarios</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>obtenerDatosUsuario(id, queryParams = {})</code>
+      <p>Obtiene un usuario por id. <code>queryParams.fields</code> proyecta solo esos campos.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-get-user-success / ac-api-users-get-user-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarUsuarios(queryParams = {})</code>
+      <p>
+        Lista usuarios. <code>queryParams</code>: role, status (active/inactive), sortBy/sortDir,
+        pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-list-success / ac-api-users-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>buscarUsuarios(texto, queryParams = {})</code>
+      <p>
+        Busca por nombre o email (coincidencia parcial). Admite el mismo queryParams que
+        listarUsuarios.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-search-success / ac-api-users-search-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerPerfilUsuario(id)</code>
+      <p>
+        Perfil extendido: agrega contacto, dirección y preferencias (datos anidados) al usuario.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-users-get-profile-success / ac-api-users-get-profile-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarUsuario(objetoUsuario)</code>
+      <p>
+        Crea un usuario nuevo. <code>nombre</code> y <code>email</code> son obligatorios;
+        <code>rol</code> por defecto es "lector".
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-register-success / ac-api-users-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarUsuario(id, cambios = {})</code>
+      <p>
+        Mezcla <code>cambios</code> sobre el usuario existente (el id no se puede sobrescribir).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-update-success / ac-api-users-update-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarUsuario(id)</code>
+      <p>Elimina un usuario del mock por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-delete-success / ac-api-users-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>validarCredenciales(email, password)</code>
+      <p>
+        Simula un login: busca el email en el mock y exige un password de 4+ caracteres; devuelve {
+        token, user }.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-auth-success / ac-api-users-auth-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Buscar usuarios — <code>buscarUsuarios(texto)</code></h2>
-  <div class="row">
-    <input type="text" id="searchTexto" value="torres" aria-label="texto" />
-    <ac-button-basic id="btnSearch">Buscar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-users-get-user-success</code>, <code>ac-api-users-get-user-error</code>,
+    <code>ac-api-users-list-success</code>, <code>ac-api-users-list-error</code>,
+    <code>ac-api-users-search-success</code>, <code>ac-api-users-search-error</code>,
+    <code>ac-api-users-get-profile-success</code>, <code>ac-api-users-get-profile-error</code>,
+    <code>ac-api-users-register-success</code>, <code>ac-api-users-register-error</code>,
+    <code>ac-api-users-update-success</code>, <code>ac-api-users-update-error</code>,
+    <code>ac-api-users-delete-success</code>, <code>ac-api-users-delete-error</code>,
+    <code>ac-api-users-auth-success</code>, <code>ac-api-users-auth-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Perfil extendido — <code>obtenerPerfilUsuario(id)</code></h2>
-  <div class="row">
-    <input type="number" id="profileId" value="1" aria-label="id" />
-    <ac-button-basic id="btnProfile">Obtener perfil</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Registrar — <code>registrarUsuario(objetoUsuario)</code></h2>
-  <div class="row">
-    <input type="text" id="registerNombre" value="Nuevo Usuario" aria-label="nombre" />
-    <input type="text" id="registerEmail" value="nuevo@mail.com" aria-label="email" />
-    <ac-button-basic id="btnRegister">Registrar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Actualizar — <code>actualizarUsuario(id, cambios)</code></h2>
-  <div class="row">
-    <input type="number" id="updateId" value="2" aria-label="id" />
-    <input type="text" id="updateNombre" value="Luis Editado" aria-label="nuevo nombre" />
-    <ac-button-basic id="btnUpdate">Actualizar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Eliminar — <code>eliminarUsuario(id)</code></h2>
-  <div class="row">
-    <input type="number" id="deleteId" value="3" aria-label="id" />
-    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Login — <code>validarCredenciales(email, password)</code></h2>
-  <div class="row">
-    <input type="text" id="authEmail" value="ana.torres@mail.com" aria-label="email" />
-    <input type="password" id="authPassword" value="1234" aria-label="password" />
-    <ac-button-basic id="btnAuth">Validar credenciales</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      El mock vive en memoria mientras la instancia está montada: registrar/actualizar/eliminar
+      modifican esa copia, pero se reinicia al recargar la página o recrear el elemento.
+    </li>
+    <li>
+      <code>validarCredenciales</code> es solo un mock de login (no hay hash ni backend real) —
+      nunca usar como ejemplo de autenticación real.
+    </li>
+  </ul>
 </section>

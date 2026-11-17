@@ -1,74 +1,143 @@
-<ac-api-productos id="apiProductos" version="0" timeout="1200"></ac-api-productos>
+<ac-api-productos id="apiComponent" version="0" timeout="1200"></ac-api-productos>
 
-<section>
-  <h2>Configuración</h2>
-  <div class="row">
-    <label>
-      <input type="checkbox" id="simulateErrorToggle" />
-      Simular error (<code>simulateError</code>)
-    </label>
-  </div>
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de productos, con catálogo y detalle extendido.
+  </p>
 </section>
 
-<section>
-  <h2>Obtener un producto — <code>obtenerProducto(id)</code></h2>
-  <div class="row">
-    <input type="number" id="getProductId" value="1" aria-label="id" />
-    <ac-button-basic id="btnGetProduct">Obtener producto</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Listar productos — <code>listarProductos(queryParams)</code></h2>
-  <div class="row">
-    <input
-      type="text"
-      id="listCategory"
-      placeholder="categoria (opcional)"
-      aria-label="categoria"
-    />
-    <ac-button-basic id="btnList">Listar productos</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>obtenerProducto(id, queryParams = {})</code>
+      <p>Obtiene un producto por id. <code>queryParams.fields</code> proyecta solo esos campos.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-get-product-success / ac-api-productos-get-product-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarProductos(queryParams = {})</code>
+      <p>
+        Lista productos. <code>queryParams</code>: category, status (active/inactive),
+        sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-list-success / ac-api-productos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>buscarProductos(texto, queryParams = {})</code>
+      <p>
+        Busca por nombre (coincidencia parcial). Admite el mismo queryParams que listarProductos.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-search-success / ac-api-productos-search-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerDetalleProducto(id)</code>
+      <p>Detalle extendido: agrega especificaciones e inventario (datos anidados) al producto.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-get-detail-success / ac-api-productos-get-detail-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarProducto(objetoProducto)</code>
+      <p>
+        Crea un producto nuevo. <code>nombre</code> y <code>precio</code> son obligatorios;
+        <code>categoria</code>/<code>stock</code> son opcionales.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-register-success / ac-api-productos-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarProducto(id, cambios = {})</code>
+      <p>
+        Mezcla <code>cambios</code> sobre el producto existente (el id no se puede sobrescribir).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-update-success / ac-api-productos-update-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarProducto(id)</code>
+      <p>Elimina un producto del mock por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-delete-success / ac-api-productos-delete-error</code></span
+      >
+    </li>
+  </ul>
 </section>
 
-<section>
-  <h2>Buscar productos — <code>buscarProductos(texto)</code></h2>
-  <div class="row">
-    <input type="text" id="searchTexto" value="laptop" aria-label="texto" />
-    <ac-button-basic id="btnSearch">Buscar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-productos-get-product-success</code>,
+    <code>ac-api-productos-get-product-error</code>, <code>ac-api-productos-list-success</code>,
+    <code>ac-api-productos-list-error</code>, <code>ac-api-productos-search-success</code>,
+    <code>ac-api-productos-search-error</code>, <code>ac-api-productos-get-detail-success</code>,
+    <code>ac-api-productos-get-detail-error</code>, <code>ac-api-productos-register-success</code>,
+    <code>ac-api-productos-register-error</code>, <code>ac-api-productos-update-success</code>,
+    <code>ac-api-productos-update-error</code>, <code>ac-api-productos-delete-success</code>,
+    <code>ac-api-productos-delete-error</code>
+  </p>
 </section>
 
-<section>
-  <h2>Detalle extendido — <code>obtenerDetalleProducto(id)</code></h2>
-  <div class="row">
-    <input type="number" id="detailId" value="1" aria-label="id" />
-    <ac-button-basic id="btnDetail">Obtener detalle</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Registrar — <code>registrarProducto(objetoProducto)</code></h2>
-  <div class="row">
-    <input type="text" id="registerNombre" value="Producto nuevo" aria-label="nombre" />
-    <input type="number" id="registerPrecio" value="99.9" aria-label="precio" />
-    <ac-button-basic id="btnRegister">Registrar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Actualizar — <code>actualizarProducto(id, cambios)</code></h2>
-  <div class="row">
-    <input type="number" id="updateId" value="2" aria-label="id" />
-    <input type="number" id="updatePrecio" value="59.9" aria-label="nuevo precio" />
-    <ac-button-basic id="btnUpdate">Actualizar</ac-button-basic>
-  </div>
-</section>
-
-<section>
-  <h2>Eliminar — <code>eliminarProducto(id)</code></h2>
-  <div class="row">
-    <input type="number" id="deleteId" value="3" aria-label="id" />
-    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
-  </div>
+<section class="api-doc">
+  <h2>Consideraciones</h2>
+  <ul class="api-doc__list">
+    <li>
+      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
+      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
+      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
+    </li>
+    <li>
+      Cada método público devuelve una Promise y además dispara un evento
+      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
+      method, params, data } en éxito o { method, params, error } en error — un único handler puede
+      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
+    </li>
+    <li>
+      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
+      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
+      necesita distinguir el origen del fallo.
+    </li>
+    <li>
+      El mock vive en memoria mientras la instancia está montada: registrar/actualizar/eliminar
+      modifican esa copia, pero se reinicia al recargar la página o recrear el elemento.
+    </li>
+  </ul>
 </section>
