@@ -1,0 +1,52 @@
+<ac-api-auth id="apiAuth" version="0" timeout="1200"></ac-api-auth>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+  <p>Token actual: <code id="currentToken">(ninguno)</code></p>
+</section>
+
+<section>
+  <h2>Login — <code>iniciarSesion(email, password)</code></h2>
+  <div class="row">
+    <input type="text" id="loginEmail" value="ana.torres@mail.com" aria-label="email" />
+    <input type="password" id="loginClave" value="1234" aria-label="clave" />
+    <ac-button-basic id="btnLogin">Iniciar sesión</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Registro — <code>registrarCuenta(objetoCuenta)</code></h2>
+  <div class="row">
+    <input type="text" id="registerNombre" value="Cuenta nueva" aria-label="nombre" />
+    <input type="text" id="registerEmail" value="nueva@mail.com" aria-label="email" />
+    <input type="password" id="registerClave" value="xyz1" aria-label="clave" />
+    <ac-button-basic id="btnRegister">Registrarse</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Validar sesión — <code>validarSesion(token)</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnValidate">Validar token actual</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Refrescar token — <code>refrescarToken(token)</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnRefresh">Refrescar token actual</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Logout — <code>cerrarSesion(token)</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnLogout">Cerrar sesión</ac-button-basic>
+  </div>
+</section>

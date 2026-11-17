@@ -72,6 +72,18 @@ importers:
         specifier: ^1.79.4
         version: 1.108.1
 
+  packages/base/ac-api-mixin:
+    devDependencies:
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+
   packages/base/ac-component-mixin:
     dependencies:
       '@ac-base/ac-intl-mixin':
@@ -169,6 +181,286 @@ importers:
       lit:
         specifier: ^3.0.0
         version: 3.3.3
+
+  packages/components/ac-api-archivos:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-auth:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-carrito:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-direcciones:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-notificaciones:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-operaciones:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-pagos:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-pedidos:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-productos:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
+  packages/components/ac-api-users:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
 
   packages/components/ac-avatar-basic:
     dependencies:

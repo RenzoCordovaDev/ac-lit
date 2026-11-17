@@ -1,0 +1,64 @@
+<ac-api-operaciones id="apiOperaciones" version="0" timeout="1200"></ac-api-operaciones>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Consultar saldo — <code>consultarSaldo(cuentaId)</code></h2>
+  <div class="row">
+    <input type="number" id="balanceCuentaId" value="1" aria-label="cuentaId" />
+    <ac-button-basic id="btnBalance">Consultar saldo</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Historial — <code>obtenerHistorial(cuentaId)</code></h2>
+  <div class="row">
+    <input type="number" id="historyCuentaId" value="1" aria-label="cuentaId" />
+    <ac-button-basic id="btnHistory">Ver historial</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Comprar — <code>comprar(productoId, cantidad)</code></h2>
+  <div class="row">
+    <input type="number" id="buyProductoId" value="2" aria-label="productoId" />
+    <input type="number" id="buyCantidad" value="2" aria-label="cantidad" />
+    <ac-button-basic id="btnBuy">Comprar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Transferir — <code>transferir(cuentaOrigenId, cuentaDestinoId, monto)</code></h2>
+  <div class="row">
+    <input type="number" id="transferOrigenId" value="2" aria-label="origen" />
+    <input type="number" id="transferDestinoId" value="1" aria-label="destino" />
+    <input type="number" id="transferMonto" value="500" aria-label="monto" />
+    <ac-button-basic id="btnTransfer">Transferir</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Depositar — <code>depositar(cuentaId, monto)</code></h2>
+  <div class="row">
+    <input type="number" id="depositCuentaId" value="1" aria-label="cuentaId" />
+    <input type="number" id="depositMonto" value="100" aria-label="monto" />
+    <ac-button-basic id="btnDeposit">Depositar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Retirar — <code>retirar(cuentaId, monto)</code></h2>
+  <div class="row">
+    <input type="number" id="withdrawCuentaId" value="1" aria-label="cuentaId" />
+    <input type="number" id="withdrawMonto" value="100" aria-label="monto" />
+    <ac-button-basic id="btnWithdraw">Retirar</ac-button-basic>
+  </div>
+</section>

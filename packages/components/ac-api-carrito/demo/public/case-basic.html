@@ -1,0 +1,60 @@
+<ac-api-carrito id="apiCarrito" version="0" timeout="1200"></ac-api-carrito>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Agregar ítem — <code>agregarItem(item)</code></h2>
+  <div class="row">
+    <input type="number" id="addProductoId" value="1" aria-label="productoId" />
+    <input type="text" id="addNombre" value="Laptop" aria-label="nombre" />
+    <input type="number" id="addPrecio" value="100" aria-label="precio" />
+    <input type="number" id="addCantidad" value="1" aria-label="cantidad" />
+    <ac-button-basic id="btnAdd">Agregar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Quitar ítem — <code>quitarItem(productoId)</code></h2>
+  <div class="row">
+    <input type="number" id="removeProductoId" value="1" aria-label="productoId" />
+    <ac-button-basic id="btnRemove">Quitar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Listar — <code>listarItems()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnList">Listar ítems</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Actualizar cantidad — <code>actualizarCantidad(productoId, cantidad)</code></h2>
+  <div class="row">
+    <input type="number" id="updateQtyProductoId" value="1" aria-label="productoId" />
+    <input type="number" id="updateQtyCantidad" value="5" aria-label="cantidad" />
+    <ac-button-basic id="btnUpdateQty">Actualizar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Resumen — <code>obtenerResumen()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnSummary">Ver resumen</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Vaciar — <code>vaciarCarrito()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnClear">Vaciar carrito</ac-button-basic>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+<ac-api-pedidos id="apiPedidos" version="0" timeout="1200"></ac-api-pedidos>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Crear pedido — <code>crearPedido(carrito)</code></h2>
+  <div class="row">
+    <input type="number" id="createProductoId" value="1" aria-label="productoId" />
+    <input type="number" id="createCantidad" value="1" aria-label="cantidad" />
+    <ac-button-basic id="btnCreate">Crear pedido</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener pedido — <code>obtenerPedido(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGet">Obtener pedido</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Listar pedidos — <code>listarPedidos(queryParams)</code></h2>
+  <div class="row">
+    <input type="text" id="listStatus" placeholder="estado (opcional)" aria-label="estado" />
+    <ac-button-basic id="btnList">Listar pedidos</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Estado / seguimiento — <code>obtenerEstadoPedido(id)</code></h2>
+  <div class="row">
+    <input type="number" id="statusId" value="1" aria-label="id" />
+    <ac-button-basic id="btnStatus">Ver estado</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Cancelar — <code>cancelarPedido(id)</code></h2>
+  <div class="row">
+    <input type="number" id="cancelId" value="1" aria-label="id" />
+    <ac-button-basic id="btnCancel">Cancelar pedido</ac-button-basic>
+  </div>
+</section>

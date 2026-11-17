@@ -74,6 +74,23 @@ export const GROUPS = [
     ],
   },
   {
+    id: 'apis',
+    label: 'APIs',
+    icon: '<rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1"/><circle cx="7" cy="17" r="1"/>',
+    members: [
+      'ac-api-auth',
+      'ac-api-users',
+      'ac-api-productos',
+      'ac-api-carrito',
+      'ac-api-pedidos',
+      'ac-api-operaciones',
+      'ac-api-pagos',
+      'ac-api-direcciones',
+      'ac-api-notificaciones',
+      'ac-api-archivos',
+    ],
+  },
+  {
     id: FALLBACK_GROUP_ID,
     label: 'Otros',
     icon: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
@@ -225,5 +242,61 @@ export const COMPONENT_META = {
     icon: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 8l4 4-4 4"/>',
     summary: 'Transición a pantalla completa',
     description: 'Contenedor que entra deslizándose a pantalla completa.',
+  },
+  'ac-api-auth': {
+    icon: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 118 0v4"/>',
+    summary: 'Simulador de sesión (sin UI)',
+    description: 'Simula login, registro, logout, validación y refresco de token.',
+  },
+  'ac-api-users': {
+    icon: '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>',
+    summary: 'Simulador de API de usuarios (sin UI)',
+    description:
+      'Simula el consumo de una API de usuarios: obtener, listar, buscar, crear, editar y eliminar.',
+  },
+  'ac-api-productos': {
+    icon: '<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>',
+    summary: 'Simulador de API de productos (sin UI)',
+    description: 'Simula el consumo de una API de productos, con catálogo y detalle extendido.',
+  },
+  'ac-api-carrito': {
+    icon: '<circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11.5a2 2 0 002 1.6H17a2 2 0 002-1.6L20.5 8H6"/>',
+    summary: 'Simulador de carrito de compras (sin UI)',
+    description:
+      'Simula un carrito de compras: agregar, quitar, actualizar cantidad y ver el resumen.',
+  },
+  'ac-api-pedidos': {
+    icon: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2h6v3H9z"/><path d="M8 11h8M8 15h5"/>',
+    summary: 'Simulador de API de pedidos (sin UI)',
+    description:
+      'Simula el consumo de una API de pedidos: crear, consultar, listar, seguimiento y cancelación.',
+  },
+  'ac-api-operaciones': {
+    icon: '<path d="M4 7h12M16 7l-3-3M16 7l-3 3"/><path d="M20 17H8M8 17l3 3M8 17l3-3"/>',
+    summary: 'Simulador de operaciones financieras (sin UI)',
+    description: 'Simula saldo, historial, compras, transferencias, depósitos y retiros.',
+  },
+  'ac-api-pagos': {
+    icon: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/>',
+    summary: 'Simulador de métodos de pago (sin UI)',
+    description:
+      'Simula el consumo de una API de métodos de pago: listar, agregar, eliminar y procesar un pago.',
+  },
+  'ac-api-direcciones': {
+    icon: '<path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    summary: 'Simulador de direcciones de envío (sin UI)',
+    description:
+      'Simula el consumo de una API de direcciones de envío, con dirección predeterminada.',
+  },
+  'ac-api-notificaciones': {
+    icon: '<path d="M12 4a5 5 0 00-5 5v4l-2 3h14l-2-3V9a5 5 0 00-5-5z"/><path d="M10 19a2 2 0 004 0"/>',
+    summary: 'Simulador de API de notificaciones (sin UI)',
+    description: 'Simula el consumo de una API de notificaciones: enviar, listar, leer y eliminar.',
+  },
+  'ac-api-archivos': {
+    icon: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M12 16.5v-5M9.5 13.5L12 11l2.5 2.5"/>',
+    summary: 'Simulador de API de archivos (sin UI)',
+    description:
+      'Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.',
   },
 };

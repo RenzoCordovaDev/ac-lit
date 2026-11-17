@@ -1,0 +1,52 @@
+<ac-api-archivos id="apiArchivos" version="0" timeout="1200"></ac-api-archivos>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Listar — <code>listarArchivos()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnList">Listar archivos</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener — <code>obtenerArchivo(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGet">Obtener</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Subir — <code>subirArchivo(objetoArchivo)</code></h2>
+  <div class="row">
+    <input type="text" id="uploadNombre" value="nuevo.pdf" aria-label="nombre" />
+    <input type="number" id="uploadTamanio" value="128" aria-label="tamanioKb" />
+    <ac-button-basic id="btnUpload">Subir</ac-button-basic>
+    <span>Progreso: <code id="uploadProgress">0%</code></span>
+  </div>
+</section>
+
+<section>
+  <h2>Descargar — <code>descargarArchivo(id)</code></h2>
+  <div class="row">
+    <input type="number" id="downloadId" value="1" aria-label="id" />
+    <ac-button-basic id="btnDownload">Descargar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarArchivo(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="2" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>

@@ -156,6 +156,66 @@
       "port": 5173
     },
     {
+      "name": "ac-api-users-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-users", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-productos-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-productos", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-operaciones-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-operaciones", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-pedidos-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-pedidos", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-notificaciones-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-notificaciones", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-auth-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-auth", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-carrito-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-carrito", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-direcciones-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-direcciones", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-pagos-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-pagos", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-api-archivos-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-api-archivos", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "catalog-site",
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4300", "--directory", "catalog-dist"],

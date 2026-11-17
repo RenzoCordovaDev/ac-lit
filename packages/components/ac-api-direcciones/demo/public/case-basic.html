@@ -1,0 +1,61 @@
+<ac-api-direcciones id="apiDirecciones" version="0" timeout="1200"></ac-api-direcciones>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Listar — <code>listarDirecciones()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnList">Listar direcciones</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener — <code>obtenerDireccion(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGet">Obtener</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Agregar — <code>agregarDireccion(objetoDireccion)</code></h2>
+  <div class="row">
+    <input type="text" id="addEtiqueta" value="Casa de playa" aria-label="etiqueta" />
+    <input type="text" id="addLinea1" value="Malecón 100" aria-label="linea1" />
+    <input type="text" id="addCiudad" value="Lima" aria-label="ciudad" />
+    <ac-button-basic id="btnAdd">Agregar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Actualizar — <code>actualizarDireccion(id, cambios)</code></h2>
+  <div class="row">
+    <input type="number" id="updateId" value="2" aria-label="id" />
+    <input type="text" id="updateCiudad" value="Cusco" aria-label="nueva ciudad" />
+    <ac-button-basic id="btnUpdate">Actualizar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Marcar predeterminada — <code>marcarPredeterminada(id)</code></h2>
+  <div class="row">
+    <input type="number" id="markDefaultId" value="2" aria-label="id" />
+    <ac-button-basic id="btnMarkDefault">Marcar predeterminada</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarDireccion(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="1" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>

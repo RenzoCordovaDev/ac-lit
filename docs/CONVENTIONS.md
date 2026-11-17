@@ -167,6 +167,20 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **`@ac-base/ac-component-mixin`** — mixin base: propiedades comunes (`ambient`, `mode`, `loading`), sanitización HTML (DOMPurify), skeleton de carga, `scopedElementsFromClasses()`. Integra los dos mixins siguientes.
 - **`@ac-base/ac-scoped-elements-mixin`** — aislamiento de custom elements para evitar colisiones de tag names.
 - **`@ac-base/ac-intl-mixin`** — API `t(key, params)`, `setLocale(locale)`, `loadTranslations(data)` sobre `locales.json`.
+- **`@ac-base/ac-api-mixin`** — mixin base para la familia `ac-api-*` (ver sección siguiente): `version`/`timeout`/`simulateError`, `render()` vacío, y `_wait`/`_emit`/`_simulateCall` para simular latencia, error y el disparo de eventos acción+resultado.
+
+## Componentes sin UI: simuladores de API (`ac-api-*`)
+
+Además de los componentes visuales, el catálogo tiene una familia de componentes **sin render** (`ac-api-users`, `ac-api-productos`, `ac-api-operaciones`, `ac-api-pedidos`, `ac-api-notificaciones`, `ac-api-auth`, `ac-api-carrito`, `ac-api-direcciones`, `ac-api-pagos`, `ac-api-archivos`): simulan el consumo de una API — se instalan e importan igual que cualquier componente del catálogo, pero se usan a través de sus **métodos públicos**, no de su render.
+
+- **Viven en `packages/components/*`** igual que los componentes visuales (mismo scaffolding, mismo juego de scripts `component:*`) — lo único que cambia es que extienden `ApiSimulatorMixin(LitElement)` de `@ac-base/ac-api-mixin` en vez de `ComponentMixin`: ese mixin da `render()` vacío (nunca pintan nada) y las propiedades/helpers de simulación.
+- **Propiedades base**: `version` (String, versión del mock/servicio simulado), `timeout` (Number, ms de latencia simulada) y `simulateError` (Boolean, atributo `simulate-error` — fuerza que el siguiente método rechace).
+- **Cada método público devuelve una `Promise` y además dispara un evento**, con la convención `ac-<componente>-<acción>-<resultado>` (ej. `ac-api-users-list-success` / `ac-api-users-list-error`) — nunca un par genérico `-success`/`-error` sin la acción, para poder escuchar selectivamente. El `detail` es siempre `{ method, params, data }` en éxito o `{ method, params, error }` en error, así **un mismo handler alcanza para ambos** (ver ejemplo en cualquier README de `ac-api-*`). Un método que necesite algo más que "espera → éxito/error" (ej. progreso) puede usar los primitivos `_wait`/`_emit` del mixin directamente en vez de `_simulateCall` — así lo hace `ac-api-archivos#subirArchivo`, con varios `ac-api-archivos-upload-progress` intermedios.
+- **Un error de dominio (ej. "usuario no existe", "saldo insuficiente") se emite por el mismo evento `-error`** que un `simulateError` forzado — quien escucha no necesita distinguir el origen.
+- **La lógica de formateo del mock vive en métodos privados con prefijo `_`** (ej. `_formatUser`, `_applyQueryParams`), separada de los métodos públicos.
+- **`queryParams` en los métodos de lectura** (listar/buscar) soporta `pagination`/`page` (recorte/paginado), `sortBy`/`sortDir` (orden), `fields` (proyección) y filtros propios del dominio (`role`, `status`, `category`, etc.) — mismo vocabulario en toda la familia.
+- **El `demo/` no tiene nada que "ver"**: como el componente no renderiza, el caso declara el componente (invisible) junto a un panel de prueba (inputs + un botón por método, más un checkbox para `simulateError`), cableado desde `demo/demo.js` por delegación de eventos (los casos se cargan con `fetch` + `innerHTML`, no pueden traer `<script>` — mismo motivo que en cualquier otra demo). Cada evento disparado se ve solo, en el panel de eventos (campanita) de `ac-demo-content`: el `events` de `demo/index.html` lista **todos** los eventos success/error (y progreso, si aplica) del componente.
+- **Agrupación en el catálogo**: la familia completa vive en el grupo `apis` de `catalog-site/catalog-meta.js` (ver "Catálogo visual" más abajo) — un componente `ac-api-*` nuevo se agrega a ese grupo, no a uno de los visuales.
 
 ## Demos centralizadas (`ac-demo-content`)
 

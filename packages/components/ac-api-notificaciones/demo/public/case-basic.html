@@ -1,0 +1,52 @@
+<ac-api-notificaciones id="apiNotificaciones" version="0" timeout="1200"></ac-api-notificaciones>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Enviar — <code>enviarNotificacion(objetoNotificacion)</code></h2>
+  <div class="row">
+    <input type="text" id="sendTitulo" value="Nueva notificación" aria-label="titulo" />
+    <input type="text" id="sendMensaje" value="Mensaje de prueba" aria-label="mensaje" />
+    <ac-button-basic id="btnSend">Enviar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Listar — <code>listarNotificaciones(queryParams)</code></h2>
+  <div class="row">
+    <input type="text" id="listStatus" placeholder="unread | read (opcional)" aria-label="status" />
+    <ac-button-basic id="btnList">Listar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener — <code>obtenerNotificacion(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGet">Obtener</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Marcar leída — <code>marcarLeida(id)</code></h2>
+  <div class="row">
+    <input type="number" id="markReadId" value="1" aria-label="id" />
+    <ac-button-basic id="btnMarkRead">Marcar leída</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarNotificacion(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="3" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>

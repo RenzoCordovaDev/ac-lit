@@ -1,0 +1,74 @@
+<ac-api-productos id="apiProductos" version="0" timeout="1200"></ac-api-productos>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener un producto — <code>obtenerProducto(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getProductId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGetProduct">Obtener producto</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Listar productos — <code>listarProductos(queryParams)</code></h2>
+  <div class="row">
+    <input
+      type="text"
+      id="listCategory"
+      placeholder="categoria (opcional)"
+      aria-label="categoria"
+    />
+    <ac-button-basic id="btnList">Listar productos</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Buscar productos — <code>buscarProductos(texto)</code></h2>
+  <div class="row">
+    <input type="text" id="searchTexto" value="laptop" aria-label="texto" />
+    <ac-button-basic id="btnSearch">Buscar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Detalle extendido — <code>obtenerDetalleProducto(id)</code></h2>
+  <div class="row">
+    <input type="number" id="detailId" value="1" aria-label="id" />
+    <ac-button-basic id="btnDetail">Obtener detalle</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Registrar — <code>registrarProducto(objetoProducto)</code></h2>
+  <div class="row">
+    <input type="text" id="registerNombre" value="Producto nuevo" aria-label="nombre" />
+    <input type="number" id="registerPrecio" value="99.9" aria-label="precio" />
+    <ac-button-basic id="btnRegister">Registrar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Actualizar — <code>actualizarProducto(id, cambios)</code></h2>
+  <div class="row">
+    <input type="number" id="updateId" value="2" aria-label="id" />
+    <input type="number" id="updatePrecio" value="59.9" aria-label="nuevo precio" />
+    <ac-button-basic id="btnUpdate">Actualizar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarProducto(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="3" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>

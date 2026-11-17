@@ -1,0 +1,52 @@
+<ac-api-pagos id="apiPagos" version="0" timeout="1200"></ac-api-pagos>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Listar — <code>listarMetodosPago()</code></h2>
+  <div class="row">
+    <ac-button-basic id="btnList">Listar métodos</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Agregar — <code>agregarMetodoPago(objetoMetodo)</code></h2>
+  <div class="row">
+    <input type="text" id="addMarca" value="Amex" aria-label="marca" />
+    <input type="text" id="addNumero" value="340000000000009" aria-label="numero" />
+    <ac-button-basic id="btnAdd">Agregar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Marcar predeterminado — <code>marcarMetodoPredeterminado(id)</code></h2>
+  <div class="row">
+    <input type="number" id="markDefaultId" value="2" aria-label="id" />
+    <ac-button-basic id="btnMarkDefault">Marcar predeterminado</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Procesar pago — <code>procesarPago(monto, metodoId)</code></h2>
+  <div class="row">
+    <input type="number" id="processMonto" value="150" aria-label="monto" />
+    <input type="number" id="processMetodoId" value="1" aria-label="metodoId" />
+    <ac-button-basic id="btnProcess">Procesar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarMetodoPago(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="2" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>

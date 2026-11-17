@@ -1,0 +1,83 @@
+<ac-api-users id="apiUsers" version="0" timeout="1200"></ac-api-users>
+
+<section>
+  <h2>Configuración</h2>
+  <div class="row">
+    <label>
+      <input type="checkbox" id="simulateErrorToggle" />
+      Simular error (<code>simulateError</code>)
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Obtener un usuario — <code>obtenerDatosUsuario(id)</code></h2>
+  <div class="row">
+    <input type="number" id="getUserId" value="1" aria-label="id" />
+    <ac-button-basic id="btnGetUser">Obtener usuario</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Listar usuarios — <code>listarUsuarios(queryParams)</code></h2>
+  <div class="row">
+    <input
+      type="number"
+      id="listPagination"
+      placeholder="pagination (opcional)"
+      aria-label="pagination"
+    />
+    <ac-button-basic id="btnList">Listar usuarios</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Buscar usuarios — <code>buscarUsuarios(texto)</code></h2>
+  <div class="row">
+    <input type="text" id="searchTexto" value="torres" aria-label="texto" />
+    <ac-button-basic id="btnSearch">Buscar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Perfil extendido — <code>obtenerPerfilUsuario(id)</code></h2>
+  <div class="row">
+    <input type="number" id="profileId" value="1" aria-label="id" />
+    <ac-button-basic id="btnProfile">Obtener perfil</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Registrar — <code>registrarUsuario(objetoUsuario)</code></h2>
+  <div class="row">
+    <input type="text" id="registerNombre" value="Nuevo Usuario" aria-label="nombre" />
+    <input type="text" id="registerEmail" value="nuevo@mail.com" aria-label="email" />
+    <ac-button-basic id="btnRegister">Registrar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Actualizar — <code>actualizarUsuario(id, cambios)</code></h2>
+  <div class="row">
+    <input type="number" id="updateId" value="2" aria-label="id" />
+    <input type="text" id="updateNombre" value="Luis Editado" aria-label="nuevo nombre" />
+    <ac-button-basic id="btnUpdate">Actualizar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Eliminar — <code>eliminarUsuario(id)</code></h2>
+  <div class="row">
+    <input type="number" id="deleteId" value="3" aria-label="id" />
+    <ac-button-basic id="btnDelete">Eliminar</ac-button-basic>
+  </div>
+</section>
+
+<section>
+  <h2>Login — <code>validarCredenciales(email, password)</code></h2>
+  <div class="row">
+    <input type="text" id="authEmail" value="ana.torres@mail.com" aria-label="email" />
+    <input type="password" id="authPassword" value="1234" aria-label="password" />
+    <ac-button-basic id="btnAuth">Validar credenciales</ac-button-basic>
+  </div>
+</section>
