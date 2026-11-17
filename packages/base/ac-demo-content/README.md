@@ -52,13 +52,56 @@ Siempre presentes, sin atributo que los active:
 
 ## Eventos
 
-| Evento                 | Cuándo                                     | `detail`           |
-| ---------------------- | ------------------------------------------ | ------------------ |
-| `ac-demo-content-copy` | El usuario copió un comando de instalación | `{ text: string }` |
+| Evento                         | Cuándo                                                                                 | `detail`                                    |
+| ------------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `ac-demo-content-copy`         | El usuario copió un comando de instalación (solo si el copiado tuvo éxito)             | `{ text: string }`                          |
+| `ac-demo-content-state-change` | Cambió el caso, idioma, tema, dispositivo, vista, el log de eventos o el modo embebido | El mismo objeto que `demoState` (ver abajo) |
 
-Es `bubbles` y `composed`. Solo se dispara si el copiado tuvo éxito.
+Ambos son `bubbles` y `composed`.
 
 Todos los controles de 2+ opciones (idioma, tema, tamaño de dispositivo, vista) comparten el mismo patrón visual: un contenedor con borde redondeado, opciones separadas por un divisor vertical, y la opción activa resaltada — nunca un switch deslizante ni texto plano de estado ("Modo claro"/"Modo oscuro").
+
+## Modo embebido
+
+Para incrustar una demo dentro de otra página que dibuja sus propios controles (por ejemplo el catálogo visual, que carga cada demo en un `<iframe>` del mismo origen), activa `embedded`:
+
+```js
+const demo = iframe.contentDocument.querySelector('ac-demo-content');
+demo.embedded = true; // o el atributo `embedded` en el HTML
+```
+
+Con `embedded`, `ac-demo-content` **no dibuja la cabecera ni el toolbar** — solo el escenario (marco de dispositivo o vista de código) y el panel de eventos cuando está abierto. Quien lo incrusta maneja el mismo estado desde afuera:
+
+| Método                                     | Efecto                                                                                                     |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `selectCase(index)`                        | Activa el caso de ese índice. Ignora índices fuera de rango.                                               |
+| `selectLanguage(index)`                    | Activa el idioma `0` o `1` de `language`. Se ignora si no hay exactamente 2 idiomas o el índice no existe. |
+| `selectAmbient(value)`                     | Setea `ambient` en los elementos del caso activo que tengan esa propiedad.                                 |
+| `selectTheme(theme)`                       | `'light'` o `'dark'` — togglea `data-theme` en el `<html>` de la demo. Otros valores se ignoran.           |
+| `selectDevice(key)`                        | `'mobile'`, `'tablet'` o `'desktop'`. Otros valores se ignoran.                                            |
+| `selectViewMode(mode)`                     | `'visual'` o `'code'`. Otros valores se ignoran.                                                           |
+| `openEventsPanel()` / `closeEventsPanel()` | Abre/cierra el panel lateral de eventos (se dibuja dentro de la propia demo).                              |
+
+El getter `demoState` devuelve una foto del estado actual, con todo lo necesario para dibujar los controles afuera:
+
+```js
+{
+  cases: [{ index: 0, header: 'Básico' }], // `header` cae a "Caso N" si el caso no lo define
+  activeCase: 0,
+  languages: ['es-PE', 'en-EN'],
+  activeLanguage: 0,
+  ambients: ['primary', 'secondary'],
+  darkMode: true, // si la demo declara `dark-mode`
+  theme: 'light',
+  devices: [{ key: 'mobile', label: 'Móvil' } /* tablet, desktop */],
+  device: 'mobile',
+  viewMode: 'visual',
+  eventNames: ['ac-mi-componente-click'],
+  eventCount: 0,
+}
+```
+
+Para mantenerse sincronizado (por ejemplo el contador de eventos), escucha `ac-demo-content-state-change`: su `detail` es ese mismo objeto. Los métodos y `demoState` funcionan también sin `embedded` — los controles propios del toolbar usan exactamente los mismos métodos.
 
 ## `<ac-demo-case>`
 

@@ -1,0 +1,226 @@
+// Metadatos de presentación del catálogo, mantenidos a mano: a qué grupo de
+// la sidebar pertenece cada componente, su ícono referencial y sus textos en
+// español. Nada de esto es obligatorio -- un componente nuevo que todavía no
+// figure acá aparece igual: cae en el grupo "Otros", con un ícono genérico y
+// la `description` de su package.json.
+
+export const FALLBACK_GROUP_ID = 'otros';
+
+export const FALLBACK_ICON = '<circle cx="12" cy="12" r="9"/>';
+
+// El orden de `members` es el orden en que se listan dentro del grupo.
+export const GROUPS = [
+  {
+    id: 'general',
+    label: 'General',
+    icon: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+    members: [
+      'ac-button-basic',
+      'ac-icon-button-basic',
+      'ac-icon-basic',
+      'ac-link-basic',
+      'ac-text-basic',
+    ],
+  },
+  {
+    id: 'formularios',
+    label: 'Formularios',
+    icon: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    members: [
+      'ac-checkbox-basic',
+      'ac-input-basic',
+      'ac-radio-basic',
+      'ac-select-basic',
+      'ac-slider-basic',
+      'ac-switch-basic',
+      'ac-textarea-basic',
+    ],
+  },
+  {
+    id: 'navegacion',
+    label: 'Navegación',
+    icon: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+    members: [
+      'ac-tabs-basic',
+      'ac-expandable-basic',
+      'ac-expandable-step',
+      'ac-expandable-multistep',
+    ],
+  },
+  {
+    id: 'informacion',
+    label: 'Información',
+    icon: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',
+    members: [
+      'ac-avatar-basic',
+      'ac-badge-basic',
+      'ac-card-basic',
+      'ac-profile-card-basic',
+      'ac-divider-basic',
+      'ac-tooltip-basic',
+    ],
+  },
+  {
+    id: 'feedback',
+    label: 'Feedback',
+    icon: '<path d="M5 5h14a1 1 0 011 1v9a1 1 0 01-1 1h-8l-4 3.5V16H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>',
+    members: [
+      'ac-notification-basic',
+      'ac-toast-basic',
+      'ac-progress-basic',
+      'ac-spinner-basic',
+      'ac-modal-basic',
+    ],
+  },
+  {
+    id: FALLBACK_GROUP_ID,
+    label: 'Otros',
+    icon: '<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+    members: ['ac-transition-container'],
+  },
+];
+
+// `summary` va en la sidebar (corto); `description` en la cabecera del
+// componente (una oración).
+export const COMPONENT_META = {
+  'ac-avatar-basic': {
+    icon: '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>',
+    summary: 'Avatar de usuario',
+    description: 'Avatar para representar a una persona o cuenta.',
+  },
+  'ac-badge-basic': {
+    icon: '<path d="M12 2l2.5 5 5.5.5-4 4 1 5.5L12 14.5 7 17l1-5.5-4-4L9.5 7z"/>',
+    summary: 'Indicadores y estados',
+    description: 'Etiqueta compacta para indicar un estado, sin interacción.',
+  },
+  'ac-button-basic': {
+    icon: '<rect x="3" y="8" width="18" height="8" rx="4"/>',
+    summary: 'Botón básico',
+    description: 'Botón para disparar acciones, con variantes por ambiente.',
+  },
+  'ac-card-basic': {
+    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/>',
+    summary: 'Tarjeta de contenido',
+    description: 'Superficie para agrupar contenido relacionado.',
+  },
+  'ac-checkbox-basic': {
+    icon: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/>',
+    summary: 'Casilla de verificación',
+    description: 'Casilla para marcar o desmarcar una opción.',
+  },
+  'ac-divider-basic': {
+    icon: '<path d="M4 12h16"/><path d="M8 6h8M8 18h8"/>',
+    summary: 'Separador',
+    description: 'Divisor de contenido horizontal o vertical.',
+  },
+  'ac-expandable-basic': {
+    icon: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 10l4 4 4-4"/>',
+    summary: 'Panel desplegable',
+    description: 'Panel que muestra u oculta su contenido.',
+  },
+  'ac-expandable-multistep': {
+    icon: '<circle cx="6" cy="6" r="1.6"/><circle cx="6" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><path d="M11 6h10M11 12h10M11 18h10"/>',
+    summary: 'Pasos en secuencia',
+    description: 'Secuencia de pasos desplegables, uno abierto a la vez.',
+  },
+  'ac-expandable-step': {
+    icon: '<circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>',
+    summary: 'Paso desplegable',
+    description: 'Paso individual desplegable de un flujo por etapas.',
+  },
+  'ac-icon-basic': {
+    icon: '<circle cx="7.5" cy="7.5" r="3.5"/><rect x="13.5" y="4" width="7" height="7" rx="1.5"/><path d="M12 20l-4.5-6.5h9z"/>',
+    summary: 'Set de íconos',
+    description: 'Set propio de íconos SVG, decorativos o con etiqueta accesible.',
+  },
+  'ac-icon-button-basic': {
+    icon: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/>',
+    summary: 'Botón con ícono',
+    description: 'Botón solo-ícono para acciones rápidas, siempre con nombre accesible.',
+  },
+  'ac-input-basic': {
+    icon: '<rect x="3" y="9" width="18" height="6" rx="1"/><path d="M8 9v6"/>',
+    summary: 'Campo de texto',
+    description: 'Campo de texto de una sola línea.',
+  },
+  'ac-link-basic': {
+    icon: '<path d="M8 12L5.5 14.5a3 3 0 104.2 4.2L12 16"/><path d="M16 12l2.5-2.5a3 3 0 10-4.2-4.2L12 8"/><path d="M9.5 14.5l5-5"/>',
+    summary: 'Enlace',
+    description: 'Enlace de navegación con variantes por ambiente.',
+  },
+  'ac-modal-basic': {
+    icon: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/>',
+    summary: 'Diálogo modal',
+    description: 'Diálogo que se superpone a la página hasta que se cierra.',
+  },
+  'ac-notification-basic': {
+    icon: '<path d="M12 4a5 5 0 00-5 5v4l-2 3h14l-2-3V9a5 5 0 00-5-5z"/><path d="M10 19a2 2 0 004 0"/>',
+    summary: 'Aviso persistente',
+    description: 'Aviso en línea que permanece visible hasta que se cierra.',
+  },
+  'ac-profile-card-basic': {
+    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5"/><path d="M14 10h5M14 14h5"/>',
+    summary: 'Tarjeta de perfil',
+    description: 'Tarjeta con los datos principales de una persona.',
+  },
+  'ac-progress-basic': {
+    icon: '<rect x="3" y="10" width="18" height="4" rx="2"/><path d="M5.5 12h6"/>',
+    summary: 'Barra de progreso',
+    description: 'Barra de progreso determinada o indeterminada.',
+  },
+  'ac-radio-basic': {
+    icon: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+    summary: 'Botón de opción',
+    description: 'Opción excluyente dentro de un grupo.',
+  },
+  'ac-select-basic': {
+    icon: '<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M15 11l2 2 2-2"/>',
+    summary: 'Lista desplegable',
+    description: 'Lista desplegable para elegir una opción.',
+  },
+  'ac-slider-basic': {
+    icon: '<path d="M4 12h16"/><circle cx="14" cy="12" r="3"/>',
+    summary: 'Control deslizante',
+    description: 'Control deslizante para elegir un valor dentro de un rango.',
+  },
+  'ac-spinner-basic': {
+    icon: '<path d="M12 3a9 9 0 110 18"/>',
+    summary: 'Indicador de carga',
+    description: 'Indicador de carga para esperas sin duración conocida.',
+  },
+  'ac-switch-basic': {
+    icon: '<rect x="3" y="8" width="18" height="8" rx="4"/><circle cx="15" cy="12" r="3"/>',
+    summary: 'Interruptor',
+    description: 'Interruptor para activar o desactivar una opción.',
+  },
+  'ac-tabs-basic': {
+    icon: '<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 7l4-3h4l2 3"/>',
+    summary: 'Pestañas',
+    description: 'Pestañas para alternar entre secciones de contenido.',
+  },
+  'ac-text-basic': {
+    icon: '<path d="M5 5h14M12 5v14"/>',
+    summary: 'Texto traducible',
+    description: 'Texto que se traduce según el idioma activo.',
+  },
+  'ac-textarea-basic': {
+    icon: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M7 9h10M7 13h7"/>',
+    summary: 'Área de texto',
+    description: 'Campo de texto de varias líneas.',
+  },
+  'ac-toast-basic': {
+    icon: '<rect x="5" y="6" width="16" height="7" rx="2"/><path d="M5 17h10"/>',
+    summary: 'Notificación temporal',
+    description: 'Notificación temporal que aparece sobre la página y se cierra sola.',
+  },
+  'ac-tooltip-basic': {
+    icon: '<path d="M5 5h14a1 1 0 011 1v8a1 1 0 01-1 1h-5l-2 3-2-3H5a1 1 0 01-1-1V6a1 1 0 011-1z"/>',
+    summary: 'Texto de ayuda flotante',
+    description: 'Texto de ayuda breve que aparece junto a un elemento.',
+  },
+  'ac-transition-container': {
+    icon: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 8l4 4-4 4"/>',
+    summary: 'Transición a pantalla completa',
+    description: 'Contenedor que entra deslizándose a pantalla completa.',
+  },
+};

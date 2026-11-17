@@ -552,3 +552,195 @@ suite('ac-demo-content: code editor view', () => {
     expect([block.getAttribute('role'), block.tabIndex]).to.deep.equal(['region', 0]);
   });
 });
+
+suite('ac-demo-content: embedded mode', () => {
+  test('hides the header when `embedded` is set', async () => {
+    const el = await fixture(
+      html`<ac-demo-content embedded name="ac-button-basic"></ac-demo-content>`,
+    );
+    expect(el.shadowRoot.querySelector('.ac-demo-content__header')).to.not.exist;
+  });
+
+  test('hides the toolbar when `embedded` is set', async () => {
+    const el = await fixture(html`<ac-demo-content embedded></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__toolbar')).to.not.exist;
+  });
+
+  test('keeps the stage when `embedded` is set', async () => {
+    const el = await fixture(html`<ac-demo-content embedded></ac-demo-content>`);
+    expect(el.shadowRoot.querySelector('.ac-demo-content__stage .ac-demo-content__device-frame')).to
+      .exist;
+  });
+
+  test('reflects `embedded` as an attribute', async () => {
+    const el = await fixture(html`<ac-demo-content></ac-demo-content>`);
+    el.embedded = true;
+    await el.updateComplete;
+    expect(el.hasAttribute('embedded')).to.be.true;
+  });
+
+  test('still opens the events panel through `openEventsPanel()` when embedded', async () => {
+    const el = await fixture(
+      html`<ac-demo-content embedded events="ac-test-demo-event"></ac-demo-content>`,
+    );
+    el.openEventsPanel();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.exist;
+  });
+});
+
+suite('ac-demo-content: public API', () => {
+  const renderTwoCases = () =>
+    fixture(html`
+      <ac-demo-content embedded language="es-PE, en-EN" ambients="primary, secondary" dark-mode>
+        <ac-demo-case header="Uno"
+          ><ac-demo-sample-button>Click</ac-demo-sample-button></ac-demo-case
+        >
+        <ac-demo-case></ac-demo-case>
+      </ac-demo-content>
+    `);
+
+  teardown(() => {
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  test('`selectCase()` activates the chosen case', async () => {
+    const el = await renderTwoCases();
+    el.selectCase(1);
+    expect(el.querySelectorAll('ac-demo-case')[1].active).to.be.true;
+  });
+
+  test('`selectCase()` ignores an out-of-range index', async () => {
+    const el = await renderTwoCases();
+    el.selectCase(5);
+    expect(el.demoState.activeCase).to.equal(0);
+  });
+
+  test('`selectLanguage()` switches the active language', async () => {
+    const el = await renderTwoCases();
+    el.selectLanguage(1);
+    expect(el.demoState.activeLanguage).to.equal(1);
+  });
+
+  test('`selectLanguage()` ignores an invalid index', async () => {
+    const el = await renderTwoCases();
+    el.selectLanguage(2);
+    expect(el.demoState.activeLanguage).to.equal(0);
+  });
+
+  test('`selectLanguage()` is ignored without exactly 2 languages', async () => {
+    const el = await fixture(html`<ac-demo-content embedded></ac-demo-content>`);
+    el.selectLanguage(1);
+    expect(el.demoState.activeLanguage).to.equal(0);
+  });
+
+  test('`selectAmbient()` sets `ambient` on components in the active case', async () => {
+    const el = await renderTwoCases();
+    el.selectAmbient('secondary');
+    expect(el.querySelector('ac-demo-sample-button').ambient).to.equal('secondary');
+  });
+
+  test('`selectTheme()` sets data-theme on <html>', async () => {
+    const el = await renderTwoCases();
+    el.selectTheme('dark');
+    expect(document.documentElement.getAttribute('data-theme')).to.equal('dark');
+  });
+
+  test('`selectTheme()` ignores an unknown theme', async () => {
+    const el = await renderTwoCases();
+    el.selectTheme('sepia');
+    expect(el.demoState.theme).to.equal('light');
+  });
+
+  test('`selectDevice()` updates the device frame', async () => {
+    const el = await renderTwoCases();
+    el.selectDevice('tablet');
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__device-frame--tablet')).to.exist;
+  });
+
+  test('`selectDevice()` ignores an unknown device', async () => {
+    const el = await renderTwoCases();
+    el.selectDevice('watch');
+    expect(el.demoState.device).to.equal('mobile');
+  });
+
+  test('`selectViewMode()` switches to the code view', async () => {
+    const el = await renderTwoCases();
+    el.selectViewMode('code');
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__code-block')).to.exist;
+  });
+
+  test('`selectViewMode()` ignores an unknown mode', async () => {
+    const el = await renderTwoCases();
+    el.selectViewMode('split');
+    expect(el.demoState.viewMode).to.equal('visual');
+  });
+
+  test('`closeEventsPanel()` closes the events panel', async () => {
+    const el = await fixture(
+      html`<ac-demo-content embedded events="ac-test-demo-event"></ac-demo-content>`,
+    );
+    el.openEventsPanel();
+    await el.updateComplete;
+    el.closeEventsPanel();
+    await el.updateComplete;
+    expect(el.shadowRoot.querySelector('.ac-demo-content__modal')).to.not.exist;
+  });
+
+  test('`demoState` lists the cases with the `Caso N` fallback header', async () => {
+    const el = await renderTwoCases();
+    expect(el.demoState.cases).to.deep.equal([
+      { index: 0, header: 'Uno' },
+      { index: 1, header: 'Caso 2' },
+    ]);
+  });
+
+  test('`demoState` lists the languages', async () => {
+    const el = await renderTwoCases();
+    expect(el.demoState.languages).to.deep.equal(['es-PE', 'en-EN']);
+  });
+
+  test('`demoState` lists the ambients', async () => {
+    const el = await renderTwoCases();
+    expect(el.demoState.ambients).to.deep.equal(['primary', 'secondary']);
+  });
+
+  test('`demoState` lists the device presets', async () => {
+    const el = await renderTwoCases();
+    expect(el.demoState.devices.map(device => device.key)).to.deep.equal([
+      'mobile',
+      'tablet',
+      'desktop',
+    ]);
+  });
+
+  test('`demoState` counts the logged events', async () => {
+    const el = await fixture(
+      html`<ac-demo-content embedded events="ac-test-state-event"></ac-demo-content>`,
+    );
+    document.dispatchEvent(new CustomEvent('ac-test-state-event', { detail: {} }));
+    expect(el.demoState.eventCount).to.equal(1);
+  });
+
+  test('dispatches `ac-demo-content-state-change` when the device changes', async () => {
+    const el = await renderTwoCases();
+    let detail;
+    el.addEventListener('ac-demo-content-state-change', event => {
+      detail = event.detail;
+    });
+    el.selectDevice('desktop');
+    await el.updateComplete;
+    expect(detail.device).to.equal('desktop');
+  });
+
+  test('`ac-demo-content-state-change` bubbles and is composed', async () => {
+    const el = await renderTwoCases();
+    let event;
+    document.addEventListener('ac-demo-content-state-change', e => (event = e), { once: true });
+    el.selectViewMode('code');
+    await el.updateComplete;
+    expect([event.bubbles, event.composed]).to.deep.equal([true, true]);
+  });
+});
