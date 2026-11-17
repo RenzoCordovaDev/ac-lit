@@ -54,6 +54,7 @@ const skeletonEl = document.getElementById('catalog-skeleton');
 const skeletonFrameEl = document.getElementById('catalog-skeleton-frame');
 const emptyStateEl = document.getElementById('catalog-empty');
 const examplesEl = document.getElementById('catalog-examples');
+const codeListEl = document.getElementById('catalog-code-list');
 
 const apiEl = document.getElementById('catalog-api');
 const apiPropsContentEl = document.getElementById('catalog-api-props-content');
@@ -328,6 +329,11 @@ frameEl.addEventListener('load', async () => {
 
   skeletonEl.hidden = true;
   frameEl.hidden = false;
+
+  // Si ya se había entrado a la pestaña Código antes de que el iframe
+  // terminara de cargar, `renderCodeBlocks()` quedó esperando `demo` -- se
+  // vuelve a pedir ahora que ya está disponible.
+  if (stageEl.dataset.tab === 'code') renderCodeBlocks();
 });
 
 function segmented({ control, label, options, onSelect }) {
@@ -568,6 +574,96 @@ function renderApiInfo(id) {
   }
 }
 
+/* Código: un bloque independiente por cada ac-demo-case del componente
+   activo, con su propio botón de copiado -- en vez del único visor de
+   código de ac-demo-content (que solo muestra el caso activo en la Demo).
+   El fuente de cada caso se trae con fetch() directo al archivo `href` del
+   <ac-demo-case> (mismo origen que el iframe, ya que todo el catálogo
+   estático vive bajo la misma raíz) y se cachea por componente. */
+const COPY_ICON =
+  '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>';
+const codeSourceCache = new Map();
+
+function loadCodeSources(component) {
+  if (!codeSourceCache.has(component.id)) {
+    codeSourceCache.set(
+      component.id,
+      (async () => {
+        if (!demo) return [];
+        const cases = [...demo.querySelectorAll(':scope > ac-demo-case')];
+        return Promise.all(
+          cases.map(async (caseEl, index) => {
+            const header = caseEl.getAttribute('header') || `Caso ${index + 1}`;
+            const href = caseEl.getAttribute('href');
+            if (!href) return { header, source: '' };
+            try {
+              const url = new URL(href, frameEl.src).href;
+              const response = await frameEl.contentWindow.fetch(url);
+              return { header, source: response.ok ? (await response.text()).trim() : '' };
+            } catch {
+              return { header, source: '' };
+            }
+          }),
+        );
+      })(),
+    );
+  }
+  return codeSourceCache.get(component.id);
+}
+
+async function copyCode(source, button) {
+  if (!source) return;
+  try {
+    await navigator.clipboard.writeText(source);
+  } catch {
+    return;
+  }
+  const label = button.querySelector('.catalog__code-copy-label');
+  label.textContent = 'Copiado';
+  clearTimeout(button._copyTimer);
+  button._copyTimer = setTimeout(() => {
+    label.textContent = 'Copiar';
+  }, COPIED_FEEDBACK_MS);
+}
+
+async function renderCodeBlocks() {
+  const component = components.find(c => c.id === activeId);
+  if (!component) return;
+  const requestedId = activeId;
+  codeListEl.replaceChildren(create('p', 'catalog__code-empty', 'Cargando código…'));
+  if (!demo) return; // se vuelve a pedir cuando el iframe termine de cargar (ver más abajo)
+
+  const entries = await loadCodeSources(component);
+  // Si mientras cargaba se cambió de componente o de pestaña, este resultado ya no aplica.
+  if (requestedId !== activeId || stageEl.dataset.tab !== 'code') return;
+
+  if (entries.length === 0) {
+    codeListEl.replaceChildren(
+      create('p', 'catalog__code-empty', 'No se encontró código fuente para este componente.'),
+    );
+    return;
+  }
+
+  codeListEl.replaceChildren(
+    ...entries.map(entry => {
+      const card = create('div', 'catalog__terminal catalog__code-card');
+      const head = create('div', 'catalog__terminal-titlebar catalog__code-card-head');
+      head.append(create('span', 'catalog__code-card-title', entry.header));
+      const copyBtn = create('button', 'catalog__code-copy');
+      copyBtn.type = 'button';
+      copyBtn.innerHTML = `${icon(COPY_ICON, 14)}<span class="catalog__code-copy-label">Copiar</span>`;
+      copyBtn.addEventListener('click', () => copyCode(entry.source, copyBtn));
+      head.append(copyBtn);
+      card.append(head);
+
+      const pre = create('pre', 'catalog__terminal-body catalog__code-card-pre');
+      pre.append(create('code', '', entry.source || '(sin contenido)'));
+      card.append(pre);
+      return card;
+    }),
+  );
+}
+
 /* Pestañas: Demo y Código son las dos vistas de la demo embebida; Ejemplos
    lista sus casos. */
 
@@ -579,7 +675,8 @@ function setTab(tab) {
   }
   stageEl.dataset.tab = tab;
   stageEl.setAttribute('aria-labelledby', `catalog-tab-${tab}`);
-  if (tab !== 'examples') demo?.selectViewMode(tab === 'code' ? 'code' : 'visual');
+  if (tab === 'demo') demo?.selectViewMode('visual');
+  if (tab === 'code') renderCodeBlocks();
   apiEl.hidden = tab !== 'code';
 }
 
@@ -642,6 +739,27 @@ commandsDialog.addEventListener('click', event => {
   // clickear el backdrop real.
   if (event.target === commandsDialog) commandsDialog.close();
 });
+
+/* Cada comando del modal tiene su propio botón de copiado (antes era un
+   único botón para todo el bloque de la terminal). */
+for (const button of commandsDialog.querySelectorAll('.catalog__terminal-copy')) {
+  button.innerHTML = icon(COPY_ICON, 13);
+  button.addEventListener('click', async () => {
+    const command = button.dataset.command;
+    if (!command) return;
+    try {
+      await navigator.clipboard.writeText(command);
+    } catch {
+      return;
+    }
+    const original = button.innerHTML;
+    button.innerHTML = icon(CHECK_ICON, 13);
+    clearTimeout(button._copyTimer);
+    button._copyTimer = setTimeout(() => {
+      button.innerHTML = original;
+    }, COPIED_FEEDBACK_MS);
+  });
+}
 
 /* Home: categorías con el conteo real de componentes de cada grupo (mismos
    GROUPS que arma la sidebar) -- lleva directo al primer componente del

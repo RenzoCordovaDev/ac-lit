@@ -55,20 +55,13 @@
         <kbd class="catalog__search-kbd" id="catalog-search-kbd" aria-hidden="true">Ctrl K</kbd>
       </label>
 
-      <nav class="catalog__nav" aria-label="Componentes por grupo">
-        <div id="catalog-groups" aria-live="polite"></div>
-      </nav>
-
       <div class="catalog__sidebar-shortcuts">
         <button type="button" class="catalog__sidebar-shortcut" id="catalog-sidebar-home">
-          <span class="catalog__sidebar-shortcut-text">
-            <span class="catalog__sidebar-shortcut-title">Inicio</span>
-            <span class="catalog__sidebar-shortcut-subtitle">Bienvenida del catálogo</span>
-          </span>
           <svg
+            class="catalog__sidebar-shortcut-icon"
             viewBox="0 0 24 24"
-            width="16"
-            height="16"
+            width="18"
+            height="18"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -76,8 +69,10 @@
             stroke-linejoin="round"
             aria-hidden="true"
           >
-            <path d="M9 6l6 6-6 6" />
+            <path d="M4 11.5L12 4l8 7.5" />
+            <path d="M6 10v9a1 1 0 0 0 1 1h3v-5h4v5h3a1 1 0 0 0 1-1v-9" />
           </svg>
+          <span class="catalog__sidebar-shortcut-title">Inicio</span>
         </button>
         <button
           type="button"
@@ -85,14 +80,11 @@
           id="catalog-sidebar-commands"
           aria-haspopup="dialog"
         >
-          <span class="catalog__sidebar-shortcut-text">
-            <span class="catalog__sidebar-shortcut-title">Comandos</span>
-            <span class="catalog__sidebar-shortcut-subtitle">Referencia rápida del CLI</span>
-          </span>
           <svg
+            class="catalog__sidebar-shortcut-icon"
             viewBox="0 0 24 24"
-            width="16"
-            height="16"
+            width="18"
+            height="18"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -102,8 +94,13 @@
           >
             <path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 6l-2 12" />
           </svg>
+          <span class="catalog__sidebar-shortcut-title">Comandos</span>
         </button>
       </div>
+
+      <nav class="catalog__nav" aria-label="Componentes por grupo">
+        <div id="catalog-groups" aria-live="polite"></div>
+      </nav>
     </aside>
 
     <dialog
@@ -141,35 +138,75 @@
             <span class="catalog__terminal-filename">terminal — aclit</span>
           </div>
           <div class="catalog__terminal-body">
-            <p class="catalog__terminal-line">
-              <span class="catalog__terminal-prompt">$</span>
-              <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
-            </p>
-            <p class="catalog__terminal-line">
-              <span class="catalog__terminal-prompt">$</span>
-              <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
-            </p>
+            <div class="catalog__terminal-command">
+              <p class="catalog__terminal-line">
+                <span class="catalog__terminal-prompt">$</span>
+                <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
+              </p>
+              <button
+                type="button"
+                class="catalog__terminal-copy"
+                data-command="npm install -g @ac-base/cli"
+                aria-label="Copiar comando: npm install -g @ac-base/cli"
+              ></button>
+            </div>
+            <div class="catalog__terminal-command">
+              <p class="catalog__terminal-line">
+                <span class="catalog__terminal-prompt">$</span>
+                <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
+              </p>
+              <button
+                type="button"
+                class="catalog__terminal-copy"
+                data-command="aclit component:create ac-mi-componente"
+                aria-label="Copiar comando: aclit component:create ac-mi-componente"
+              ></button>
+            </div>
             <p class="catalog__terminal-line catalog__terminal-line--comment">
               # Componente creado en ./ac-mi-componente
             </p>
-            <p class="catalog__terminal-line">
-              <span class="catalog__terminal-prompt">$</span>
-              <span class="catalog__terminal-cmd">aclit component:serve</span>
-            </p>
+            <div class="catalog__terminal-command">
+              <p class="catalog__terminal-line">
+                <span class="catalog__terminal-prompt">$</span>
+                <span class="catalog__terminal-cmd">aclit component:serve</span>
+              </p>
+              <button
+                type="button"
+                class="catalog__terminal-copy"
+                data-command="aclit component:serve"
+                aria-label="Copiar comando: aclit component:serve"
+              ></button>
+            </div>
             <p class="catalog__terminal-line catalog__terminal-line--comment">
               # levanta la demo con Vite en http://localhost:5173
             </p>
-            <p class="catalog__terminal-line">
-              <span class="catalog__terminal-prompt">$</span>
-              <span class="catalog__terminal-cmd">aclit component:build</span>
-            </p>
+            <div class="catalog__terminal-command">
+              <p class="catalog__terminal-line">
+                <span class="catalog__terminal-prompt">$</span>
+                <span class="catalog__terminal-cmd">aclit component:build</span>
+              </p>
+              <button
+                type="button"
+                class="catalog__terminal-copy"
+                data-command="aclit component:build"
+                aria-label="Copiar comando: aclit component:build"
+              ></button>
+            </div>
             <p class="catalog__terminal-line catalog__terminal-line--comment">
               # compila el componente a ./dist
             </p>
-            <p class="catalog__terminal-line">
-              <span class="catalog__terminal-prompt">$</span>
-              <span class="catalog__terminal-cmd">aclit help</span>
-            </p>
+            <div class="catalog__terminal-command">
+              <p class="catalog__terminal-line">
+                <span class="catalog__terminal-prompt">$</span>
+                <span class="catalog__terminal-cmd">aclit help</span>
+              </p>
+              <button
+                type="button"
+                class="catalog__terminal-copy"
+                data-command="aclit help"
+                aria-label="Copiar comando: aclit help"
+              ></button>
+            </div>
             <p class="catalog__terminal-line catalog__terminal-line--comment">
               # lista todos los comandos disponibles
             </p>
@@ -809,6 +846,7 @@
             hidden
           ></iframe>
           <ul class="catalog__examples" id="catalog-examples"></ul>
+          <div class="catalog__code-list" id="catalog-code-list"></div>
         </div>
 
         <div class="catalog__api" id="catalog-api" hidden>

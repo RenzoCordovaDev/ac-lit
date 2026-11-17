@@ -88,13 +88,15 @@ body[data-view='home'] .catalog__menu-button {
   outline-offset: 2px;
 }
 
-/* Sidebar -- paleta FIJA (verde oscuro en ambos temas, como la marca), igual
-   criterio que el terminal del Home: no depende de data-theme. */
+/* Sidebar -- vuelve a los tokens neutros del tema (igual criterio que el
+   resto del catálogo) en vez de un verde sólido fijo, para bajar la
+   saturación de color general de la página. El acento verde queda
+   reservado para el logo, el tech badge y los estados activos/CTA. */
 .catalog__sidebar {
-  --sidebar-text: #ecfdf5;
-  --sidebar-subtext: #a7f3d0;
-  --sidebar-field: #0b6b52;
-  --sidebar-field-border: #2f8f74;
+  --sidebar-text: var(--color-text, #bcbec4);
+  --sidebar-subtext: var(--catalog-subtext);
+  --sidebar-field: var(--color-surface, #2b2b2b);
+  --sidebar-field-border: var(--color-muted, #313335);
 
   display: flex;
   flex-direction: column;
@@ -102,7 +104,8 @@ body[data-view='home'] .catalog__menu-button {
   min-height: 0;
   padding: var(--space-5, 1.25rem) var(--space-4, 1rem);
   color: var(--sidebar-text);
-  background: linear-gradient(165deg, #065f46 0%, #064e3b 45%, #022c22 100%);
+  background: var(--color-surface, #2b2b2b);
+  border-right: 1px solid var(--color-muted, #313335);
 }
 
 .catalog__sidebar :focus-visible {
@@ -164,8 +167,6 @@ body[data-view='home'] .catalog__menu-button {
 
 .catalog__sidebar .catalog__tech-badge {
   align-self: center;
-  background: #ecfdf5;
-  color: #064e3b;
 }
 
 .catalog__search-field {
@@ -373,45 +374,39 @@ body[data-view='home'] .catalog__menu-button {
 }
 
 .catalog__sidebar-shortcuts {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-2, 0.5rem);
 }
 
 .catalog__sidebar-shortcut {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-1, 0.3rem);
   width: 100%;
   font: inherit;
-  text-align: left;
+  text-align: center;
   color: var(--sidebar-text);
   background: var(--sidebar-field);
   border: 1px solid var(--sidebar-field-border);
   border-radius: var(--radius-md, 1rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  padding: var(--space-3, 0.75rem) var(--space-2, 0.5rem);
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
 
 .catalog__sidebar-shortcut:hover {
-  border-color: var(--sidebar-text);
+  border-color: var(--catalog-accent);
 }
 
-.catalog__sidebar-shortcut-text {
-  display: flex;
-  flex-direction: column;
+.catalog__sidebar-shortcut-icon {
+  color: var(--catalog-accent);
 }
 
 .catalog__sidebar-shortcut-title {
-  font-size: var(--font-size-sm, 0.85rem);
-  font-weight: var(--font-weight-bold, 700);
-}
-
-.catalog__sidebar-shortcut-subtitle {
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--sidebar-subtext);
+  font-weight: var(--font-weight-bold, 700);
 }
 
 .catalog__backdrop {
@@ -1045,6 +1040,42 @@ body[data-view='home'] .catalog__menu-button {
   font-weight: var(--font-weight-bold, 700);
 }
 
+/* Cada comando del modal "Comandos del CLI" tiene su propia fila con botón
+   de copiado individual (antes solo existía un único botón para todo el
+   bloque de la terminal). */
+.catalog__terminal-command {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__terminal-command .catalog__terminal-line {
+  margin: 0;
+}
+
+.catalog__terminal-copy {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--term-text);
+  background: transparent;
+  border: 1px solid var(--term-border);
+  border-radius: var(--radius-sm, 0.4rem);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.catalog__terminal-copy:hover {
+  border-color: var(--catalog-accent);
+  color: var(--catalog-accent);
+}
+
 /* Home: links a documentación externa */
 .catalog__home-links {
   display: flex;
@@ -1344,7 +1375,8 @@ body[data-view='home'] .catalog__menu-button {
   border-radius: var(--radius-lg, 1.5rem);
 }
 
-.catalog__stage[data-tab='examples'] {
+.catalog__stage[data-tab='examples'],
+.catalog__stage[data-tab='code'] {
   flex-basis: auto;
 }
 
@@ -1362,7 +1394,10 @@ body[data-view='home'] .catalog__menu-button {
 
 .catalog__stage[data-tab='examples'] .catalog__frame,
 .catalog__stage[data-tab='examples'] .catalog__skeleton,
-.catalog__stage:not([data-tab='examples']) .catalog__examples {
+.catalog__stage[data-tab='code'] .catalog__frame,
+.catalog__stage[data-tab='code'] .catalog__skeleton,
+.catalog__stage:not([data-tab='examples']) .catalog__examples,
+.catalog__stage:not([data-tab='code']) .catalog__code-list {
   display: none;
 }
 
@@ -1477,6 +1512,62 @@ body[data-view='home'] .catalog__menu-button {
 .catalog__example[aria-current='true'] .catalog__example-icon {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* Código: un bloque independiente por cada ejemplo (ac-demo-case), cada uno
+   con su propio botón de copiado -- en vez de un único visor de código
+   sincronizado con la demo activa. Reutiliza el look del terminal del Home
+   (paleta fija oscura) para no introducir una superficie de color nueva. */
+.catalog__code-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-5, 1.25rem);
+}
+
+.catalog__code-card-head {
+  justify-content: space-between;
+}
+
+.catalog__code-card-title {
+  font-weight: var(--font-weight-bold, 700);
+  overflow-wrap: anywhere;
+}
+
+.catalog__code-copy {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.3rem);
+  font: inherit;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--term-text);
+  background: transparent;
+  border: 1px solid var(--term-border);
+  border-radius: var(--radius-sm, 0.5rem);
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__code-copy:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__code-card-pre {
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--term-text);
+}
+
+.catalog__code-empty {
+  margin: var(--space-5, 1.25rem);
+  color: var(--catalog-subtext);
+  font-size: var(--font-size-sm, 0.85rem);
 }
 
 /* Propiedades/Eventos: dos expandibles debajo del stage, solo visibles en la
