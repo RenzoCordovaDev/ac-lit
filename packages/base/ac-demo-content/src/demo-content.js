@@ -14,6 +14,17 @@ const DEVICE_PRESETS = [
   { key: 'desktop', label: 'Desktop', width: 1280, height: 800 },
 ];
 const MAX_EVENT_LOG_ENTRIES = 50;
+const THEMES = ['light', 'dark'];
+const VIEW_MODES = ['visual', 'code'];
+const STATE_PROPERTIES = [
+  '_activeCaseIndex',
+  '_activeDevice',
+  '_viewMode',
+  '_langIndex',
+  '_theme',
+  '_eventLog',
+  'embedded',
+];
 const COPIED_FEEDBACK_MS = 1600;
 
 const COPY_ICON = html`<svg
@@ -108,6 +119,9 @@ function renderToken(token) {
  * y ALTURA fijos por preset — el contenido scrollea adentro, no empuja el
  * marco), vista visual/código (código muestra el HTML fuente del caso
  * activo) y un panel lateral de eventos con el detalle de cada uno.
+ *
+ * Con `embedded` no dibuja cabecera ni toolbar: quien lo incrusta maneja los
+ * mismos controles desde afuera con los métodos `select*()` y lee `demoState`.
  */
 export class DemoContent extends ComponentMixin(LitElement) {
   static get is() {
@@ -128,6 +142,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       ambients: { type: String },
       events: { type: String },
       darkMode: { type: Boolean, reflect: true, attribute: 'dark-mode' },
+      embedded: { type: Boolean, reflect: true },
       _activeCaseIndex: { state: true },
       _activeDevice: { state: true },
       _viewMode: { state: true },
@@ -149,6 +164,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this.ambients = '';
     this.events = '';
     this.darkMode = false;
+    this.embedded = false;
     this._activeCaseIndex = 0;
     this._activeDevice = 'mobile';
     this._viewMode = 'visual';
@@ -179,6 +195,26 @@ export class DemoContent extends ComponentMixin(LitElement) {
     return Array.from(this.querySelectorAll(':scope > ac-demo-case'));
   }
 
+  get demoState() {
+    return {
+      cases: this._cases.map((caseEl, index) => ({
+        index,
+        header: caseEl.header || `Caso ${index + 1}`,
+      })),
+      activeCase: this._activeCaseIndex,
+      languages: this._languages,
+      activeLanguage: this._langIndex,
+      ambients: this._ambientOptions,
+      darkMode: this.darkMode,
+      theme: this._theme,
+      devices: DEVICE_PRESETS.map(({ key, label }) => ({ key, label })),
+      device: this._activeDevice,
+      viewMode: this._viewMode,
+      eventNames: this._eventNames,
+      eventCount: this._eventLog.length,
+    };
+  }
+
   connectedCallback() {
     super.connectedCallback();
     for (const name of this._eventNames) {
@@ -205,6 +241,18 @@ export class DemoContent extends ComponentMixin(LitElement) {
     }
   }
 
+  updated(changedProperties) {
+    if (STATE_PROPERTIES.some(property => changedProperties.has(property))) {
+      this.dispatchEvent(
+        new CustomEvent('ac-demo-content-state-change', {
+          detail: this.demoState,
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
+  }
+
   _onEvent(event) {
     const entry = { time: new Date().toLocaleTimeString(), name: event.type, detail: event.detail };
     this._eventLog = [entry, ...this._eventLog].slice(0, MAX_EVENT_LOG_ENTRIES);
@@ -218,17 +266,18 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this._activeCaseIndex = index;
   }
 
-  _onCaseChange(event) {
-    this._activateCase(Number(event.target.value));
+  selectCase(index) {
+    if (!Number.isInteger(index) || index < 0 || index >= this._cases.length) return;
+    this._activateCase(index);
   }
 
-  _onLanguageSelect(index) {
+  selectLanguage(index) {
+    if (this._languages.length !== 2 || (index !== 0 && index !== 1)) return;
     this._langIndex = index;
     setGlobalLocale(this._languages[index]);
   }
 
-  _onAmbientChange(event) {
-    const value = event.target.value;
+  selectAmbient(value) {
     const activeCase = this._cases[this._activeCaseIndex];
     if (!activeCase) return;
 
@@ -237,6 +286,44 @@ export class DemoContent extends ComponentMixin(LitElement) {
         el.ambient = value;
       }
     }
+  }
+
+  selectTheme(theme) {
+    if (!THEMES.includes(theme)) return;
+    this._theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  selectDevice(key) {
+    if (!DEVICE_PRESETS.some(preset => preset.key === key)) return;
+    this._activeDevice = key;
+  }
+
+  selectViewMode(mode) {
+    if (!VIEW_MODES.includes(mode)) return;
+    this._viewMode = mode;
+  }
+
+  openEventsPanel() {
+    this._eventsPanelOpen = true;
+    document.addEventListener('keydown', this._onPanelKeydown);
+  }
+
+  closeEventsPanel() {
+    this._eventsPanelOpen = false;
+    document.removeEventListener('keydown', this._onPanelKeydown);
+  }
+
+  _onCaseChange(event) {
+    this.selectCase(Number(event.target.value));
+  }
+
+  _onLanguageSelect(index) {
+    this.selectLanguage(index);
+  }
+
+  _onAmbientChange(event) {
+    this.selectAmbient(event.target.value);
   }
 
   // Un modal/toast/transition "contenido" de un caso renuncia a la capa
@@ -265,16 +352,15 @@ export class DemoContent extends ComponentMixin(LitElement) {
   }
 
   _onThemeSelect(theme) {
-    this._theme = theme;
-    document.documentElement.setAttribute('data-theme', theme);
+    this.selectTheme(theme);
   }
 
   _onDeviceSelect(key) {
-    this._activeDevice = key;
+    this.selectDevice(key);
   }
 
   _onViewModeSelect(mode) {
-    this._viewMode = mode;
+    this.selectViewMode(mode);
   }
 
   async _onInstallCommandClick(command) {
@@ -296,18 +382,16 @@ export class DemoContent extends ComponentMixin(LitElement) {
   }
 
   _onEventsButtonClick() {
-    this._eventsPanelOpen = true;
-    document.addEventListener('keydown', this._onPanelKeydown);
+    this.openEventsPanel();
   }
 
   _onEventsPanelClose() {
-    this._eventsPanelOpen = false;
-    document.removeEventListener('keydown', this._onPanelKeydown);
+    this.closeEventsPanel();
   }
 
   _onPanelKeydown(event) {
     if (event.key === 'Escape') {
-      this._onEventsPanelClose();
+      this.closeEventsPanel();
     }
   }
 
@@ -316,8 +400,19 @@ export class DemoContent extends ComponentMixin(LitElement) {
     const devicePreset = DEVICE_PRESETS.find(preset => preset.key === this._activeDevice);
 
     return html`
-      ${hasHeader ? this._renderHeader() : ''}
+      ${hasHeader && !this.embedded ? this._renderHeader() : ''}
+      ${this.embedded ? '' : this._renderToolbar()}
 
+      <div class="ac-demo-content__stage">
+        ${this._viewMode === 'code' ? this._renderCodeView() : this._renderDeviceStage(devicePreset)}
+      </div>
+
+      ${this._eventsPanelOpen ? this._renderEventsPanel() : ''}
+    `;
+  }
+
+  _renderToolbar() {
+    return html`
       <div part="toolbar" class="ac-demo-content__toolbar">
         <div class="ac-demo-content__toolbar-cases">${this._renderCaseSwitcher(this._cases)}</div>
         <div class="ac-demo-content__toolbar-controls">
@@ -328,12 +423,6 @@ export class DemoContent extends ComponentMixin(LitElement) {
           ${this._eventNames.length ? this._renderEventsButton() : ''}
         </div>
       </div>
-
-      <div class="ac-demo-content__stage">
-        ${this._viewMode === 'code' ? this._renderCodeView() : this._renderDeviceStage(devicePreset)}
-      </div>
-
-      ${this._eventsPanelOpen ? this._renderEventsPanel() : ''}
     `;
   }
 

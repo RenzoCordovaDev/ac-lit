@@ -1,14 +1,14 @@
-/* Mismo lenguaje visual que @ac-base/ac-demo-content (ver su .styles.scss) --
-   header con borde inferior, control segmentado de pastilla para el tema,
-   mismos tokens de color/radio/espaciado/tipografía de "Emerald Pro". */
+/* Shell del catálogo: sidebar fija con los componentes agrupados + columna de
+   contenido (barra superior, Home o vista del componente). Mismos tokens de
+   color/radio/espaciado/tipografía de "Emerald Pro" que el resto del repo. */
 
 * {
   box-sizing: border-box;
 }
 
-/* `.catalog__home`/`.catalog__body` fijan su propio `display` -- sin esto,
-   esa regla le gana al `display: none` del atributo `hidden` (misma
-   especificidad, gana la hoja de estilos propia sobre la del navegador). */
+/* Varias reglas de acá fijan su propio `display` -- sin esto le ganan al
+   `display: none` del atributo `hidden` (misma especificidad, gana la hoja de
+   estilos propia sobre la del navegador). */
 [hidden] {
   display: none !important;
 }
@@ -21,8 +21,8 @@ body {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
   font-family: var(
     --font-family,
     -apple-system,
@@ -34,6 +34,25 @@ body {
   );
   color: var(--color-text, #bcbec4);
   background: var(--color-bg, #1e1e1e);
+
+  /* Verde de marca para texto/íconos que van directo sobre la página:
+     --color-primary-500 está pensado para fondo oscuro, en claro se oscurece
+     (ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). */
+  --catalog-accent: var(--color-primary-500, #10b981);
+  --catalog-active-bg: var(--color-primary-700, #047857);
+  --catalog-active-text: var(--color-primary-50, #ecfdf5);
+  --catalog-active-subtext: var(--color-primary-50, #ecfdf5);
+  /* --color-subtext no llega a 4.5:1 contra --color-bg en modo oscuro
+     (~3.9:1) -- mismo valor propio que usa ac-divider-basic para ese caso. */
+  --catalog-subtext: #9496a0;
+}
+
+:root[data-theme='light'] body {
+  --catalog-subtext: var(--color-subtext, #5f5e58);
+  --catalog-accent: var(--color-primary-700, #047857);
+  --catalog-active-bg: var(--color-primary-100, #d1fae5);
+  --catalog-active-text: var(--color-text, #27272a);
+  --catalog-active-subtext: var(--color-subtext, #5f5e58);
 }
 
 .catalog__visually-hidden {
@@ -48,48 +67,77 @@ body {
   border: 0;
 }
 
-/* Header */
-.catalog__header {
+:focus-visible {
+  outline: 2px solid var(--catalog-accent);
+  outline-offset: 2px;
+}
+
+/* Sidebar -- paleta FIJA (verde oscuro en ambos temas, como la marca), igual
+   criterio que el terminal del Home: no depende de data-theme. */
+.catalog__sidebar {
+  --sidebar-text: #ecfdf5;
+  --sidebar-subtext: #a7f3d0;
+  --sidebar-field: #0b6b52;
+  --sidebar-field-border: #2f8f74;
+
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-4, 1rem);
-  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
-  border-bottom: 1px solid var(--color-muted, #313335);
+  min-height: 0;
+  padding: var(--space-5, 1.25rem) var(--space-4, 1rem);
+  color: var(--sidebar-text);
+  background: linear-gradient(165deg, #065f46 0%, #064e3b 45%, #022c22 100%);
+}
+
+.catalog__sidebar :focus-visible {
+  outline-color: var(--sidebar-text);
 }
 
 .catalog__brand {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.6rem);
+  gap: var(--space-3, 0.75rem);
   font: inherit;
+  text-align: left;
+  color: inherit;
   background: transparent;
   border: none;
-  padding: 0;
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-1, 0.25rem);
   cursor: pointer;
-  transition: opacity 0.15s ease;
 }
 
-.catalog__brand:hover {
-  opacity: 0.8;
+.catalog__logo {
+  flex-shrink: 0;
 }
 
-.catalog__page-title {
-  margin: 0;
-  font-size: var(--font-size-md, 1rem);
-  font-weight: var(--font-weight-medium, 600);
-  color: var(--color-subtext, #787a80);
+.catalog__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  min-width: 0;
+}
+
+.catalog__brand-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
 }
 
 .catalog__name {
-  font-size: var(--font-size-lg, 1.1rem);
+  font-size: calc(var(--font-size-lg, 1.1rem) * 1.25);
   font-weight: var(--font-weight-bold, 700);
-  margin: 0;
-  color: var(--color-text, #bcbec4);
+  line-height: 1.1;
+}
+
+.catalog__tagline {
+  font-size: var(--font-size-xs, 0.75rem);
+  line-height: var(--line-height-tight, 1.4);
+  color: var(--sidebar-subtext);
 }
 
 .catalog__tech-badge {
+  align-self: flex-start;
   font-size: var(--font-size-xs, 0.7rem);
   font-weight: var(--font-weight-medium, 600);
   padding: var(--space-1, 0.2rem) var(--space-2, 0.5rem);
@@ -98,65 +146,348 @@ body {
   color: var(--color-primary-50, #ecfdf5);
 }
 
-.catalog__header-meta {
+.catalog__sidebar .catalog__tech-badge {
+  align-self: center;
+  background: #ecfdf5;
+  color: #064e3b;
+}
+
+.catalog__search-field {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3, 0.75rem);
-}
-
-.catalog__docs-link {
-  font-size: var(--font-size-sm, 0.8rem);
-  font-weight: var(--font-weight-medium, 600);
-  /* --color-primary-500 está pensado para fondo oscuro -- en modo claro el
-     link va directo sobre la página, sin caja propia, así que se oscurece
-     abajo (ver "Dark-mode y colores de fondo sólido" en docs/CONVENTIONS.md). */
-  color: var(--color-primary-500, #10b981);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-:root[data-theme='light'] .catalog__docs-link {
-  color: var(--color-primary-700, #047857);
-}
-
-.catalog__docs-link:hover {
-  text-decoration: underline;
-}
-
-/* Control segmentado (idéntico en espíritu al de ac-demo-content) */
-.catalog__segmented {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--color-muted, #313335);
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  background: var(--sidebar-field);
+  border: 1px solid var(--sidebar-field-border);
   border-radius: var(--radius-full, 999px);
-  overflow: hidden;
 }
 
-.catalog__segmented-divider {
-  width: 1px;
-  align-self: stretch;
-  background: var(--color-muted, #313335);
+.catalog__search-field:focus-within {
+  border-color: var(--sidebar-text);
 }
 
-.catalog__segmented-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.catalog__search-icon {
+  flex-shrink: 0;
+}
+
+.catalog__search-input {
+  flex: 1;
+  min-width: 0;
   font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--sidebar-text);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.catalog__search-input::placeholder {
+  color: var(--sidebar-subtext);
+}
+
+.catalog__search-input:focus-visible {
+  outline: none;
+}
+
+.catalog__search-kbd {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: var(--font-size-xs, 0.7rem);
+  color: var(--sidebar-subtext);
+  white-space: nowrap;
+}
+
+/* Lista de grupos: tarjeta con los colores del tema activo dentro de la
+   sidebar fija -- por eso vuelve a los tokens que cambian con data-theme. */
+.catalog__nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-2, 0.5rem);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.catalog__nav :focus-visible {
+  outline-color: var(--catalog-accent);
+}
+
+.catalog__group + .catalog__group {
+  margin-top: var(--space-1, 0.25rem);
+}
+
+.catalog__group-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  text-align: left;
   color: var(--color-text, #bcbec4);
   background: transparent;
   border: none;
-  padding: var(--space-2, 0.4rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 0.5rem);
+  padding: var(--space-2, 0.5rem);
   cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
-.catalog__segmented-button[aria-pressed='true'] {
-  background: var(--color-primary-700, #047857);
-  color: var(--color-primary-50, #ecfdf5);
+.catalog__group-button:hover:not(:disabled) {
+  background: var(--color-surface, #2b2b2b);
+}
+
+.catalog__group-button:disabled {
+  cursor: default;
+}
+
+.catalog__group-icon {
+  flex-shrink: 0;
+  color: var(--catalog-accent);
+}
+
+.catalog__group-label {
+  flex: 1;
+}
+
+.catalog__group-count {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-subtext);
+}
+
+.catalog__group-chevron {
+  flex-shrink: 0;
+  color: var(--catalog-subtext);
+  transition: transform 0.15s ease;
+}
+
+.catalog__group-button[aria-expanded='true'] .catalog__group-chevron {
+  transform: rotate(90deg);
+}
+
+.catalog__group-button:disabled .catalog__group-chevron {
+  display: none;
+}
+
+.catalog__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-2, 0.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.catalog__item-button {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  font: inherit;
+  text-align: left;
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-2, 0.5rem) var(--space-2, 0.5rem)
+    var(--space-3, 0.75rem);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.catalog__item-button:hover {
+  background: var(--color-surface, #2b2b2b);
+}
+
+.catalog__item-button[aria-current='true'] {
+  background: var(--catalog-active-bg);
+  color: var(--catalog-active-text);
+}
+
+.catalog__item-button[aria-current='true']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--catalog-accent);
+}
+
+.catalog__item-icon {
+  flex-shrink: 0;
+  color: var(--catalog-subtext);
+}
+
+.catalog__item-button[aria-current='true'] .catalog__item-icon {
+  color: var(--catalog-active-text);
+}
+
+.catalog__item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.catalog__item-name {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  overflow-wrap: anywhere;
+}
+
+.catalog__item-summary {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__item-button[aria-current='true'] .catalog__item-summary {
+  color: var(--catalog-active-subtext);
+}
+
+.catalog__list-empty {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+  padding: var(--space-3, 0.75rem);
+}
+
+.catalog__sidebar-home {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  font: inherit;
+  text-align: left;
+  color: var(--sidebar-text);
+  background: var(--sidebar-field);
+  border: 1px solid var(--sidebar-field-border);
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__sidebar-home:hover {
+  border-color: var(--sidebar-text);
+}
+
+.catalog__sidebar-home-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog__sidebar-home-title {
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__sidebar-home-subtitle {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--sidebar-subtext);
+}
+
+.catalog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Columna de contenido */
+.catalog__content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.catalog__topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem);
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__icon-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__icon-button:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__menu-button {
+  display: none;
+}
+
+:root[data-theme='light'] .catalog__theme-icon--dark,
+:root[data-theme='dark'] .catalog__theme-icon--light {
+  display: none;
+}
+
+.catalog__breadcrumb {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog__breadcrumb ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__breadcrumb li + li::before {
+  content: '›';
+  margin-right: var(--space-2, 0.5rem);
+}
+
+.catalog__breadcrumb li[aria-current='page'] {
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+}
+
+.catalog__repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+  text-decoration: none;
+}
+
+.catalog__repo-link:hover {
+  text-decoration: underline;
 }
 
 /* Home: bienvenida, comandos del CLI, info adicional y pie con copyright */
@@ -192,6 +523,10 @@ body {
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
+.catalog__home-content .catalog__tech-badge {
+  align-self: center;
+}
+
 .catalog__home-title {
   margin: 0;
   /* Hero: la única superficie del catálogo que necesita un título más grande
@@ -205,7 +540,7 @@ body {
 
 .catalog__home-text {
   margin: 0;
-  color: var(--color-subtext, #787a80);
+  color: var(--catalog-subtext);
   font-size: var(--font-size-md, 0.95rem);
   line-height: var(--line-height, 1.5);
 }
@@ -221,13 +556,11 @@ body {
   padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
     transform 0.15s ease,
     box-shadow 0.15s ease;
 }
 
 .catalog__cta:hover {
-  background: var(--color-primary-500, #10b981);
   transform: translateY(-1px);
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
@@ -249,7 +582,7 @@ body {
   align-items: flex-start;
   gap: var(--space-2, 0.5rem);
   font-size: var(--font-size-sm, 0.85rem);
-  color: var(--color-subtext, #787a80);
+  color: var(--catalog-subtext);
   background: var(--color-surface, #2b2b2b);
   border-radius: var(--radius-md, 1rem);
   padding: var(--space-3, 0.75rem);
@@ -258,14 +591,8 @@ body {
 .catalog__home-features li::before {
   content: '✓';
   flex-shrink: 0;
-  color: var(--color-primary-500, #10b981);
+  color: var(--catalog-accent);
   font-weight: var(--font-weight-bold, 700);
-}
-
-@media (max-width: 640px) {
-  .catalog__home-features {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Home: mockup de terminal con comandos del CLI -- paleta FIJA (oscura en
@@ -369,13 +696,8 @@ body {
 .catalog__home-link {
   font-size: var(--font-size-sm, 0.85rem);
   font-weight: var(--font-weight-medium, 600);
-  color: var(--color-primary-500, #10b981);
+  color: var(--catalog-accent);
   text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-:root[data-theme='light'] .catalog__home-link {
-  color: var(--color-primary-700, #047857);
 }
 
 .catalog__home-link:hover {
@@ -388,149 +710,278 @@ body {
   padding: var(--space-4, 1rem);
   text-align: center;
   font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-subtext, #787a80);
+  color: var(--catalog-subtext);
   border-top: 1px solid var(--color-muted, #313335);
 }
 
 .catalog__footer a {
-  color: var(--color-primary-500, #10b981);
+  color: var(--catalog-accent);
   text-decoration: none;
   font-weight: var(--font-weight-medium, 600);
-}
-
-:root[data-theme='light'] .catalog__footer a {
-  color: var(--color-primary-700, #047857);
 }
 
 .catalog__footer a:hover {
   text-decoration: underline;
 }
 
-/* Cuerpo: sidebar + iframe */
-.catalog__body {
-  display: flex;
+/* Vista del componente: cabecera, controles de la demo, pestañas y stage */
+.catalog__component {
   flex: 1;
   min-height: 0;
-}
-
-.catalog__sidebar {
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  width: 280px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--color-muted, #313335);
-  padding: var(--space-4, 1rem);
-  gap: var(--space-3, 0.75rem);
-  overflow-y: auto;
+  gap: var(--space-5, 1.25rem);
+  padding: var(--space-6, 1.5rem);
+  /* Decoración de fondo de la cabecera, derivada de los tokens de marca. */
+  background:
+    radial-gradient(
+      60rem 18rem at 100% 0,
+      color-mix(in srgb, var(--color-primary-300, #6ee7b7) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40rem 14rem at 62% 0,
+      color-mix(in srgb, var(--color-accent-300, #fcd34d) 16%, transparent),
+      transparent 70%
+    );
+  background-repeat: no-repeat;
 }
 
-.catalog__search-input {
-  width: 100%;
-  font: inherit;
-  font-size: var(--font-size-sm, 0.85rem);
-  color: var(--color-text, #bcbec4);
+.catalog__hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5, 1.25rem);
+}
+
+.catalog__hero-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5rem;
+  height: 5.5rem;
+  color: var(--catalog-accent);
   background: var(--color-surface, #2b2b2b);
   border: 1px solid var(--color-muted, #313335);
-  border-radius: var(--radius-sm, 0.5rem);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+  border-radius: var(--radius-lg, 1.5rem);
 }
 
-.catalog__search-input:focus-visible {
-  outline: none;
-  border-color: var(--color-primary-500, #10b981);
-  box-shadow: 0 0 0 2px var(--color-primary-700, #047857);
-}
-
-.catalog__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.catalog__hero-text {
+  flex: 1;
+  min-width: 14rem;
   display: flex;
   flex-direction: column;
   gap: var(--space-1, 0.25rem);
 }
 
-.catalog__item-button {
-  width: 100%;
+.catalog__hero-name {
+  margin: 0;
+  /* Mismo criterio que el título del Home: derivado de --font-size-lg. */
+  font-size: calc(var(--font-size-lg, 1.1rem) * 1.9);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.catalog__hero-description {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__hero-actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1, 0.2rem);
+  flex-wrap: wrap;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
   font: inherit;
-  text-align: left;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  text-decoration: none;
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.catalog__button--ghost {
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__button--ghost:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__button--solid {
+  color: var(--color-primary-50, #ecfdf5);
+  background: var(--color-primary-700, #047857);
+  border: 1px solid var(--color-primary-700, #047857);
+}
+
+.catalog__button--solid:hover {
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+/* Controles de la demo: manejan al ac-demo-content embebido en el iframe. */
+.catalog__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3, 0.75rem) var(--space-4, 1rem);
+}
+
+.catalog__segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+}
+
+.catalog__segmented-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
   color: var(--color-text, #bcbec4);
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm, 0.5rem);
+  border-radius: var(--radius-full, 999px);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
   cursor: pointer;
   transition:
     background-color 0.15s ease,
-    box-shadow 0.15s ease;
+    color 0.15s ease;
 }
 
-.catalog__item-button:hover {
-  background: var(--color-surface, #2b2b2b);
-  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
-}
-
-.catalog__item-button[aria-current='true'] {
+.catalog__segmented-button[aria-pressed='true'] {
   background: var(--color-primary-700, #047857);
   color: var(--color-primary-50, #ecfdf5);
-  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-.catalog__item-row {
-  display: flex;
+.catalog__field {
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-}
-
-.catalog__item-icon {
-  flex-shrink: 0;
-  color: var(--color-subtext, #787a80);
-}
-
-.catalog__item-button[aria-current='true'] .catalog__item-icon {
-  color: var(--color-primary-50, #ecfdf5);
-}
-
-.catalog__item-name {
-  font-size: var(--font-size-md, 0.9rem);
+  font-size: var(--font-size-sm, 0.85rem);
   font-weight: var(--font-weight-medium, 600);
 }
 
-.catalog__item-description {
-  font-size: var(--font-size-xs, 0.75rem);
-  color: var(--color-subtext, #787a80);
+.catalog__select {
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  cursor: pointer;
 }
 
-.catalog__item-button[aria-current='true'] .catalog__item-description {
-  /* Texto fijo sobre fondo sólido -- mismo criterio que el resto del
-     catálogo (ver "Dark-mode y colores de fondo sólido" en CONVENTIONS.md). */
+.catalog__events-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__events-button:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__events-count {
+  min-width: 1.4rem;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.75rem);
+  border-radius: var(--radius-full, 999px);
+  padding: 0 var(--space-1, 0.25rem);
+  background: var(--color-primary-700, #047857);
   color: var(--color-primary-50, #ecfdf5);
 }
 
-.catalog__list-empty {
-  font-size: var(--font-size-sm, 0.85rem);
-  color: var(--color-subtext, #787a80);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+.catalog__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+  border-bottom: 1px solid var(--color-muted, #313335);
+  padding-bottom: var(--space-3, 0.75rem);
 }
 
-/* Main: el iframe con la demo real del componente */
-.catalog__main {
+.catalog__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.catalog__tab:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__tab[aria-selected='true'] {
+  background: var(--color-primary-700, #047857);
+  border-color: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+/* Stage: el iframe con la demo real (embebida) o la lista de ejemplos. El
+   alto mínimo deja ver entero el marco "Móvil" sin depender del alto de la
+   ventana; la vista completa scrollea si no entra. */
+.catalog__stage {
   position: relative;
-  flex: 1;
-  min-width: 0;
+  flex: 1 0 44rem;
   display: flex;
+  overflow: hidden;
+  background: var(--color-bg, #1e1e1e);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+}
+
+.catalog__stage[data-tab='examples'] {
+  flex-basis: auto;
 }
 
 .catalog__empty-state {
   margin: auto;
-  color: var(--color-subtext, #787a80);
+  color: var(--catalog-subtext);
   font-size: var(--font-size-md, 0.9rem);
 }
 
@@ -538,7 +989,67 @@ body {
   flex: 1;
   border: none;
   width: 100%;
+}
+
+.catalog__stage[data-tab='examples'] .catalog__frame,
+.catalog__stage[data-tab='examples'] .catalog__skeleton,
+.catalog__stage:not([data-tab='examples']) .catalog__examples {
+  display: none;
+}
+
+.catalog__examples {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: var(--space-5, 1.25rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  align-content: start;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__example {
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1, 0.25rem);
+  font: inherit;
+  text-align: left;
+  color: var(--color-text, #bcbec4);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 1rem);
+  padding: var(--space-4, 1rem);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.catalog__example:hover {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__example[aria-current='true'] {
+  border-color: var(--catalog-accent);
+  box-shadow: inset 0 0 0 1px var(--catalog-accent);
+}
+
+.catalog__example-index {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-subtext);
+}
+
+.catalog__example-title {
+  font-size: var(--font-size-md, 0.95rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__example-status {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-accent);
 }
 
 /* Skeleton mientras carga la demo del componente elegido -- mismo criterio
@@ -613,25 +1124,68 @@ body {
     animation: none;
   }
 
-  .catalog__brand,
-  .catalog__docs-link,
-  .catalog__segmented-button,
-  .catalog__search-input,
+  .catalog__sidebar,
+  .catalog__group-button,
+  .catalog__group-chevron,
   .catalog__item-button,
-  .catalog__cta {
+  .catalog__sidebar-home,
+  .catalog__icon-button,
+  .catalog__cta,
+  .catalog__button,
+  .catalog__segmented-button,
+  .catalog__events-button,
+  .catalog__tab,
+  .catalog__example {
     transition: none;
   }
 }
 
-@media (max-width: 720px) {
-  .catalog__body {
-    flex-direction: column;
+/* Pantallas angostas: la sidebar pasa a ser un panel deslizable que se abre
+   con el botón de menú de la barra superior. */
+@media (max-width: 900px) {
+  body {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .catalog__sidebar {
-    width: 100%;
-    max-height: 40vh;
-    border-right: none;
-    border-bottom: 1px solid var(--color-muted, #313335);
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 10;
+    width: min(300px, 86vw);
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  body[data-nav-open='true'] .catalog__sidebar {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .catalog__menu-button {
+    display: inline-flex;
+  }
+
+  /* Sin lugar para la ruta completa: queda solo el componente actual. */
+  .catalog__breadcrumb li:not([aria-current='page']),
+  .catalog__breadcrumb li + li::before {
+    display: none;
+  }
+
+  .catalog__topbar,
+  .catalog__component {
+    padding-left: var(--space-4, 1rem);
+    padding-right: var(--space-4, 1rem);
+  }
+
+  .catalog__hero-icon {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .catalog__home-features {
+    grid-template-columns: 1fr;
   }
 }

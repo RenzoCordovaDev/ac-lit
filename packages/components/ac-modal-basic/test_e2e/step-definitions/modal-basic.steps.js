@@ -63,24 +63,28 @@ When('el usuario hace click fuera del modal', async function () {
 
 When('el usuario cierra el modal {string} con su botón de cerrar', async function (testId) {
   const modal = componentProvider.find(ModalBasicPage, testId);
+  await modal.waitForSettled();
   await modal.closeButton.waitForDisplayed();
   await modal.closeButton.click();
 });
 
 When('el usuario pulsa el botón principal del modal {string}', async function (testId) {
   const modal = componentProvider.find(ModalBasicPage, testId);
+  await modal.waitForSettled();
   await modal.primaryButton.waitForDisplayed();
   await modal.primaryButton.click();
 });
 
 When('el usuario pulsa el botón secundario del modal {string}', async function (testId) {
   const modal = componentProvider.find(ModalBasicPage, testId);
+  await modal.waitForSettled();
   await modal.secondaryButton.waitForDisplayed();
   await modal.secondaryButton.click();
 });
 
 When('el usuario pulsa el enlace del modal {string}', async function (testId) {
   const modal = componentProvider.find(ModalBasicPage, testId);
+  await modal.waitForSettled();
   await modal.link.waitForDisplayed();
   await modal.link.click();
 });
