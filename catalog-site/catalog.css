@@ -1119,8 +1119,17 @@ body {
 .catalog__skeleton {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   display: flex;
   justify-content: center;
+  /* `align-items` por defecto es `stretch`: sin esto, el marco se encoge al
+     alto disponible de `.catalog__stage` y ESE achique se lo come el propio
+     `.catalog__skeleton-viewport` (su `height: 667px` deja de ser literal,
+     flex lo encoge) -- quedaba con menos proporción que el marco real.
+     `flex-start` deja que el marco use su alto real y, si no entra, que lo
+     recorte `.catalog__stage` (mismo `overflow: hidden` que ya tenía) -- la
+     franja visible queda con las proporciones correctas en vez de achicada. */
+  align-items: flex-start;
   padding: var(--space-6, 1.5rem);
   background: var(--color-surface, #2b2b2b);
 }
