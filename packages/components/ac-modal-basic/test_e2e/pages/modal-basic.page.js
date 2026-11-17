@@ -41,6 +41,24 @@ export class ModalBasicPage extends ComponentObject {
     }, this.selector);
   }
 
+  /** Espera a que el <dialog> esté abierto y sin animaciones en curso. El
+   * modal entra con una animación de 300ms: un click a un botón del panel
+   * durante ese movimiento puede caer fuera de él (WebDriver calcula el punto
+   * antes de despachar el click) y el test falla de forma intermitente. */
+  async waitForSettled() {
+    await browser.waitUntil(
+      () =>
+        browser.execute(selector => {
+          const dialog = document.querySelector(selector).shadowRoot.querySelector('dialog');
+          const running = dialog
+            .getAnimations({ subtree: true })
+            .some(animation => animation.playState === 'running');
+          return dialog.open && !running;
+        }, this.selector),
+      { timeout: 4000, timeoutMsg: `El modal "${this.selector}" no terminó de abrirse` },
+    );
+  }
+
   get closeButton() {
     return this.root.$('[part="close"]');
   }
