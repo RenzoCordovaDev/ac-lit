@@ -39,12 +39,14 @@ When('el usuario pulsa Escape', async function () {
 
 When('el usuario pulsa la flecha de volver del contenedor {string}', async function (testId) {
   const container = componentProvider.find(TransitionContainerPage, testId);
+  await container.waitForSettled();
   await container.backButton.waitForClickable();
   await container.backButton.click();
 });
 
 When('el usuario pulsa el ícono de menú del contenedor {string}', async function (testId) {
   const container = componentProvider.find(TransitionContainerPage, testId);
+  await container.waitForSettled();
   await container.menuButton.waitForClickable();
   await container.menuButton.click();
 });
