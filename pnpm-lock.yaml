@@ -63,8 +63,14 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0(bare-buffer@3.7.1)(yauzl@2.10.0)
 
-  catalog-site/lab-reference/registro-wizard:
+  catalog-site/lab-reference/ac-registro-wizard:
     dependencies:
+      '@ac-base/ac-component-mixin':
+        specifier: workspace:^
+        version: link:../../../packages/base/ac-component-mixin
+      '@ac-base/ac-intl-mixin':
+        specifier: workspace:^
+        version: link:../../../packages/base/ac-intl-mixin
       '@ac-components/ac-api-users':
         specifier: workspace:^
         version: link:../../../packages/components/ac-api-users
@@ -119,9 +125,6 @@ importers:
       '@ac-components/ac-transition-container':
         specifier: workspace:^
         version: link:../../../packages/components/ac-transition-container
-      lit:
-        specifier: ^3.0.0
-        version: 3.3.3
     devDependencies:
       '@ac-base/ac-core':
         specifier: workspace:^
@@ -129,12 +132,24 @@ importers:
       '@ac-base/ac-demo-content':
         specifier: workspace:^
         version: link:../../../packages/base/ac-demo-content
+      '@ac-base/ac-e2e-testing':
+        specifier: workspace:^
+        version: link:../../../packages/base/ac-e2e-testing
       '@ac-base/cli':
         specifier: workspace:^
         version: link:../../../cli
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
       concurrently:
         specifier: ^9.1.0
         version: 9.2.5
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
       sass:
         specifier: ^1.79.4
         version: 1.108.1

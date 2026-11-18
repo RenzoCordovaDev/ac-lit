@@ -97,7 +97,7 @@ export const LAB_CHAPTERS = [
     // Componente de referencia real (`catalog-site/lab-reference/<nombre>/`,
     // ver docs/CONVENTIONS.md) -- `renderLabChapters()` en catalog.js arma el
     // link "Ver solución" a partir de este nombre de carpeta cuando existe.
-    referenceDemo: 'registro-wizard',
+    referenceDemo: 'ac-registro-wizard',
     labs: [
       {
         id: 'construccion-01-scaffold',
@@ -105,17 +105,17 @@ export const LAB_CHAPTERS = [
         objective:
           'Instalar el CLI de ac-lit y generar la estructura base de un componente nuevo, fuera del catálogo publicable, para usarlo como tu propio banco de pruebas durante todo este capítulo.',
         context:
-          'El componente de referencia de este capítulo se llama `registro-wizard` y vive en `catalog-site/lab-reference/registro-wizard/` -- no en `packages/components/` (ese directorio es solo para componentes publicables del catálogo). Igual que cualquier paquete real, necesita su propio `package.json`, `src/` y `demo/`; a diferencia de uno real, no lleva `test/`, `test_e2e/` ni scripts `component:test*`/`component:lint` (no se testea ni se publica).',
+          'El componente de referencia de este capítulo se llama `ac-registro-wizard` y vive en `catalog-site/lab-reference/ac-registro-wizard/` -- no en `packages/components/` (ese directorio es solo para componentes que se publican de verdad). Pero, salvo por eso, es un paquete real: lo genera el mismo `aclit component:create` que generaría cualquier componente del catálogo, con `package.json`, `src/`, `demo/`, `test/`, `test_e2e/` y los mismos scripts `component:*` -- la única diferencia real es que queda `"private": true` y nunca se publica.',
         steps: [
           'Instala el CLI globalmente: `npm install -g @ac-base/cli`.',
-          'Crea la carpeta `catalog-site/lab-reference/<tu-nombre>/` y, parado ahí, corre `aclit component:create <tu-nombre>` (o copia a mano el `package.json`/`vite.config.js` mínimos de otro componente del catálogo, como `packages/components/ac-badge-basic/`, y simplifícalos: sin scripts de test/lint/e2e, sin changeset).',
-          'Agrega la carpeta al workspace de pnpm (`pnpm-workspace.yaml`): `catalog-site/lab-reference/*`, para que `workspace:^` resuelva contra el catálogo real.',
-          'Corre `pnpm install` desde la raíz del repo.',
-          'Levanta la demo con `pnpm --filter <tu-paquete> run component:serve` (o `vite demo` directo si ya compilaste los estilos) y confirma que abre en el navegador, vacía.',
+          'Párate en `catalog-site/lab-reference/` y corre `aclit component:create ac-<tu-nombre>` (el nombre tiene que empezar con `ac-`, el CLI lo exige igual que a cualquier componente real) -- el comando crea la carpeta por vos, no hace falta crearla a mano antes.',
+          'Abre el `package.json` generado: agrega `"private": true` justo después de `"version"` y borra el bloque `"publishConfig"` completo -- es la única edición manual necesaria, para dejar explícito que este paquete nunca se publica.',
+          'Confirma que `pnpm-workspace.yaml` ya incluye el patrón `catalog-site/lab-reference/*` (debería estar desde el primer componente de referencia de este catálogo) y corre `pnpm install` desde la raíz del repo.',
+          'Levanta la demo con `pnpm --filter <tu-paquete> run component:serve` y confirma que abre en el navegador, con el contenido de placeholder que trae el scaffold (un `<span>` con el texto "Hola").',
         ],
         hint: 'Si `pnpm install` falla resolviendo `workspace:^`, revisa que el nombre de carpeta en `catalog-site/lab-reference/` coincida exactamente con el patrón que agregaste a `pnpm-workspace.yaml` -- un patrón de glob que no matchea deja el paquete fuera del workspace y el protocolo `workspace:^` no tiene contra qué resolver.',
         selfCheck:
-          'La demo carga en `http://localhost:5173` (o el puerto que hayas configurado) sin errores en la consola del navegador, mostrando una página vacía con tu componente todavía sin contenido.',
+          'La demo carga en `http://localhost:5173` (o el puerto que hayas configurado) sin errores en la consola del navegador, con `ac-demo-content` alrededor (cabecera, selector ES/EN, tema, dispositivo) y tu componente mostrando "Hola" -- el placeholder que trae el scaffold, todavía sin tu lógica.',
       },
       {
         id: 'construccion-02-first-component',
@@ -126,12 +126,12 @@ export const LAB_CHAPTERS = [
           "Un componente del catálogo se consume exactamente igual que cualquier dependencia de npm: se agrega al `package.json` (con el protocolo `workspace:^`, porque vive en el mismo monorepo), se importa por su efecto de registro (`import '@ac-components/ac-button-basic'`) y se declara directo en el `render()` de Lit -- nunca `document.createElement`.",
         steps: [
           'Agrega `"@ac-components/ac-button-basic": "workspace:^"` a las `dependencies` de tu `package.json` y corre `pnpm install` de nuevo.',
-          "En `src/registro-wizard.js`, importa `lit` (`LitElement`, `html`) y `import '@ac-components/ac-button-basic';` arriba del archivo.",
-          'Escribe una clase mínima que extienda `LitElement`, con `static get is()` devolviendo el tag elegido (sin prefijo `ac-`, ej. `registro-wizard`) y un `render()` que devuelva un `<ac-button-basic>` de prueba.',
-          'Registra el custom element en `index.js` (`customElements.define(RegistroWizard.is, RegistroWizard)`), importado desde `demo/demo.js`.',
+          'Abre `src/registro-wizard.js` y reconoce lo que el CLI ya generó: la clase extiende `ComponentMixin(LitElement)` (no `LitElement` a secas -- heredás `ambient`, `this.t()` y `componentBaseStyles` gratis), `static get is()` ya devuelve tu tag con el prefijo `ac-` completo, y `render()` ya tiene un `<span>` de placeholder.',
+          "Agrega `import '@ac-components/ac-button-basic';` arriba del archivo, junto a los imports de `lit`/`ComponentMixin` que ya están.",
+          'Reemplaza el `<span>` de placeholder del `render()` por un `<ac-button-basic>` de prueba, declarado directo ahí (nunca `document.createElement`).',
           'Recarga la demo y confirma que el botón del catálogo se ve y reacciona al click (abre el panel de eventos del navegador o un `console.log` temporal en un listener declarativo).',
         ],
-        hint: 'Si el botón no aparece, revisa que `index.js` quede importado desde `demo/demo.js` (no alcanza con que exista el archivo: Vite solo registra lo que de verdad se importa) y que el tag en el HTML/template coincida exactamente con `static get is()`.',
+        hint: 'El `index.js` que generó el CLI ya registra el custom element e importa `src/registro-wizard.js` -- no hace falta tocarlo. Si el botón no aparece, revisa que el tag que usaste en el HTML coincida exactamente con lo que devuelve `static get is()`.',
         selfCheck:
           '`<ac-button-basic>` se ve dentro de tu componente (no al lado, como hermano en el HTML de la demo) y un click dispara su evento `ac-button-basic-click` -- visible en un `console.log` temporal o en las dev tools.',
       },
@@ -147,7 +147,7 @@ export const LAB_CHAPTERS = [
           'Importa cada uno arriba de `src/registro-wizard.js` y declara todos directo en el `render()` (ningún `document.createElement`, ningún componente montado a mano).',
           'Declara `<ac-api-users>` también en el template (no pinta nada, pero necesita estar en el DOM para recibir llamadas y emitir eventos) y crea una referencia con `createRef()` de `lit/directives/ref.js`, asignada con `${ref(this._apiUsersRef)}`.',
           'Escribe el método público `init()`: `this._apiUsersRef.value?.obtenerDatosUsuario(1)` -- dispara la lectura simulada contra el mock de `ac-api-users`.',
-          "Llama `wizard.init()` una vez desde `demo/demo.js`, después de `customElements.whenDefined('registro-wizard')`, como lo haría cualquier app consumidora al montar el componente.",
+          "Llama `wizard.init()` una vez desde `demo/demo.js`, después de `customElements.whenDefined('ac-registro-wizard')`, como lo haría cualquier app consumidora al montar el componente.",
         ],
         hint: 'Usar `ref()` es obligatorio acá porque necesitas invocar un MÉTODO sobre `ac-api-users` (no solo leer una property) -- para eso existe, a diferencia de un binding `.prop=${...}` normal. Nunca reemplaces esto por `this.shadowRoot.querySelector(...)`.',
         selfCheck:
@@ -176,16 +176,18 @@ export const LAB_CHAPTERS = [
         objective:
           'Escuchar todos los eventos de los componentes hijos (y de `ac-api-users`) con bindings `@evento=${...}` directo en el template, nunca con `addEventListener` imperativo.',
         context:
-          'A diferencia de otros laboratorios de este catálogo, `registro-wizard` no define ningún evento `CustomEvent` propio -- no lo necesita, porque no tiene ningún componente padre que escuche sus eventos (es la raíz del flujo). Lo importante acá es el otro lado del patrón: cada evento que SÍ te interesa (de `ac-input-basic`, `ac-select-basic`, `ac-checkbox-basic`, `ac-switch-basic`, `ac-radio-basic`, `ac-button-basic`, `ac-modal-basic`, `ac-transition-container` y `ac-api-users`) se escucha con un binding `@ac-<componente>-<evento>=${this._handler}` en el JSX/template de Lit, con el handler siempre privado.',
+          'El patrón tiene dos caras, y este componente usa las dos. Por un lado, cada evento que te interesa de un hijo (`ac-input-basic`, `ac-select-basic`, `ac-checkbox-basic`, `ac-switch-basic`, `ac-radio-basic`, `ac-button-basic`, `ac-modal-basic`, `ac-transition-container`, `ac-expandable-multistep` y `ac-api-users`) se escucha con un binding `@ac-<componente>-<evento>=${this._handler}` en el template, con el handler siempre privado. Por el otro, tu propio componente también DISPARA sus propios eventos hacia quien lo consuma (igual que `ac-expandable-step` o `ac-modal-basic` emiten los suyos): `ac-registro-wizard-step-change` (cuando el multistep avanza), `ac-registro-wizard-register-success`/`-register-error` (cuando termina el guardado) y `ac-registro-wizard-reset` (cuando se llama `reset()`) -- así se cierra el circuito completo: tu componente escucha hacia abajo y emite hacia arriba.',
         steps: [
           'Repasa cada componente hijo y su README (`packages/components/<componente>/README.md`) para confirmar el nombre exacto de sus eventos.',
-          'En el `render()`, agrega un binding `@evento=${this._handler}` por cada interacción que te importe (cambios de los campos, click de cada botón, click de cerrar/primary del modal, click de la flecha de volver del `ac-transition-container`, y los 4 eventos de `ac-api-users` que usas: `-get-user-success/error`, `-register-success/error`).',
+          'En el `render()`, agrega un binding `@evento=${this._handler}` por cada interacción que te importe (cambios de los campos, click de cada botón, click de cerrar/primary del modal, click de la flecha de volver del `ac-transition-container`, el cambio de paso activo de `ac-expandable-multistep`, y los 4 eventos de `ac-api-users` que usas: `-get-user-success/error`, `-register-success/error`).',
+          'Escribe un método privado `_emit(name, detail = {})` que haga `this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }))` -- es el único lugar del componente que construye un `CustomEvent` a mano.',
+          'Llama a `this._emit(...)` con el nombre namespaced correcto (`ac-registro-wizard-<evento>`) desde los handlers donde corresponda: al cambiar de paso, al terminar el guardado (éxito o error) y al final de `reset()`.',
           'Confirma que ningún `addEventListener` imperativo quedó en el código (ni en `connectedCallback` ni en ningún otro lado) -- si necesitas escuchar algo, el binding va en el template.',
-          'Prueba cada control desde la demo y confirma en consola (con un `console.log` temporal) que el handler correcto se dispara.',
+          'Agrega los 4 eventos propios al atributo `events` de `<ac-demo-content>` en `demo/index.html` y prueba cada control desde la demo, confirmando en el panel de eventos del navegador que tanto los eventos que escuchás como los que emitís aparecen con su `detail` correcto.',
         ],
         hint: 'Un evento que bubbles desde un nieto (ej. el click de un botón dentro de un `ac-expandable-step`) sigue llegando a un `@evento` puesto en el elemento que lo declara directamente -- no necesitas "re-escucharlo" más arriba salvo que quieras delegación explícita, como hace `ac-expandable-multistep` con sus steps.',
         selfCheck:
-          'Una búsqueda de `addEventListener` en `src/registro-wizard.js` no devuelve ningún resultado -- todo el cableado de eventos vive en bindings `@evento` del template.',
+          'Una búsqueda de `addEventListener` en `src/registro-wizard.js` no devuelve ningún resultado -- todo el cableado de eventos vive en bindings `@evento` del template. Y en el panel de eventos de la demo, completar el flujo muestra tanto los eventos que escuchás de tus hijos como los 4 `ac-registro-wizard-*` que tu propio componente dispara.',
       },
       {
         id: 'construccion-06-styles',
@@ -193,13 +195,12 @@ export const LAB_CHAPTERS = [
         objective:
           'Escribir `src/registro-wizard.styles.scss` y compilarlo al patrón `*.styles.js` que Lit consume, igual que cualquier componente real del catálogo.',
         context:
-          'El pipeline de estilos es el mismo que usa todo el catálogo: se escribe un `.scss`, se compila a un módulo JS (`compile-scss-to-lit.cjs`, de `@ac-base/cli`) que exporta un `css` de Lit, y ese archivo compilado (gitignored) se importa en el componente. La diferencia acá es que el `package.json` de `registro-wizard` solo necesita su propio script `component:build:styles` -- no la batería completa de scripts de un paquete publicable.',
+          'El pipeline de estilos es el mismo que usa todo el catálogo: se escribe un `.scss`, se compila a un módulo JS (`compile-scss-to-lit.cjs`, de `@ac-base/cli`) que exporta un `css` de Lit, y ese archivo compilado (gitignored) se importa en el componente. El `package.json` que generó el CLI en el paso 1 ya trae la batería completa de scripts `component:*` (`component:build:styles`, `component:build:styles:watch`, `component:serve`, etc.) -- no hay que escribir ninguno a mano, solo escribir el `.scss` y correr los scripts que ya están.',
         steps: [
           'Crea `src/registro-wizard.styles.scss` con el layout que necesites (espaciado entre el paso activo y sus acciones, el bloque de resumen del paso 3, etc.) -- reutiliza tokens de `@ac-base/ac-core` (`--space-*`, `--radius-*`, `--color-muted`) con fallback, igual que cualquier componente del catálogo.',
-          'Agrega a tu `package.json` el script `"component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/registro-wizard.styles.scss src/registro-wizard.styles.js RegistroWizardStyles"`.',
-          'Corre ese script y confirma que genera `src/registro-wizard.styles.js`.',
-          'Importa `RegistroWizardStyles` en `src/registro-wizard.js` y agrégalo a `static get styles()`.',
-          'Agrega también `component:build:styles:watch` y haz que `component:serve` lo corra en paralelo con `vite demo` (vía `concurrently`), para que cada guardado del `.scss` recargue sola la demo.',
+          'Corre `pnpm --filter <tu-paquete> run component:build:styles` y confirma que genera `src/registro-wizard.styles.js`.',
+          'Importa `RegistroWizardStyles` en `src/registro-wizard.js` y agrégalo a `static get styles()`, junto a `componentBaseStyles` que ya trae el scaffold.',
+          'Corre `pnpm --filter <tu-paquete> run component:serve` (ya incluye `component:build:styles:watch` en paralelo vía `concurrently`, generado por el CLI) y confirma que cada guardado del `.scss` recarga sola la demo.',
         ],
         hint: '`src/*.styles.js` nunca se versiona (está en `.gitignore`, igual que en cualquier componente del catálogo) -- si cambias de máquina o clonas de nuevo, hay que volver a correr `component:build:styles` antes de que el componente renderice con estilos.',
         selfCheck:
