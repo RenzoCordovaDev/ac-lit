@@ -9,14 +9,14 @@ import '@ac-components/ac-switch-basic';
 import { PLAN_ANUAL, PLAN_MENSUAL, PLAN_RADIO_GROUP_NAME } from '../../utils/constants.js';
 import { RegistroWizardStepPreferenciasStyles } from './registro-wizard-step-preferencias.styles.js';
 
-/*
-Contenido del paso 2 ("Preferencias") de ac-registro-wizard: términos y condiciones, notificaciones por correo y plan (mensual/anual). Recibe los valores por propiedad y emite un evento por cada cambio -- no guarda estado propio de las preferencias.
-@lit @webcomponent @customElement
-@fires {{checked: boolean}} registro-wizard-step-preferencias-terminos-change
-@fires {{checked: boolean}} registro-wizard-step-preferencias-notificaciones-change
-@fires {{value: string}} registro-wizard-step-preferencias-plan-change
-@fires {void} registro-wizard-step-preferencias-next-click
-*/
+/**
+ * Contenido del paso 2 ("Preferencias") de ac-registro-wizard: términos y condiciones, notificaciones por correo y plan (mensual/anual). Recibe los valores por propiedad y emite un evento por cada cambio -- no guarda estado propio de las preferencias.
+ * @lit @webcomponent @customElement
+ * @fires {{checked: boolean}} registro-wizard-step-preferencias-terminos-change
+ * @fires {{checked: boolean}} registro-wizard-step-preferencias-notificaciones-change
+ * @fires {{value: string}} registro-wizard-step-preferencias-plan-change
+ * @fires {void} registro-wizard-step-preferencias-next-click
+ */
 export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
   static get is() {
     return 'registro-wizard-step-preferencias';
@@ -28,23 +28,23 @@ export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
 
   static get properties() {
     return {
-      /*
-      Si el usuario aceptó los términos y condiciones.
-      @type {Boolean}
-      @default false
-      */
+      /**
+       * Si el usuario aceptó los términos y condiciones.
+       * @type {Boolean}
+       * @default false
+       */
       terminos: { type: Boolean },
-      /*
-      Si el usuario quiere recibir notificaciones por correo.
-      @type {Boolean}
-      @default false
-      */
+      /**
+       * Si el usuario quiere recibir notificaciones por correo.
+       * @type {Boolean}
+       * @default false
+       */
       notificaciones: { type: Boolean },
-      /*
-      Plan elegido: mensual o anual.
-      @type {String}
-      @default PLAN_MENSUAL
-      */
+      /**
+       * Plan elegido: mensual o anual.
+       * @type {String}
+       * @default PLAN_MENSUAL
+       */
       plan: { type: String },
     };
   }
@@ -56,60 +56,60 @@ export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
     this.plan = PLAN_MENSUAL;
   }
 
-  /*
-  Traslada el cambio del checkbox de términos como evento propio.
-  @private
-  @event registro-wizard-step-preferencias-terminos-change
-  */
+  /**
+   * Traslada el cambio del checkbox de términos como evento propio.
+   * @private
+   * @event registro-wizard-step-preferencias-terminos-change
+   */
   _onTerminosChange(event) {
     this._emit('registro-wizard-step-preferencias-terminos-change', {
       checked: event.detail.checked,
     });
   }
 
-  /*
-  Traslada el cambio del switch de notificaciones como evento propio.
-  @private
-  @event registro-wizard-step-preferencias-notificaciones-change
-  */
+  /**
+   * Traslada el cambio del switch de notificaciones como evento propio.
+   * @private
+   * @event registro-wizard-step-preferencias-notificaciones-change
+   */
   _onNotificacionesChange(event) {
     this._emit('registro-wizard-step-preferencias-notificaciones-change', {
       checked: event.detail.checked,
     });
   }
 
-  /*
-  Traslada la elección de plan. Solo emite cuando el radio queda marcado, porque ambos radios del grupo disparan change.
-  @private
-  @event registro-wizard-step-preferencias-plan-change
-  */
+  /**
+   * Traslada la elección de plan. Solo emite cuando el radio queda marcado, porque ambos radios del grupo disparan change.
+   * @private
+   * @event registro-wizard-step-preferencias-plan-change
+   */
   _onPlanChange(event) {
     if (event.detail.checked) {
       this._emit('registro-wizard-step-preferencias-plan-change', { value: event.detail.value });
     }
   }
 
-  /*
-  Emite el evento de avance al siguiente paso.
-  @private
-  @event registro-wizard-step-preferencias-next-click
-  */
+  /**
+   * Emite el evento de avance al siguiente paso.
+   * @private
+   * @event registro-wizard-step-preferencias-next-click
+   */
   _onNextClick() {
     this._emit('registro-wizard-step-preferencias-next-click');
   }
 
-  /*
-  Despacha un CustomEvent con el nombre y detalle indicados, burbujeante y compuesto.
-  @private
-  */
+  /**
+   * Despacha un CustomEvent con el nombre y detalle indicados, burbujeante y compuesto.
+   * @private
+   */
   _emit(name, detail = {}) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /*
-  Renderiza el contenido del paso de preferencias.
-  @public
-  */
+  /**
+   * Renderiza el contenido del paso de preferencias.
+   * @public
+   */
   render() {
     return html`
       <ac-checkbox-basic

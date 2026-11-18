@@ -12,14 +12,14 @@ import './elements/steps/registro-wizard-steps.js';
 import { API_VERSION, DEFAULT_ROL, INIT_USER_ID, PLAN_MENSUAL } from './utils/constants.js';
 import { RegistroWizardStyles } from './registro-wizard.styles.js';
 
-/*
-Wizard de registro de usuario de 3 pasos (datos, preferencias, resumen), construido con el scaffolding real del CLI de ac-lit. Coordina el estado canónico del formulario y la llamada simulada a ac-api-users; delega la coordinación del multistep a registro-wizard-steps y el contenido del modal de éxito a registro-wizard-modal-resultado.
-@lit @webcomponent @customElement
-@fires {{step: number, totalSteps: number}} ac-registro-wizard-step-change
-@fires {{data: Object}} ac-registro-wizard-register-success
-@fires {{error: Object}} ac-registro-wizard-register-error
-@fires {void} ac-registro-wizard-reset
-*/
+/**
+ * Wizard de registro de usuario de 3 pasos (datos, preferencias, resumen), construido con el scaffolding real del CLI de ac-lit. Coordina el estado canónico del formulario y la llamada simulada a ac-api-users; delega la coordinación del multistep a registro-wizard-steps y el contenido del modal de éxito a registro-wizard-modal-resultado.
+ * @lit @webcomponent @customElement
+ * @fires {{step: number, totalSteps: number}} ac-registro-wizard-step-change
+ * @fires {{data: Object}} ac-registro-wizard-register-success
+ * @fires {{error: Object}} ac-registro-wizard-register-error
+ * @fires {void} ac-registro-wizard-reset
+ */
 export class RegistroWizard extends ComponentMixin(LitElement) {
   static get is() {
     return 'ac-registro-wizard';
@@ -31,95 +31,95 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
   static get properties() {
     return {
-      /*
-      Si el componente debe contener sus superposiciones (ac-transition-container/ac-modal-basic) dentro de un marco simulado en vez del viewport real -- lo asigna ac-demo-content en el catálogo.
-      @type {Boolean}
-      @default false
-      */
+      /**
+       * Si el componente debe contener sus superposiciones (ac-transition-container/ac-modal-basic) dentro de un marco simulado en vez del viewport real -- lo asigna ac-demo-content en el catálogo.
+       * @type {Boolean}
+       * @default false
+       */
       contained: { type: Boolean, reflect: true },
-      /*
-      Si la transición raíz (ac-transition-container) está visible. Arranca en true: este wizard no tiene pantalla "anterior", es la raíz del flujo.
-      @type {Boolean}
-      @default true
-      @private
-      */
+      /**
+       * Si la transición raíz (ac-transition-container) está visible. Arranca en true: este wizard no tiene pantalla "anterior", es la raíz del flujo.
+       * @type {Boolean}
+       * @default true
+       * @private
+       */
       _open: { state: true },
-      /*
-      Si el modal de registro exitoso está visible.
-      @type {Boolean}
-      @default false
-      @private
-      */
+      /**
+       * Si el modal de registro exitoso está visible.
+       * @type {Boolean}
+       * @default false
+       * @private
+       */
       _modalOpen: { state: true },
-      /*
-      Nombre completo del formulario, estado canónico compartido entre los 3 pasos.
-      @type {String}
-      @default ''
-      @private
-      */
+      /**
+       * Nombre completo del formulario, estado canónico compartido entre los 3 pasos.
+       * @type {String}
+       * @default ''
+       * @private
+       */
       _nombre: { state: true },
-      /*
-      Correo electrónico del formulario, estado canónico compartido entre los 3 pasos.
-      @type {String}
-      @default ''
-      @private
-      */
+      /**
+       * Correo electrónico del formulario, estado canónico compartido entre los 3 pasos.
+       * @type {String}
+       * @default ''
+       * @private
+       */
       _email: { state: true },
-      /*
-      Rol elegido en el paso 1.
-      @type {String}
-      @default ''
-      @private
-      */
+      /**
+       * Rol elegido en el paso 1.
+       * @type {String}
+       * @default ''
+       * @private
+       */
       _rol: { state: true },
-      /*
-      Si se activaron las notificaciones por correo en el paso 2.
-      @type {Boolean}
-      @default false
-      @private
-      */
+      /**
+       * Si se activaron las notificaciones por correo en el paso 2.
+       * @type {Boolean}
+       * @default false
+       * @private
+       */
       _notificaciones: { state: true },
-      /*
-      Si se aceptaron los términos y condiciones en el paso 2.
-      @type {Boolean}
-      @default false
-      @private
-      */
+      /**
+       * Si se aceptaron los términos y condiciones en el paso 2.
+       * @type {Boolean}
+       * @default false
+       * @private
+       */
       _terminos: { state: true },
-      /*
-      Plan elegido en el paso 2: mensual o anual.
-      @type {String}
-      @default PLAN_MENSUAL
-      @private
-      */
+      /**
+       * Plan elegido en el paso 2: mensual o anual.
+       * @type {String}
+       * @default PLAN_MENSUAL
+       * @private
+       */
       _plan: { state: true },
-      /*
-      Si la llamada de guardado contra ac-api-users está en curso.
-      @type {Boolean}
-      @default false
-      @private
-      */
+      /**
+       * Si la llamada de guardado contra ac-api-users está en curso.
+       * @type {Boolean}
+       * @default false
+       * @private
+       */
       _loading: { state: true },
-      /*
-      Mensaje de error visible arriba del multistep (fallo de guardado o de carga inicial).
-      @type {String}
-      @default ''
-      @private
-      */
+      /**
+       * Mensaje de error visible arriba del multistep (fallo de guardado o de carga inicial).
+       * @type {String}
+       * @default ''
+       * @private
+       */
       _errorMessage: { state: true },
-      /*
-      Datos de bienvenida precargados por init() contra ac-api-users.
-      @type {Object}
-      @default null
-      @private
-      */
+      /**
+       * Datos de bienvenida precargados por init() contra ac-api-users.
+       * @type {Object}
+       * @default null
+       * @private
+       */
       _welcomeUser: { state: true },
-      /*
-      Datos del usuario ya registrado, para llenar el modal de éxito.
-      @type {Object}
-      @default null
-      @private
-      */
+      /**
+       * Datos del usuario ya registrado, para llenar el modal de éxito.
+       * @type {Object}
+       * @default null
+       * @private
+       */
       _registeredUser: { state: true },
     };
   }
@@ -133,10 +133,10 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this._stepsRef = createRef();
   }
 
-  /*
-  Vuelve todas las properties de estado a su valor inicial. Lo usan el constructor y reset().
-  @private
-  */
+  /**
+   * Vuelve todas las properties de estado a su valor inicial. Lo usan el constructor y reset().
+   * @private
+   */
   _resetState() {
     this._open = true;
     this._modalOpen = false;
@@ -162,74 +162,74 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this._emit('ac-registro-wizard-reset');
   }
 
-  /*
-  Guarda los datos de bienvenida que trajo la lectura inicial contra ac-api-users.
-  @private
-  */
+  /**
+   * Guarda los datos de bienvenida que trajo la lectura inicial contra ac-api-users.
+   * @private
+   */
   _onInitDataSuccess(event) {
     this._welcomeUser = event.detail.data;
   }
 
-  /*
-  Muestra el error de la lectura inicial contra ac-api-users.
-  @private
-  */
+  /**
+   * Muestra el error de la lectura inicial contra ac-api-users.
+   * @private
+   */
   _onInitDataError(event) {
     this._errorMessage = event.detail.error?.message ?? this.t('registro-wizard-welcome-error');
   }
 
-  /*
-  Actualiza el nombre canónico con el valor reemitido por registro-wizard-steps.
-  @private
-  */
+  /**
+   * Actualiza el nombre canónico con el valor reemitido por registro-wizard-steps.
+   * @private
+   */
   _onNombreInput(event) {
     this._nombre = event.detail.value;
   }
 
-  /*
-  Actualiza el correo canónico con el valor reemitido por registro-wizard-steps.
-  @private
-  */
+  /**
+   * Actualiza el correo canónico con el valor reemitido por registro-wizard-steps.
+   * @private
+   */
   _onEmailInput(event) {
     this._email = event.detail.value;
   }
 
-  /*
-  Actualiza el rol canónico con el valor reemitido por registro-wizard-steps.
-  @private
-  */
+  /**
+   * Actualiza el rol canónico con el valor reemitido por registro-wizard-steps.
+   * @private
+   */
   _onRolChange(event) {
     this._rol = event.detail.value;
   }
 
-  /*
-  Actualiza el estado canónico de notificaciones.
-  @private
-  */
+  /**
+   * Actualiza el estado canónico de notificaciones.
+   * @private
+   */
   _onNotificacionesChange(event) {
     this._notificaciones = event.detail.checked;
   }
 
-  /*
-  Actualiza el estado canónico de términos y condiciones.
-  @private
-  */
+  /**
+   * Actualiza el estado canónico de términos y condiciones.
+   * @private
+   */
   _onTerminosChange(event) {
     this._terminos = event.detail.checked;
   }
 
-  /*
-  Actualiza el plan canónico elegido.
-  @private
-  */
+  /**
+   * Actualiza el plan canónico elegido.
+   * @private
+   */
   _onPlanChange(event) {
     this._plan = event.detail.value;
   }
 
-  /*
-  Valida que se hayan aceptado los términos y, si corresponde, dispara el guardado contra ac-api-users.
-  @private
-  */
+  /**
+   * Valida que se hayan aceptado los términos y, si corresponde, dispara el guardado contra ac-api-users.
+   * @private
+   */
   _onConfirmClick() {
     if (!this._terminos) {
       this._errorMessage = this.t('registro-wizard-terminos-error');
@@ -245,11 +245,11 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     });
   }
 
-  /*
-  Maneja el éxito del guardado: cierra la transición, abre el modal con los datos reales y emite el evento propio de éxito.
-  @private
-  @event ac-registro-wizard-register-success
-  */
+  /**
+   * Maneja el éxito del guardado: cierra la transición, abre el modal con los datos reales y emite el evento propio de éxito.
+   * @private
+   * @event ac-registro-wizard-register-success
+   */
   _onRegisterSuccess(event) {
     this._loading = false;
     this._errorMessage = '';
@@ -259,47 +259,47 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this._emit('ac-registro-wizard-register-success', { data: event.detail.data });
   }
 
-  /*
-  Maneja el error del guardado: muestra el mensaje y emite el evento propio de error, sin cerrar la transición.
-  @private
-  @event ac-registro-wizard-register-error
-  */
+  /**
+   * Maneja el error del guardado: muestra el mensaje y emite el evento propio de error, sin cerrar la transición.
+   * @private
+   * @event ac-registro-wizard-register-error
+   */
   _onRegisterError(event) {
     this._loading = false;
     this._errorMessage = event.detail.error?.message ?? this.t('registro-wizard-register-error');
     this._emit('ac-registro-wizard-register-error', { error: event.detail.error });
   }
 
-  /*
-  Descarta el mensaje de error visible arriba del multistep.
-  @private
-  */
+  /**
+   * Descarta el mensaje de error visible arriba del multistep.
+   * @private
+   */
   _onDismissError() {
     this._errorMessage = '';
   }
 
-  /*
-  Cierra el modal de éxito y reinicia el wizard.
-  @private
-  */
+  /**
+   * Cierra el modal de éxito y reinicia el wizard.
+   * @private
+   */
   _onModalPrimaryClick() {
     this._modalOpen = false;
     this.reset();
   }
 
-  /*
-  Reinicia el wizard al hacer click en la flecha de volver -- este wizard no tiene pantalla anterior a la que volver.
-  @private
-  */
+  /**
+   * Reinicia el wizard al hacer click en la flecha de volver -- este wizard no tiene pantalla anterior a la que volver.
+   * @private
+   */
   _onBackIconClick() {
     this.reset();
   }
 
-  /*
-  Reemite el cambio de paso activo que informó registro-wizard-steps como evento público propio.
-  @private
-  @event ac-registro-wizard-step-change
-  */
+  /**
+   * Reemite el cambio de paso activo que informó registro-wizard-steps como evento público propio.
+   * @private
+   * @event ac-registro-wizard-step-change
+   */
   _onStepsStepChange(event) {
     this._emit('ac-registro-wizard-step-change', {
       step: event.detail.step,
@@ -307,18 +307,18 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     });
   }
 
-  /*
-  Despacha un CustomEvent con el nombre y detalle indicados, con bubbles y composed activos.
-  @private
-  */
+  /**
+   * Despacha un CustomEvent con el nombre y detalle indicados, con bubbles y composed activos.
+   * @private
+   */
   _emit(name, detail = {}) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /*
-  Renderiza ac-api-users (sin UI), la transición raíz con registro-wizard-steps adentro, y el modal de éxito con registro-wizard-modal-resultado adentro. ac-api-users y ac-modal-basic van como hermanos de ac-transition-container, nunca anidados dentro de su slot.
-  @public
-  */
+  /**
+   * Renderiza ac-api-users (sin UI), la transición raíz con registro-wizard-steps adentro, y el modal de éxito con registro-wizard-modal-resultado adentro. ac-api-users y ac-modal-basic van como hermanos de ac-transition-container, nunca anidados dentro de su slot.
+   * @public
+   */
   render() {
     return html`
       <ac-api-users
