@@ -60,6 +60,19 @@ export class RegistroWizard extends LitElement {
 
   static get properties() {
     return {
+      // `contained`/`getBoundary`: mismo contrato que `ac-transition-container`/
+      // `ac-modal-basic` (ver "Superposiciones" en docs/CONVENTIONS.md). Como esos
+      // dos viven DENTRO de este shadow DOM (no son descendientes de luz del
+      // `<ac-demo-case>`), `ac-demo-content._applyContainment()` no puede verlos
+      // directo -- pero si `registro-wizard` declara esta misma propiedad
+      // `contained`, ese método SÍ la detecta en el host (`'contained' in el`) y
+      // se la asigna a él, de donde este componente la reenvía hacia sus dos
+      // hijos de superposición en el render() de más abajo. Sin esto, su
+      // `<dialog>` interno abre con `showModal()` nativo y tapa toda la página
+      // real -- incluida la cabecera/toolbar de `ac-demo-content` -- en vez de
+      // quedar contenido al marco de dispositivo simulado.
+      contained: { type: Boolean, reflect: true },
+
       // Estructura (transition-container / modal).
       _open: { state: true },
       _modalOpen: { state: true },
@@ -85,6 +98,8 @@ export class RegistroWizard extends LitElement {
 
   constructor() {
     super();
+    this.contained = false;
+    this.getBoundary = null;
     this._resetState();
 
     // Referencias para acceso imperativo real (llamar métodos de
@@ -263,6 +278,8 @@ export class RegistroWizard extends LitElement {
 
       <ac-transition-container
         ?open=${this._open}
+        ?contained=${this.contained}
+        .getBoundary=${this.getBoundary}
         header-text="Registro de usuario"
         hide-menu-icon
         @ac-transition-container-header-back-icon-click=${this._onBackIconClick}
@@ -404,6 +421,8 @@ export class RegistroWizard extends LitElement {
 
       <ac-modal-basic
         ?open=${this._modalOpen}
+        ?contained=${this.contained}
+        .getBoundary=${this.getBoundary}
         header="Registro exitoso"
         primary-text="Cerrar"
         @ac-modal-basic-primary-click=${this._onModalPrimaryClick}
