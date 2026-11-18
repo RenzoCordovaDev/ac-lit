@@ -38,6 +38,12 @@ function listPackageDirs(parent) {
 
 const hasDemo = dir => fs.existsSync(path.join(dir, 'demo'));
 const hasE2e = dir => fs.existsSync(path.join(dir, 'test_e2e'));
+const hasStyles = dir => {
+  const srcDir = path.join(dir, 'src');
+  return (
+    fs.existsSync(srcDir) && fs.readdirSync(srcDir).some(name => name.endsWith('.styles.scss'))
+  );
+};
 
 describe('component:* scripts', () => {
   const componentPackages = [
@@ -51,9 +57,9 @@ describe('component:* scripts', () => {
 
     it(`${label} exposes the full component:* set`, () => {
       const scripts = readScripts(dir);
-      const expected = hasE2e(dir)
-        ? COMPONENT_SCRIPTS
-        : COMPONENT_SCRIPTS.filter(name => !name.includes(':test:e2e'));
+      let expected = COMPONENT_SCRIPTS;
+      if (!hasE2e(dir)) expected = expected.filter(name => !name.includes(':test:e2e'));
+      if (!hasStyles(dir)) expected = expected.filter(name => !name.includes(':build:styles'));
 
       assert.deepEqual(
         expected.filter(name => !scripts.includes(name)),
