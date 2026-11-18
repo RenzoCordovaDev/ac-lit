@@ -1740,6 +1740,22 @@ body[data-view='home'] .catalog__menu-button {
   pointer-events: none;
 }
 
+.catalog__lab-reference-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.3rem);
+  margin-top: var(--space-3, 0.75rem);
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--color-muted, #313335);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+  text-decoration: none;
+}
+
+.catalog__lab-reference-link:hover {
+  text-decoration: underline;
+}
+
 .catalog__api-table {
   width: 100%;
   border-collapse: collapse;

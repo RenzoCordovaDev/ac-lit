@@ -18,11 +18,12 @@ import {
   writeFileSync,
   readFileSync,
 } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const ROOT = process.cwd();
 const COMPONENTS_DIR = join(ROOT, 'packages', 'components');
 const CATALOG_SITE_DIR = join(ROOT, 'catalog-site');
+const LAB_REFERENCE_DIR = join(CATALOG_SITE_DIR, 'lab-reference');
 const OUT_DIR = join(ROOT, 'catalog-dist');
 const TOKENS_SRC_DIR = join(ROOT, 'packages', 'base', 'ac-core', 'src', 'tokens');
 const TOKEN_FILES = ['base.css', 'modern-warm-palette.css', 'modern-warm-palette-light.css'];
@@ -48,6 +49,20 @@ function discoverComponents() {
     .sort();
 }
 
+// Componentes de referencia del Laboratorio de aprendizaje
+// (`catalog-site/lab-reference/*`, ver docs/CONVENTIONS.md) -- pedagógicos,
+// nunca parte del catálogo publicable, pero su demo se buildea igual para
+// poder mostrarla como "Ver solución" desde la vista del Laboratorio.
+function discoverLabReferenceComponents() {
+  if (!existsSync(LAB_REFERENCE_DIR)) return [];
+  return readdirSync(LAB_REFERENCE_DIR, { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name)
+    .filter(name => existsSync(join(LAB_REFERENCE_DIR, name, 'package.json')))
+    .filter(name => existsSync(join(LAB_REFERENCE_DIR, name, 'demo')))
+    .sort();
+}
+
 function readPackageJson(dir) {
   return JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
 }
@@ -57,7 +72,11 @@ function main() {
   if (names.length === 0) {
     throw new Error('No se encontró ningún componente del catálogo para buildear.');
   }
-  console.log(`[catalog] ${names.length} componente(s) encontrados.`);
+  const labNames = discoverLabReferenceComponents();
+  console.log(
+    `[catalog] ${names.length} componente(s) encontrados` +
+      (labNames.length ? `, ${labNames.length} de referencia del Laboratorio.` : '.'),
+  );
 
   // Fase 1/4 -- estilos. ac-demo-content primero (toda demo lo importa), y
   // cada componente después: cada uno depende de su propio `*.styles.js`
@@ -69,6 +88,10 @@ function main() {
   for (const name of names) {
     runPnpm(['--filter', `@ac-components/${name}`, 'run', 'component:build:styles']);
   }
+  for (const name of labNames) {
+    const pkg = readPackageJson(join(LAB_REFERENCE_DIR, name));
+    runPnpm(['--filter', pkg.name, 'run', 'component:build:styles']);
+  }
 
   // Fase 2/4 -- build de cada demo real (la misma que usa component:serve/
   // component:preview), con `--base=./` para que los assets queden en rutas
@@ -77,12 +100,22 @@ function main() {
   for (const name of names) {
     runPnpm(['--filter', `@ac-components/${name}`, 'exec', 'vite', 'build', '--base=./']);
   }
+  for (const name of labNames) {
+    const pkg = readPackageJson(join(LAB_REFERENCE_DIR, name));
+    runPnpm(['--filter', pkg.name, 'exec', 'vite', 'build', '--base=./']);
+  }
 
-  // Fase 3/4 -- staging: arma catalog-dist/ desde cero.
+  // Fase 3/4 -- staging: arma catalog-dist/ desde cero. `lab-reference/` se
+  // excluye de esta copia en bloque (traería `src/`, `node_modules/`, etc.
+  // de cada componente pedagógico) -- solo se copia su `dist/` ya buildeado,
+  // más abajo, igual que el resto de las demos.
   console.log('\n[catalog] Fase 3/4 -- armando catalog-dist/...');
   rmSync(OUT_DIR, { recursive: true, force: true });
   mkdirSync(OUT_DIR, { recursive: true });
-  cpSync(CATALOG_SITE_DIR, OUT_DIR, { recursive: true });
+  cpSync(CATALOG_SITE_DIR, OUT_DIR, {
+    recursive: true,
+    filter: src => src !== LAB_REFERENCE_DIR && !src.startsWith(LAB_REFERENCE_DIR + sep),
+  });
 
   const tokensDestDir = join(OUT_DIR, 'tokens');
   mkdirSync(tokensDestDir, { recursive: true });
@@ -94,6 +127,14 @@ function main() {
   mkdirSync(demosDestDir, { recursive: true });
   for (const name of names) {
     cpSync(join(COMPONENTS_DIR, name, 'dist'), join(demosDestDir, name), { recursive: true });
+  }
+
+  const labDemosDestDir = join(OUT_DIR, 'lab-reference-demos');
+  mkdirSync(labDemosDestDir, { recursive: true });
+  for (const name of labNames) {
+    cpSync(join(LAB_REFERENCE_DIR, name, 'dist'), join(labDemosDestDir, name), {
+      recursive: true,
+    });
   }
 
   // Fase 4/4 -- manifest: la lista que lee catalog.js, generada de cero en
@@ -114,7 +155,10 @@ function main() {
     `${JSON.stringify({ generatedAt: new Date().toISOString(), components }, null, 2)}\n`,
   );
 
-  console.log(`\n[catalog] Listo: ${names.length} componente(s) en ${relative(ROOT, OUT_DIR)}/`);
+  console.log(
+    `\n[catalog] Listo: ${names.length} componente(s) en ${relative(ROOT, OUT_DIR)}/` +
+      (labNames.length ? ` (+ ${labNames.length} de referencia del Laboratorio)` : ''),
+  );
 }
 
 main();

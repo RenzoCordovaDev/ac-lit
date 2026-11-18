@@ -353,6 +353,13 @@ function renderLabChapters() {
         content.append(item);
       });
     }
+    if (chapter.referenceDemo) {
+      const link = create('a', 'catalog__lab-reference-link', 'Ver solución →');
+      link.href = `./lab-reference-demos/${chapter.referenceDemo}/index.html`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      content.append(link);
+    }
     section.append(content);
     chaptersEl.append(section);
   }

@@ -94,6 +94,10 @@ export const LAB_CHAPTERS = [
     title: 'Capítulo 1 — Construcción',
     summary:
       'Construye un componente propio de punta a punta: desde `aclit component:create` hasta un flujo completo con API pública/privada, eventos, estilos, modal, transición interna y multipasos.',
+    // Componente de referencia real (`catalog-site/lab-reference/<nombre>/`,
+    // ver docs/CONVENTIONS.md) -- `renderLabChapters()` en catalog.js arma el
+    // link "Ver solución" a partir de este nombre de carpeta cuando existe.
+    referenceDemo: 'registro-wizard',
     labs: [
       {
         id: 'construccion-01-scaffold',
