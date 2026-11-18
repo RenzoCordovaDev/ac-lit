@@ -2,3 +2,7 @@ packages:
   - 'cli'
   - 'packages/base/*'
   - 'packages/components/*'
+  # Componentes de referencia del Laboratorio de aprendizaje (catalog-site/) --
+  # pedagógicos, nunca publicados a npm, pero necesitan resolver
+  # `workspace:^` contra el catálogo real igual que cualquier paquete.
+  - 'catalog-site/lab-reference/*'
