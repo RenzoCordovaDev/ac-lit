@@ -53,7 +53,7 @@ When('el usuario pulsa el ícono de menú del contenedor {string}', async functi
 
 async function waitForContainerVisible(testId, expected) {
   const container = componentProvider.find(TransitionContainerPage, testId);
-  await browser.waitUntil(async () => (await container.snapshot()).visible === expected, {
+  await browser.waitUntil(async () => (await container.snapshot()).open === expected, {
     timeout: 4000,
     timeoutMsg: `El contenedor "${testId}" no llegó a estar ${expected ? 'visible' : 'cerrado'}`,
   });
