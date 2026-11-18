@@ -181,6 +181,27 @@ importers:
         specifier: ^3.0.0
         version: 3.3.3
 
+  packages/base/ac-ccp:
+    devDependencies:
+      '@ac-components/ac-badge-basic':
+        specifier: workspace:^
+        version: link:../../components/ac-badge-basic
+      '@ac-components/ac-button-basic':
+        specifier: workspace:^
+        version: link:../../components/ac-button-basic
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
   packages/base/ac-component-mixin:
     dependencies:
       '@ac-base/ac-intl-mixin':
