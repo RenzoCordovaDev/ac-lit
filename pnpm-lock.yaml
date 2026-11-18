@@ -126,6 +126,9 @@ importers:
       '@ac-base/ac-core':
         specifier: workspace:^
         version: link:../../../packages/base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../../packages/base/ac-demo-content
       '@ac-base/cli':
         specifier: workspace:^
         version: link:../../../cli
