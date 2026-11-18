@@ -21,10 +21,6 @@ export class RegistroWizardStepResumen extends ComponentMixin(LitElement) {
     return 'registro-wizard-step-resumen';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardStepResumenStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -93,10 +89,10 @@ export class RegistroWizardStepResumen extends ComponentMixin(LitElement) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /**
-   * Renderiza el resumen de datos del paso 3 y el botón "Confirmar" (o un spinner mientras loading es true).
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStepResumenStyles];
+  }
+
   render() {
     return html`
       <div class="registro-wizard-step-resumen__summary">

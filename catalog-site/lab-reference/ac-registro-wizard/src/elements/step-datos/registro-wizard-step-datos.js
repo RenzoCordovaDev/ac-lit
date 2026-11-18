@@ -23,10 +23,6 @@ export class RegistroWizardStepDatos extends ComponentMixin(LitElement) {
     return 'registro-wizard-step-datos';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardStepDatosStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -115,10 +111,10 @@ export class RegistroWizardStepDatos extends ComponentMixin(LitElement) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /**
-   * Renderiza los campos del paso 1 y el botón de siguiente. Los eventos los disparan los handlers, no render directamente.
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStepDatosStyles];
+  }
+
   render() {
     return html`
       ${

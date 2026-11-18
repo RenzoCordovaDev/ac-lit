@@ -25,10 +25,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     return 'ac-registro-wizard';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -315,10 +311,10 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /**
-   * Renderiza ac-api-users (sin UI), la transición raíz con registro-wizard-steps adentro, y el modal de éxito con registro-wizard-modal-resultado adentro. ac-api-users y ac-modal-basic van como hermanos de ac-transition-container, nunca anidados dentro de su slot.
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStyles];
+  }
+
   render() {
     return html`
       <ac-api-users

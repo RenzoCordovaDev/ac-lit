@@ -28,10 +28,6 @@ export class RegistroWizardSteps extends ComponentMixin(LitElement) {
     return 'registro-wizard-steps';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardStepsStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -228,10 +224,10 @@ export class RegistroWizardSteps extends ComponentMixin(LitElement) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /**
-   * Renderiza el ac-expandable-multistep con sus 3 ac-expandable-step, cada uno con su contenido real adentro.
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStepsStyles];
+  }
+
   render() {
     return html`
       <ac-expandable-multistep

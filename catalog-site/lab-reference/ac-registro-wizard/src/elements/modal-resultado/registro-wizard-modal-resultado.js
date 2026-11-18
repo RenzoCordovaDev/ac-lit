@@ -16,10 +16,6 @@ export class RegistroWizardModalResultado extends ComponentMixin(LitElement) {
     return 'registro-wizard-modal-resultado';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardModalResultadoStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -57,10 +53,10 @@ export class RegistroWizardModalResultado extends ComponentMixin(LitElement) {
     this.rol = '';
   }
 
-  /**
-   * Renderiza el contenido del modal de éxito. Devuelve un template vacío si todavía no hay nombre.
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardModalResultadoStyles];
+  }
+
   render() {
     if (!this.nombre) return html``;
 

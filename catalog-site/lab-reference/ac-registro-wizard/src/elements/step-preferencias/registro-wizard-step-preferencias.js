@@ -22,10 +22,6 @@ export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
     return 'registro-wizard-step-preferencias';
   }
 
-  static get styles() {
-    return [componentBaseStyles, RegistroWizardStepPreferenciasStyles];
-  }
-
   static get properties() {
     return {
       /**
@@ -106,10 +102,10 @@ export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 
-  /**
-   * Renderiza el contenido del paso de preferencias.
-   * @public
-   */
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStepPreferenciasStyles];
+  }
+
   render() {
     return html`
       <ac-checkbox-basic
