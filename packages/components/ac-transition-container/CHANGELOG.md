@@ -1,5 +1,11 @@
 # @ac-components/ac-transition-container
 
+## 1.0.0
+
+### Major Changes
+
+- f24ce3a: Se renombra la propiedad pública `visible` a `open` para homologar el nombre con `ac-modal-basic` — breaking change, quien use `visible`/`?visible` debe migrar a `open`/`?open`.
+
 ## 0.1.2
 
 ### Patch Changes
