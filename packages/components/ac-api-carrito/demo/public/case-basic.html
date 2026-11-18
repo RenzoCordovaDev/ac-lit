@@ -1,0 +1,107 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula un carrito de compras: agregar, quitar, actualizar cantidad y ver el resumen.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>agregarItem(item)</code>
+      <p>
+        Agrega <code>{ productoId, nombre, precio, cantidad? }</code>; si el producto ya está en el
+        carrito, suma la cantidad.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-carrito-add-success / ac-api-carrito-add-error</code></span
+      >
+    </li>
+    <li>
+      <code>quitarItem(productoId)</code>
+      <p>Quita un ítem del carrito por <code>productoId</code>; falla si no está en el carrito.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-carrito-remove-success / ac-api-carrito-remove-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarItems(queryParams = {})</code>
+      <p>
+        Lista los ítems del carrito. <code>queryParams</code>: sortBy/sortDir, pagination/page,
+        fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-carrito-list-success / ac-api-carrito-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarCantidad(productoId, cantidad)</code>
+      <p>
+        Cambia la cantidad de un ítem existente; falla si <code>cantidad</code> no es mayor a 0.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code
+          >ac-api-carrito-update-quantity-success / ac-api-carrito-update-quantity-error</code
+        ></span
+      >
+    </li>
+    <li>
+      <code>vaciarCarrito()</code>
+      <p>Vacía el carrito por completo.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-carrito-clear-success / ac-api-carrito-clear-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerResumen()</code>
+      <p>
+        Devuelve { items, subtotal, impuestos, total } (impuestos al 18% fijo sobre el subtotal).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-carrito-summary-success / ac-api-carrito-summary-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-carrito-add-success</code>, <code>ac-api-carrito-add-error</code>,
+    <code>ac-api-carrito-remove-success</code>, <code>ac-api-carrito-remove-error</code>,
+    <code>ac-api-carrito-list-success</code>, <code>ac-api-carrito-list-error</code>,
+    <code>ac-api-carrito-update-quantity-success</code>,
+    <code>ac-api-carrito-update-quantity-error</code>, <code>ac-api-carrito-clear-success</code>,
+    <code>ac-api-carrito-clear-error</code>, <code>ac-api-carrito-summary-success</code>,
+    <code>ac-api-carrito-summary-error</code>
+  </p>
+</section>

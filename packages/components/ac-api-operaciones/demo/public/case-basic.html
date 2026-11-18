@@ -1,0 +1,108 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula saldo, historial, compras, transferencias, depósitos y retiros.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>consultarSaldo(cuentaId)</code>
+      <p>Devuelve el saldo actual de una cuenta del mock.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-balance-success / ac-api-operaciones-balance-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerHistorial(cuentaId, queryParams = {})</code>
+      <p>
+        Lista los movimientos de una cuenta. <code>queryParams</code>: tipo, sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-history-success / ac-api-operaciones-history-error</code></span
+      >
+    </li>
+    <li>
+      <code>comprar(productoId, cantidad = 1)</code>
+      <p>
+        Debita la cuenta principal (id 1) según un mock interno de precios; falla si no hay saldo
+        suficiente.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-operaciones-buy-success / ac-api-operaciones-buy-error</code></span
+      >
+    </li>
+    <li>
+      <code>transferir(cuentaOrigenId, cuentaDestinoId, monto)</code>
+      <p>
+        Mueve dinero entre dos cuentas del mock; falla si la cuenta origen no tiene saldo
+        suficiente.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-transfer-success / ac-api-operaciones-transfer-error</code></span
+      >
+    </li>
+    <li>
+      <code>depositar(cuentaId, monto)</code>
+      <p>Suma <code>monto</code> al saldo de la cuenta.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-deposit-success / ac-api-operaciones-deposit-error</code></span
+      >
+    </li>
+    <li>
+      <code>retirar(cuentaId, monto)</code>
+      <p>Resta <code>monto</code> al saldo de la cuenta; falla si no hay saldo suficiente.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-operaciones-withdraw-success / ac-api-operaciones-withdraw-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-operaciones-balance-success</code>, <code>ac-api-operaciones-balance-error</code>,
+    <code>ac-api-operaciones-history-success</code>, <code>ac-api-operaciones-history-error</code>,
+    <code>ac-api-operaciones-buy-success</code>, <code>ac-api-operaciones-buy-error</code>,
+    <code>ac-api-operaciones-transfer-success</code>,
+    <code>ac-api-operaciones-transfer-error</code>, <code>ac-api-operaciones-deposit-success</code>,
+    <code>ac-api-operaciones-deposit-error</code>, <code>ac-api-operaciones-withdraw-success</code>,
+    <code>ac-api-operaciones-withdraw-error</code>
+  </p>
+</section>

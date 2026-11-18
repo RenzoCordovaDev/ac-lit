@@ -1,0 +1,115 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de productos, con catálogo y detalle extendido.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>obtenerProducto(id, queryParams = {})</code>
+      <p>Obtiene un producto por id. <code>queryParams.fields</code> proyecta solo esos campos.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-get-product-success / ac-api-productos-get-product-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarProductos(queryParams = {})</code>
+      <p>
+        Lista productos. <code>queryParams</code>: category, status (active/inactive),
+        sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-list-success / ac-api-productos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>buscarProductos(texto, queryParams = {})</code>
+      <p>
+        Busca por nombre (coincidencia parcial). Admite el mismo queryParams que listarProductos.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-search-success / ac-api-productos-search-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerDetalleProducto(id)</code>
+      <p>Detalle extendido: agrega especificaciones e inventario (datos anidados) al producto.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-get-detail-success / ac-api-productos-get-detail-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarProducto(objetoProducto)</code>
+      <p>
+        Crea un producto nuevo. <code>nombre</code> y <code>precio</code> son obligatorios;
+        <code>categoria</code>/<code>stock</code> son opcionales.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-productos-register-success / ac-api-productos-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarProducto(id, cambios = {})</code>
+      <p>
+        Mezcla <code>cambios</code> sobre el producto existente (el id no se puede sobrescribir).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-update-success / ac-api-productos-update-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarProducto(id)</code>
+      <p>Elimina un producto del mock por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-productos-delete-success / ac-api-productos-delete-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-productos-get-product-success</code>,
+    <code>ac-api-productos-get-product-error</code>, <code>ac-api-productos-list-success</code>,
+    <code>ac-api-productos-list-error</code>, <code>ac-api-productos-search-success</code>,
+    <code>ac-api-productos-search-error</code>, <code>ac-api-productos-get-detail-success</code>,
+    <code>ac-api-productos-get-detail-error</code>, <code>ac-api-productos-register-success</code>,
+    <code>ac-api-productos-register-error</code>, <code>ac-api-productos-update-success</code>,
+    <code>ac-api-productos-update-error</code>, <code>ac-api-productos-delete-success</code>,
+    <code>ac-api-productos-delete-error</code>
+  </p>
+</section>

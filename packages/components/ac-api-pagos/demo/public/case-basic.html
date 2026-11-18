@@ -1,0 +1,95 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de métodos de pago: listar, agregar, eliminar y procesar un pago.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarMetodosPago(queryParams = {})</code>
+      <p>
+        Lista métodos de pago guardados (sin exponer el número completo). <code>queryParams</code>:
+        sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-list-success / ac-api-pagos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>agregarMetodoPago(objetoMetodo)</code>
+      <p>
+        <code>marca</code> y <code>numero</code> son obligatorios; el número se enmascara en toda
+        respuesta (solo se guardan los últimos 4 dígitos como <code>ultimosDigitos</code>).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-add-success / ac-api-pagos-add-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarMetodoPago(id)</code>
+      <p>Elimina un método de pago por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-delete-success / ac-api-pagos-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>marcarMetodoPredeterminado(id)</code>
+      <p>Marca un método de pago como predeterminado; desmarca cualquier otro.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-pagos-mark-default-success / ac-api-pagos-mark-default-error</code></span
+      >
+    </li>
+    <li>
+      <code>procesarPago(monto, metodoId)</code>
+      <p>
+        Procesa un pago con un método existente; falla si <code>monto</code> no es mayor a 0 o el
+        método no existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pagos-process-success / ac-api-pagos-process-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-pagos-list-success</code>, <code>ac-api-pagos-list-error</code>,
+    <code>ac-api-pagos-add-success</code>, <code>ac-api-pagos-add-error</code>,
+    <code>ac-api-pagos-delete-success</code>, <code>ac-api-pagos-delete-error</code>,
+    <code>ac-api-pagos-mark-default-success</code>, <code>ac-api-pagos-mark-default-error</code>,
+    <code>ac-api-pagos-process-success</code>, <code>ac-api-pagos-process-error</code>
+  </p>
+</section>

@@ -1714,6 +1714,43 @@ body[data-view='home'] .catalog__menu-button {
   color: var(--color-text, #bcbec4);
 }
 
+.catalog__api-methods {
+  list-style: none;
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__api-method-signature {
+  display: block;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+  overflow-wrap: anywhere;
+}
+
+.catalog__api-method-description {
+  display: block;
+  margin-top: var(--space-1, 0.25rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__api-method-event {
+  display: block;
+  margin-top: var(--space-1, 0.25rem);
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__api-method-event code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  color: var(--catalog-subtext);
+}
+
 /* Skeleton mientras carga la demo del componente elegido -- reproduce la
    estructura real de .ac-demo-content__stage (ver su .styles.scss): mismo
    fondo/padding exterior y mismo marco de dispositivo (ancho máximo, radios,

@@ -1,0 +1,126 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de usuarios: obtener, listar, buscar, crear, editar y eliminar.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>obtenerDatosUsuario(id, queryParams = {})</code>
+      <p>Obtiene un usuario por id. <code>queryParams.fields</code> proyecta solo esos campos.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-get-user-success / ac-api-users-get-user-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarUsuarios(queryParams = {})</code>
+      <p>
+        Lista usuarios. <code>queryParams</code>: role, status (active/inactive), sortBy/sortDir,
+        pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-list-success / ac-api-users-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>buscarUsuarios(texto, queryParams = {})</code>
+      <p>
+        Busca por nombre o email (coincidencia parcial). Admite el mismo queryParams que
+        listarUsuarios.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-search-success / ac-api-users-search-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerPerfilUsuario(id)</code>
+      <p>
+        Perfil extendido: agrega contacto, dirección y preferencias (datos anidados) al usuario.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-users-get-profile-success / ac-api-users-get-profile-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarUsuario(objetoUsuario)</code>
+      <p>
+        Crea un usuario nuevo. <code>nombre</code> y <code>email</code> son obligatorios;
+        <code>rol</code> por defecto es "lector".
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-register-success / ac-api-users-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarUsuario(id, cambios = {})</code>
+      <p>
+        Mezcla <code>cambios</code> sobre el usuario existente (el id no se puede sobrescribir).
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-update-success / ac-api-users-update-error</code></span
+      >
+    </li>
+    <li>
+      <code>eliminarUsuario(id)</code>
+      <p>Elimina un usuario del mock por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-delete-success / ac-api-users-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>validarCredenciales(email, password)</code>
+      <p>
+        Simula un login: busca el email en el mock y exige un password de 4+ caracteres; devuelve {
+        token, user }.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-users-auth-success / ac-api-users-auth-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-users-get-user-success</code>, <code>ac-api-users-get-user-error</code>,
+    <code>ac-api-users-list-success</code>, <code>ac-api-users-list-error</code>,
+    <code>ac-api-users-search-success</code>, <code>ac-api-users-search-error</code>,
+    <code>ac-api-users-get-profile-success</code>, <code>ac-api-users-get-profile-error</code>,
+    <code>ac-api-users-register-success</code>, <code>ac-api-users-register-error</code>,
+    <code>ac-api-users-update-success</code>, <code>ac-api-users-update-error</code>,
+    <code>ac-api-users-delete-success</code>, <code>ac-api-users-delete-error</code>,
+    <code>ac-api-users-auth-success</code>, <code>ac-api-users-auth-error</code>
+  </p>
+</section>

@@ -12,6 +12,7 @@ import { GROUPS, FALLBACK_GROUP_ID, FALLBACK_ICON, COMPONENT_META } from './cata
 import { COMPONENT_API } from './catalog-api.js';
 
 const REPO_URL = 'https://github.com/RenzoCordovaDev/ac-lit';
+const API_GROUP_ID = 'apis';
 const COPIED_FEEDBACK_MS = 1600;
 const NARROW_SCREEN = window.matchMedia('(max-width: 900px)');
 
@@ -48,6 +49,7 @@ const copyStatusEl = document.getElementById('catalog-copy-status');
 
 const controlsEl = document.getElementById('catalog-controls');
 const tabEls = [...document.querySelectorAll('.catalog__tab')];
+const tabsEl = document.querySelector('.catalog__tabs');
 const stageEl = document.getElementById('catalog-stage');
 const frameEl = document.getElementById('catalog-frame');
 const skeletonEl = document.getElementById('catalog-skeleton');
@@ -59,8 +61,10 @@ const codeListEl = document.getElementById('catalog-code-list');
 const apiEl = document.getElementById('catalog-api');
 const apiPropsContentEl = document.getElementById('catalog-api-props-content');
 const apiEventsContentEl = document.getElementById('catalog-api-events-content');
+const apiMethodsContentEl = document.getElementById('catalog-api-methods-content');
 const apiPropsCountEl = document.getElementById('catalog-api-props-count');
 const apiEventsCountEl = document.getElementById('catalog-api-events-count');
+const apiMethodsCountEl = document.getElementById('catalog-api-methods-count');
 
 const homeCategoriesEl = document.getElementById('catalog-home-categories');
 
@@ -252,6 +256,7 @@ function selectComponent(id, { updateHash = true } = {}) {
 
   const meta = metaFor(component);
   const group = groupFor(component.id);
+  const isApiComponent = group.id === API_GROUP_ID;
   heroIconEl.innerHTML = icon(meta.icon, 40);
   heroNameEl.textContent = component.id;
   heroDescriptionEl.textContent = meta.description;
@@ -260,23 +265,39 @@ function selectComponent(id, { updateHash = true } = {}) {
   document.title = `${component.id} — Catálogo ac-lit`;
   renderBreadcrumb(['Componentes', group.label, component.id]);
 
-  // Skeleton mientras carga el iframe nuevo -- evita el "de golpe" al
-  // cambiar de componente. Se oculta directo en el evento `load` (ver más
-  // abajo): la duración real queda atada a lo que tarde esa demo puntual en
-  // cargar, sin ningún piso artificial por timeout.
   controlsEl.hidden = true;
   examplesEl.replaceChildren();
   renderApiInfo(component.id);
-  setTab('demo');
-  // El marco del skeleton usa el mismo preset elegido para la demo anterior
-  // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
-  // tamaño dos veces (skeleton -> otro tamaño -> real) si ya se había elegido
-  // Tablet/Desktop.
-  skeletonFrameEl.dataset.device = demoPrefs.device;
-  skeletonEl.hidden = false;
-  frameEl.hidden = true;
-  emptyStateEl.hidden = true;
-  frameEl.src = component.demoEntry;
+
+  // La familia `ac-api-*` no renderiza nada y no tiene controles que
+  // mostrar: en vez de un iframe/skeleton y las pestañas Demo/Código/
+  // Ejemplos, va de frente a la ficha de Propiedades/Métodos/Eventos (ver
+  // renderApiInfo arriba), que queda como único contenido siempre visible.
+  tabsEl.hidden = isApiComponent;
+  stageEl.hidden = isApiComponent;
+  apiEl.hidden = !isApiComponent;
+
+  if (isApiComponent) {
+    frameEl.removeAttribute('src');
+    frameEl.hidden = true;
+    skeletonEl.hidden = true;
+    emptyStateEl.hidden = true;
+  } else {
+    // Skeleton mientras carga el iframe nuevo -- evita el "de golpe" al
+    // cambiar de componente. Se oculta directo en el evento `load` (ver más
+    // abajo): la duración real queda atada a lo que tarde esa demo puntual en
+    // cargar, sin ningún piso artificial por timeout.
+    setTab('demo');
+    // El marco del skeleton usa el mismo preset elegido para la demo anterior
+    // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
+    // tamaño dos veces (skeleton -> otro tamaño -> real) si ya se había elegido
+    // Tablet/Desktop.
+    skeletonFrameEl.dataset.device = demoPrefs.device;
+    skeletonEl.hidden = false;
+    frameEl.hidden = true;
+    emptyStateEl.hidden = true;
+    frameEl.src = component.demoEntry;
+  }
 
   // Solo se redibuja la lista si hay que abrir el grupo del componente; si
   // ya está a la vista alcanza con mover la marca de "actual" (y así no se
@@ -486,9 +507,13 @@ function renderExamples(state) {
   );
 }
 
-/* Propiedades/Eventos: dos expandibles debajo del stage, con la API pública
-   del componente elegido (ver catalog-api.js, transcrita a mano de cada
-   README). Solo se muestran en la pestaña Código (ver setTab() más abajo). */
+/* Propiedades/Métodos/Eventos: tres expandibles debajo del stage, con la API
+   pública del componente elegido (ver catalog-api.js, transcrita a mano de
+   cada README). Solo se muestran en la pestaña Código (ver setTab() más
+   abajo). Métodos suele quedar vacío para los componentes visuales -- es la
+   sección clave para la familia sin UI `ac-api-*` (ver docs/CONVENTIONS.md),
+   donde no hay controles que mostrar en la demo y esta ficha es la
+   documentación real del componente. */
 
 function apiCell(text, { code = false } = {}) {
   const cell = create('td');
@@ -507,12 +532,14 @@ function apiCell(text, { code = false } = {}) {
 }
 
 function renderApiInfo(id) {
-  const api = COMPONENT_API[id] ?? { properties: [], events: [] };
+  const api = COMPONENT_API[id] ?? {};
   const properties = api.properties ?? [];
   const events = api.events ?? [];
+  const methods = api.methods ?? [];
 
   apiPropsCountEl.textContent = String(properties.length);
   apiEventsCountEl.textContent = String(events.length);
+  apiMethodsCountEl.textContent = String(methods.length);
 
   apiPropsContentEl.replaceChildren();
   if (properties.length === 0) {
@@ -571,6 +598,29 @@ function renderApiInfo(id) {
       list.append(item);
     }
     apiEventsContentEl.append(list);
+  }
+
+  apiMethodsContentEl.replaceChildren();
+  if (methods.length === 0) {
+    apiMethodsContentEl.append(
+      create('p', 'catalog__api-empty', 'Este componente no expone métodos públicos propios.'),
+    );
+  } else {
+    const list = create('ul', 'catalog__api-methods');
+    for (const method of methods) {
+      const item = create('li');
+      item.append(create('span', 'catalog__api-method-signature', method.signature ?? method.name));
+      if (method.description) {
+        item.append(create('span', 'catalog__api-method-description', method.description));
+      }
+      if (method.event) {
+        const eventLine = create('span', 'catalog__api-method-event');
+        eventLine.append(create('span', '', 'Dispara: '), create('code', '', method.event));
+        item.append(eventLine);
+      }
+      list.append(item);
+    }
+    apiMethodsContentEl.append(list);
   }
 }
 

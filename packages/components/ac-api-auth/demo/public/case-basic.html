@@ -1,0 +1,86 @@
+<section class="api-doc">
+  <p class="api-doc__summary">Simula login, registro, logout, validación y refresco de token.</p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>iniciarSesion(email, password)</code>
+      <p>Valida email/clave contra el mock y devuelve { token, usuario }.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-login-success / ac-api-auth-login-error</code></span
+      >
+    </li>
+    <li>
+      <code>registrarCuenta(objetoCuenta)</code>
+      <p>
+        Crea una cuenta (nombre/email/clave obligatorios, email único) y la deja autenticada — mismo
+        resultado que iniciarSesion.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-register-success / ac-api-auth-register-error</code></span
+      >
+    </li>
+    <li>
+      <code>cerrarSesion(token)</code>
+      <p>Invalida el token; falla si la sesión no existe o ya expiró.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-logout-success / ac-api-auth-logout-error</code></span
+      >
+    </li>
+    <li>
+      <code>validarSesion(token)</code>
+      <p>Comprueba que el token siga activo y devuelve el usuario asociado.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-validate-success / ac-api-auth-validate-error</code></span
+      >
+    </li>
+    <li>
+      <code>refrescarToken(token)</code>
+      <p>Invalida el token anterior y entrega uno nuevo para el mismo usuario.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-auth-refresh-success / ac-api-auth-refresh-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-auth-login-success</code>, <code>ac-api-auth-login-error</code>,
+    <code>ac-api-auth-register-success</code>, <code>ac-api-auth-register-error</code>,
+    <code>ac-api-auth-logout-success</code>, <code>ac-api-auth-logout-error</code>,
+    <code>ac-api-auth-validate-success</code>, <code>ac-api-auth-validate-error</code>,
+    <code>ac-api-auth-refresh-success</code>, <code>ac-api-auth-refresh-error</code>
+  </p>
+</section>

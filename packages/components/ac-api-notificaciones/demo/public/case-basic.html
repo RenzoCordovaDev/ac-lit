@@ -1,0 +1,100 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de notificaciones: enviar, listar, leer y eliminar.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>enviarNotificacion(objetoNotificacion)</code>
+      <p>
+        Crea una notificación nueva (no leída). <code>titulo</code> y <code>mensaje</code> son
+        obligatorios; <code>tipo</code> por defecto es "general".
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-send-success / ac-api-notificaciones-send-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarNotificaciones(queryParams = {})</code>
+      <p>
+        Lista notificaciones. <code>queryParams</code>: tipo, leida/status (read/unread),
+        sortBy/sortDir (orden por defecto: fecha desc), pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-list-success / ac-api-notificaciones-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerNotificacion(id)</code>
+      <p>Obtiene una notificación por id.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-get-success / ac-api-notificaciones-get-error</code></span
+      >
+    </li>
+    <li>
+      <code>marcarLeida(id)</code>
+      <p>Marca una notificación como leída.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code
+          >ac-api-notificaciones-mark-read-success / ac-api-notificaciones-mark-read-error</code
+        ></span
+      >
+    </li>
+    <li>
+      <code>eliminarNotificacion(id)</code>
+      <p>Elimina una notificación por id.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-notificaciones-delete-success / ac-api-notificaciones-delete-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-notificaciones-send-success</code>, <code>ac-api-notificaciones-send-error</code>,
+    <code>ac-api-notificaciones-list-success</code>, <code>ac-api-notificaciones-list-error</code>,
+    <code>ac-api-notificaciones-get-success</code>, <code>ac-api-notificaciones-get-error</code>,
+    <code>ac-api-notificaciones-mark-read-success</code>,
+    <code>ac-api-notificaciones-mark-read-error</code>,
+    <code>ac-api-notificaciones-delete-success</code>,
+    <code>ac-api-notificaciones-delete-error</code>
+  </p>
+</section>

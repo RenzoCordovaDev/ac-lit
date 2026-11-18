@@ -1,0 +1,31 @@
+{
+  "name": "@ac-base/ac-api-mixin",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-api-mixin"
+  },
+  "description": "Mixin base para componentes no visuales que simulan el consumo de una API (latencia, error simulado, eventos acción+resultado)",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "web-test-runner \"src/**/*.test.js\""
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0"
+  }
+}

@@ -1,0 +1,96 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarArchivos(queryParams = {})</code>
+      <p>
+        Lista archivos. <code>queryParams</code>: tipo, sortBy/sortDir, pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-list-success / ac-api-archivos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerArchivo(id)</code>
+      <p>Obtiene los metadatos de un archivo por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-get-success / ac-api-archivos-get-error</code></span
+      >
+    </li>
+    <li>
+      <code>subirArchivo(objetoArchivo)</code>
+      <p>
+        <code>nombre</code> es obligatorio. No usa el orquestador simple: antes del evento final
+        emite 4 eventos intermedios de progreso (25/50/75/100%).
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code
+          >ac-api-archivos-upload-progress (×4) y luego ac-api-archivos-upload-success /
+          ac-api-archivos-upload-error</code
+        ></span
+      >
+    </li>
+    <li>
+      <code>eliminarArchivo(id)</code>
+      <p>Elimina un archivo por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-archivos-delete-success / ac-api-archivos-delete-error</code></span
+      >
+    </li>
+    <li>
+      <code>descargarArchivo(id)</code>
+      <p>Devuelve { id, nombre, contenidoBase64 } con un mock de contenido codificado en base64.</p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-archivos-download-success / ac-api-archivos-download-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-archivos-list-success</code>, <code>ac-api-archivos-list-error</code>,
+    <code>ac-api-archivos-get-success</code>, <code>ac-api-archivos-get-error</code>,
+    <code>ac-api-archivos-upload-progress</code>, <code>ac-api-archivos-upload-success</code>,
+    <code>ac-api-archivos-upload-error</code>, <code>ac-api-archivos-delete-success</code>,
+    <code>ac-api-archivos-delete-error</code>, <code>ac-api-archivos-download-success</code>,
+    <code>ac-api-archivos-download-error</code>
+  </p>
+</section>

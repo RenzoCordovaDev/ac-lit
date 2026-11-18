@@ -1,13 +1,46 @@
-// API pública de cada componente (propiedades y eventos), para los dos
-// expandables que se muestran debajo del código en la pestaña "Código" del
-// catálogo. Los datos se transcriben a mano desde el README de cada
-// componente (`packages/components/<id>/README.md`, secciones "Propiedades"
-// y "Eventos") -- no hay parseo automático en build time. Al agregar un
-// componente nuevo al catálogo, agrega su entrada acá leyendo su README.
+// API pública de cada componente (propiedades, métodos públicos y eventos),
+// para los expandables que se muestran debajo del código en la pestaña
+// "Código" del catálogo. Los datos se transcriben a mano desde el README de
+// cada componente (`packages/components/<id>/README.md`) -- no hay parseo
+// automático en build time. Al agregar un componente nuevo al catálogo,
+// agrega su entrada acá leyendo su README.
 //
-// Si un componente no tiene propiedades configurables o no dispara eventos
-// propios, su arreglo correspondiente queda vacío (`[]`) -- el expandible lo
-// muestra igual, con un texto de estado vacío.
+// Si un componente no tiene propiedades configurables, no expone métodos
+// públicos propios o no dispara eventos propios, su arreglo correspondiente
+// queda vacío (`[]`) -- el expandible lo muestra igual, con un texto de
+// estado vacío.
+
+// Propiedades compartidas por toda la familia `ac-api-*` (vienen de
+// `@ac-base/ac-api-mixin`, ver docs/CONVENTIONS.md) -- se repiten tal cual en
+// cada entrada de esos componentes en vez de solo documentarlas una vez,
+// porque cada expandible se renderiza por componente (ver renderApiInfo en
+// catalog.js) y así cada ficha queda completa por sí sola.
+const API_SIMULATOR_PROPERTIES = [
+  {
+    name: 'version',
+    attribute: 'version',
+    type: 'String',
+    default: "'v1'",
+    description:
+      'Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.',
+  },
+  {
+    name: 'timeout',
+    attribute: 'timeout',
+    type: 'Number',
+    default: '3000',
+    description:
+      'Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.',
+  },
+  {
+    name: 'simulateError',
+    attribute: 'simulate-error',
+    type: 'Boolean',
+    default: 'false',
+    description:
+      'Si es true, fuerza que toda llamada posterior falle (dispara el evento de error correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del consumidor. Se puede alternar en caliente.',
+  },
+];
 
 export const COMPONENT_API = {
   'ac-avatar-basic': {
@@ -1544,6 +1577,536 @@ export const COMPONENT_API = {
         description:
           'Click en el ícono de menú (hamburguesa) de la cabecera (visible por defecto salvo hide-menu-icon).',
       },
+    ],
+  },
+
+  // --- Familia `ac-api-*`: simuladores de API sin UI (ver docs/CONVENTIONS.md,
+  // sección "Componentes sin UI: simuladores de API"). Sin controles/elementos
+  // visuales en su demo -- esta ficha (Propiedades/Métodos/Eventos) es su
+  // documentación real dentro del catálogo.
+  'ac-api-users': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'obtenerDatosUsuario(id, queryParams = {})',
+        description: 'Obtiene un usuario por id. `queryParams.fields` proyecta solo esos campos.',
+        event: 'ac-api-users-get-user-success / ac-api-users-get-user-error',
+      },
+      {
+        signature: 'listarUsuarios(queryParams = {})',
+        description:
+          'Lista usuarios. `queryParams`: role, status (active/inactive), sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-users-list-success / ac-api-users-list-error',
+      },
+      {
+        signature: 'buscarUsuarios(texto, queryParams = {})',
+        description:
+          'Busca por nombre o email (coincidencia parcial). Admite el mismo queryParams que listarUsuarios.',
+        event: 'ac-api-users-search-success / ac-api-users-search-error',
+      },
+      {
+        signature: 'obtenerPerfilUsuario(id)',
+        description:
+          'Perfil extendido: agrega contacto, dirección y preferencias (datos anidados) al usuario.',
+        event: 'ac-api-users-get-profile-success / ac-api-users-get-profile-error',
+      },
+      {
+        signature: 'registrarUsuario(objetoUsuario)',
+        description:
+          'Crea un usuario nuevo. `nombre` y `email` son obligatorios; `rol` por defecto es "lector".',
+        event: 'ac-api-users-register-success / ac-api-users-register-error',
+      },
+      {
+        signature: 'actualizarUsuario(id, cambios = {})',
+        description:
+          'Mezcla `cambios` sobre el usuario existente (el id no se puede sobrescribir).',
+        event: 'ac-api-users-update-success / ac-api-users-update-error',
+      },
+      {
+        signature: 'eliminarUsuario(id)',
+        description: 'Elimina un usuario del mock por id.',
+        event: 'ac-api-users-delete-success / ac-api-users-delete-error',
+      },
+      {
+        signature: 'validarCredenciales(email, password)',
+        description:
+          'Simula un login: busca el email en el mock y exige un password de 4+ caracteres; devuelve { token, user }.',
+        event: 'ac-api-users-auth-success / ac-api-users-auth-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-users-get-user-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-get-user-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-search-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-search-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-get-profile-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-get-profile-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-register-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-register-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-update-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-update-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-delete-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-users-auth-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-users-auth-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-productos': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'obtenerProducto(id, queryParams = {})',
+        description: 'Obtiene un producto por id. `queryParams.fields` proyecta solo esos campos.',
+        event: 'ac-api-productos-get-product-success / ac-api-productos-get-product-error',
+      },
+      {
+        signature: 'listarProductos(queryParams = {})',
+        description:
+          'Lista productos. `queryParams`: category, status (active/inactive), sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-productos-list-success / ac-api-productos-list-error',
+      },
+      {
+        signature: 'buscarProductos(texto, queryParams = {})',
+        description:
+          'Busca por nombre (coincidencia parcial). Admite el mismo queryParams que listarProductos.',
+        event: 'ac-api-productos-search-success / ac-api-productos-search-error',
+      },
+      {
+        signature: 'obtenerDetalleProducto(id)',
+        description:
+          'Detalle extendido: agrega especificaciones e inventario (datos anidados) al producto.',
+        event: 'ac-api-productos-get-detail-success / ac-api-productos-get-detail-error',
+      },
+      {
+        signature: 'registrarProducto(objetoProducto)',
+        description:
+          'Crea un producto nuevo. `nombre` y `precio` son obligatorios; `categoria`/`stock` son opcionales.',
+        event: 'ac-api-productos-register-success / ac-api-productos-register-error',
+      },
+      {
+        signature: 'actualizarProducto(id, cambios = {})',
+        description:
+          'Mezcla `cambios` sobre el producto existente (el id no se puede sobrescribir).',
+        event: 'ac-api-productos-update-success / ac-api-productos-update-error',
+      },
+      {
+        signature: 'eliminarProducto(id)',
+        description: 'Elimina un producto del mock por id.',
+        event: 'ac-api-productos-delete-success / ac-api-productos-delete-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-productos-get-product-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-get-product-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-search-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-search-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-get-detail-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-get-detail-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-register-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-register-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-update-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-update-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-productos-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-productos-delete-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-operaciones': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'consultarSaldo(cuentaId)',
+        description: 'Devuelve el saldo actual de una cuenta del mock.',
+        event: 'ac-api-operaciones-balance-success / ac-api-operaciones-balance-error',
+      },
+      {
+        signature: 'obtenerHistorial(cuentaId, queryParams = {})',
+        description:
+          'Lista los movimientos de una cuenta. `queryParams`: tipo, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-operaciones-history-success / ac-api-operaciones-history-error',
+      },
+      {
+        signature: 'comprar(productoId, cantidad = 1)',
+        description:
+          'Debita la cuenta principal (id 1) según un mock interno de precios; falla si no hay saldo suficiente.',
+        event: 'ac-api-operaciones-buy-success / ac-api-operaciones-buy-error',
+      },
+      {
+        signature: 'transferir(cuentaOrigenId, cuentaDestinoId, monto)',
+        description:
+          'Mueve dinero entre dos cuentas del mock; falla si la cuenta origen no tiene saldo suficiente.',
+        event: 'ac-api-operaciones-transfer-success / ac-api-operaciones-transfer-error',
+      },
+      {
+        signature: 'depositar(cuentaId, monto)',
+        description: 'Suma `monto` al saldo de la cuenta.',
+        event: 'ac-api-operaciones-deposit-success / ac-api-operaciones-deposit-error',
+      },
+      {
+        signature: 'retirar(cuentaId, monto)',
+        description: 'Resta `monto` al saldo de la cuenta; falla si no hay saldo suficiente.',
+        event: 'ac-api-operaciones-withdraw-success / ac-api-operaciones-withdraw-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-operaciones-balance-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-balance-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-operaciones-history-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-history-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-operaciones-buy-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-buy-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-operaciones-transfer-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-transfer-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-operaciones-deposit-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-deposit-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-operaciones-withdraw-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-operaciones-withdraw-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-pedidos': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'crearPedido(carrito)',
+        description:
+          'Crea un pedido a partir de un arreglo `[{ productoId, cantidad, precioUnitario }]`; falla si viene vacío.',
+        event: 'ac-api-pedidos-create-success / ac-api-pedidos-create-error',
+      },
+      {
+        signature: 'obtenerPedido(id)',
+        description: 'Obtiene un pedido por id.',
+        event: 'ac-api-pedidos-get-success / ac-api-pedidos-get-error',
+      },
+      {
+        signature: 'listarPedidos(queryParams = {})',
+        description:
+          'Lista pedidos. `queryParams`: status (filtra por estado), sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-pedidos-list-success / ac-api-pedidos-list-error',
+      },
+      {
+        signature: 'obtenerEstadoPedido(id)',
+        description:
+          'Devuelve el estado actual y el detalle de seguimiento (pasos pendiente → confirmado → en_camino → entregado).',
+        event: 'ac-api-pedidos-get-status-success / ac-api-pedidos-get-status-error',
+      },
+      {
+        signature: 'cancelarPedido(id)',
+        description: 'Cancela un pedido; falla si ya está en estado "entregado".',
+        event: 'ac-api-pedidos-cancel-success / ac-api-pedidos-cancel-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-pedidos-create-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pedidos-create-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pedidos-get-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pedidos-get-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pedidos-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pedidos-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pedidos-get-status-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pedidos-get-status-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pedidos-cancel-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pedidos-cancel-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-notificaciones': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'enviarNotificacion(objetoNotificacion)',
+        description:
+          'Crea una notificación nueva (no leída). `titulo` y `mensaje` son obligatorios; `tipo` por defecto es "general".',
+        event: 'ac-api-notificaciones-send-success / ac-api-notificaciones-send-error',
+      },
+      {
+        signature: 'listarNotificaciones(queryParams = {})',
+        description:
+          'Lista notificaciones. `queryParams`: tipo, leida/status (read/unread), sortBy/sortDir (orden por defecto: fecha desc), pagination/page, fields.',
+        event: 'ac-api-notificaciones-list-success / ac-api-notificaciones-list-error',
+      },
+      {
+        signature: 'obtenerNotificacion(id)',
+        description: 'Obtiene una notificación por id.',
+        event: 'ac-api-notificaciones-get-success / ac-api-notificaciones-get-error',
+      },
+      {
+        signature: 'marcarLeida(id)',
+        description: 'Marca una notificación como leída.',
+        event: 'ac-api-notificaciones-mark-read-success / ac-api-notificaciones-mark-read-error',
+      },
+      {
+        signature: 'eliminarNotificacion(id)',
+        description: 'Elimina una notificación por id.',
+        event: 'ac-api-notificaciones-delete-success / ac-api-notificaciones-delete-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-notificaciones-send-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-notificaciones-send-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-notificaciones-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-notificaciones-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-notificaciones-get-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-notificaciones-get-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-notificaciones-mark-read-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-notificaciones-mark-read-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-notificaciones-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-notificaciones-delete-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-auth': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'iniciarSesion(email, password)',
+        description: 'Valida email/clave contra el mock y devuelve { token, usuario }.',
+        event: 'ac-api-auth-login-success / ac-api-auth-login-error',
+      },
+      {
+        signature: 'registrarCuenta(objetoCuenta)',
+        description:
+          'Crea una cuenta (nombre/email/clave obligatorios, email único) y la deja autenticada — mismo resultado que iniciarSesion.',
+        event: 'ac-api-auth-register-success / ac-api-auth-register-error',
+      },
+      {
+        signature: 'cerrarSesion(token)',
+        description: 'Invalida el token; falla si la sesión no existe o ya expiró.',
+        event: 'ac-api-auth-logout-success / ac-api-auth-logout-error',
+      },
+      {
+        signature: 'validarSesion(token)',
+        description: 'Comprueba que el token siga activo y devuelve el usuario asociado.',
+        event: 'ac-api-auth-validate-success / ac-api-auth-validate-error',
+      },
+      {
+        signature: 'refrescarToken(token)',
+        description: 'Invalida el token anterior y entrega uno nuevo para el mismo usuario.',
+        event: 'ac-api-auth-refresh-success / ac-api-auth-refresh-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-auth-login-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-auth-login-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-auth-register-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-auth-register-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-auth-logout-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-auth-logout-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-auth-validate-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-auth-validate-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-auth-refresh-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-auth-refresh-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-carrito': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'agregarItem(item)',
+        description:
+          'Agrega `{ productoId, nombre, precio, cantidad? }`; si el producto ya está en el carrito, suma la cantidad.',
+        event: 'ac-api-carrito-add-success / ac-api-carrito-add-error',
+      },
+      {
+        signature: 'quitarItem(productoId)',
+        description: 'Quita un ítem del carrito por `productoId`; falla si no está en el carrito.',
+        event: 'ac-api-carrito-remove-success / ac-api-carrito-remove-error',
+      },
+      {
+        signature: 'listarItems(queryParams = {})',
+        description:
+          'Lista los ítems del carrito. `queryParams`: sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-carrito-list-success / ac-api-carrito-list-error',
+      },
+      {
+        signature: 'actualizarCantidad(productoId, cantidad)',
+        description:
+          'Cambia la cantidad de un ítem existente; falla si `cantidad` no es mayor a 0.',
+        event: 'ac-api-carrito-update-quantity-success / ac-api-carrito-update-quantity-error',
+      },
+      {
+        signature: 'vaciarCarrito()',
+        description: 'Vacía el carrito por completo.',
+        event: 'ac-api-carrito-clear-success / ac-api-carrito-clear-error',
+      },
+      {
+        signature: 'obtenerResumen()',
+        description:
+          'Devuelve { items, subtotal, impuestos, total } (impuestos al 18% fijo sobre el subtotal).',
+        event: 'ac-api-carrito-summary-success / ac-api-carrito-summary-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-carrito-add-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-add-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-carrito-remove-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-remove-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-carrito-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-carrito-update-quantity-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-update-quantity-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-carrito-clear-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-clear-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-carrito-summary-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-carrito-summary-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-direcciones': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarDirecciones(queryParams = {})',
+        description: 'Lista direcciones. `queryParams`: sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-direcciones-list-success / ac-api-direcciones-list-error',
+      },
+      {
+        signature: 'obtenerDireccion(id)',
+        description: 'Obtiene una dirección por id.',
+        event: 'ac-api-direcciones-get-success / ac-api-direcciones-get-error',
+      },
+      {
+        signature: 'agregarDireccion(objetoDireccion)',
+        description:
+          '`linea1` y `ciudad` son obligatorios. La primera dirección que se agrega queda como predeterminada.',
+        event: 'ac-api-direcciones-add-success / ac-api-direcciones-add-error',
+      },
+      {
+        signature: 'actualizarDireccion(id, cambios = {})',
+        description:
+          'Mezcla `cambios` sobre la dirección existente (el id no se puede sobrescribir).',
+        event: 'ac-api-direcciones-update-success / ac-api-direcciones-update-error',
+      },
+      {
+        signature: 'eliminarDireccion(id)',
+        description:
+          'Elimina una dirección; si era la predeterminada y queda alguna otra, promueve la primera que quede.',
+        event: 'ac-api-direcciones-delete-success / ac-api-direcciones-delete-error',
+      },
+      {
+        signature: 'marcarPredeterminada(id)',
+        description: 'Marca una dirección como predeterminada; desmarca cualquier otra.',
+        event: 'ac-api-direcciones-mark-default-success / ac-api-direcciones-mark-default-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-direcciones-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-direcciones-get-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-get-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-direcciones-add-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-add-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-direcciones-update-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-update-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-direcciones-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-delete-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-direcciones-mark-default-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-direcciones-mark-default-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-pagos': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarMetodosPago(queryParams = {})',
+        description:
+          'Lista métodos de pago guardados (sin exponer el número completo). `queryParams`: sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-pagos-list-success / ac-api-pagos-list-error',
+      },
+      {
+        signature: 'agregarMetodoPago(objetoMetodo)',
+        description:
+          '`marca` y `numero` son obligatorios; el número se enmascara en toda respuesta (solo se guardan los últimos 4 dígitos como `ultimosDigitos`).',
+        event: 'ac-api-pagos-add-success / ac-api-pagos-add-error',
+      },
+      {
+        signature: 'eliminarMetodoPago(id)',
+        description: 'Elimina un método de pago por id.',
+        event: 'ac-api-pagos-delete-success / ac-api-pagos-delete-error',
+      },
+      {
+        signature: 'marcarMetodoPredeterminado(id)',
+        description: 'Marca un método de pago como predeterminado; desmarca cualquier otro.',
+        event: 'ac-api-pagos-mark-default-success / ac-api-pagos-mark-default-error',
+      },
+      {
+        signature: 'procesarPago(monto, metodoId)',
+        description:
+          'Procesa un pago con un método existente; falla si `monto` no es mayor a 0 o el método no existe.',
+        event: 'ac-api-pagos-process-success / ac-api-pagos-process-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-pagos-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pagos-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pagos-add-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pagos-add-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pagos-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pagos-delete-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pagos-mark-default-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pagos-mark-default-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-pagos-process-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-pagos-process-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-archivos': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarArchivos(queryParams = {})',
+        description:
+          'Lista archivos. `queryParams`: tipo, sortBy/sortDir, pagination/page, fields.',
+        event: 'ac-api-archivos-list-success / ac-api-archivos-list-error',
+      },
+      {
+        signature: 'obtenerArchivo(id)',
+        description: 'Obtiene los metadatos de un archivo por id.',
+        event: 'ac-api-archivos-get-success / ac-api-archivos-get-error',
+      },
+      {
+        signature: 'subirArchivo(objetoArchivo)',
+        description:
+          '`nombre` es obligatorio. No usa el orquestador simple: antes del evento final emite 4 eventos intermedios de progreso (25/50/75/100%).',
+        event:
+          'ac-api-archivos-upload-progress (×4) y luego ac-api-archivos-upload-success / ac-api-archivos-upload-error',
+      },
+      {
+        signature: 'eliminarArchivo(id)',
+        description: 'Elimina un archivo por id.',
+        event: 'ac-api-archivos-delete-success / ac-api-archivos-delete-error',
+      },
+      {
+        signature: 'descargarArchivo(id)',
+        description:
+          'Devuelve { id, nombre, contenidoBase64 } con un mock de contenido codificado en base64.',
+        event: 'ac-api-archivos-download-success / ac-api-archivos-download-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-archivos-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-archivos-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-archivos-get-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-archivos-get-error', detail: '{ method, params, error }' },
+      {
+        name: 'ac-api-archivos-upload-progress',
+        detail: '{ method, params, data: { porcentaje } }',
+        description:
+          'Se dispara 4 veces por subida (25, 50, 75 y 100%), incluso si la subida termina en error.',
+      },
+      { name: 'ac-api-archivos-upload-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-archivos-upload-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-archivos-delete-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-archivos-delete-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-archivos-download-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-archivos-download-error', detail: '{ method, params, error }' },
     ],
   },
 };

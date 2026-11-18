@@ -1,0 +1,95 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el consumo de una API de pedidos: crear, consultar, listar, seguimiento y cancelación.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>crearPedido(carrito)</code>
+      <p>
+        Crea un pedido a partir de un arreglo
+        <code>[{ productoId, cantidad, precioUnitario }]</code>; falla si viene vacío.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pedidos-create-success / ac-api-pedidos-create-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerPedido(id)</code>
+      <p>Obtiene un pedido por id.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pedidos-get-success / ac-api-pedidos-get-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarPedidos(queryParams = {})</code>
+      <p>
+        Lista pedidos. <code>queryParams</code>: status (filtra por estado), sortBy/sortDir,
+        pagination/page, fields.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pedidos-list-success / ac-api-pedidos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerEstadoPedido(id)</code>
+      <p>
+        Devuelve el estado actual y el detalle de seguimiento (pasos pendiente → confirmado →
+        en_camino → entregado).
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-pedidos-get-status-success / ac-api-pedidos-get-status-error</code></span
+      >
+    </li>
+    <li>
+      <code>cancelarPedido(id)</code>
+      <p>Cancela un pedido; falla si ya está en estado "entregado".</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-pedidos-cancel-success / ac-api-pedidos-cancel-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-pedidos-create-success</code>, <code>ac-api-pedidos-create-error</code>,
+    <code>ac-api-pedidos-get-success</code>, <code>ac-api-pedidos-get-error</code>,
+    <code>ac-api-pedidos-list-success</code>, <code>ac-api-pedidos-list-error</code>,
+    <code>ac-api-pedidos-get-status-success</code>, <code>ac-api-pedidos-get-status-error</code>,
+    <code>ac-api-pedidos-cancel-success</code>, <code>ac-api-pedidos-cancel-error</code>
+  </p>
+</section>
