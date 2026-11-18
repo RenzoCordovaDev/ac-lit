@@ -1,0 +1,36 @@
+{
+  "name": "@ac-base/ac-ccp",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-ccp"
+  },
+  "description": "Channel Communication Pattern: comunicación desacoplada por canales nombrados (pub/sub con dirección in/out, retención y replay del último mensaje) e integración con el ciclo de vida de Lit v3 vía Reactive Controller",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "web-test-runner \"src/**/*.test.js\"",
+    "examples:serve": "vite examples"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
+    "@ac-components/ac-badge-basic": "workspace:^",
+    "@ac-components/ac-button-basic": "workspace:^",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0",
+    "vite": "^5.4.8"
+  }
+}

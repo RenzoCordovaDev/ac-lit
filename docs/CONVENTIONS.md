@@ -168,6 +168,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **`@ac-base/ac-scoped-elements-mixin`** — aislamiento de custom elements para evitar colisiones de tag names.
 - **`@ac-base/ac-intl-mixin`** — API `t(key, params)`, `setLocale(locale)`, `loadTranslations(data)` sobre `locales.json`.
 - **`@ac-base/ac-api-mixin`** — mixin base para la familia `ac-api-*` (ver sección siguiente): `version`/`timeout`/`simulateError`, `render()` vacío, y `_wait`/`_emit`/`_simulateCall` para simular latencia, error y el disparo de eventos acción+resultado.
+- **`@ac-base/ac-ccp`** — Channel Communication Pattern: comunicación desacoplada por canales nombrados (pub/sub con dirección `in`/`out`, retención y replay del último mensaje) entre páginas/componentes de una app (ver "Comunicación por canales" más abajo).
 
 ## Componentes sin UI: simuladores de API (`ac-api-*`)
 
@@ -181,6 +182,16 @@ Además de los componentes visuales, el catálogo tiene una familia de component
 - **`queryParams` en los métodos de lectura** (listar/buscar) soporta `pagination`/`page` (recorte/paginado), `sortBy`/`sortDir` (orden), `fields` (proyección) y filtros propios del dominio (`role`, `status`, `category`, etc.) — mismo vocabulario en toda la familia.
 - **El catálogo visual no simula nada de esta familia**: para un componente del grupo `apis`, `catalog-site/` se salta por completo el iframe de demo, el skeleton y las pestañas Demo/Código/Ejemplos — va directo a la ficha de Propiedades/Métodos públicos/Eventos (ver "Catálogo visual" más abajo), que queda como único contenido siempre visible. El `demo/` del propio paquete (`demo/public/case-basic.html`) solo se usa al correr `component:serve` de forma aislada (fuera del catálogo) — tampoco tiene controles ni instancia el componente ahí: es la misma ficha de documentación estática (descripción, Propiedades, Métodos públicos y Eventos, generada desde la misma data que `catalog-api.js`, para no mantener dos redacciones distintas). `demo/demo.js` queda solo con los imports del demo en sí (ni importa el propio componente, ni hay botones que cablear) y `demo/index.html` **no declara `events`** en `ac-demo-content` ni usa `ac-button-basic` como dependencia.
 - **Agrupación en el catálogo**: la familia completa vive en el grupo `apis` de `catalog-site/catalog-meta.js` (ver "Catálogo visual" más abajo) — un componente `ac-api-*` nuevo se agrega a ese grupo, no a uno de los visuales.
+
+## Comunicación por canales (`@ac-base/ac-ccp`)
+
+Patrón de publicación/suscripción (pub/sub) para que páginas y componentes de una app construida con `ac-lit` se comuniquen sin conocerse entre sí — un endpoint `out` publica en un canal con nombre lógico, uno o varios `in` con el mismo nombre lo reciben. Coincidencia exacta (sin wildcards), cardinalidad N:M, y retención opcional del último mensaje por canal (`retain`/`replay`) para que un suscriptor que llega tarde igual reciba el último valor.
+
+- **`ChannelController` es el primer Reactive Controller propio del repo.** Hasta `ac-ccp`, ningún paquete implementaba uno — es el precedente a seguir para cualquier integración futura entre un paquete base y el ciclo de vida de Lit: se registra en `hostConnected()`, se desconecta por completo en `hostDisconnected()`, y cada conexión pide un endpoint nuevo al manager (nunca reutiliza uno anterior), así que un ciclo `connect → disconnect → connect` del host nunca duplica una suscripción.
+- **Nunca crea su propia instancia de CCP.** Siempre la recibe en `config.ccp`, creada una sola vez por la aplicación con `createCCP()` — igual que `ChannelController` nunca instancia CCP por su cuenta, ningún consumidor debe compartir una instancia global de CCP entre aplicaciones distintas.
+- **`host.requestUpdate()` se llama después del callback del usuario** (`onMessage`), nunca antes — el consumidor actualiza su propio estado en el callback y el controller recién ahí pide el re-render.
+- **Integración con `aclit app:create`/Application Template queda en backlog**, fuera de esta entrega: ese comando todavía es un stub (ver "CLI" más abajo), así que no hay ningún "Application Template" real al que integrar CCP todavía.
+- Ver [`packages/base/ac-ccp/README.md`](../packages/base/ac-ccp/README.md) para la API completa y [`packages/base/ac-ccp/examples/`](../packages/base/ac-ccp/examples/) para una demo ejecutable de 3 páginas.
 
 ## Demos centralizadas (`ac-demo-content`)
 
@@ -314,6 +325,7 @@ Dos cosas a tener en cuenta con `link:`:
 - `@open-wc/testing` + `@web/test-runner`, un archivo `*.test.js` por componente en `test/`.
 - Los tests corren en navegador real (no jsdom), acorde a que se testean Custom Elements/Shadow DOM.
 - **Interfaz TDD de Mocha**: `suite`/`test` en vez de `describe`/`it` (y `setup`/`teardown` en vez de `before`/`after`, si hace falta) — se activa con `testFramework: { config: { ui: 'tdd' } }` en `web-test-runner.config.js`. Así se alinea el naming con el framework del cliente que `ac-lit` prepara a los desarrolladores a usar.
+- **Todo paquete base nuevo usa `suite`/`test`** (no `describe`/`it`), aunque los paquetes base existentes de antes de esta convención (`ac-api-mixin`, `ac-core`, los mixins) todavía usen `describe`/`it` sin migrar — es deuda histórica, no el estándar a seguir. `@ac-base/ac-ccp` es el primer paquete base que nace ya con `suite`/`test`.
 - **Un solo `expect` por `test`**: cada test valida una sola cosa. Un caso que antes mezclaba varias aserciones (ej. "defaults to variant/disabled/loading") se separa en un test por aserción, aunque eso signifique repetir el `fixture(...)` en cada uno. Esto mantiene cada test enfocado en un único objetivo y hace que un fallo señale exactamente qué se rompió.
 
 ## Testing E2E y accesibilidad

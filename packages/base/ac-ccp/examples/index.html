@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ac-base/ac-ccp — ejemplo</title>
+    <script type="module" src="./examples.js"></script>
+    <link rel="stylesheet" href="./examples.css" />
+  </head>
+  <body>
+    <div class="examples-root">
+      <header class="examples-header">
+        <h1>Channel Communication Pattern</h1>
+        <nav class="examples-nav">
+          <a href="#home">Home</a>
+          <a href="#publisher">Página A — publisher</a>
+          <a href="#subscriber">Página B — subscriber</a>
+        </nav>
+      </header>
+      <main>
+        <ccp-example-home-page></ccp-example-home-page>
+        <ccp-example-publisher-page hidden></ccp-example-publisher-page>
+        <ccp-example-subscriber-page hidden></ccp-example-subscriber-page>
+      </main>
+    </div>
+  </body>
+</html>
