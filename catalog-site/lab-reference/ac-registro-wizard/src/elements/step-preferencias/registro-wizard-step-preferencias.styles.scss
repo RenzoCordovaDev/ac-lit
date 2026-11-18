@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.registro-wizard-step-preferencias__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.registro-wizard-step-preferencias__plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 16px);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.registro-wizard-step-preferencias__plan legend {
+  font-weight: var(--font-weight-medium, 600);
+  font-size: var(--font-size-sm, 0.85rem);
+  padding: 0 var(--space-1, 0.25rem);
+}
+
+.registro-wizard-step-preferencias__actions {
+  display: flex;
+  justify-content: flex-end;
+}

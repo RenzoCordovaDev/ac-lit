@@ -96,6 +96,23 @@
           </svg>
           <span class="catalog__sidebar-shortcut-title">Comandos</span>
         </button>
+        <button type="button" class="catalog__sidebar-shortcut" id="catalog-sidebar-lab">
+          <svg
+            class="catalog__sidebar-shortcut-icon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3" />
+          </svg>
+          <span class="catalog__sidebar-shortcut-title">Laboratorio</span>
+        </button>
       </div>
 
       <nav class="catalog__nav" aria-label="Componentes por grupo">
@@ -322,6 +339,9 @@
             <div class="catalog__home-actions">
               <button type="button" class="catalog__cta" id="catalog-cta">
                 Explorar los componentes →
+              </button>
+              <button type="button" class="catalog__home-cta-ghost" id="catalog-home-lab-link">
+                Ir al laboratorio →
               </button>
               <a class="catalog__home-cta-ghost" href="#cli-quickstart">Inicio rápido (CLI)</a>
             </div>
@@ -964,6 +984,23 @@
             <div class="catalog__api-content" id="catalog-api-events-content"></div>
           </details>
         </div>
+      </main>
+
+      <main class="catalog__lab" id="view-lab" hidden>
+        <div class="catalog__lab-header">
+          <button type="button" class="catalog__lab-back" id="catalog-lab-back">← Inicio</button>
+          <h1>Laboratorio</h1>
+          <p class="catalog__lab-intro">
+            Construye tu propio componente de punta a punta, en capítulos progresivos.
+          </p>
+          <div class="catalog__lab-progress">
+            <div class="catalog__lab-progress-bar">
+              <div class="catalog__lab-progress-fill" id="lab-progress-fill"></div>
+            </div>
+            <span class="catalog__lab-progress-label" id="lab-progress-label">0% completado</span>
+          </div>
+        </div>
+        <div class="catalog__lab-chapters" id="lab-chapters"></div>
       </main>
     </div>
   </body>

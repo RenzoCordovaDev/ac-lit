@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}

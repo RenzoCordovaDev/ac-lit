@@ -10,6 +10,7 @@
 
 import { GROUPS, FALLBACK_GROUP_ID, FALLBACK_ICON, COMPONENT_META } from './catalog-meta.js';
 import { COMPONENT_API } from './catalog-api.js';
+import { LAB_CHAPTERS } from './learning-lab.js';
 
 const REPO_URL = 'https://github.com/RenzoCordovaDev/ac-lit';
 const API_GROUP_ID = 'apis';
@@ -30,6 +31,7 @@ const CHEVRON_ICON = '<path d="M9 6l6 6-6 6"/>';
 
 const homeViewEl = document.getElementById('view-home');
 const catalogViewEl = document.getElementById('view-catalog');
+const labViewEl = document.getElementById('view-lab');
 const breadcrumbEl = document.getElementById('catalog-breadcrumb');
 const countEl = document.getElementById('catalog-count');
 const menuButton = document.getElementById('catalog-menu-button');
@@ -228,6 +230,7 @@ function showHome() {
   document.body.dataset.view = 'home';
   homeViewEl.hidden = false;
   catalogViewEl.hidden = true;
+  labViewEl.hidden = true;
   activeId = null;
   demo = null;
   frameEl.removeAttribute('src');
@@ -245,6 +248,135 @@ function showCatalog() {
   document.body.dataset.view = 'catalog';
   homeViewEl.hidden = true;
   catalogViewEl.hidden = false;
+  labViewEl.hidden = true;
+}
+
+function showLab() {
+  document.body.dataset.view = 'lab';
+  homeViewEl.hidden = true;
+  catalogViewEl.hidden = true;
+  labViewEl.hidden = false;
+  activeId = null;
+  demo = null;
+  frameEl.removeAttribute('src');
+  document.title = 'Laboratorio — ac-lit';
+  renderBreadcrumb(['Laboratorio']);
+  renderLabChapters();
+}
+
+/* Progreso del Laboratorio: ids de laboratorios completados, persistidos en
+   localStorage (por navegador; si no hay storage, simplemente no persiste). */
+
+const LAB_PROGRESS_KEY = 'ac-lit:lab-progress';
+
+function loadLabProgress() {
+  try {
+    const raw = localStorage.getItem(LAB_PROGRESS_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveLabProgress(completedSet) {
+  try {
+    localStorage.setItem(LAB_PROGRESS_KEY, JSON.stringify([...completedSet]));
+  } catch {
+    // localStorage puede fallar (modo privado, cuota) -- el progreso simplemente no persiste esa vez.
+  }
+}
+
+let labProgress = loadLabProgress();
+// Capítulos abiertos en la vista de Laboratorio (sobrevive a los re-renders).
+const openLabChapters = new Set(LAB_CHAPTERS.length ? [LAB_CHAPTERS[0].id] : []);
+
+function toggleLabComplete(labId) {
+  const allLabs = LAB_CHAPTERS.flatMap(chapter => chapter.labs);
+  if (labProgress.has(labId)) {
+    // Desmarcar un laboratorio re-bloquea los siguientes: se quitan del progreso
+    // para que la ruta siga siendo estrictamente secuencial.
+    const index = allLabs.findIndex(lab => lab.id === labId);
+    for (const lab of allLabs.slice(index)) labProgress.delete(lab.id);
+  } else {
+    labProgress.add(labId);
+  }
+  saveLabProgress(labProgress);
+  renderLabChapters();
+}
+
+function renderLabChapters() {
+  const chaptersEl = document.getElementById('lab-chapters');
+  chaptersEl.replaceChildren();
+
+  let previousChapterComplete = true;
+  for (const chapter of LAB_CHAPTERS) {
+    const doneCount = chapter.labs.filter(lab => labProgress.has(lab.id)).length;
+    // Un capítulo sin labs no bloquea a los siguientes; uno con labs bloquea
+    // hasta que esté 100% completo.
+    const chapterLocked = !previousChapterComplete;
+    if (chapter.labs.length > 0) {
+      previousChapterComplete = doneCount === chapter.labs.length;
+    }
+
+    const section = create('details', 'catalog__api-section');
+    section.open = openLabChapters.has(chapter.id);
+    section.addEventListener('toggle', () => {
+      if (section.open) openLabChapters.add(chapter.id);
+      else openLabChapters.delete(chapter.id);
+    });
+
+    const summary = create('summary', 'catalog__api-summary');
+    summary.append(
+      create('span', 'catalog__api-summary-title', chapter.title),
+      create('span', 'catalog__api-summary-count', `${doneCount}/${chapter.labs.length}`),
+    );
+    const chevronWrap = create('span');
+    chevronWrap.innerHTML = icon(CHEVRON_ICON, 16);
+    const chevron = chevronWrap.firstElementChild;
+    chevron.setAttribute('class', 'catalog__api-summary-chevron');
+    summary.append(chevron);
+    section.append(summary);
+
+    const content = create('div', 'catalog__api-content');
+    if (chapter.labs.length === 0) {
+      content.append(create('p', 'catalog__api-empty', 'Próximamente.'));
+    } else {
+      chapter.labs.forEach((lab, index) => {
+        const locked = chapterLocked || (index > 0 && !labProgress.has(chapter.labs[index - 1].id));
+        const item = create(
+          'div',
+          locked ? 'catalog__lab-item catalog__lab-item--locked' : 'catalog__lab-item',
+        );
+        const label = create('label', 'catalog__lab-item-label');
+        const checkbox = create('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = labProgress.has(lab.id);
+        checkbox.disabled = locked;
+        checkbox.addEventListener('change', () => toggleLabComplete(lab.id));
+        label.append(checkbox, create('span', 'catalog__lab-item-title', lab.title));
+        item.append(label, create('p', 'catalog__lab-item-objective', lab.objective));
+        content.append(item);
+      });
+    }
+    if (chapter.referenceDemo) {
+      const link = create('a', 'catalog__lab-reference-link', 'Ver solución →');
+      link.href = `./lab-reference-demos/${chapter.referenceDemo}/index.html`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      content.append(link);
+    }
+    section.append(content);
+    chaptersEl.append(section);
+  }
+
+  const totalLabs = LAB_CHAPTERS.reduce((sum, chapter) => sum + chapter.labs.length, 0);
+  const doneLabs = LAB_CHAPTERS.reduce(
+    (sum, chapter) => sum + chapter.labs.filter(lab => labProgress.has(lab.id)).length,
+    0,
+  );
+  const percent = totalLabs === 0 ? 0 : Math.round((doneLabs / totalLabs) * 100);
+  document.getElementById('lab-progress-fill').style.width = `${percent}%`;
+  document.getElementById('lab-progress-label').textContent = `${percent}% completado`;
 }
 
 function selectComponent(id, { updateHash = true } = {}) {
@@ -843,6 +975,16 @@ function goHome() {
 
 document.getElementById('catalog-home-link').addEventListener('click', goHome);
 document.getElementById('catalog-sidebar-home').addEventListener('click', goHome);
+document.getElementById('catalog-sidebar-lab').addEventListener('click', () => {
+  history.replaceState(null, '', '#laboratorio');
+  showLab();
+  setNavOpen(false);
+});
+document.getElementById('catalog-home-lab-link').addEventListener('click', () => {
+  history.replaceState(null, '', '#laboratorio');
+  showLab();
+});
+document.getElementById('catalog-lab-back').addEventListener('click', goHome);
 
 document.getElementById('catalog-cta').addEventListener('click', () => {
   if (components.length === 0) return;
@@ -874,6 +1016,10 @@ window.addEventListener('hashchange', () => {
     showHome();
     return;
   }
+  if (id === 'laboratorio') {
+    showLab();
+    return;
+  }
   if (id !== activeId && components.some(c => c.id === id)) {
     showCatalog();
     selectComponent(id, { updateHash: false });
@@ -892,7 +1038,9 @@ async function init() {
   renderHomeCategories();
 
   const fromHash = normalizeHash();
-  if (fromHash && components.some(c => c.id === fromHash)) {
+  if (fromHash === 'laboratorio') {
+    showLab();
+  } else if (fromHash && components.some(c => c.id === fromHash)) {
     expandedGroups.clear();
     showCatalog();
     selectComponent(fromHash, { updateHash: false });

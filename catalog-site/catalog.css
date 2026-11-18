@@ -55,19 +55,22 @@ body {
   --catalog-active-subtext: var(--color-subtext, #5f5e58);
 }
 
-/* Home y catálogo son páginas separadas: en Home no hay lista de componentes
-   que navegar, así que la sidebar no se muestra (ni siquiera colapsada) y el
-   grid pasa a una sola columna. `data-view` lo fija catalog.js en
-   showHome()/showCatalog(). */
-body[data-view='home'] {
+/* Home, Laboratorio y catálogo son páginas separadas: ni Home ni Laboratorio
+   tienen lista de componentes que navegar, así que en esas dos la sidebar no
+   se muestra (ni siquiera colapsada) y el grid pasa a una sola columna.
+   `data-view` lo fija catalog.js en showHome()/showLab()/showCatalog(). */
+body[data-view='home'],
+body[data-view='lab'] {
   grid-template-columns: minmax(0, 1fr);
 }
 
-body[data-view='home'] .catalog__sidebar {
+body[data-view='home'] .catalog__sidebar,
+body[data-view='lab'] .catalog__sidebar {
   display: none;
 }
 
-body[data-view='home'] .catalog__menu-button {
+body[data-view='home'] .catalog__menu-button,
+body[data-view='lab'] .catalog__menu-button {
   display: none !important;
 }
 
@@ -642,9 +645,12 @@ body[data-view='home'] .catalog__menu-button {
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-/* Hero: botón fantasma (outline) junto al primario. */
+/* Hero: botón(es) fantasma (outline) junto al primario -- usada tanto en un
+   <a> (ancla a #cli-quickstart) como en un <button> (ir al laboratorio), por
+   eso fija cursor y font-family explícitos (un <button> no los hereda solo). */
 .catalog__home-cta-ghost {
   font: inherit;
+  font-family: inherit;
   font-size: var(--font-size-md, 1rem);
   font-weight: var(--font-weight-bold, 700);
   color: var(--color-text, #bcbec4);
@@ -653,6 +659,7 @@ body[data-view='home'] .catalog__menu-button {
   border-radius: var(--radius-full, 999px);
   padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
   text-decoration: none;
+  cursor: pointer;
   transition: border-color 0.15s ease;
 }
 
@@ -1643,6 +1650,133 @@ body[data-view='home'] .catalog__menu-button {
   padding-top: var(--space-3, 0.75rem);
   font-size: var(--font-size-sm, 0.85rem);
   color: var(--catalog-subtext);
+}
+
+/* Laboratorio: vista propia (#laboratorio), cabecera con progreso y capítulos
+   colapsables que reutilizan la estructura de .catalog__api-section. */
+.catalog__lab {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 1.25rem);
+  padding: var(--space-6, 1.5rem);
+}
+
+.catalog__lab-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-back {
+  align-self: flex-start;
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.catalog__lab-back:hover {
+  text-decoration: underline;
+}
+
+.catalog__lab-header h1 {
+  margin: 0;
+  font-size: var(--font-size-xl, 1.5rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-intro {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__lab-progress-bar {
+  flex: 1;
+  height: 0.5rem;
+  background: var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
+  overflow: hidden;
+}
+
+.catalog__lab-progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--catalog-accent);
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
+.catalog__lab-progress-label {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--catalog-subtext);
+  white-space: nowrap;
+}
+
+.catalog__lab-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__lab-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.3rem);
+  padding: var(--space-3, 0.75rem) 0;
+  border-top: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__lab-item-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-weight: var(--font-weight-bold, 700);
+  cursor: pointer;
+}
+
+.catalog__lab-item-label input {
+  accent-color: var(--catalog-accent);
+}
+
+.catalog__lab-item-objective {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-item--locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.catalog__lab-reference-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.3rem);
+  margin-top: var(--space-3, 0.75rem);
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--color-muted, #313335);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+  text-decoration: none;
+}
+
+.catalog__lab-reference-link:hover {
+  text-decoration: underline;
 }
 
 .catalog__api-table {
