@@ -1,14 +1,39 @@
 import { fixture, expect, html, oneEvent, aTimeout } from '@open-wc/testing';
 import '../index.js';
 
+const STEP_CONTENT_TAGS = [
+  'registro-wizard-step-datos',
+  'registro-wizard-step-preferencias',
+  'registro-wizard-step-resumen',
+];
+
+const STEP_ACTIONS_CLASS = [
+  'registro-wizard-step-datos__actions',
+  'registro-wizard-step-preferencias__actions',
+  'registro-wizard-step-resumen__actions',
+];
+
 function fastApi(el) {
   const api = el.shadowRoot.querySelector('ac-api-users');
   api.timeout = 1;
   return api;
 }
 
+function stepsHost(el) {
+  return el.shadowRoot.querySelector('registro-wizard-steps');
+}
+
+function expandableSteps(el) {
+  return stepsHost(el).shadowRoot.querySelectorAll('ac-expandable-step');
+}
+
+function stepContent(el, index) {
+  return expandableSteps(el)[index].querySelector(STEP_CONTENT_TAGS[index]);
+}
+
 async function fillStep1(el, { nombre = 'Juan Perez', email = 'juan@test.com' } = {}) {
-  const [nombreInput, emailInput] = el.shadowRoot.querySelectorAll('ac-input-basic');
+  const datos = stepContent(el, 0);
+  const [nombreInput, emailInput] = datos.shadowRoot.querySelectorAll('ac-input-basic');
   const nombreField = nombreInput.shadowRoot.querySelector('input');
   nombreField.value = nombre;
   nombreField.dispatchEvent(new Event('input'));
@@ -19,19 +44,21 @@ async function fillStep1(el, { nombre = 'Juan Perez', email = 'juan@test.com' } 
 }
 
 function clickActionButton(el, index) {
-  const button = el.shadowRoot.querySelectorAll('.registro-wizard__actions ac-button-basic')[index];
+  const content = stepContent(el, index);
+  const button = content.shadowRoot.querySelector(`.${STEP_ACTIONS_CLASS[index]} ac-button-basic`);
   button.shadowRoot.querySelector('button').click();
 }
 
 function acceptTerminos(el) {
-  const checkbox = el.shadowRoot.querySelector('ac-checkbox-basic');
+  const preferencias = stepContent(el, 1);
+  const checkbox = preferencias.shadowRoot.querySelector('ac-checkbox-basic');
   const input = checkbox.shadowRoot.querySelector('input');
   input.checked = true;
   input.dispatchEvent(new Event('change'));
 }
 
 function steps(el) {
-  return el.shadowRoot.querySelectorAll('ac-expandable-step');
+  return expandableSteps(el);
 }
 
 async function advanceToStep3(el) {
@@ -39,7 +66,7 @@ async function advanceToStep3(el) {
   clickActionButton(el, 0);
   await aTimeout(30);
   acceptTerminos(el);
-  await el.updateComplete;
+  await stepsHost(el).updateComplete;
   clickActionButton(el, 1);
   await aTimeout(30);
 }
@@ -92,8 +119,8 @@ suite('ac-registro-wizard', () => {
   test('sin nombre ni correo, click en Siguiente muestra el error de validación', async () => {
     const el = await fixture(html`<ac-registro-wizard></ac-registro-wizard>`);
     clickActionButton(el, 0);
-    await el.updateComplete;
-    expect(el._nombreError).to.equal('Completa tu nombre y correo para continuar.');
+    await stepsHost(el).updateComplete;
+    expect(stepsHost(el)._nombreError).to.equal('Completa tu nombre y correo para continuar.');
   });
 
   test('confirmar con éxito dispara ac-registro-wizard-register-success', async () => {

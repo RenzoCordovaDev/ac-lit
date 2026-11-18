@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.registro-wizard-step-datos__field-with-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  max-width: 100%;
+}
+
+.registro-wizard-step-datos__field-with-hint ac-select-basic {
+  flex: 1;
+  min-width: 0;
+}
+
+.registro-wizard-step-datos__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-2, 0.5rem);
+}

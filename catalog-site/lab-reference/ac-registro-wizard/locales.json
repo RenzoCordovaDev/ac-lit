@@ -19,6 +19,7 @@
     "registro-wizard-email-label": "Correo",
     "registro-wizard-rol-label": "Rol",
     "registro-wizard-rol-placeholder": "Elige un rol",
+    "registro-wizard-welcome-message": "Hola, {nombre}. Completa tus datos para continuar.",
     "registro-wizard-nombre-error": "Completa tu nombre y correo para continuar.",
     "registro-wizard-terminos-error": "Debes aceptar los términos para completar el registro.",
     "registro-wizard-welcome-error": "No se pudo cargar el saludo inicial.",

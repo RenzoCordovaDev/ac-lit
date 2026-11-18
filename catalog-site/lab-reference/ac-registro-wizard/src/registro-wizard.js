@@ -1,40 +1,25 @@
 import { LitElement, html } from 'lit';
-import { ref, createRef } from 'lit/directives/ref.js';
+import { createRef, ref } from 'lit/directives/ref.js';
 import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 
-import '@ac-components/ac-transition-container';
-import '@ac-components/ac-expandable-multistep';
-import '@ac-components/ac-expandable-step';
-import '@ac-components/ac-modal-basic';
-import '@ac-components/ac-input-basic';
-import '@ac-components/ac-select-basic';
-import '@ac-components/ac-checkbox-basic';
-import '@ac-components/ac-switch-basic';
-import '@ac-components/ac-radio-basic';
-import '@ac-components/ac-avatar-basic';
-import '@ac-components/ac-badge-basic';
-import '@ac-components/ac-text-basic';
-import '@ac-components/ac-divider-basic';
-import '@ac-components/ac-button-basic';
-import '@ac-components/ac-tooltip-basic';
-import '@ac-components/ac-spinner-basic';
-import '@ac-components/ac-notification-basic';
 import '@ac-components/ac-api-users';
+import '@ac-components/ac-modal-basic';
+import '@ac-components/ac-notification-basic';
+import '@ac-components/ac-transition-container';
 
+import './elements/modal-resultado/registro-wizard-modal-resultado.js';
+import './elements/steps/registro-wizard-steps.js';
+import { API_VERSION, DEFAULT_ROL, INIT_USER_ID, PLAN_MENSUAL } from './utils/constants.js';
 import { RegistroWizardStyles } from './registro-wizard.styles.js';
 
-const ROL_OPTIONS = [
-  { value: 'admin', label: 'Administrador' },
-  { value: 'editor', label: 'Editor' },
-  { value: 'lector', label: 'Lector' },
-];
-
-const ROL_BADGE_LABEL = {
-  admin: 'Administrador',
-  editor: 'Editor',
-  lector: 'Lector',
-};
-
+/*
+Wizard de registro de usuario de 3 pasos (datos, preferencias, resumen), construido con el scaffolding real del CLI de ac-lit. Coordina el estado canónico del formulario y la llamada simulada a ac-api-users; delega la coordinación del multistep a registro-wizard-steps y el contenido del modal de éxito a registro-wizard-modal-resultado.
+@lit @webcomponent @customElement
+@fires {{step: number, totalSteps: number}} ac-registro-wizard-step-change
+@fires {{data: Object}} ac-registro-wizard-register-success
+@fires {{error: Object}} ac-registro-wizard-register-error
+@fires {void} ac-registro-wizard-reset
+*/
 export class RegistroWizard extends ComponentMixin(LitElement) {
   static get is() {
     return 'ac-registro-wizard';
@@ -46,19 +31,95 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
   static get properties() {
     return {
+      /*
+      Si el componente debe contener sus superposiciones (ac-transition-container/ac-modal-basic) dentro de un marco simulado en vez del viewport real -- lo asigna ac-demo-content en el catálogo.
+      @type {Boolean}
+      @default false
+      */
       contained: { type: Boolean, reflect: true },
+      /*
+      Si la transición raíz (ac-transition-container) está visible. Arranca en true: este wizard no tiene pantalla "anterior", es la raíz del flujo.
+      @type {Boolean}
+      @default true
+      @private
+      */
       _open: { state: true },
+      /*
+      Si el modal de registro exitoso está visible.
+      @type {Boolean}
+      @default false
+      @private
+      */
       _modalOpen: { state: true },
+      /*
+      Nombre completo del formulario, estado canónico compartido entre los 3 pasos.
+      @type {String}
+      @default ''
+      @private
+      */
       _nombre: { state: true },
+      /*
+      Correo electrónico del formulario, estado canónico compartido entre los 3 pasos.
+      @type {String}
+      @default ''
+      @private
+      */
       _email: { state: true },
+      /*
+      Rol elegido en el paso 1.
+      @type {String}
+      @default ''
+      @private
+      */
       _rol: { state: true },
-      _nombreError: { state: true },
+      /*
+      Si se activaron las notificaciones por correo en el paso 2.
+      @type {Boolean}
+      @default false
+      @private
+      */
       _notificaciones: { state: true },
+      /*
+      Si se aceptaron los términos y condiciones en el paso 2.
+      @type {Boolean}
+      @default false
+      @private
+      */
       _terminos: { state: true },
+      /*
+      Plan elegido en el paso 2: mensual o anual.
+      @type {String}
+      @default PLAN_MENSUAL
+      @private
+      */
       _plan: { state: true },
+      /*
+      Si la llamada de guardado contra ac-api-users está en curso.
+      @type {Boolean}
+      @default false
+      @private
+      */
       _loading: { state: true },
+      /*
+      Mensaje de error visible arriba del multistep (fallo de guardado o de carga inicial).
+      @type {String}
+      @default ''
+      @private
+      */
       _errorMessage: { state: true },
+      /*
+      Datos de bienvenida precargados por init() contra ac-api-users.
+      @type {Object}
+      @default null
+      @private
+      */
       _welcomeUser: { state: true },
+      /*
+      Datos del usuario ya registrado, para llenar el modal de éxito.
+      @type {Object}
+      @default null
+      @private
+      */
       _registeredUser: { state: true },
     };
   }
@@ -69,21 +130,22 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this.getBoundary = null;
     this._resetState();
     this._apiUsersRef = createRef();
-    this._step1Ref = createRef();
-    this._step2Ref = createRef();
-    this._step3Ref = createRef();
+    this._stepsRef = createRef();
   }
 
+  /*
+  Vuelve todas las properties de estado a su valor inicial. Lo usan el constructor y reset().
+  @private
+  */
   _resetState() {
     this._open = true;
     this._modalOpen = false;
     this._nombre = '';
     this._email = '';
     this._rol = '';
-    this._nombreError = '';
     this._notificaciones = false;
     this._terminos = false;
-    this._plan = 'mensual';
+    this._plan = PLAN_MENSUAL;
     this._loading = false;
     this._errorMessage = '';
     this._welcomeUser = null;
@@ -91,71 +153,83 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
   }
 
   init() {
-    this._apiUsersRef.value?.obtenerDatosUsuario(1);
+    this._apiUsersRef.value?.obtenerDatosUsuario(INIT_USER_ID);
   }
 
   reset() {
     this._resetState();
-    if (this._step1Ref.value) {
-      this._step1Ref.value.completed = false;
-      this._step1Ref.value.active = true;
-    }
-    if (this._step2Ref.value) {
-      this._step2Ref.value.completed = false;
-      this._step2Ref.value.active = false;
-    }
-    if (this._step3Ref.value) {
-      this._step3Ref.value.completed = false;
-      this._step3Ref.value.active = false;
-    }
+    this._stepsRef.value?.reset();
     this._emit('ac-registro-wizard-reset');
   }
 
+  /*
+  Guarda los datos de bienvenida que trajo la lectura inicial contra ac-api-users.
+  @private
+  */
   _onInitDataSuccess(event) {
     this._welcomeUser = event.detail.data;
   }
 
+  /*
+  Muestra el error de la lectura inicial contra ac-api-users.
+  @private
+  */
   _onInitDataError(event) {
     this._errorMessage = event.detail.error?.message ?? this.t('registro-wizard-welcome-error');
   }
 
+  /*
+  Actualiza el nombre canónico con el valor reemitido por registro-wizard-steps.
+  @private
+  */
   _onNombreInput(event) {
     this._nombre = event.detail.value;
-    if (this._nombreError) this._nombreError = '';
   }
 
+  /*
+  Actualiza el correo canónico con el valor reemitido por registro-wizard-steps.
+  @private
+  */
   _onEmailInput(event) {
     this._email = event.detail.value;
   }
 
+  /*
+  Actualiza el rol canónico con el valor reemitido por registro-wizard-steps.
+  @private
+  */
   _onRolChange(event) {
     this._rol = event.detail.value;
   }
 
+  /*
+  Actualiza el estado canónico de notificaciones.
+  @private
+  */
   _onNotificacionesChange(event) {
     this._notificaciones = event.detail.checked;
   }
 
+  /*
+  Actualiza el estado canónico de términos y condiciones.
+  @private
+  */
   _onTerminosChange(event) {
     this._terminos = event.detail.checked;
   }
 
+  /*
+  Actualiza el plan canónico elegido.
+  @private
+  */
   _onPlanChange(event) {
-    if (event.detail.checked) this._plan = event.detail.value;
+    this._plan = event.detail.value;
   }
 
-  _onStep1NextClick() {
-    if (!this._nombre.trim() || !this._email.trim()) {
-      this._nombreError = this.t('registro-wizard-nombre-error');
-      return;
-    }
-    this._step1Ref.value?.complete();
-  }
-
-  _onStep2NextClick() {
-    this._step2Ref.value?.complete();
-  }
-
+  /*
+  Valida que se hayan aceptado los términos y, si corresponde, dispara el guardado contra ac-api-users.
+  @private
+  */
   _onConfirmClick() {
     if (!this._terminos) {
       this._errorMessage = this.t('registro-wizard-terminos-error');
@@ -167,10 +241,15 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this._apiUsersRef.value?.registrarUsuario({
       nombre: this._nombre,
       email: this._email,
-      rol: this._rol || 'lector',
+      rol: this._rol || DEFAULT_ROL,
     });
   }
 
+  /*
+  Maneja el éxito del guardado: cierra la transición, abre el modal con los datos reales y emite el evento propio de éxito.
+  @private
+  @event ac-registro-wizard-register-success
+  */
   _onRegisterSuccess(event) {
     this._loading = false;
     this._errorMessage = '';
@@ -180,37 +259,71 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     this._emit('ac-registro-wizard-register-success', { data: event.detail.data });
   }
 
+  /*
+  Maneja el error del guardado: muestra el mensaje y emite el evento propio de error, sin cerrar la transición.
+  @private
+  @event ac-registro-wizard-register-error
+  */
   _onRegisterError(event) {
     this._loading = false;
     this._errorMessage = event.detail.error?.message ?? this.t('registro-wizard-register-error');
     this._emit('ac-registro-wizard-register-error', { error: event.detail.error });
   }
 
+  /*
+  Descarta el mensaje de error visible arriba del multistep.
+  @private
+  */
   _onDismissError() {
     this._errorMessage = '';
   }
 
+  /*
+  Cierra el modal de éxito y reinicia el wizard.
+  @private
+  */
   _onModalPrimaryClick() {
     this._modalOpen = false;
     this.reset();
   }
 
+  /*
+  Reinicia el wizard al hacer click en la flecha de volver -- este wizard no tiene pantalla anterior a la que volver.
+  @private
+  */
   _onBackIconClick() {
     this.reset();
   }
 
-  _onMultistepStepChange(event) {
+  /*
+  Reemite el cambio de paso activo que informó registro-wizard-steps como evento público propio.
+  @private
+  @event ac-registro-wizard-step-change
+  */
+  _onStepsStepChange(event) {
     this._emit('ac-registro-wizard-step-change', {
-      step: event.detail.stepNumber,
+      step: event.detail.step,
       totalSteps: event.detail.totalSteps,
     });
   }
 
+  /*
+  Despacha un CustomEvent con el nombre y detalle indicados, con bubbles y composed activos.
+  @private
+  */
+  _emit(name, detail = {}) {
+    this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
+  }
+
+  /*
+  Renderiza ac-api-users (sin UI), la transición raíz con registro-wizard-steps adentro, y el modal de éxito con registro-wizard-modal-resultado adentro. ac-api-users y ac-modal-basic van como hermanos de ac-transition-container, nunca anidados dentro de su slot.
+  @public
+  */
   render() {
     return html`
       <ac-api-users
         ${ref(this._apiUsersRef)}
-        version="lab-1"
+        version=${API_VERSION}
         @ac-api-users-get-user-success=${this._onInitDataSuccess}
         @ac-api-users-get-user-error=${this._onInitDataError}
         @ac-api-users-register-success=${this._onRegisterSuccess}
@@ -235,129 +348,25 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
                 ></ac-notification-basic>`
               : ''
           }
-          <ac-expandable-multistep
-            @ac-expandable-multistep-active-step-change=${this._onMultistepStepChange}
-          >
-            <ac-expandable-step
-              ${ref(this._step1Ref)}
-              header=${this.t('registro-wizard-step1-header')}
-              active
-            >
-              ${
-                this._welcomeUser
-                  ? html`<ac-text-basic
-                      tag="p"
-                      size="sm"
-                      text="Hola, ${this._welcomeUser.nombre}. Completa tus datos para continuar."
-                    ></ac-text-basic>`
-                  : ''
-              }
-              <ac-input-basic
-                label=${this.t('registro-wizard-nombre-label')}
-                .value=${this._nombre}
-                .error=${this._nombreError}
-                @ac-input-basic-input=${this._onNombreInput}
-              ></ac-input-basic>
-              <ac-input-basic
-                label=${this.t('registro-wizard-email-label')}
-                type="email"
-                .value=${this._email}
-                @ac-input-basic-input=${this._onEmailInput}
-              ></ac-input-basic>
-              <div class="registro-wizard__field-with-hint">
-                <ac-select-basic
-                  label=${this.t('registro-wizard-rol-label')}
-                  placeholder=${this.t('registro-wizard-rol-placeholder')}
-                  .options=${ROL_OPTIONS}
-                  .value=${this._rol}
-                  @ac-select-basic-change=${this._onRolChange}
-                ></ac-select-basic>
-                <ac-tooltip-basic text=${this.t('registro-wizard-rol-tooltip')} position="left">
-                  <ac-button-basic
-                    ambient="secondary"
-                    aria-label=${this.t('registro-wizard-rol-help-aria')}
-                    >?</ac-button-basic
-                  >
-                </ac-tooltip-basic>
-              </div>
-              <div class="registro-wizard__actions">
-                <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onStep1NextClick}
-                  >${this.t('registro-wizard-next')}</ac-button-basic
-                >
-              </div>
-            </ac-expandable-step>
-
-            <ac-expandable-step
-              ${ref(this._step2Ref)}
-              header=${this.t('registro-wizard-step2-header')}
-            >
-              <ac-checkbox-basic
-                .checked=${this._terminos}
-                @ac-checkbox-basic-change=${this._onTerminosChange}
-                >${this.t('registro-wizard-terminos-label')}</ac-checkbox-basic
-              >
-              <ac-switch-basic
-                .checked=${this._notificaciones}
-                @ac-switch-basic-change=${this._onNotificacionesChange}
-                >${this.t('registro-wizard-notificaciones-label')}</ac-switch-basic
-              >
-              <fieldset class="registro-wizard__plan">
-                <legend>${this.t('registro-wizard-plan-legend')}</legend>
-                <ac-radio-basic
-                  name="registro-wizard-plan"
-                  value="mensual"
-                  .checked=${this._plan === 'mensual'}
-                  @ac-radio-basic-change=${this._onPlanChange}
-                  >${this.t('registro-wizard-plan-mensual')}</ac-radio-basic
-                >
-                <ac-radio-basic
-                  name="registro-wizard-plan"
-                  value="anual"
-                  .checked=${this._plan === 'anual'}
-                  @ac-radio-basic-change=${this._onPlanChange}
-                  >${this.t('registro-wizard-plan-anual')}</ac-radio-basic
-                >
-              </fieldset>
-              <div class="registro-wizard__actions">
-                <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onStep2NextClick}
-                  >${this.t('registro-wizard-next')}</ac-button-basic
-                >
-              </div>
-            </ac-expandable-step>
-
-            <ac-expandable-step
-              ${ref(this._step3Ref)}
-              header=${this.t('registro-wizard-step3-header')}
-            >
-              <div class="registro-wizard__summary">
-                <ac-avatar-basic name=${this._nombre} size="lg"></ac-avatar-basic>
-                <div class="registro-wizard__summary-details">
-                  <ac-text-basic tag="p" size="md"
-                    >${this._nombre || '—'} · ${this._email || '—'}</ac-text-basic
-                  >
-                  <ac-badge-basic ambient="success"
-                    >${ROL_BADGE_LABEL[this._rol] ?? 'Sin rol'}</ac-badge-basic
-                  >
-                </div>
-              </div>
-              <ac-divider-basic></ac-divider-basic>
-              <ac-text-basic tag="p" size="sm"
-                >Plan ${this._plan} · Notificaciones
-                ${this._notificaciones ? 'activadas' : 'desactivadas'}</ac-text-basic
-              >
-              <div class="registro-wizard__actions">
-                ${
-                  this._loading
-                    ? html`<ac-spinner-basic size="md" ambient="primary"></ac-spinner-basic>`
-                    : html`<ac-button-basic
-                        ambient="primary"
-                        @ac-button-basic-click=${this._onConfirmClick}
-                        >${this.t('registro-wizard-confirm')}</ac-button-basic
-                      >`
-                }
-              </div>
-            </ac-expandable-step>
-          </ac-expandable-multistep>
+          <registro-wizard-steps
+            ${ref(this._stepsRef)}
+            .nombre=${this._nombre}
+            .email=${this._email}
+            .rol=${this._rol}
+            .welcomeName=${this._welcomeUser?.nombre ?? ''}
+            .terminos=${this._terminos}
+            .notificaciones=${this._notificaciones}
+            .plan=${this._plan}
+            .loading=${this._loading}
+            @registro-wizard-steps-nombre-change=${this._onNombreInput}
+            @registro-wizard-steps-email-change=${this._onEmailInput}
+            @registro-wizard-steps-rol-change=${this._onRolChange}
+            @registro-wizard-steps-terminos-change=${this._onTerminosChange}
+            @registro-wizard-steps-notificaciones-change=${this._onNotificacionesChange}
+            @registro-wizard-steps-plan-change=${this._onPlanChange}
+            @registro-wizard-steps-confirm-click=${this._onConfirmClick}
+            @registro-wizard-steps-step-change=${this._onStepsStepChange}
+          ></registro-wizard-steps>
         </div>
       </ac-transition-container>
 
@@ -369,26 +378,13 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
         primary-text=${this.t('registro-wizard-modal-primary')}
         @ac-modal-basic-primary-click=${this._onModalPrimaryClick}
       >
-        ${
-          this._registeredUser
-            ? html`
-                <ac-text-basic tag="p" size="md"
-                  >Usuario #${this._registeredUser.id} registrado con éxito.</ac-text-basic
-                >
-                <ac-text-basic tag="p" size="sm"
-                  >${this._registeredUser.nombre} · ${this._registeredUser.email}</ac-text-basic
-                >
-                <ac-badge-basic ambient="success"
-                  >${ROL_BADGE_LABEL[this._registeredUser.rol] ?? this._registeredUser.rol}</ac-badge-basic
-                >
-              `
-            : ''
-        }
+        <registro-wizard-modal-resultado
+          .userId=${this._registeredUser?.id ?? null}
+          .nombre=${this._registeredUser?.nombre ?? ''}
+          .email=${this._registeredUser?.email ?? ''}
+          .rol=${this._registeredUser?.rol ?? ''}
+        ></registro-wizard-modal-resultado>
       </ac-modal-basic>
     `;
-  }
-
-  _emit(name, detail = {}) {
-    this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true, composed: true }));
   }
 }

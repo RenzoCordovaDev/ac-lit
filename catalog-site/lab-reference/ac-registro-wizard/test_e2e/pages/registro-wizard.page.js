@@ -1,5 +1,17 @@
 import { ComponentObject } from '@ac-base/ac-e2e-testing';
 
+const STEP_CONTENT_TAGS = [
+  'registro-wizard-step-datos',
+  'registro-wizard-step-preferencias',
+  'registro-wizard-step-resumen',
+];
+
+const STEP_ACTIONS_CLASS = [
+  'registro-wizard-step-datos__actions',
+  'registro-wizard-step-preferencias__actions',
+  'registro-wizard-step-resumen__actions',
+];
+
 export class RegistroWizardPage extends ComponentObject {
   constructor(testId = 'registro-wizard-default') {
     super({ selector: `[data-testid="${testId}"]` });
@@ -8,7 +20,8 @@ export class RegistroWizardPage extends ComponentObject {
   async snapshot() {
     return browser.execute(selector => {
       const el = document.querySelector(selector);
-      const steps = [...el.shadowRoot.querySelectorAll('ac-expandable-step')];
+      const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
+      const steps = [...stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')];
       return {
         open: el._open,
         modalOpen: el._modalOpen,
@@ -42,9 +55,12 @@ export class RegistroWizardPage extends ComponentObject {
 
   async fillStep1(nombre, email) {
     await browser.execute(
-      (selector, nombreValue, emailValue) => {
+      (selector, nombreValue, emailValue, contentTag) => {
         const el = document.querySelector(selector);
-        const [nombreInput, emailInput] = el.shadowRoot.querySelectorAll('ac-input-basic');
+        const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
+        const step = stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')[0];
+        const datos = step.querySelector(contentTag);
+        const [nombreInput, emailInput] = datos.shadowRoot.querySelectorAll('ac-input-basic');
         const nombreField = nombreInput.shadowRoot.querySelector('input');
         nombreField.value = nombreValue;
         nombreField.dispatchEvent(new Event('input'));
@@ -55,30 +71,41 @@ export class RegistroWizardPage extends ComponentObject {
       this.selector,
       nombre,
       email,
+      STEP_CONTENT_TAGS[0],
     );
   }
 
   async acceptTerminos() {
-    await browser.execute(selector => {
-      const el = document.querySelector(selector);
-      const checkbox = el.shadowRoot.querySelector('ac-checkbox-basic');
-      const input = checkbox.shadowRoot.querySelector('input');
-      input.checked = true;
-      input.dispatchEvent(new Event('change'));
-    }, this.selector);
+    await browser.execute(
+      (selector, contentTag) => {
+        const el = document.querySelector(selector);
+        const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
+        const step = stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')[1];
+        const preferencias = step.querySelector(contentTag);
+        const checkbox = preferencias.shadowRoot.querySelector('ac-checkbox-basic');
+        const input = checkbox.shadowRoot.querySelector('input');
+        input.checked = true;
+        input.dispatchEvent(new Event('change'));
+      },
+      this.selector,
+      STEP_CONTENT_TAGS[1],
+    );
   }
 
   async clickActionButton(index) {
     await browser.execute(
-      (selector, i) => {
+      (selector, i, contentTags, actionsClasses) => {
         const el = document.querySelector(selector);
-        const button = el.shadowRoot.querySelectorAll('.registro-wizard__actions ac-button-basic')[
-          i
-        ];
+        const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
+        const step = stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')[i];
+        const content = step.querySelector(contentTags[i]);
+        const button = content.shadowRoot.querySelector(`.${actionsClasses[i]} ac-button-basic`);
         button.shadowRoot.querySelector('button').click();
       },
       this.selector,
       index,
+      STEP_CONTENT_TAGS,
+      STEP_ACTIONS_CLASS,
     );
   }
 }
