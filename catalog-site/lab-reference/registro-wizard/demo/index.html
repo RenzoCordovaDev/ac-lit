@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>registro-wizard demo</title>
+    <script type="module" src="./demo.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <div class="demo-root">
+      <h1>&lt;registro-wizard&gt;</h1>
+      <p>
+        Componente de referencia del Laboratorio (Capítulo 1 — Construcción). Abre solo (sin botón
+        disparador): se monta ya visible dentro de <code>ac-transition-container</code>.
+      </p>
+      <p>
+        Usa el botón "Simular error" para forzar <code>simulate-error</code> en el
+        <code>ac-api-users</code> interno y probar el camino de error del guardado del paso 3.
+      </p>
+      <button id="toggle-error-btn" type="button">Simular error en el guardado</button>
+      <registro-wizard id="wizard"></registro-wizard>
+    </div>
+  </body>
+</html>
