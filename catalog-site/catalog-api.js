@@ -1491,8 +1491,8 @@ export const COMPONENT_API = {
   'ac-transition-container': {
     properties: [
       {
-        name: 'visible',
-        attribute: 'visible',
+        name: 'open',
+        attribute: 'open',
         type: 'Boolean',
         default: 'false',
         description:
