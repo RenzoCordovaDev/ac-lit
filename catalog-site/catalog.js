@@ -12,6 +12,7 @@ import { GROUPS, FALLBACK_GROUP_ID, FALLBACK_ICON, COMPONENT_META } from './cata
 import { COMPONENT_API } from './catalog-api.js';
 
 const REPO_URL = 'https://github.com/RenzoCordovaDev/ac-lit';
+const API_GROUP_ID = 'apis';
 const COPIED_FEEDBACK_MS = 1600;
 const NARROW_SCREEN = window.matchMedia('(max-width: 900px)');
 
@@ -48,6 +49,7 @@ const copyStatusEl = document.getElementById('catalog-copy-status');
 
 const controlsEl = document.getElementById('catalog-controls');
 const tabEls = [...document.querySelectorAll('.catalog__tab')];
+const tabsEl = document.querySelector('.catalog__tabs');
 const stageEl = document.getElementById('catalog-stage');
 const frameEl = document.getElementById('catalog-frame');
 const skeletonEl = document.getElementById('catalog-skeleton');
@@ -254,6 +256,7 @@ function selectComponent(id, { updateHash = true } = {}) {
 
   const meta = metaFor(component);
   const group = groupFor(component.id);
+  const isApiComponent = group.id === API_GROUP_ID;
   heroIconEl.innerHTML = icon(meta.icon, 40);
   heroNameEl.textContent = component.id;
   heroDescriptionEl.textContent = meta.description;
@@ -262,23 +265,39 @@ function selectComponent(id, { updateHash = true } = {}) {
   document.title = `${component.id} — Catálogo ac-lit`;
   renderBreadcrumb(['Componentes', group.label, component.id]);
 
-  // Skeleton mientras carga el iframe nuevo -- evita el "de golpe" al
-  // cambiar de componente. Se oculta directo en el evento `load` (ver más
-  // abajo): la duración real queda atada a lo que tarde esa demo puntual en
-  // cargar, sin ningún piso artificial por timeout.
   controlsEl.hidden = true;
   examplesEl.replaceChildren();
   renderApiInfo(component.id);
-  setTab('demo');
-  // El marco del skeleton usa el mismo preset elegido para la demo anterior
-  // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
-  // tamaño dos veces (skeleton -> otro tamaño -> real) si ya se había elegido
-  // Tablet/Desktop.
-  skeletonFrameEl.dataset.device = demoPrefs.device;
-  skeletonEl.hidden = false;
-  frameEl.hidden = true;
-  emptyStateEl.hidden = true;
-  frameEl.src = component.demoEntry;
+
+  // La familia `ac-api-*` no renderiza nada y no tiene controles que
+  // mostrar: en vez de un iframe/skeleton y las pestañas Demo/Código/
+  // Ejemplos, va de frente a la ficha de Propiedades/Métodos/Eventos (ver
+  // renderApiInfo arriba), que queda como único contenido siempre visible.
+  tabsEl.hidden = isApiComponent;
+  stageEl.hidden = isApiComponent;
+  apiEl.hidden = !isApiComponent;
+
+  if (isApiComponent) {
+    frameEl.removeAttribute('src');
+    frameEl.hidden = true;
+    skeletonEl.hidden = true;
+    emptyStateEl.hidden = true;
+  } else {
+    // Skeleton mientras carga el iframe nuevo -- evita el "de golpe" al
+    // cambiar de componente. Se oculta directo en el evento `load` (ver más
+    // abajo): la duración real queda atada a lo que tarde esa demo puntual en
+    // cargar, sin ningún piso artificial por timeout.
+    setTab('demo');
+    // El marco del skeleton usa el mismo preset elegido para la demo anterior
+    // (persiste entre componentes, ver demoPrefs más abajo) -- así no cambia de
+    // tamaño dos veces (skeleton -> otro tamaño -> real) si ya se había elegido
+    // Tablet/Desktop.
+    skeletonFrameEl.dataset.device = demoPrefs.device;
+    skeletonEl.hidden = false;
+    frameEl.hidden = true;
+    emptyStateEl.hidden = true;
+    frameEl.src = component.demoEntry;
+  }
 
   // Solo se redibuja la lista si hay que abrir el grupo del componente; si
   // ya está a la vista alcanza con mover la marca de "actual" (y así no se
