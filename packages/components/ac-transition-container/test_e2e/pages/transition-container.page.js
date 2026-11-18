@@ -11,7 +11,7 @@ export class TransitionContainerPage extends ComponentObject {
       const el = document.querySelector(selector);
       const dialog = el.shadowRoot.querySelector('dialog');
       return {
-        visible: dialog.open,
+        open: dialog.open,
         title: dialog.querySelector('h2').textContent.trim(),
         hasBackIcon: Boolean(dialog.querySelector('[part="back"]')),
       };

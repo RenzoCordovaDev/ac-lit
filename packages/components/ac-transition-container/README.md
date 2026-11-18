@@ -15,7 +15,7 @@ import '@ac-components/ac-transition-container';
 ```html
 <ac-transition-container
   id="security-settings-emergency-zone-pe-transition-main-menu"
-  ?visible="${this._isVisibleMainMenu}"
+  ?open="${this._isVisibleMainMenu}"
   header-text="security-settings-emergency-zone-pe-title-header"
   header-type="first-level-sequential"
   @transition-container-header-back-icon-click="${this._handleBackClick}"
@@ -27,7 +27,7 @@ import '@ac-components/ac-transition-container';
   const container = document.getElementById(
     'security-settings-emergency-zone-pe-transition-main-menu',
   );
-  container.show(); // o: container.visible = true
+  container.show(); // o: container.open = true
 
   container.addEventListener('ac-transition-container-header-back-icon-click', () => {
     // la decisión de cerrar (o navegar a otra pantalla) es tuya
@@ -42,7 +42,7 @@ import '@ac-components/ac-transition-container';
 
 | Propiedad      | Atributo         | Tipo     | Default                 | Descripción                                                                                                                                                                                                                                             |
 | -------------- | ---------------- | -------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `visible`      | `visible`        | Boolean  | `false`                 | Contenedor visible (reflejado como atributo). Al pasar a `false` se anima la salida y luego se cierra el `<dialog>`.                                                                                                                                    |
+| `open`         | `open`           | Boolean  | `false`                 | Contenedor visible (reflejado como atributo). Al pasar a `false` se anima la salida y luego se cierra el `<dialog>`.                                                                                                                                    |
 | `headerText`   | `header-text`    | String   | `''`                    | Título. Pasa por `this.t()`, así que acepta tanto una clave de `locales.json` como un literal. Sin `header-text` se muestra un título por defecto traducido (`transition-container-title`).                                                             |
 | `headerType`   | `header-type`    | String   | `'first-level-initial'` | **Lista blanca**: `'first-level-initial'` o `'first-level-sequential'` (cualquier otro valor cae a `'first-level-initial'`). Reservada para uso futuro — **no** controla la flecha de volver ni el ícono de menú, que son siempre visibles por defecto. |
 | `hideMenuIcon` | `hide-menu-icon` | Boolean  | `false`                 | Oculta el ícono de menú (hamburguesa) del lado derecho de la cabecera.                                                                                                                                                                                  |
@@ -68,7 +68,7 @@ Todos `bubbles` y `composed`.
 
 | Evento                                           | Cuándo                                                                                               | `detail`                                    |
 | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `ac-transition-container-open`                   | El contenedor se vuelve visible (no se dispara por el estado inicial `visible` del HTML).            | `true`                                      |
+| `ac-transition-container-open`                   | El contenedor se vuelve visible (no se dispara por el estado inicial `open` del HTML).               | `true`                                      |
 | `ac-transition-container-close`                  | El contenedor empieza a cerrarse.                                                                    | `{ reason: 'escape' \| 'api' \| 'native' }` |
 | `ac-transition-container-header-back-icon-click` | Click en la flecha de volver de la cabecera (siempre visible, no se puede ocultar).                  | `true`                                      |
 | `ac-transition-container-header-menu-icon-click` | Click en el ícono de menú (hamburguesa) de la cabecera (visible por defecto salvo `hide-menu-icon`). | `true`                                      |

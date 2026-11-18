@@ -13,7 +13,7 @@ const openContainer = async (attributes = {}) => {
   for (const [name, value] of Object.entries(attributes)) {
     el.setAttribute(name, value === true ? '' : value);
   }
-  el.visible = true;
+  el.open = true;
   await el.updateComplete;
   return el;
 };
@@ -27,7 +27,7 @@ const collectEvents = (el, name) => {
 suite('ac-transition-container', () => {
   test('is not visible by default', async () => {
     const el = await fixture(html`<ac-transition-container></ac-transition-container>`);
-    expect(el.visible).to.be.false;
+    expect(el.open).to.be.false;
   });
 
   test('defaults headerType to "first-level-initial"', async () => {
@@ -88,7 +88,7 @@ suite('ac-transition-container', () => {
     const el = await openContainer();
     backButtonOf(el).click();
     await aTimeout(0);
-    expect(el.visible).to.be.true;
+    expect(el.open).to.be.true;
   });
 
   test('uses a default translated title without `header-text`', async () => {
@@ -142,7 +142,7 @@ suite('ac-transition-container', () => {
     const el = await openContainer();
     menuButtonOf(el).click();
     await aTimeout(0);
-    expect(el.visible).to.be.true;
+    expect(el.open).to.be.true;
   });
 });
 
@@ -150,7 +150,7 @@ suite('ac-transition-container: events', () => {
   test('dispatches ac-transition-container-open when it becomes visible', async () => {
     const el = await fixture(html`<ac-transition-container></ac-transition-container>`);
     setTimeout(() => {
-      el.visible = true;
+      el.open = true;
     });
     const event = await oneEvent(el, 'ac-transition-container-open');
     expect(event.detail).to.be.true;
@@ -163,7 +163,7 @@ suite('ac-transition-container: events', () => {
       dispatched = true;
     });
     const el = document.createElement('ac-transition-container');
-    el.setAttribute('visible', '');
+    el.setAttribute('open', '');
     host.appendChild(el);
     await el.updateComplete;
     await aTimeout(0);
@@ -191,11 +191,11 @@ suite('ac-transition-container: events', () => {
     expect(dialogOf(el).open).to.be.true;
   });
 
-  test('syncs `visible` when the browser closes the dialog by itself', async () => {
+  test('syncs `open` when the browser closes the dialog by itself', async () => {
     const el = await openContainer();
     dialogOf(el).close();
     await aTimeout(0);
-    expect(el.visible).to.be.false;
+    expect(el.open).to.be.false;
   });
 
   test('container events bubble and are composed', async () => {

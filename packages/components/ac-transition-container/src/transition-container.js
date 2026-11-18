@@ -59,7 +59,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
 
   static get properties() {
     return {
-      visible: { type: Boolean, reflect: true },
+      open: { type: Boolean, reflect: true },
       headerText: { type: String, attribute: 'header-text' },
       headerType: { type: String, attribute: 'header-type', reflect: true },
       hideMenuIcon: { type: Boolean, attribute: 'hide-menu-icon', reflect: true },
@@ -70,7 +70,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
 
   constructor() {
     super();
-    this.visible = false;
+    this.open = false;
     this.headerText = '';
     this.headerType = DEFAULT_HEADER_TYPE;
     this.hideMenuIcon = false;
@@ -111,7 +111,7 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
 
   /** Abre el contenedor. */
   show() {
-    this.visible = true;
+    this.open = true;
   }
 
   /** Cierra el contenedor (con su animación). */
@@ -124,12 +124,12 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
   }
 
   updated(changed) {
-    if (!changed.has('visible')) return;
+    if (!changed.has('open')) return;
 
     const dialog = this._dialog;
-    const previous = changed.get('visible');
+    const previous = changed.get('open');
 
-    if (this.visible) {
+    if (this.open) {
       this._cancelPendingClose();
       if (!dialog.open) {
         if (this.contained) {
@@ -211,9 +211,9 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
   }
 
   _requestClose(reason) {
-    if (!this.visible) return;
+    if (!this.open) return;
     this._closeReason = reason;
-    this.visible = false;
+    this.open = false;
   }
 
   /** Anima la salida (de izquierda a derecha) y, al terminar, cierra el `<dialog>`. */
@@ -368,11 +368,11 @@ export class TransitionContainer extends ComponentMixin(LitElement) {
   }
 
   _onNativeClose() {
-    // El navegador cerró el <dialog> por su cuenta (no por `visible = false`).
-    if (this.visible) {
+    // El navegador cerró el <dialog> por su cuenta (no por `open = false`).
+    if (this.open) {
       this._closeReason = undefined;
       this._emit('ac-transition-container-close', { reason: 'native' });
-      this.visible = false;
+      this.open = false;
     }
   }
 
