@@ -220,6 +220,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4300", "--directory", "catalog-dist"],
       "port": 4300
+    },
+    {
+      "name": "ac-ccp-examples",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-base/ac-ccp", "run", "examples:serve"],
+      "port": 5173
     }
   ]
 }

@@ -183,6 +183,9 @@ importers:
 
   packages/base/ac-ccp:
     devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../ac-core
       '@ac-components/ac-badge-basic':
         specifier: workspace:^
         version: link:../../components/ac-badge-basic

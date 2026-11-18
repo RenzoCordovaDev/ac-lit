@@ -25,6 +25,7 @@
     "lit": "^3.0.0"
   },
   "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
     "@ac-components/ac-badge-basic": "workspace:^",
     "@ac-components/ac-button-basic": "workspace:^",
     "@open-wc/testing": "^4.0.0",
