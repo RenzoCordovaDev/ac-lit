@@ -256,6 +256,11 @@ function showLab() {
   homeViewEl.hidden = true;
   catalogViewEl.hidden = true;
   labViewEl.hidden = false;
+  activeId = null;
+  demo = null;
+  frameEl.removeAttribute('src');
+  document.title = 'Laboratorio — ac-lit';
+  renderBreadcrumb(['Laboratorio']);
   renderLabChapters();
 }
 
@@ -975,6 +980,11 @@ document.getElementById('catalog-sidebar-lab').addEventListener('click', () => {
   showLab();
   setNavOpen(false);
 });
+document.getElementById('catalog-home-lab-link').addEventListener('click', () => {
+  history.replaceState(null, '', '#laboratorio');
+  showLab();
+});
+document.getElementById('catalog-lab-back').addEventListener('click', goHome);
 
 document.getElementById('catalog-cta').addEventListener('click', () => {
   if (components.length === 0) return;

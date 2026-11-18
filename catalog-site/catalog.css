@@ -55,19 +55,22 @@ body {
   --catalog-active-subtext: var(--color-subtext, #5f5e58);
 }
 
-/* Home y catálogo son páginas separadas: en Home no hay lista de componentes
-   que navegar, así que la sidebar no se muestra (ni siquiera colapsada) y el
-   grid pasa a una sola columna. `data-view` lo fija catalog.js en
-   showHome()/showCatalog(). */
-body[data-view='home'] {
+/* Home, Laboratorio y catálogo son páginas separadas: ni Home ni Laboratorio
+   tienen lista de componentes que navegar, así que en esas dos la sidebar no
+   se muestra (ni siquiera colapsada) y el grid pasa a una sola columna.
+   `data-view` lo fija catalog.js en showHome()/showLab()/showCatalog(). */
+body[data-view='home'],
+body[data-view='lab'] {
   grid-template-columns: minmax(0, 1fr);
 }
 
-body[data-view='home'] .catalog__sidebar {
+body[data-view='home'] .catalog__sidebar,
+body[data-view='lab'] .catalog__sidebar {
   display: none;
 }
 
-body[data-view='home'] .catalog__menu-button {
+body[data-view='home'] .catalog__menu-button,
+body[data-view='lab'] .catalog__menu-button {
   display: none !important;
 }
 
@@ -642,9 +645,12 @@ body[data-view='home'] .catalog__menu-button {
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-/* Hero: botón fantasma (outline) junto al primario. */
+/* Hero: botón(es) fantasma (outline) junto al primario -- usada tanto en un
+   <a> (ancla a #cli-quickstart) como en un <button> (ir al laboratorio), por
+   eso fija cursor y font-family explícitos (un <button> no los hereda solo). */
 .catalog__home-cta-ghost {
   font: inherit;
+  font-family: inherit;
   font-size: var(--font-size-md, 1rem);
   font-weight: var(--font-weight-bold, 700);
   color: var(--color-text, #bcbec4);
@@ -653,6 +659,7 @@ body[data-view='home'] .catalog__menu-button {
   border-radius: var(--radius-full, 999px);
   padding: var(--space-3, 0.85rem) var(--space-6, 2rem);
   text-decoration: none;
+  cursor: pointer;
   transition: border-color 0.15s ease;
 }
 
@@ -1661,6 +1668,22 @@ body[data-view='home'] .catalog__menu-button {
   display: flex;
   flex-direction: column;
   gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-back {
+  align-self: flex-start;
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.catalog__lab-back:hover {
+  text-decoration: underline;
 }
 
 .catalog__lab-header h1 {
