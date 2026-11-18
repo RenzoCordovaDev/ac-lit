@@ -1,5 +1,3 @@
-<ac-api-carrito id="apiComponent" version="0" timeout="1200"></ac-api-carrito>
-
 <section class="api-doc">
   <p class="api-doc__summary">
     Simula un carrito de compras: agregar, quitar, actualizar cantidad y ver el resumen.
@@ -106,31 +104,4 @@
     <code>ac-api-carrito-clear-error</code>, <code>ac-api-carrito-summary-success</code>,
     <code>ac-api-carrito-summary-error</code>
   </p>
-</section>
-
-<section class="api-doc">
-  <h2>Consideraciones</h2>
-  <ul class="api-doc__list">
-    <li>
-      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
-      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
-      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
-    </li>
-    <li>
-      Cada método público devuelve una Promise y además dispara un evento
-      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
-      method, params, data } en éxito o { method, params, error } en error — un único handler puede
-      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
-    </li>
-    <li>
-      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
-      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
-      necesita distinguir el origen del fallo.
-    </li>
-    <li>
-      A diferencia del resto de la familia, no tiene semilla de datos: el "mock" es el propio estado
-      del carrito, vacío al montar la instancia — todo lo que se liste viene de llamadas previas a
-      <code>agregarItem</code> en esa misma instancia.
-    </li>
-  </ul>
 </section>

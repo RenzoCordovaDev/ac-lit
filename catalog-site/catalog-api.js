@@ -1,13 +1,14 @@
-// API pública de cada componente (propiedades y eventos), para los dos
-// expandables que se muestran debajo del código en la pestaña "Código" del
-// catálogo. Los datos se transcriben a mano desde el README de cada
-// componente (`packages/components/<id>/README.md`, secciones "Propiedades"
-// y "Eventos") -- no hay parseo automático en build time. Al agregar un
-// componente nuevo al catálogo, agrega su entrada acá leyendo su README.
+// API pública de cada componente (propiedades, métodos públicos y eventos),
+// para los expandables que se muestran debajo del código en la pestaña
+// "Código" del catálogo. Los datos se transcriben a mano desde el README de
+// cada componente (`packages/components/<id>/README.md`) -- no hay parseo
+// automático en build time. Al agregar un componente nuevo al catálogo,
+// agrega su entrada acá leyendo su README.
 //
-// Si un componente no tiene propiedades configurables o no dispara eventos
-// propios, su arreglo correspondiente queda vacío (`[]`) -- el expandible lo
-// muestra igual, con un texto de estado vacío.
+// Si un componente no tiene propiedades configurables, no expone métodos
+// públicos propios o no dispara eventos propios, su arreglo correspondiente
+// queda vacío (`[]`) -- el expandible lo muestra igual, con un texto de
+// estado vacío.
 
 // Propiedades compartidas por toda la familia `ac-api-*` (vienen de
 // `@ac-base/ac-api-mixin`, ver docs/CONVENTIONS.md) -- se repiten tal cual en
@@ -39,15 +40,6 @@ const API_SIMULATOR_PROPERTIES = [
     description:
       'Si es true, fuerza que toda llamada posterior falle (dispara el evento de error correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del consumidor. Se puede alternar en caliente.',
   },
-];
-
-// Consideraciones comunes a toda la familia `ac-api-*` -- cada entrada las
-// repite al inicio de su propio arreglo `considerations` y agrega las
-// específicas de su dominio a continuación.
-const API_SIMULATOR_CONSIDERATIONS = [
-  'No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro componente, igual que un componente visual del catálogo, pero solo se usa a través de sus métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.',
-  'Cada método público devuelve una Promise y además dispara un evento `ac-<componente>-<acción>-<resultado>`, con el mismo detail { method, params, data } en éxito o { method, params, error } en error — un único handler puede procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).',
-  'Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con `simulateError` comparten el mismo canal de evento de error — el consumidor nunca necesita distinguir el origen del fallo.',
 ];
 
 export const COMPONENT_API = {
@@ -1590,8 +1582,8 @@ export const COMPONENT_API = {
 
   // --- Familia `ac-api-*`: simuladores de API sin UI (ver docs/CONVENTIONS.md,
   // sección "Componentes sin UI: simuladores de API"). Sin controles/elementos
-  // visuales en su demo -- esta ficha (Propiedades/Métodos/Eventos/
-  // Consideraciones) es su documentación real dentro del catálogo.
+  // visuales en su demo -- esta ficha (Propiedades/Métodos/Eventos) es su
+  // documentación real dentro del catálogo.
   'ac-api-users': {
     properties: API_SIMULATOR_PROPERTIES,
     methods: [
@@ -1660,11 +1652,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-users-auth-success', detail: '{ method, params, data }' },
       { name: 'ac-api-users-auth-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'El mock vive en memoria mientras la instancia está montada: registrar/actualizar/eliminar modifican esa copia, pero se reinicia al recargar la página o recrear el elemento.',
-      '`validarCredenciales` es solo un mock de login (no hay hash ni backend real) — nunca usar como ejemplo de autenticación real.',
-    ],
   },
 
   'ac-api-productos': {
@@ -1727,10 +1714,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-productos-delete-success', detail: '{ method, params, data }' },
       { name: 'ac-api-productos-delete-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'El mock vive en memoria mientras la instancia está montada: registrar/actualizar/eliminar modifican esa copia, pero se reinicia al recargar la página o recrear el elemento.',
-    ],
   },
 
   'ac-api-operaciones': {
@@ -1784,11 +1767,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-operaciones-withdraw-success', detail: '{ method, params, data }' },
       { name: 'ac-api-operaciones-withdraw-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'Es el componente con más estado de la familia: saldos y movimientos viven en memoria mientras la instancia está montada (dos cuentas mock) y se reinician al recargar o recrear el elemento.',
-      '`comprar` usa una tabla de precios mock interna, independiente de `ac-api-productos` — los dos componentes no comparten catálogo ni id de producto.',
-    ],
   },
 
   'ac-api-pedidos': {
@@ -1835,11 +1813,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-pedidos-cancel-success', detail: '{ method, params, data }' },
       { name: 'ac-api-pedidos-cancel-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'Los estados de seguimiento son una secuencia fija (pendiente, confirmado, en_camino, entregado): `obtenerEstadoPedido` marca como completados todos los pasos hasta el estado actual.',
-      'El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página o recrear el elemento.',
-    ],
   },
 
   'ac-api-notificaciones': {
@@ -1885,11 +1858,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-notificaciones-delete-success', detail: '{ method, params, data }' },
       { name: 'ac-api-notificaciones-delete-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'El orden por defecto de `listarNotificaciones` es por fecha descendente (la más reciente primero), a diferencia del resto de la familia (que no ordena si no se pide sortBy).',
-      'El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página o recrear el elemento.',
-    ],
   },
 
   'ac-api-auth': {
@@ -1933,11 +1901,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-auth-validate-error', detail: '{ method, params, error }' },
       { name: 'ac-api-auth-refresh-success', detail: '{ method, params, data }' },
       { name: 'ac-api-auth-refresh-error', detail: '{ method, params, error }' },
-    ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'A diferencia de `ac-api-users`, este componente es dueño del ciclo de vida completo de la sesión (login, registro, logout, validación, refresco de token) — las sesiones activas (tokens) viven en memoria mientras la instancia está montada.',
-      'Es un mock de autenticación (sin hash ni backend real): nunca usarlo como ejemplo de login de producción.',
     ],
   },
 
@@ -1993,10 +1956,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-carrito-summary-success', detail: '{ method, params, data }' },
       { name: 'ac-api-carrito-summary-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'A diferencia del resto de la familia, no tiene semilla de datos: el "mock" es el propio estado del carrito, vacío al montar la instancia — todo lo que se liste viene de llamadas previas a `agregarItem` en esa misma instancia.',
-    ],
   },
 
   'ac-api-direcciones': {
@@ -2050,11 +2009,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-direcciones-mark-default-success', detail: '{ method, params, data }' },
       { name: 'ac-api-direcciones-mark-default-error', detail: '{ method, params, error }' },
     ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'Siempre hay como máximo una dirección predeterminada: agregar la primera, o eliminar la que lo era, reasigna automáticamente ese estado.',
-      'El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página o recrear el elemento.',
-    ],
   },
 
   'ac-api-pagos': {
@@ -2100,11 +2054,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-pagos-mark-default-error', detail: '{ method, params, error }' },
       { name: 'ac-api-pagos-process-success', detail: '{ method, params, data }' },
       { name: 'ac-api-pagos-process-error', detail: '{ method, params, error }' },
-    ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      'El número de tarjeta nunca se expone, ni siquiera en el mock devuelto: toda respuesta reemplaza `numero` por `ultimosDigitos` (los últimos 4 dígitos) — pensado como ejemplo de diseño consciente de datos sensibles.',
-      'El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página o recrear el elemento.',
     ],
   },
 
@@ -2158,12 +2107,6 @@ export const COMPONENT_API = {
       { name: 'ac-api-archivos-delete-error', detail: '{ method, params, error }' },
       { name: 'ac-api-archivos-download-success', detail: '{ method, params, data }' },
       { name: 'ac-api-archivos-download-error', detail: '{ method, params, error }' },
-    ],
-    considerations: [
-      ...API_SIMULATOR_CONSIDERATIONS,
-      '`subirArchivo` es el único método de toda la familia que no usa el orquestador genérico `_simulateCall` del mixin: arma su propio flujo con `_wait`/`_emit` para poder emitir los eventos de progreso intermedios antes del evento final.',
-      'Los eventos de progreso de una subida se emiten completos (los 4) incluso cuando `simulateError` hace fallar esa subida — el error solo llega al final, en el evento `upload-error`.',
-      'El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página o recrear el elemento.',
     ],
   },
 };

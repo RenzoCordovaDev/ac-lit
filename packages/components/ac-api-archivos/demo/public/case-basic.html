@@ -1,5 +1,3 @@
-<ac-api-archivos id="apiComponent" version="0" timeout="1200"></ac-api-archivos>
-
 <section class="api-doc">
   <p class="api-doc__summary">
     Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.
@@ -95,41 +93,4 @@
     <code>ac-api-archivos-delete-error</code>, <code>ac-api-archivos-download-success</code>,
     <code>ac-api-archivos-download-error</code>
   </p>
-</section>
-
-<section class="api-doc">
-  <h2>Consideraciones</h2>
-  <ul class="api-doc__list">
-    <li>
-      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
-      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
-      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
-    </li>
-    <li>
-      Cada método público devuelve una Promise y además dispara un evento
-      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
-      method, params, data } en éxito o { method, params, error } en error — un único handler puede
-      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
-    </li>
-    <li>
-      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
-      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
-      necesita distinguir el origen del fallo.
-    </li>
-    <li>
-      <code>subirArchivo</code> es el único método de toda la familia que no usa el orquestador
-      genérico <code>_simulateCall</code> del mixin: arma su propio flujo con
-      <code>_wait</code>/<code>_emit</code> para poder emitir los eventos de progreso intermedios
-      antes del evento final.
-    </li>
-    <li>
-      Los eventos de progreso de una subida se emiten completos (los 4) incluso cuando
-      <code>simulateError</code> hace fallar esa subida — el error solo llega al final, en el evento
-      <code>upload-error</code>.
-    </li>
-    <li>
-      El mock vive en memoria mientras la instancia está montada y se reinicia al recargar la página
-      o recrear el elemento.
-    </li>
-  </ul>
 </section>

@@ -1751,20 +1751,6 @@ body[data-view='home'] .catalog__menu-button {
   color: var(--catalog-subtext);
 }
 
-.catalog__api-considerations {
-  margin: var(--space-3, 0.75rem) 0 0;
-  padding-left: 1.1rem;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2, 0.5rem);
-  font-size: var(--font-size-sm, 0.85rem);
-  color: var(--color-text, #bcbec4);
-}
-
-.catalog__api-considerations li {
-  padding-left: var(--space-1, 0.25rem);
-}
-
 /* Skeleton mientras carga la demo del componente elegido -- reproduce la
    estructura real de .ac-demo-content__stage (ver su .styles.scss): mismo
    fondo/padding exterior y mismo marco de dispositivo (ancho máximo, radios,

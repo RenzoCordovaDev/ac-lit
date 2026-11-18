@@ -60,11 +60,9 @@ const apiEl = document.getElementById('catalog-api');
 const apiPropsContentEl = document.getElementById('catalog-api-props-content');
 const apiEventsContentEl = document.getElementById('catalog-api-events-content');
 const apiMethodsContentEl = document.getElementById('catalog-api-methods-content');
-const apiConsiderationsContentEl = document.getElementById('catalog-api-considerations-content');
 const apiPropsCountEl = document.getElementById('catalog-api-props-count');
 const apiEventsCountEl = document.getElementById('catalog-api-events-count');
 const apiMethodsCountEl = document.getElementById('catalog-api-methods-count');
-const apiConsiderationsCountEl = document.getElementById('catalog-api-considerations-count');
 
 const homeCategoriesEl = document.getElementById('catalog-home-categories');
 
@@ -490,13 +488,13 @@ function renderExamples(state) {
   );
 }
 
-/* Propiedades/Métodos/Eventos/Consideraciones: cuatro expandibles debajo del
-   stage, con la API pública del componente elegido (ver catalog-api.js,
-   transcrita a mano de cada README). Solo se muestran en la pestaña Código
-   (ver setTab() más abajo). Métodos y Consideraciones suelen quedar vacíos
-   para los componentes visuales -- son las secciones clave para la familia
-   sin UI `ac-api-*` (ver docs/CONVENTIONS.md), donde no hay controles que
-   mostrar en la demo y esta es la documentación real del componente. */
+/* Propiedades/Métodos/Eventos: tres expandibles debajo del stage, con la API
+   pública del componente elegido (ver catalog-api.js, transcrita a mano de
+   cada README). Solo se muestran en la pestaña Código (ver setTab() más
+   abajo). Métodos suele quedar vacío para los componentes visuales -- es la
+   sección clave para la familia sin UI `ac-api-*` (ver docs/CONVENTIONS.md),
+   donde no hay controles que mostrar en la demo y esta ficha es la
+   documentación real del componente. */
 
 function apiCell(text, { code = false } = {}) {
   const cell = create('td');
@@ -519,12 +517,10 @@ function renderApiInfo(id) {
   const properties = api.properties ?? [];
   const events = api.events ?? [];
   const methods = api.methods ?? [];
-  const considerations = api.considerations ?? [];
 
   apiPropsCountEl.textContent = String(properties.length);
   apiEventsCountEl.textContent = String(events.length);
   apiMethodsCountEl.textContent = String(methods.length);
-  apiConsiderationsCountEl.textContent = String(considerations.length);
 
   apiPropsContentEl.replaceChildren();
   if (properties.length === 0) {
@@ -606,19 +602,6 @@ function renderApiInfo(id) {
       list.append(item);
     }
     apiMethodsContentEl.append(list);
-  }
-
-  apiConsiderationsContentEl.replaceChildren();
-  if (considerations.length === 0) {
-    apiConsiderationsContentEl.append(
-      create('p', 'catalog__api-empty', 'Sin consideraciones adicionales para este componente.'),
-    );
-  } else {
-    const list = create('ul', 'catalog__api-considerations');
-    for (const consideration of considerations) {
-      list.append(create('li', '', consideration));
-    }
-    apiConsiderationsContentEl.append(list);
   }
 }
 

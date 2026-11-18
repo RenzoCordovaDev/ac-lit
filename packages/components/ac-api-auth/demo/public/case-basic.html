@@ -1,5 +1,3 @@
-<ac-api-auth id="apiComponent" version="0" timeout="1200"></ac-api-auth>
-
 <section class="api-doc">
   <p class="api-doc__summary">Simula login, registro, logout, validación y refresco de token.</p>
 </section>
@@ -85,35 +83,4 @@
     <code>ac-api-auth-validate-success</code>, <code>ac-api-auth-validate-error</code>,
     <code>ac-api-auth-refresh-success</code>, <code>ac-api-auth-refresh-error</code>
   </p>
-</section>
-
-<section class="api-doc">
-  <h2>Consideraciones</h2>
-  <ul class="api-doc__list">
-    <li>
-      No renderiza nada (render() devuelve nothing de lit): se declara en el render() de otro
-      componente, igual que un componente visual del catálogo, pero solo se usa a través de sus
-      métodos públicos y los eventos que dispara — nunca pinta nada en pantalla.
-    </li>
-    <li>
-      Cada método público devuelve una Promise y además dispara un evento
-      <code>ac-&lt;componente&gt;-&lt;acción&gt;-&lt;resultado&gt;</code>, con el mismo detail {
-      method, params, data } en éxito o { method, params, error } en error — un único handler puede
-      procesar ambos casos (ver "Métodos públicos" y "Eventos" arriba).
-    </li>
-    <li>
-      Un error de dominio (p. ej. un id que no existe en el mock) y un error forzado con
-      <code>simulateError</code> comparten el mismo canal de evento de error — el consumidor nunca
-      necesita distinguir el origen del fallo.
-    </li>
-    <li>
-      A diferencia de <code>ac-api-users</code>, este componente es dueño del ciclo de vida completo
-      de la sesión (login, registro, logout, validación, refresco de token) — las sesiones activas
-      (tokens) viven en memoria mientras la instancia está montada.
-    </li>
-    <li>
-      Es un mock de autenticación (sin hash ni backend real): nunca usarlo como ejemplo de login de
-      producción.
-    </li>
-  </ul>
 </section>
