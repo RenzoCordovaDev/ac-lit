@@ -95,30 +95,34 @@ export class RegistroWizardStepResumen extends ComponentMixin(LitElement) {
 
   render() {
     return html`
-      <div class="registro-wizard-step-resumen__summary">
-        <ac-avatar-basic name=${this.nombre} size="lg"></ac-avatar-basic>
-        <div class="registro-wizard-step-resumen__summary-details">
-          <ac-text-basic tag="p" size="md"
-            >${this.nombre || '—'} · ${this.email || '—'}</ac-text-basic
-          >
-          <ac-badge-basic ambient="success"
-            >${ROL_BADGE_LABEL[this.rol] ?? UNKNOWN_ROL_LABEL}</ac-badge-basic
-          >
+      <div class="registro-wizard-step-resumen__fields">
+        <div class="registro-wizard-step-resumen__summary">
+          <ac-avatar-basic name=${this.nombre} size="lg"></ac-avatar-basic>
+          <div class="registro-wizard-step-resumen__summary-details">
+            <ac-text-basic tag="p" size="md"
+              >${this.nombre || '—'} · ${this.email || '—'}</ac-text-basic
+            >
+            <ac-badge-basic ambient="success"
+              >${ROL_BADGE_LABEL[this.rol] ?? UNKNOWN_ROL_LABEL}</ac-badge-basic
+            >
+          </div>
         </div>
-      </div>
-      <ac-divider-basic></ac-divider-basic>
-      <ac-text-basic tag="p" size="sm"
-        >Plan ${this.plan} · Notificaciones
-        ${this.notificaciones ? 'activadas' : 'desactivadas'}</ac-text-basic
-      >
-      <div class="registro-wizard-step-resumen__actions">
-        ${
-          this.loading
-            ? html`<ac-spinner-basic size="md" ambient="primary"></ac-spinner-basic>`
-            : html`<ac-button-basic ambient="primary" @ac-button-basic-click=${this._onConfirmClick}
-                >${this.t('registro-wizard-confirm')}</ac-button-basic
-              >`
-        }
+        <ac-divider-basic></ac-divider-basic>
+        <ac-text-basic tag="p" size="sm"
+          >Plan ${this.plan} · Notificaciones
+          ${this.notificaciones ? 'activadas' : 'desactivadas'}</ac-text-basic
+        >
+        <div class="registro-wizard-step-resumen__actions">
+          ${
+            this.loading
+              ? html`<ac-spinner-basic size="md" ambient="primary"></ac-spinner-basic>`
+              : html`<ac-button-basic
+                  ambient="primary"
+                  @ac-button-basic-click=${this._onConfirmClick}
+                  >${this.t('registro-wizard-confirm')}</ac-button-basic
+                >`
+          }
+        </div>
       </div>
     `;
   }

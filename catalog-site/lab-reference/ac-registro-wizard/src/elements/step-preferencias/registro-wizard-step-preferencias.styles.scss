@@ -8,11 +8,18 @@
   display: none;
 }
 
+.registro-wizard-step-preferencias__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 .registro-wizard-step-preferencias__plan {
   display: flex;
   flex-direction: column;
   gap: var(--space-2, 0.5rem);
-  margin: var(--space-3, 0.75rem) 0;
   padding: var(--space-3, 0.75rem);
   border: 1px solid var(--color-muted, #313335);
   border-radius: var(--radius-md, 16px);
@@ -30,5 +37,4 @@
 .registro-wizard-step-preferencias__actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: var(--space-2, 0.5rem);
 }

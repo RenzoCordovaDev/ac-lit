@@ -117,45 +117,49 @@ export class RegistroWizardStepDatos extends ComponentMixin(LitElement) {
 
   render() {
     return html`
-      ${
-        this.welcomeName
-          ? html`<ac-text-basic
-              tag="p"
-              size="sm"
-              text=${this.t('registro-wizard-welcome-message', { nombre: this.welcomeName })}
-            ></ac-text-basic>`
-          : ''
-      }
-      <ac-input-basic
-        label=${this.t('registro-wizard-nombre-label')}
-        .value=${this.nombre}
-        .error=${this.nombreError}
-        @ac-input-basic-input=${this._onNombreInput}
-      ></ac-input-basic>
-      <ac-input-basic
-        label=${this.t('registro-wizard-email-label')}
-        type="email"
-        .value=${this.email}
-        @ac-input-basic-input=${this._onEmailInput}
-      ></ac-input-basic>
-      <div class="registro-wizard-step-datos__field-with-hint">
-        <ac-select-basic
-          label=${this.t('registro-wizard-rol-label')}
-          placeholder=${this.t('registro-wizard-rol-placeholder')}
-          .options=${ROL_OPTIONS}
-          .value=${this.rol}
-          @ac-select-basic-change=${this._onRolChange}
-        ></ac-select-basic>
-        <ac-tooltip-basic text=${this.t('registro-wizard-rol-tooltip')} position="left">
-          <ac-button-basic ambient="secondary" aria-label=${this.t('registro-wizard-rol-help-aria')}
-            >?</ac-button-basic
+      <div class="registro-wizard-step-datos__fields">
+        ${
+          this.welcomeName
+            ? html`<ac-text-basic
+                tag="p"
+                size="sm"
+                text=${this.t('registro-wizard-welcome-message', { nombre: this.welcomeName })}
+              ></ac-text-basic>`
+            : ''
+        }
+        <ac-input-basic
+          label=${this.t('registro-wizard-nombre-label')}
+          .value=${this.nombre}
+          .error=${this.nombreError}
+          @ac-input-basic-input=${this._onNombreInput}
+        ></ac-input-basic>
+        <ac-input-basic
+          label=${this.t('registro-wizard-email-label')}
+          type="email"
+          .value=${this.email}
+          @ac-input-basic-input=${this._onEmailInput}
+        ></ac-input-basic>
+        <div class="registro-wizard-step-datos__field-with-hint">
+          <ac-select-basic
+            label=${this.t('registro-wizard-rol-label')}
+            placeholder=${this.t('registro-wizard-rol-placeholder')}
+            .options=${ROL_OPTIONS}
+            .value=${this.rol}
+            @ac-select-basic-change=${this._onRolChange}
+          ></ac-select-basic>
+          <ac-tooltip-basic text=${this.t('registro-wizard-rol-tooltip')} position="left">
+            <ac-button-basic
+              ambient="secondary"
+              aria-label=${this.t('registro-wizard-rol-help-aria')}
+              >?</ac-button-basic
+            >
+          </ac-tooltip-basic>
+        </div>
+        <div class="registro-wizard-step-datos__actions">
+          <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onNextClick}
+            >${this.t('registro-wizard-next')}</ac-button-basic
           >
-        </ac-tooltip-basic>
-      </div>
-      <div class="registro-wizard-step-datos__actions">
-        <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onNextClick}
-          >${this.t('registro-wizard-next')}</ac-button-basic
-        >
+        </div>
       </div>
     `;
   }

@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit';
 import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 
+import '@ac-components/ac-avatar-basic';
 import '@ac-components/ac-badge-basic';
 import '@ac-components/ac-text-basic';
 
@@ -61,9 +62,14 @@ export class RegistroWizardModalResultado extends ComponentMixin(LitElement) {
     if (!this.nombre) return html``;
 
     return html`
-      <ac-text-basic tag="p" size="md">Usuario #${this.userId} registrado con éxito.</ac-text-basic>
-      <ac-text-basic tag="p" size="sm">${this.nombre} · ${this.email}</ac-text-basic>
-      <ac-badge-basic ambient="success">${ROL_BADGE_LABEL[this.rol] ?? this.rol}</ac-badge-basic>
+      <div class="registro-wizard-modal-resultado__content">
+        <ac-avatar-basic name=${this.nombre} size="lg"></ac-avatar-basic>
+        <ac-text-basic tag="p" size="lg"
+          >Usuario #${this.userId} registrado con éxito.</ac-text-basic
+        >
+        <ac-text-basic tag="p" size="md">${this.nombre} · ${this.email}</ac-text-basic>
+        <ac-badge-basic ambient="success">${ROL_BADGE_LABEL[this.rol] ?? this.rol}</ac-badge-basic>
+      </div>
     `;
   }
 }

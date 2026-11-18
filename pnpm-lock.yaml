@@ -95,6 +95,9 @@ importers:
       '@ac-components/ac-expandable-step':
         specifier: workspace:^
         version: link:../../../packages/components/ac-expandable-step
+      '@ac-components/ac-icon-button-basic':
+        specifier: workspace:^
+        version: link:../../../packages/components/ac-icon-button-basic
       '@ac-components/ac-input-basic':
         specifier: workspace:^
         version: link:../../../packages/components/ac-input-basic

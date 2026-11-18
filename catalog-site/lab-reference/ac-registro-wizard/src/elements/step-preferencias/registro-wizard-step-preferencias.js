@@ -108,37 +108,39 @@ export class RegistroWizardStepPreferencias extends ComponentMixin(LitElement) {
 
   render() {
     return html`
-      <ac-checkbox-basic
-        .checked=${this.terminos}
-        @ac-checkbox-basic-change=${this._onTerminosChange}
-        >${this.t('registro-wizard-terminos-label')}</ac-checkbox-basic
-      >
-      <ac-switch-basic
-        .checked=${this.notificaciones}
-        @ac-switch-basic-change=${this._onNotificacionesChange}
-        >${this.t('registro-wizard-notificaciones-label')}</ac-switch-basic
-      >
-      <fieldset class="registro-wizard-step-preferencias__plan">
-        <legend>${this.t('registro-wizard-plan-legend')}</legend>
-        <ac-radio-basic
-          name=${PLAN_RADIO_GROUP_NAME}
-          value=${PLAN_MENSUAL}
-          .checked=${this.plan === PLAN_MENSUAL}
-          @ac-radio-basic-change=${this._onPlanChange}
-          >${this.t('registro-wizard-plan-mensual')}</ac-radio-basic
+      <div class="registro-wizard-step-preferencias__fields">
+        <ac-checkbox-basic
+          .checked=${this.terminos}
+          @ac-checkbox-basic-change=${this._onTerminosChange}
+          >${this.t('registro-wizard-terminos-label')}</ac-checkbox-basic
         >
-        <ac-radio-basic
-          name=${PLAN_RADIO_GROUP_NAME}
-          value=${PLAN_ANUAL}
-          .checked=${this.plan === PLAN_ANUAL}
-          @ac-radio-basic-change=${this._onPlanChange}
-          >${this.t('registro-wizard-plan-anual')}</ac-radio-basic
+        <ac-switch-basic
+          .checked=${this.notificaciones}
+          @ac-switch-basic-change=${this._onNotificacionesChange}
+          >${this.t('registro-wizard-notificaciones-label')}</ac-switch-basic
         >
-      </fieldset>
-      <div class="registro-wizard-step-preferencias__actions">
-        <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onNextClick}
-          >${this.t('registro-wizard-next')}</ac-button-basic
-        >
+        <fieldset class="registro-wizard-step-preferencias__plan">
+          <legend>${this.t('registro-wizard-plan-legend')}</legend>
+          <ac-radio-basic
+            name=${PLAN_RADIO_GROUP_NAME}
+            value=${PLAN_MENSUAL}
+            .checked=${this.plan === PLAN_MENSUAL}
+            @ac-radio-basic-change=${this._onPlanChange}
+            >${this.t('registro-wizard-plan-mensual')}</ac-radio-basic
+          >
+          <ac-radio-basic
+            name=${PLAN_RADIO_GROUP_NAME}
+            value=${PLAN_ANUAL}
+            .checked=${this.plan === PLAN_ANUAL}
+            @ac-radio-basic-change=${this._onPlanChange}
+            >${this.t('registro-wizard-plan-anual')}</ac-radio-basic
+          >
+        </fieldset>
+        <div class="registro-wizard-step-preferencias__actions">
+          <ac-button-basic ambient="primary" @ac-button-basic-click=${this._onNextClick}
+            >${this.t('registro-wizard-next')}</ac-button-basic
+          >
+        </div>
       </div>
     `;
   }

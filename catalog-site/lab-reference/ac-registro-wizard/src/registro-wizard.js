@@ -3,17 +3,19 @@ import { createRef, ref } from 'lit/directives/ref.js';
 import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
 
 import '@ac-components/ac-api-users';
+import '@ac-components/ac-icon-button-basic';
 import '@ac-components/ac-modal-basic';
 import '@ac-components/ac-notification-basic';
 import '@ac-components/ac-transition-container';
 
+import './elements/modal-info/registro-wizard-modal-info.js';
 import './elements/modal-resultado/registro-wizard-modal-resultado.js';
 import './elements/steps/registro-wizard-steps.js';
 import { API_VERSION, DEFAULT_ROL, INIT_USER_ID, PLAN_MENSUAL } from './utils/constants.js';
 import { RegistroWizardStyles } from './registro-wizard.styles.js';
 
 /**
- * Wizard de registro de usuario de 3 pasos (datos, preferencias, resumen), construido con el scaffolding real del CLI de ac-lit. Coordina el estado canónico del formulario y la llamada simulada a ac-api-users; delega la coordinación del multistep a registro-wizard-steps y el contenido del modal de éxito a registro-wizard-modal-resultado.
+ * Wizard de registro de usuario de 3 pasos (datos, preferencias, resumen), construido con el scaffolding real del CLI de ac-lit. Coordina el estado canónico del formulario y la llamada simulada a ac-api-users; delega la coordinación del multistep a registro-wizard-steps, el contenido del modal de éxito a registro-wizard-modal-resultado y el del modal de información a registro-wizard-modal-info.
  * @lit @webcomponent @customElement
  * @fires {{step: number, totalSteps: number}} ac-registro-wizard-step-change
  * @fires {{data: Object}} ac-registro-wizard-register-success
@@ -47,6 +49,13 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
        * @private
        */
       _modalOpen: { state: true },
+      /**
+       * Si el modal de información general del laboratorio está visible.
+       * @type {Boolean}
+       * @default false
+       * @private
+       */
+      _infoOpen: { state: true },
       /**
        * Nombre completo del formulario, estado canónico compartido entre los 3 pasos.
        * @type {String}
@@ -124,6 +133,7 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
     super();
     this.contained = false;
     this.getBoundary = null;
+    this._infoOpen = false;
     this._resetState();
     this._apiUsersRef = createRef();
     this._stepsRef = createRef();
@@ -292,6 +302,22 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
   }
 
   /**
+   * Abre el modal de información general del laboratorio.
+   * @private
+   */
+  _onInfoIconClick() {
+    this._infoOpen = true;
+  }
+
+  /**
+   * Sincroniza el estado al cerrarse el modal de información, sin importar la causa (botón de cerrar, Escape o backdrop).
+   * @private
+   */
+  _onInfoModalClose() {
+    this._infoOpen = false;
+  }
+
+  /**
    * Reemite el cambio de paso activo que informó registro-wizard-steps como evento público propio.
    * @private
    * @event ac-registro-wizard-step-change
@@ -334,6 +360,13 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
         hide-menu-icon
         @ac-transition-container-header-back-icon-click=${this._onBackIconClick}
       >
+        <ac-icon-button-basic
+          slot="header-end"
+          name="info"
+          ambient="secondary"
+          a11y-label=${this.t('registro-wizard-info-aria')}
+          @click=${this._onInfoIconClick}
+        ></ac-icon-button-basic>
         <div class="registro-wizard__body">
           ${
             this._errorMessage
@@ -370,6 +403,7 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
         ?open=${this._modalOpen}
         ?contained=${this.contained}
         .getBoundary=${this.getBoundary}
+        size="full"
         header=${this.t('registro-wizard-modal-header')}
         primary-text=${this.t('registro-wizard-modal-primary')}
         @ac-modal-basic-primary-click=${this._onModalPrimaryClick}
@@ -380,6 +414,16 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
           .email=${this._registeredUser?.email ?? ''}
           .rol=${this._registeredUser?.rol ?? ''}
         ></registro-wizard-modal-resultado>
+      </ac-modal-basic>
+
+      <ac-modal-basic
+        ?open=${this._infoOpen}
+        ?contained=${this.contained}
+        .getBoundary=${this.getBoundary}
+        header=${this.t('registro-wizard-info-title')}
+        @ac-modal-basic-close=${this._onInfoModalClose}
+      >
+        <registro-wizard-modal-info></registro-wizard-modal-info>
       </ac-modal-basic>
     `;
   }

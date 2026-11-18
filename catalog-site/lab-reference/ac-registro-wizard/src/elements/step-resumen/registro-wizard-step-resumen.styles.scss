@@ -8,10 +8,23 @@
   display: none;
 }
 
+.registro-wizard-step-resumen__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 .registro-wizard-step-resumen__summary {
   display: flex;
   align-items: center;
   gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 24px);
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .registro-wizard-step-resumen__summary-details {
@@ -24,5 +37,4 @@
 .registro-wizard-step-resumen__actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: var(--space-2, 0.5rem);
 }

@@ -44,20 +44,32 @@ import '@ac-components/ac-registro-wizard';
 | `ac-registro-wizard-register-error`   | `{ error }`            | Al fallar el guardado contra `ac-api-users`.              |
 | `ac-registro-wizard-reset`            | —                      | Al llamar a `reset()` (manual, o tras cerrar el modal).   |
 
+## Modal de éxito (pantalla completa) y modal de información
+
+El modal de éxito (`registro-wizard-modal-resultado`) usa `size="full"`:
+cubre toda la pantalla, como una página propia de confirmación, no un
+diálogo flotante. La cabecera del `ac-transition-container` tiene además un
+botón-ícono (`ac-icon-button-basic`, ícono `info`, slot `header-end`) que
+abre un segundo modal, independiente del de éxito, con tamaño normal
+(`offset`, el default) y la información general del laboratorio.
+
 ## Estructura interna
 
 El `render()` del componente principal solo declara `ac-api-users`,
-`ac-transition-container` y `ac-modal-basic` directamente — el resto del
-wizard vive partido en custom elements propios, bajo `src/elements/`, cada
-uno con su `.scss` independiente:
+`ac-transition-container` y `ac-modal-basic` (×2: éxito e información)
+directamente — el resto del wizard vive partido en custom elements propios,
+bajo `src/elements/`, cada uno con su `.scss` independiente:
 
 - `registro-wizard-steps` — coordina `ac-expandable-multistep` y sus 3
   `ac-expandable-step`, y valida el paso 1 antes de avanzar.
 - `registro-wizard-step-datos` / `-step-preferencias` / `-step-resumen` —
   el contenido real de cada uno de los 3 pasos.
-- `registro-wizard-modal-resultado` — el contenido del modal de éxito.
+- `registro-wizard-modal-resultado` — el contenido del modal de éxito
+  (pantalla completa).
+- `registro-wizard-modal-info` — el contenido estático del modal de
+  información general del laboratorio.
 
-Ninguno de estos 4 elementos lleva el prefijo `ac-`: son piezas internas de
+Ninguno de estos 5 elementos lleva el prefijo `ac-`: son piezas internas de
 este componente, no parte del catálogo público, aunque sí extienden
 `ComponentMixin(LitElement)` igual que cualquier componente real. Las
 constantes y valores fijos del wizard (opciones de rol, valores de plan,
@@ -66,8 +78,8 @@ versión simulada de la API) viven centralizados en `src/utils/constants.js`.
 ## i18n
 
 `locales.json` (`es-PE`/`en-EN`/`pt-BR`) tiene las claves `registro-wizard-*`
-que usan el componente principal y sus 4 elementos de contenido — todos
-comparten el mismo archivo (`index.js` registra las traducciones para los 6
+que usan el componente principal y sus 5 elementos de contenido — todos
+comparten el mismo archivo (`index.js` registra las traducciones para los 7
 tags).
 
 ## Desarrollo
@@ -81,9 +93,9 @@ aclit component:test:e2e        # funcional (WebdriverIO + Cucumber)
 aclit component:test:e2e:a11y   # accesibilidad (axe-core)
 ```
 
-> `component:build:styles` compila los 6 `.scss` del componente (el
-> principal + los 5 de `src/elements/`) a sus `*.styles.js` — gitignorados,
-> no se versionan. Durante `component:serve` quedan además en modo watch (6
+> `component:build:styles` compila los 7 `.scss` del componente (el
+> principal + los 6 de `src/elements/`) a sus `*.styles.js` — gitignorados,
+> no se versionan. Durante `component:serve` quedan además en modo watch (7
 > watchers en paralelo vía `concurrently`): cada guardado de cualquier
 > `.scss` recompila su propio archivo y Vite recarga el navegador solo, sin
 > reiniciar nada.

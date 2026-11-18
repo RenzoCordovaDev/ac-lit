@@ -8,9 +8,17 @@
   display: none;
 }
 
+.registro-wizard-step-datos__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 .registro-wizard-step-datos__field-with-hint {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--space-2, 0.5rem);
   max-width: 100%;
 }
@@ -23,5 +31,4 @@
 .registro-wizard-step-datos__actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: var(--space-2, 0.5rem);
 }
