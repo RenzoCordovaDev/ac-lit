@@ -184,4 +184,4 @@ pnpm --filter @ac-base/ac-ccp run examples:serve
 - Comunicación entre pestañas o ventanas (`BroadcastChannel`).
 - Red o WebSocket: todo ocurre en memoria, dentro de una misma página.
 - Persistencia de mensajes: los mensajes retenidos viven solo en memoria y se pierden al recargar la página.
-- Integración con `aclit app:create`: el CLI todavía no tiene ese comando; queda para cuando esté implementado.
+- ~~Integración con `aclit app:create`~~: ya implementada — el template que genera ese comando trae `ChannelController` integrado entre sus páginas por defecto (ver `cli/templates/app/`).

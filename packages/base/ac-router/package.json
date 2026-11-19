@@ -1,0 +1,33 @@
+{
+  "name": "@ac-base/ac-router",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RenzoCordovaDev/ac-lit.git",
+    "directory": "packages/base/ac-router"
+  },
+  "description": "Enrutamiento vanilla por hash con parámetros de ruta, sin dependencias en runtime, e integración con Lit v3 vía Reactive Controller",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "src",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "web-test-runner \"src/**/*.test.js\"",
+    "examples:serve": "vite examples"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0",
+    "vite": "^5.4.8"
+  }
+}

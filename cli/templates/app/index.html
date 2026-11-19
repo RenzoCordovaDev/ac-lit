@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__title__</title>
+    <script type="module" src="./src/app.js"></script>
+    <link rel="stylesheet" href="./src/app.css" />
+  </head>
+  <body>
+    <div class="app-root">
+      <header class="app-header">
+        <h1>__title__</h1>
+        <nav class="app-nav">
+          <a href="#/">Home</a>
+          <a href="#/usuarios">Usuarios</a>
+          <a href="#/seleccionado">Seleccionado</a>
+        </nav>
+      </header>
+      <main>
+        <app-home-page></app-home-page>
+        <app-users-table-page hidden></app-users-table-page>
+        <app-user-detail-page hidden></app-user-detail-page>
+        <app-selected-user-badge-page hidden></app-selected-user-badge-page>
+      </main>
+    </div>
+  </body>
+</html>

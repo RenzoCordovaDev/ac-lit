@@ -48,11 +48,19 @@ describe('aclit (bin)', () => {
     assert.match(result.stdout + result.stderr, /Debe ser kebab-case/);
   });
 
-  it('exits non-zero with a clear message for `aclit app:create` (not implemented yet)', () => {
+  it('scaffolds an app via `aclit app:create <name>`', () => {
     const result = runAc(['app:create', 'mi-app'], tmpDir);
 
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(fs.existsSync(path.join(tmpDir, 'mi-app', 'src', 'app.js')));
+    assert.ok(fs.existsSync(path.join(tmpDir, 'mi-app', 'index.html')));
+  });
+
+  it('exits non-zero with a clear message for an invalid app name', () => {
+    const result = runAc(['app:create', 'MiApp'], tmpDir);
+
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /todavía no está implementado/);
+    assert.match(result.stdout + result.stderr, /Debe ser kebab-case/);
   });
 
   it('suggests the colon form for the old space-separated syntax', () => {

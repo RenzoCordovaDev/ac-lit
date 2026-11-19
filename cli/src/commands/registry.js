@@ -22,9 +22,10 @@ export const COMMANDS = [
     name: 'app:create',
     args: '<name>',
     options: [],
-    description: 'Scaffoldea un proyecto ac-lit nuevo en el directorio actual (pendiente)',
+    description: 'Scaffoldea un proyecto ac-lit nuevo en el directorio actual',
     run(name) {
-      appCreate(name);
+      const destDir = appCreate(name);
+      console.log(`App creada en ${destDir}`);
     },
   },
 ];

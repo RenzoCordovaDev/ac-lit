@@ -226,6 +226,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-base/ac-ccp", "run", "examples:serve"],
       "port": 5173
+    },
+    {
+      "name": "ac-router-examples",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-base/ac-router", "run", "examples:serve"],
+      "port": 5173
     }
   ]
 }

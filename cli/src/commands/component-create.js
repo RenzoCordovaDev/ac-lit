@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { deriveComponentNames } from '../scaffold/naming.js';
 import { copyTemplateDir } from '../scaffold/copy-template-dir.js';
 import { isInsideAcLitWorkspace } from '../scaffold/workspace-context.js';
-import { EXTERNAL_BASE_PACKAGE_RANGES } from '../scaffold/external-package-versions.js';
+import { pinExternalPackageVersions } from '../scaffold/pin-external-versions.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_DIR = path.join(here, '..', '..', 'templates', 'component');
@@ -41,32 +41,6 @@ export function componentCreate(rawName, { e2e = true } = {}) {
   }
 
   return destDir;
-}
-
-/**
- * Fuera del workspace de `ac-lit`, `workspace:^` no resuelve — se reemplaza
- * por el rango real publicado en npm de cada paquete `@ac-base/*`.
- */
-function pinExternalPackageVersions(destDir) {
-  const pkgPath = path.join(destDir, 'package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-
-  for (const section of ['dependencies', 'devDependencies']) {
-    for (const [name, range] of Object.entries(pkg[section] ?? {})) {
-      if (range !== 'workspace:^') continue;
-
-      const realRange = EXTERNAL_BASE_PACKAGE_RANGES[name];
-      if (!realRange) {
-        throw new Error(
-          `No hay una versión real publicada registrada para "${name}" en ` +
-            'cli/src/scaffold/external-package-versions.js.',
-        );
-      }
-      pkg[section][name] = realRange;
-    }
-  }
-
-  fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
 function stripE2eFromPackageJson(destDir) {
