@@ -14,7 +14,7 @@ export const EXTERNAL_PACKAGE_RANGES = {
   '@ac-base/ac-demo-content': '^0.1.0',
   '@ac-base/cli': '^0.2.0',
   '@ac-base/ac-ccp': '^0.2.0',
-  '@ac-base/ac-router': '^0.1.0',
+  '@ac-base/ac-router': '^0.2.0',
   '@ac-components/ac-button-basic': '^0.1.2',
   '@ac-components/ac-badge-basic': '^0.1.2',
 };
