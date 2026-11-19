@@ -1,3 +1,4 @@
-// Barrel público de @ac-base/ac-router. Se completa una vez que router.js y
-// router-controller.js existen (ver plan de implementación).
-export {};
+export { createRouter } from './src/router.js';
+export { RouterController } from './src/router-controller.js';
+export { RouterError } from './src/router-error.js';
+export { ROUTER_ERROR_CODES } from './src/router-error-codes.js';
