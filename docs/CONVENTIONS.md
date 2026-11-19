@@ -190,7 +190,7 @@ Patrón de publicación/suscripción (pub/sub) para que páginas y componentes d
 - **`ChannelController` es el primer Reactive Controller propio del repo.** Hasta `ac-ccp`, ningún paquete implementaba uno — es el precedente a seguir para cualquier integración futura entre un paquete base y el ciclo de vida de Lit: se registra en `hostConnected()`, se desconecta por completo en `hostDisconnected()`, y cada conexión pide un endpoint nuevo al manager (nunca reutiliza uno anterior), así que un ciclo `connect → disconnect → connect` del host nunca duplica una suscripción.
 - **Nunca crea su propia instancia de CCP.** Siempre la recibe en `config.ccp`, creada una sola vez por la aplicación con `createCCP()` — igual que `ChannelController` nunca instancia CCP por su cuenta, ningún consumidor debe compartir una instancia global de CCP entre aplicaciones distintas.
 - **`host.requestUpdate()` se llama después del callback del usuario** (`onMessage`), nunca antes — el consumidor actualiza su propio estado en el callback y el controller recién ahí pide el re-render.
-- **Integración con `aclit app:create`/Application Template queda en backlog**, fuera de esta entrega: ese comando todavía es un stub (ver "CLI" más abajo), así que no hay ningún "Application Template" real al que integrar CCP todavía.
+- **Integración con `aclit app:create`/Application Template**: implementada. `cli/templates/app/` (el template real que genera ese comando, ver "CLI" más abajo) trae `ChannelController` integrado por defecto entre sus páginas de ejemplo.
 - Ver [`packages/base/ac-ccp/README.md`](../packages/base/ac-ccp/README.md) para la API completa y [`packages/base/ac-ccp/examples/`](../packages/base/ac-ccp/examples/) para una demo ejecutable de 3 páginas.
 
 ## Demos centralizadas (`ac-demo-content`)
@@ -266,7 +266,7 @@ Paquete `@ac-base/cli` (`cli/`), implementado con [Commander.js](https://github.
 
 - **`aclit component:create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe ser el nombre completo con prefijo `ac-` (ej. `ac-mi-componente`) — de ahí se derivan clase, archivo, paquete npm, etc. según la tabla de naming de este documento. `--no-e2e` omite `test_e2e/` y sus entradas en `package.json`.
   - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && aclit component:create ac-mi-componente`.
-- **`aclit app:create <nombre>`** — scaffolding de un proyecto `ac-lit` nuevo. **Pendiente de implementar.**
+- **`aclit app:create <nombre>`** — genera un proyecto de app nuevo (`index.html`, `src/app.js`, `src/pages/`, `package.json`, `README.md`) en el directorio actual. A diferencia de `component:create`, `<nombre>` **no exige prefijo `ac-` ni scope de npm** — es el proyecto propio de quien lo genera, nunca un paquete publicable al catálogo (`package.json` sale con `"private": true`). El template trae 3 páginas navegadas por el patrón hash + `.hidden` (ver "Comunicación por canales" más arriba) con `@ac-base/ac-ccp` ya integrado entre ellas: una página publica en un canal retenido y otra lo muestra, usando componentes reales del catálogo (`@ac-components/ac-button-basic`/`ac-badge-basic`).
 
 Los templates viven en `cli/templates/` como archivos reales (no un motor de templates) con placeholders `__token__` (ej. `__class_name__`, `__tag__`, `__file_base__`), reemplazados por una función propia de reemplazo de texto (`src/scaffold/render-template.js`). Por eso `cli/templates/` está en `.prettierignore`: un placeholder `__token__` suelto en un `.md` (fuera de un code span) es indistinguible de énfasis Markdown (`__bold__`) y Prettier lo normaliza a `**bold**`, corrompiéndolo — dentro de backticks/fences no hay problema.
 
@@ -276,7 +276,7 @@ Cualquier otro comando (`aclit component:serve`, `aclit component:test`, `aclit 
 
 ### Scripts de paquete (`component:*`)
 
-Todo paquete con estructura de componente (cada `packages/components/*`, `packages/base/ac-demo-content` y el template del CLI) expone el mismo juego de scripts, todos con el prefijo `component:` — el equivalente para apps será `app:*`:
+Todo paquete con estructura de componente (cada `packages/components/*`, `packages/base/ac-demo-content` y el template del CLI) expone el mismo juego de scripts, todos con el prefijo `component:` — el equivalente para apps es `app:*` (`app:lint`/`app:serve`/`app:build`/`app:preview`, ver "Levantar el servidor de desarrollo" más abajo): un juego más chico, porque una app no compila `.scss` propio ni tiene suite e2e de fábrica.
 
 | Script                                                    | Qué hace                                                                             |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------ |
