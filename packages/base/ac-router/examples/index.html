@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ac-base/ac-router — ejemplo</title>
+    <script type="module" src="./examples.js"></script>
+    <link rel="stylesheet" href="./examples.css" />
+  </head>
+  <body>
+    <div class="examples-root">
+      <header class="examples-header">
+        <h1>Enrutamiento por hash con parámetros</h1>
+        <nav class="examples-nav">
+          <a href="#/">Home</a>
+          <a href="#/usuarios">Usuarios</a>
+        </nav>
+      </header>
+      <main>
+        <ac-router-example-home-page></ac-router-example-home-page>
+        <ac-router-example-users-list-page hidden></ac-router-example-users-list-page>
+        <ac-router-example-user-detail-page hidden></ac-router-example-user-detail-page>
+      </main>
+    </div>
+  </body>
+</html>
