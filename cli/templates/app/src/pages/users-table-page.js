@@ -109,7 +109,10 @@ class AppUsersTablePage extends LitElement {
   render() {
     return html`
       <h2>Usuarios</h2>
-      <p>Cada botón publica el usuario seleccionado en el canal <code>'users.selected'</code>.</p>
+      <p>
+        Cada botón publica el usuario seleccionado en el canal <code>'users.selected'</code>; cada
+        enlace "Ver detalle" navega a <code>/usuarios/:id</code> con el id de ese usuario.
+      </p>
       <ul>
         ${this.#users.map(
           user => html`
@@ -120,6 +123,7 @@ class AppUsersTablePage extends LitElement {
               >
                 Seleccionar a ${user.name}
               </ac-button-basic>
+              <a href="#/usuarios/${user.id}">Ver detalle</a>
             </li>
           `,
         )}
@@ -127,7 +131,7 @@ class AppUsersTablePage extends LitElement {
       ${this._selected
         ? html`<p>Seleccionaste: <strong>${this._selected.name}</strong></p>`
         : html`<p>Todavía no seleccionaste a nadie.</p>`}
-      <p><a href="#home">← Volver</a></p>
+      <p><a href="#/">← Volver</a></p>
     `;
   }
 }

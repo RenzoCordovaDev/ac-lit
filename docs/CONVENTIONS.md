@@ -169,6 +169,7 @@ En ambos casos, **la accesibilidad del demo debe probarse en los dos temas** —
 - **`@ac-base/ac-intl-mixin`** — API `t(key, params)`, `setLocale(locale)`, `loadTranslations(data)` sobre `locales.json`.
 - **`@ac-base/ac-api-mixin`** — mixin base para la familia `ac-api-*` (ver sección siguiente): `version`/`timeout`/`simulateError`, `render()` vacío, y `_wait`/`_emit`/`_simulateCall` para simular latencia, error y el disparo de eventos acción+resultado.
 - **`@ac-base/ac-ccp`** — Channel Communication Pattern: comunicación desacoplada por canales nombrados (pub/sub con dirección `in`/`out`, retención y replay del último mensaje) entre páginas/componentes de una app (ver "Comunicación por canales" más abajo).
+- **`@ac-base/ac-router`** — enrutamiento vanilla por hash con parámetros de ruta (`#/usuarios/:id`), sin dependencias en runtime (ver "Navegación por rutas" más abajo).
 
 ## Componentes sin UI: simuladores de API (`ac-api-*`)
 
@@ -192,6 +193,14 @@ Patrón de publicación/suscripción (pub/sub) para que páginas y componentes d
 - **`host.requestUpdate()` se llama después del callback del usuario** (`onMessage`), nunca antes — el consumidor actualiza su propio estado en el callback y el controller recién ahí pide el re-render.
 - **Integración con `aclit app:create`/Application Template**: implementada. `cli/templates/app/` (el template real que genera ese comando, ver "CLI" más abajo) trae `ChannelController` integrado por defecto entre sus páginas de ejemplo.
 - Ver [`packages/base/ac-ccp/README.md`](../packages/base/ac-ccp/README.md) para la API completa y [`packages/base/ac-ccp/examples/`](../packages/base/ac-ccp/examples/) para una demo ejecutable de 3 páginas.
+
+## Navegación por rutas (`@ac-base/ac-router`)
+
+Enrutador vanilla por hash (`#/segmento/:param`) para navegar entre páginas de una app con parámetros de ruta y navegación programática — sin ninguna librería externa, sin `history.pushState` real (cero configuración de servidor, funciona en cualquier host estático). Una ruta se define como `{ path, name }`; un segmento con prefijo `:` captura cualquier valor no vacío; el matching es "primer match gana" (una ruta más específica debe registrarse antes que una con parámetro que la solape). Si ningún path matchea, `route.matched` es `false` y el consumidor decide el fallback — el router nunca redirige solo.
+
+- **`RouterController` es el segundo Reactive Controller propio del repo**, después de `ChannelController` de `@ac-base/ac-ccp` — mismo patrón: nunca crea su propia instancia de Router (siempre la recibe en `config.router`), se conecta/desconecta con el ciclo de vida del host, y expone `controller.route` siempre al día.
+- **Complementa a CCP, no lo reemplaza**: el router resuelve "a qué recurso navegó el usuario, según la URL" (parámetros de ruta); CCP resuelve "cómo se avisan datos entre páginas, sin pasar por la URL" (pub/sub). `cli/templates/app/` usa los dos a la vez, cada uno para lo suyo.
+- Ver [`packages/base/ac-router/README.md`](../packages/base/ac-router/README.md) para la API completa y [`packages/base/ac-router/examples/`](../packages/base/ac-router/examples/) para una demo ejecutable de 3 páginas (lista + detalle con parámetro).
 
 ## Demos centralizadas (`ac-demo-content`)
 
@@ -266,7 +275,7 @@ Paquete `@ac-base/cli` (`cli/`), implementado con [Commander.js](https://github.
 
 - **`aclit component:create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe ser el nombre completo con prefijo `ac-` (ej. `ac-mi-componente`) — de ahí se derivan clase, archivo, paquete npm, etc. según la tabla de naming de este documento. `--no-e2e` omite `test_e2e/` y sus entradas en `package.json`.
   - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && aclit component:create ac-mi-componente`.
-- **`aclit app:create <nombre>`** — genera un proyecto de app nuevo (`index.html`, `src/app.js`, `src/pages/`, `package.json`, `README.md`) en el directorio actual. A diferencia de `component:create`, `<nombre>` **no exige prefijo `ac-` ni scope de npm** — es el proyecto propio de quien lo genera, nunca un paquete publicable al catálogo (`package.json` sale con `"private": true`). El template trae 3 páginas navegadas por el patrón hash + `.hidden` (ver "Comunicación por canales" más arriba) con `@ac-base/ac-ccp` ya integrado entre ellas: una página publica en un canal retenido y otra lo muestra, usando componentes reales del catálogo (`@ac-components/ac-button-basic`/`ac-badge-basic`).
+- **`aclit app:create <nombre>`** — genera un proyecto de app nuevo (`index.html`, `src/app.js`, `src/pages/`, `package.json`, `README.md`) en el directorio actual. A diferencia de `component:create`, `<nombre>` **no exige prefijo `ac-` ni scope de npm** — es el proyecto propio de quien lo genera, nunca un paquete publicable al catálogo (`package.json` sale con `"private": true`). El template trae 4 páginas con los dos mecanismos de comunicación ya integrados: navegación por rutas con `@ac-base/ac-router` (ver "Navegación por rutas" más arriba) — incluida una ruta con parámetro, `/usuarios/:id` — y pub/sub entre páginas con `@ac-base/ac-ccp` (ver "Comunicación por canales" más arriba), usando componentes reales del catálogo (`@ac-components/ac-button-basic`/`ac-badge-basic`).
 
 Los templates viven en `cli/templates/` como archivos reales (no un motor de templates) con placeholders `__token__` (ej. `__class_name__`, `__tag__`, `__file_base__`), reemplazados por una función propia de reemplazo de texto (`src/scaffold/render-template.js`). Por eso `cli/templates/` está en `.prettierignore`: un placeholder `__token__` suelto en un `.md` (fuera de un code span) es indistinguible de énfasis Markdown (`__bold__`) y Prettier lo normaliza a `**bold**`, corrompiéndolo — dentro de backticks/fences no hay problema.
 

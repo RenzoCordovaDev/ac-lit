@@ -14,6 +14,7 @@
   "dependencies": {
     "@ac-base/ac-ccp": "workspace:^",
     "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-router": "workspace:^",
     "@ac-components/ac-badge-basic": "workspace:^",
     "@ac-components/ac-button-basic": "workspace:^",
     "lit": "^3.0.0"

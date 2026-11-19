@@ -39,8 +39,13 @@ class AppHomePage extends LitElement {
         <strong>Seleccionado</strong>: verás el mismo usuario, porque el canal guarda el último
         mensaje publicado.
       </p>
-      <p><a href="#tabla">Ir a Usuarios →</a></p>
-      <p><a href="#seleccion">Ir a Seleccionado →</a></p>
+      <p>
+        Además, cada usuario de <strong>Usuarios</strong> tiene un enlace "Ver detalle" que navega a
+        una ruta con parámetro (<code>/usuarios/:id</code>), vía <code>@ac-base/ac-router</code> —
+        un enrutador vanilla por hash, sin ninguna librería externa.
+      </p>
+      <p><a href="#/usuarios">Ir a Usuarios →</a></p>
+      <p><a href="#/seleccionado">Ir a Seleccionado →</a></p>
     `;
   }
 }

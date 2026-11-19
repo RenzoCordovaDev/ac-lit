@@ -23,7 +23,7 @@ Todos los comandos usan la forma `<tipo>:<accion>` (no subcomandos con espacio).
 
 - **`aclit component:create <nombre> [--no-e2e]`** — genera un componente completo (`src/`, `test/`, `test_e2e/`, `demo/`, `locales.json`, `index.js`, `package.json`, `README.md`) en el directorio actual. `<nombre>` debe tener el prefijo `ac-` y ser kebab-case (ej. `ac-mi-componente`); de ahí se derivan la clase (`MiComponente`), el archivo (`mi-componente.js`), el paquete npm (`@ac-components/ac-mi-componente`), etc.
   - Para agregar un componente al catálogo de `ac-lit`: `cd packages/components && aclit component:create ac-mi-componente`.
-- **`aclit app:create <nombre>`** — genera un proyecto de app nuevo (`index.html`, `src/app.js`, `src/pages/`, `package.json`, `README.md`) en el directorio actual. A diferencia de `component:create`, `<nombre>` no exige prefijo `ac-` ni scope de npm (ej. `mi-app`) — es el proyecto propio de quien lo genera, nunca un paquete publicable (`package.json` sale con `"private": true`). El template trae 3 páginas navegadas por hash con `@ac-base/ac-ccp` ya integrado entre ellas.
+- **`aclit app:create <nombre>`** — genera un proyecto de app nuevo (`index.html`, `src/app.js`, `src/pages/`, `package.json`, `README.md`) en el directorio actual. A diferencia de `component:create`, `<nombre>` no exige prefijo `ac-` ni scope de npm (ej. `mi-app`) — es el proyecto propio de quien lo genera, nunca un paquete publicable (`package.json` sale con `"private": true`). El template trae 4 páginas con navegación por rutas (`@ac-base/ac-router`, incluida una ruta con parámetro) y pub/sub entre páginas (`@ac-base/ac-ccp`) ya integrados.
 
 ### Ayuda
 
