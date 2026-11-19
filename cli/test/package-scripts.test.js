@@ -77,3 +77,34 @@ describe('component:* scripts', () => {
     });
   }
 });
+
+// `cli/templates/app` es, por ahora, el único paquete "de app" del repo: un
+// proyecto generado por `aclit app:create` vive fuera del workspace de
+// `ac-lit` (no hay ninguna carpeta de apps reales acá que validar).
+const APP_SCRIPTS = ['app:lint', 'app:serve', 'app:build', 'app:preview'];
+
+describe('app:* scripts', () => {
+  const appPackages = [path.join(REPO_ROOT, 'cli', 'templates', 'app')];
+
+  for (const dir of appPackages) {
+    const label = path.relative(REPO_ROOT, dir).replaceAll('\\', '/');
+
+    it(`${label} exposes the full app:* set`, () => {
+      const scripts = readScripts(dir);
+
+      assert.deepEqual(
+        APP_SCRIPTS.filter(name => !scripts.includes(name)),
+        [],
+      );
+    });
+
+    it(`${label} has no pre-homologation script names`, () => {
+      const legacy = ['build', 'test', 'dev', 'preview', 'serve', 'lint'];
+
+      assert.deepEqual(
+        readScripts(dir).filter(name => legacy.includes(name)),
+        [],
+      );
+    });
+  }
+});

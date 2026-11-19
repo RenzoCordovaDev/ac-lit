@@ -1,0 +1,24 @@
+{
+  "name": "__package_name__",
+  "version": "0.1.0",
+  "description": "__title__ -- app construida con ac-lit",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "app:lint": "eslint .",
+    "app:serve": "vite",
+    "app:build": "vite build",
+    "app:preview": "vite preview"
+  },
+  "dependencies": {
+    "@ac-base/ac-ccp": "workspace:^",
+    "@ac-base/ac-core": "workspace:^",
+    "@ac-components/ac-badge-basic": "workspace:^",
+    "@ac-components/ac-button-basic": "workspace:^",
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  }
+}
