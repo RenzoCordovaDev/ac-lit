@@ -1,5 +1,15 @@
 # @ac-base/cli
 
+## 0.4.0
+
+### Minor Changes
+
+- 9c0402e: Agrega `PageMixin` + `pageBaseStyles` al template de `app:create` (`src/utils/page-mixin.js`): simplifica conectar una página a `@ac-base/ac-ccp` a dos métodos (`connectionOut`/`connectionIn`), sin repetir la declaración de `ccp` ni el `willUpdate` de inicialización en cada página.
+
+### Patch Changes
+
+- a4c55e3: Ajusta el `PageMixin` del template de `app:create`: sin campos privados (`#algo`, por claridad didáctica), `setupChannels()` se llama desde `firstUpdated()` en vez de `willUpdate()`, agrega un canal global de ejemplo (`global.user.data`, publicado por Home) y mejora el diseño de las 4 páginas con más componentes del catálogo (`ac-card-basic`, `ac-divider-basic`) y estilos base de layout.
+
 ## 0.3.1
 
 ### Patch Changes
