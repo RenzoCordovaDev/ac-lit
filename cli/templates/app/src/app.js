@@ -1,7 +1,10 @@
 import '@ac-base/ac-core/tokens/base.css';
 import '@ac-base/ac-core/tokens/modern-warm-palette.css';
+import '@ac-base/ac-core/tokens/modern-warm-palette-light.css';
 import { createCCP } from '@ac-base/ac-ccp';
 import { createRouter } from '@ac-base/ac-router';
+import '@ac-components/ac-text-basic';
+import '@ac-components/ac-link-basic';
 import './pages/home-page.js';
 import './pages/users-table-page.js';
 import './pages/user-detail-page.js';
