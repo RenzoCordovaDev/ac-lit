@@ -1,45 +1,67 @@
-import { css, html, LitElement } from 'lit';
-import { pageBaseStyles } from '../utils/page-mixin.js';
+import { html, LitElement } from 'lit';
+import '@ac-components/ac-badge-basic';
+import '@ac-components/ac-card-basic';
+import { PageMixin, pageBaseStyles } from '../utils/page-mixin.js';
 
 /**
- * Página de portada de la app. Explica cómo se comunican las páginas y enlaza
- * a las dos páginas de ejemplo. No usa CCP directamente.
+ * Página de portada: publica un usuario de ejemplo en el canal global
+ * `'global.user.data'` -- cualquier otra página puede suscribirse y recibirlo,
+ * sin importar en qué orden la visiten.
  *
  * @element app-home-page
  */
-class AppHomePage extends LitElement {
+class AppHomePage extends PageMixin(LitElement) {
+  static get properties() {
+    return {
+      _userData: { state: true },
+    };
+  }
+
+  constructor() {
+    super();
+    this._userData = null;
+  }
+
+  setupChannels() {
+    const publishUserData = this.connectionOut('global.user.data', { retain: true });
+    this._userData = {
+      nombre: 'Ana Torres',
+      email: 'ana.torres@ejemplo.com',
+      telefono: '+51 999 888 777',
+    };
+    publishUserData(this._userData);
+  }
+
   static get styles() {
-    return [
-      pageBaseStyles,
-      css`
-        p {
-          margin: 0 0 0.75rem;
-        }
-      `,
-    ];
+    return [pageBaseStyles];
   }
 
   render() {
     return html`
-      <h2>Bienvenido</h2>
-      <p>
-        Esta app usa <code>@ac-base/ac-ccp</code> para comunicar sus páginas por canales. La página
-        <strong>Usuarios</strong> publica a quién seleccionaste en un canal retenido, y la página
-        <strong>Seleccionado</strong> lo muestra, incluso si entras a esa página después de haber
-        seleccionado a alguien.
-      </p>
-      <p>
-        Prueba seleccionar un usuario en <strong>Usuarios</strong> y luego abre
-        <strong>Seleccionado</strong>: verás el mismo usuario, porque el canal guarda el último
-        mensaje publicado.
-      </p>
-      <p>
-        Además, cada usuario de <strong>Usuarios</strong> tiene un enlace "Ver detalle" que navega a
-        una ruta con parámetro (<code>/usuarios/:id</code>), vía <code>@ac-base/ac-router</code> —
-        un enrutador vanilla por hash, sin ninguna librería externa.
-      </p>
-      <p><a href="#/usuarios">Ir a Usuarios →</a></p>
-      <p><a href="#/seleccionado">Ir a Seleccionado →</a></p>
+      <div class="page">
+        <h2>Bienvenido</h2>
+        <ac-card-basic header-text="Canales de comunicación">
+          <p>Esta app conecta sus páginas con <code>@ac-base/ac-ccp</code>, sin que se conozcan entre sí.</p>
+          <p>
+            Esta página publica un usuario de ejemplo en el canal global
+            <code>'global.user.data'</code> — <strong>Usuarios</strong> y <strong>Seleccionado</strong>
+            lo reciben, en cualquier orden.
+          </p>
+          ${this._userData
+            ? html`<ac-badge-basic ambient="success">Transmitiendo: ${this._userData.nombre}</ac-badge-basic>`
+            : html`<ac-badge-basic ambient="neutral">Preparando usuario…</ac-badge-basic>`}
+        </ac-card-basic>
+        <ac-card-basic header-text="Navegación por rutas">
+          <p>
+            <strong>Usuarios</strong> enlaza a <code>/usuarios/:id</code> con
+            <code>@ac-base/ac-router</code> — un enrutador vanilla por hash, sin ninguna librería externa.
+          </p>
+        </ac-card-basic>
+        <div class="page-actions">
+          <a href="#/usuarios">Ir a Usuarios →</a>
+          <a href="#/seleccionado">Ir a Seleccionado →</a>
+        </div>
+      </div>
     `;
   }
 }
