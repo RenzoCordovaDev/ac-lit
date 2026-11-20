@@ -10,6 +10,8 @@ __package_name__/
 ├── src/
 │   ├── app.js              # Shell: crea CCP + el router y decide qué página mostrar
 │   ├── app.css             # Layout del shell (header, nav, [hidden])
+│   ├── utils/
+│   │   └── page-mixin.js   # PageMixin + pageBaseStyles: resuelve `ccp` y simplifica pub/sub
 │   └── pages/              # Una página por custom element
 │       ├── home-page.js                       # Portada
 │       ├── users-table-page.js                # Publica el usuario seleccionado + enlaza al detalle
@@ -38,6 +40,31 @@ Las páginas se navegan con [`@ac-base/ac-router`](https://github.com/RenzoCordo
 ## Comunicación entre páginas
 
 Las páginas también se comunican con [`@ac-base/ac-ccp`](https://github.com/RenzoCordovaDev/ac-lit/blob/main/packages/base/ac-ccp/README.md) (Channel Communication Pattern) — un mecanismo **separado** del router, para pub/sub entre páginas sin pasar por la URL. La página **Usuarios** publica en el canal `'users.selected'` con retención, y la página **Seleccionado** se suscribe a ese mismo canal. Como el canal retiene el último mensaje, **Seleccionado** muestra el usuario aunque se haya elegido antes de entrar a esa página.
+
+## Simplificar páginas con `PageMixin`
+
+`src/utils/page-mixin.js` resuelve la parte repetitiva de conectar una página a CCP: declarar `ccp`, esperar a que esté disponible (`willUpdate`) y crear `ChannelController` a mano. Una página que necesita canales extiende `PageMixin(LitElement)` y sobreescribe `setupChannels()`:
+
+```js
+import { LitElement } from 'lit';
+import { PageMixin, pageBaseStyles } from '../utils/page-mixin.js';
+
+class MiPagina extends PageMixin(LitElement) {
+  setupChannels() {
+    this.publicarAlgo = this.connectionOut('mi.canal', { retain: true });
+    this.connectionIn('otro.canal', payload => {
+      this._valor = payload;
+    });
+  }
+  // ...
+}
+```
+
+- `connectionOut(nombre, { retain })` crea el canal de salida y devuelve una función `(payload) => void` lista para publicar.
+- `connectionIn(nombre, onPayload, { replay })` se suscribe; `onPayload` recibe el `payload` ya desenvuelto (no el `message` completo).
+- `pageBaseStyles` es el bloque `:host { display: block; line-height: 1.5; }` que comparten todas las páginas — se usa en `static get styles()` junto a los estilos propios: `return [pageBaseStyles, css\`...\`];`.
+
+Una página que no necesita canales (como `home-page.js`) puede usar solo `pageBaseStyles`, sin extender `PageMixin`.
 
 ## Agregar una página nueva
 

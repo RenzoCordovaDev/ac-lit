@@ -1,4 +1,5 @@
 import { css, html, LitElement } from 'lit';
+import { pageBaseStyles } from '../utils/page-mixin.js';
 
 /**
  * Página de portada de la app. Explica cómo se comunican las páginas y enlaza
@@ -7,22 +8,15 @@ import { css, html, LitElement } from 'lit';
  * @element app-home-page
  */
 class AppHomePage extends LitElement {
-  /**
-   * Estilos de la portada: bloque simple con espaciado entre párrafos.
-   *
-   * @returns {import('lit').CSSResult}
-   */
   static get styles() {
-    return css`
-      :host {
-        display: block;
-        line-height: 1.5;
-      }
-
-      p {
-        margin: 0 0 0.75rem;
-      }
-    `;
+    return [
+      pageBaseStyles,
+      css`
+        p {
+          margin: 0 0 0.75rem;
+        }
+      `,
+    ];
   }
 
   render() {

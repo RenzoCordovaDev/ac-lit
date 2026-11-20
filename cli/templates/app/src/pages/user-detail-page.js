@@ -1,5 +1,6 @@
 import { css, html, LitElement } from 'lit';
 import '@ac-components/ac-badge-basic';
+import { pageBaseStyles } from '../utils/page-mixin.js';
 
 /**
  * Página "Detalle" de la app: lee el parámetro `:id` de la ruta `/usuarios/:id`
@@ -9,51 +10,30 @@ import '@ac-components/ac-badge-basic';
  * @element app-user-detail-page
  */
 class AppUserDetailPage extends LitElement {
-  /**
-   * Propiedades reactivas del componente.
-   *
-   * @type {Object}
-   * @property {Object} routeParams - Parámetros de la ruta activa (`{ id }`), inyectados por el shell.
-   */
   static properties = {
     routeParams: { attribute: false },
   };
 
-  /**
-   * Lista fija de usuarios de ejemplo (misma lista que `users-table-page.js`).
-   *
-   * @type {Array<{id: number, name: string}>}
-   */
   #users = [
     { id: 1, name: 'Ana' },
     { id: 2, name: 'Luis' },
     { id: 3, name: 'Carla' },
   ];
 
-  /**
-   * Inicializa las propiedades reactivas del componente.
-   */
   constructor() {
     super();
     this.routeParams = {};
   }
 
-  /**
-   * Estilos de la página: bloque simple con espaciado entre párrafos.
-   *
-   * @returns {import('lit').CSSResult}
-   */
   static get styles() {
-    return css`
-      :host {
-        display: block;
-        line-height: 1.5;
-      }
-
-      p {
-        margin: 0 0 0.75rem;
-      }
-    `;
+    return [
+      pageBaseStyles,
+      css`
+        p {
+          margin: 0 0 0.75rem;
+        }
+      `,
+    ];
   }
 
   render() {
