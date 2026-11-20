@@ -3,13 +3,26 @@ import { css } from 'lit';
 
 /**
  * Estilos base que comparten todas las páginas de esta app: `static get styles()`
- * devuelve `[pageBaseStyles, css`...`]` en vez de repetir el mismo bloque
- * `:host { display: block; line-height: 1.5; }` en cada página.
+ * devuelve `[pageBaseStyles, css`...`]`. `.page` es el contenedor principal del
+ * contenido (espaciado vertical consistente); `.page-actions` agrupa enlaces/botones en fila.
  */
 export const pageBaseStyles = css`
   :host {
     display: block;
     line-height: 1.5;
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 1rem);
+  }
+
+  .page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem);
+    align-items: center;
   }
 `;
 
@@ -21,11 +34,12 @@ export const pageBaseStyles = css`
  *
  * Una página que necesita canales solo tiene que:
  * 1. Extender `PageMixin(LitElement)`.
- * 2. Sobreescribir `setupChannels()` y ahí llamar a `this.connectionOut(...)`/`this.connectionIn(...)`
- *    -- se llama una sola vez, automáticamente, en cuanto `ccp` está disponible.
+ * 2. Sobreescribir `setupChannels()` y ahí llamar a `this.connectionOut(...)`/`this.connectionIn(...)`.
  *
- * Nunca hace falta declarar `ccp` a mano, escribir `willUpdate`, ni crear
- * `ChannelController` directamente.
+ * `setupChannels()` se llama una sola vez, en `firstUpdated()` -- funciona
+ * porque `src/app.js` le asigna `ccp` a TODAS las páginas de entrada, antes
+ * de que cualquiera de ellas renderice por primera vez. Nunca hace falta
+ * declarar `ccp` a mano ni crear `ChannelController` directamente.
  */
 export const PageMixin = superClass =>
   class extends superClass {
@@ -35,8 +49,6 @@ export const PageMixin = superClass =>
         ccp: { attribute: false },
       };
     }
-
-    #canalesListos = false;
 
     constructor() {
       super();
@@ -78,11 +90,10 @@ export const PageMixin = superClass =>
       });
     }
 
-    willUpdate(changedProperties) {
-      if (changedProperties.has('ccp') && this.ccp && !this.#canalesListos) {
-        this.#canalesListos = true;
+    firstUpdated(changedProperties) {
+      super.firstUpdated(changedProperties);
+      if (this.ccp) {
         this.setupChannels();
       }
-      super.willUpdate(changedProperties);
     }
   };

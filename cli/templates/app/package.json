@@ -17,6 +17,8 @@
     "@ac-base/ac-router": "workspace:^",
     "@ac-components/ac-badge-basic": "workspace:^",
     "@ac-components/ac-button-basic": "workspace:^",
+    "@ac-components/ac-card-basic": "workspace:^",
+    "@ac-components/ac-divider-basic": "workspace:^",
     "lit": "^3.0.0"
   },
   "devDependencies": {
