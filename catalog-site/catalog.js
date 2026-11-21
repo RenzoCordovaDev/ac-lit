@@ -30,6 +30,8 @@ const BELL_ICON =
 const CHEVRON_ICON = '<path d="M9 6l6 6-6 6"/>';
 const DOC_ICON =
   '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';
+const LIGHTBULB_ICON =
+  '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>';
 
 const homeViewEl = document.getElementById('view-home');
 const catalogViewEl = document.getElementById('view-catalog');
@@ -40,6 +42,9 @@ const labRequirementsEl = document.getElementById('lab-requirements');
 const labLevelGridEl = document.getElementById('lab-level-grid');
 const labLevelTitleEl = document.getElementById('lab-level-title');
 const labLevelIntroEl = document.getElementById('lab-level-intro');
+const labNavListEl = document.getElementById('lab-nav-list');
+const labContentEl = document.getElementById('lab-content');
+const labNavSearchEl = document.getElementById('lab-nav-search');
 const breadcrumbEl = document.getElementById('catalog-breadcrumb');
 const countEl = document.getElementById('catalog-count');
 const menuButton = document.getElementById('catalog-menu-button');
@@ -260,6 +265,7 @@ function showCatalog() {
 }
 
 let activeLevel = null;
+let selectedLabId = null;
 
 // `levelId` ausente -- o desconocido -- muestra el selector de nivel; un
 // `levelId` real muestra la página propia de ese nivel.
@@ -292,8 +298,15 @@ function showLab(levelId) {
   labLevelIntroEl.textContent = level.description;
   labProgress = loadLabProgress(level.id);
   openLabChapters.clear();
-  if (level.chapters.length) openLabChapters.add(level.chapters[0].id);
-  renderLabChapters(level);
+  labNavSearchEl.value = '';
+  selectedLabId = autoSelectLabId(level);
+  if (selectedLabId) {
+    const found = findLab(level, selectedLabId);
+    if (found) openLabChapters.add(found.chapter.id);
+  } else if (level.chapters.length) {
+    openLabChapters.add(level.chapters[0].id);
+  }
+  renderLabLevel(level);
 }
 
 function renderLabSelector() {
@@ -435,85 +448,342 @@ function toggleLabComplete(labId) {
     labProgress.add(labId);
   }
   saveLabProgress(activeLevel.id, labProgress);
-  renderLabChapters(activeLevel);
+  renderLabLevel(activeLevel);
 }
 
-function renderLabChapters(level) {
-  const chaptersEl = document.getElementById('lab-chapters');
-  chaptersEl.replaceChildren();
+function selectLab(labId) {
+  selectedLabId = labId;
+  const found = findLab(activeLevel, labId);
+  if (found) openLabChapters.add(found.chapter.id);
+  renderLabLevel(activeLevel);
+}
+
+// Recorre los capítulos de un nivel aplicando la regla de desbloqueo
+// estrictamente secuencial (un capítulo solo se abre si el anterior está
+// 100% completo; dentro de un capítulo, un laboratorio solo si el anterior de
+// ESE capítulo está completo) -- la comparten el nav, la auto-selección y la
+// búsqueda de un laboratorio por id, en vez de recalcularla cada una por su cuenta.
+function chapterEntries(level) {
+  let previousChapterComplete = true;
+  return level.chapters.map(chapter => {
+    const doneCount = chapter.labs.filter(lab => labProgress.has(lab.id)).length;
+    const chapterLocked = !previousChapterComplete;
+    if (chapter.labs.length > 0) previousChapterComplete = doneCount === chapter.labs.length;
+    const labs = chapter.labs.map((lab, index) => ({
+      lab,
+      locked: chapterLocked || (index > 0 && !labProgress.has(chapter.labs[index - 1].id)),
+    }));
+    return { chapter, doneCount, labs };
+  });
+}
+
+function findLab(level, labId) {
+  for (const entry of chapterEntries(level)) {
+    const found = entry.labs.find(({ lab }) => lab.id === labId);
+    if (found) return { chapter: entry.chapter, lab: found.lab, locked: found.locked };
+  }
+  return null;
+}
+
+// Primer laboratorio desbloqueado y sin completar (continuar donde quedó); si
+// no hay ninguno (todo completo, o el nivel no tiene capítulos todavía), cae
+// al último laboratorio desbloqueado, o null si no hay ninguno.
+function autoSelectLabId(level) {
+  let fallbackLastId = null;
+  for (const entry of chapterEntries(level)) {
+    for (const { lab, locked } of entry.labs) {
+      if (!locked) fallbackLastId = lab.id;
+      if (!locked && !labProgress.has(lab.id)) return lab.id;
+    }
+  }
+  return fallbackLastId;
+}
+
+function formatMinutes(minutes) {
+  if (minutes < 60) return `${minutes}min`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest === 0 ? `${hours}h` : `${hours}h ${rest}min`;
+}
+
+function renderLabLevel(level) {
+  renderLabNav(level);
+  renderLabContent(level);
+  updateLabProgressBar(level);
+}
+
+function renderLabNav(level) {
+  labNavListEl.replaceChildren();
 
   if (level.chapters.length === 0) {
-    chaptersEl.append(
+    labNavListEl.append(
       create(
         'p',
-        'catalog__api-empty',
+        'catalog__lab-nav-empty',
         'Próximamente -- este nivel todavía no tiene capítulos publicados.',
       ),
     );
     return;
   }
 
-  let previousChapterComplete = true;
-  for (const chapter of level.chapters) {
-    const doneCount = chapter.labs.filter(lab => labProgress.has(lab.id)).length;
-    // Un capítulo sin labs no bloquea a los siguientes; uno con labs bloquea
-    // hasta que esté 100% completo.
-    const chapterLocked = !previousChapterComplete;
-    if (chapter.labs.length > 0) {
-      previousChapterComplete = doneCount === chapter.labs.length;
-    }
+  const query = labNavSearchEl.value.trim().toLowerCase();
 
-    const section = create('details', 'catalog__api-section');
-    section.open = openLabChapters.has(chapter.id);
-    section.addEventListener('toggle', () => {
-      if (section.open) openLabChapters.add(chapter.id);
+  for (const entry of chapterEntries(level)) {
+    const { chapter, doneCount, labs } = entry;
+    const matchingLabs = query
+      ? labs.filter(({ lab }) => lab.title.toLowerCase().includes(query))
+      : labs;
+    if (query && matchingLabs.length === 0) continue;
+
+    const group = create('details', 'catalog__lab-nav-group');
+    group.open = query ? true : openLabChapters.has(chapter.id);
+    group.addEventListener('toggle', () => {
+      if (group.open) openLabChapters.add(chapter.id);
       else openLabChapters.delete(chapter.id);
     });
 
-    const summary = create('summary', 'catalog__api-summary');
-    summary.append(
-      create('span', 'catalog__api-summary-title', chapter.title),
-      create('span', 'catalog__api-summary-count', `${doneCount}/${chapter.labs.length}`),
-    );
-    const chevronWrap = create('span');
-    chevronWrap.innerHTML = icon(CHEVRON_ICON, 16);
-    const chevron = chevronWrap.firstElementChild;
-    chevron.setAttribute('class', 'catalog__api-summary-chevron');
-    summary.append(chevron);
-    section.append(summary);
+    const summary = create('summary', 'catalog__lab-nav-group-summary');
+    summary.append(create('span', 'catalog__lab-nav-group-title', chapter.title));
+    if (chapter.labs.length > 0) {
+      summary.append(
+        create('span', 'catalog__lab-nav-group-count', `${doneCount}/${chapter.labs.length}`),
+        create('span', 'catalog__lab-nav-group-time', formatMinutes(chapter.estimatedMinutes)),
+      );
+    }
+    const chevronWrap = create('span', 'catalog__lab-nav-group-chevron');
+    chevronWrap.innerHTML = icon(CHEVRON_ICON, 14);
+    summary.append(chevronWrap);
+    group.append(summary);
 
-    const content = create('div', 'catalog__api-content');
-    if (chapter.labs.length === 0) {
-      content.append(create('p', 'catalog__api-empty', 'Próximamente.'));
+    const groupBody = create('div', 'catalog__lab-nav-group-body');
+    if (labs.length === 0) {
+      groupBody.append(create('p', 'catalog__lab-nav-empty', 'Próximamente.'));
     } else {
-      chapter.labs.forEach((lab, index) => {
-        const locked = chapterLocked || (index > 0 && !labProgress.has(chapter.labs[index - 1].id));
-        const item = create(
+      for (const { lab, locked } of matchingLabs) {
+        const row = create(
           'div',
-          locked ? 'catalog__lab-item catalog__lab-item--locked' : 'catalog__lab-item',
+          locked ? 'catalog__lab-nav-item catalog__lab-nav-item--locked' : 'catalog__lab-nav-item',
         );
-        const label = create('label', 'catalog__lab-item-label');
+        if (lab.id === selectedLabId) row.classList.add('catalog__lab-nav-item--active');
+
         const checkbox = create('input');
         checkbox.type = 'checkbox';
         checkbox.checked = labProgress.has(lab.id);
         checkbox.disabled = locked;
+        checkbox.setAttribute('aria-label', `Marcar "${lab.title}" como completado`);
         checkbox.addEventListener('change', () => toggleLabComplete(lab.id));
-        label.append(checkbox, create('span', 'catalog__lab-item-title', lab.title));
-        item.append(label, create('p', 'catalog__lab-item-objective', lab.objective));
-        content.append(item);
-      });
+
+        const button = create('button', 'catalog__lab-nav-item-button');
+        button.type = 'button';
+        button.disabled = locked;
+        button.append(
+          create('span', 'catalog__lab-nav-item-title', lab.title),
+          create('span', 'catalog__lab-nav-item-time', formatMinutes(lab.estimatedMinutes)),
+        );
+        button.addEventListener('click', () => selectLab(lab.id));
+
+        row.append(checkbox, button);
+        groupBody.append(row);
+      }
     }
-    if (chapter.referenceDemo) {
-      const link = create('a', 'catalog__lab-reference-link', 'Ver solución →');
-      link.href = `./lab-reference-demos/${chapter.referenceDemo}/index.html`;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      content.append(link);
-    }
-    section.append(content);
-    chaptersEl.append(section);
+    group.append(groupBody);
+    labNavListEl.append(group);
   }
 
+  if (query && labNavListEl.children.length === 0) {
+    labNavListEl.append(
+      create(
+        'p',
+        'catalog__lab-nav-empty',
+        `Sin resultados para "${labNavSearchEl.value.trim()}".`,
+      ),
+    );
+  }
+}
+
+/* Editor de código reutilizable -- fondo claro fijo (no depende del tema de
+   la página), números de línea, resaltado por tipo de token. Pensado para
+   usarse en cualquier parte del sitio que necesite mostrar código real (hoy:
+   el contenido del Laboratorio), no solo en un lugar puntual.
+
+   El tokenizador es deliberadamente simple (reglas con regex, no un parser
+   real por lenguaje): alcanza para resaltar bien los fragmentos curados que
+   escribimos nosotros mismos, no pretende tokenizar código arbitrario de
+   cualquier usuario. */
+
+function escapeHtml(text) {
+  return text.replace(
+    /[&<>"']/g,
+    ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch],
+  );
+}
+
+const JS_KEYWORDS =
+  'const|let|var|function|class|extends|return|import|export|from|default|if|else|for|while|new|this|static|get|set|async|await|true|false|null|undefined|super|typeof|of|in|break|continue|try|catch|throw';
+
+const CODE_TOKEN_RULES = {
+  js: [
+    { type: 'comment', re: /\/\/[^\n]*|\/\*[\s\S]*?\*\// },
+    { type: 'string', re: /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ },
+    { type: 'number', re: /\b\d+(?:\.\d+)?\b/ },
+    { type: 'keyword', re: new RegExp(`\\b(?:${JS_KEYWORDS})\\b`) },
+    { type: 'function', re: /\b[a-zA-Z_$][\w$]*(?=\()/ },
+  ],
+  scss: [
+    { type: 'comment', re: /\/\/[^\n]*|\/\*[\s\S]*?\*\// },
+    { type: 'string', re: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ },
+    { type: 'hex-color', re: /#[0-9a-fA-F]{3,8}\b/ },
+    { type: 'variable', re: /\$[\w-]+|--[\w-]+/ },
+    { type: 'number', re: /\b\d+(?:\.\d+)?(?:px|rem|em|ms|s|%)?\b/ },
+    { type: 'at-rule', re: /@[\w-]+/ },
+    { type: 'selector', re: /[.:#&][\w-]+/ },
+    { type: 'property', re: /\b[\w-]+(?=\s*:)/ },
+    { type: 'function', re: /\b[a-zA-Z_-][\w-]*(?=\()/ },
+  ],
+  json: [
+    { type: 'string-key', re: /"(?:\\.|[^"\\])*"(?=\s*:)/ },
+    { type: 'string', re: /"(?:\\.|[^"\\])*"/ },
+    { type: 'number', re: /\b\d+(?:\.\d+)?\b/ },
+    { type: 'keyword', re: /\b(?:true|false|null)\b/ },
+  ],
+  bash: [
+    { type: 'comment', re: /#[^\n]*/ },
+    { type: 'string', re: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ },
+    { type: 'flag', re: /(?<=\s|^)--?[\w-]+/ },
+  ],
+  html: [
+    { type: 'comment', re: /<!--[\s\S]*?-->/ },
+    { type: 'tag', re: /<\/?[a-zA-Z][\w-]*/ },
+    { type: 'string', re: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ },
+    { type: 'attr', re: /\b[a-zA-Z-]+(?==)/ },
+  ],
+};
+
+function highlightCode(code, lang) {
+  const rules = CODE_TOKEN_RULES[lang];
+  if (!rules) return escapeHtml(code);
+
+  const names = rules.map((rule, index) => ({ groupName: `t${index}`, type: rule.type }));
+  const combined = new RegExp(
+    rules.map((rule, index) => `(?<t${index}>${rule.re.source})`).join('|'),
+    'g',
+  );
+
+  let result = '';
+  let lastIndex = 0;
+  for (const match of code.matchAll(combined)) {
+    if (match.index > lastIndex) result += escapeHtml(code.slice(lastIndex, match.index));
+    const found = names.find(({ groupName }) => match.groups[groupName] !== undefined);
+    const text = match[0];
+    if (found.type === 'hex-color') {
+      result += `<span class="catalog__code-editor-swatch" style="background:${text}" aria-hidden="true"></span><span class="catalog__code-editor-token catalog__code-editor-token--hex-color">${escapeHtml(text)}</span>`;
+    } else {
+      result += `<span class="catalog__code-editor-token catalog__code-editor-token--${found.type}">${escapeHtml(text)}</span>`;
+    }
+    lastIndex = match.index + text.length;
+  }
+  if (lastIndex < code.length) result += escapeHtml(code.slice(lastIndex));
+  return result;
+}
+
+function renderCodeEditor({ lang, filename, code }) {
+  const wrapper = create('div', 'catalog__code-editor');
+  if (filename || lang) {
+    const head = create('div', 'catalog__code-editor-head');
+    if (filename) head.append(create('span', 'catalog__code-editor-filename', filename));
+    if (lang) head.append(create('span', 'catalog__code-editor-lang', lang));
+    wrapper.append(head);
+  }
+  const body = create('div', 'catalog__code-editor-body');
+  const lines = code.replace(/\n$/, '').split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const lineNumber = create('span', 'catalog__code-editor-line-number', String(i + 1));
+    const lineCode = create('span', 'catalog__code-editor-line-code');
+    lineCode.innerHTML = highlightCode(lines[i], lang) || '&nbsp;';
+    body.append(lineNumber, lineCode);
+  }
+  wrapper.append(body);
+  return wrapper;
+}
+
+function buildLabCallout(kind, title, text, iconPath) {
+  const box = create('div', `catalog__lab-content-callout catalog__lab-content-callout--${kind}`);
+  const iconWrap = create('span', 'catalog__lab-content-callout-icon');
+  iconWrap.innerHTML = icon(iconPath, 18);
+  const textWrap = create('div');
+  textWrap.append(
+    create('p', 'catalog__lab-content-callout-title', title),
+    create('p', 'catalog__lab-content-callout-text', text),
+  );
+  box.append(iconWrap, textWrap);
+  return box;
+}
+
+function renderLabContent(level) {
+  labContentEl.replaceChildren();
+
+  const found = selectedLabId ? findLab(level, selectedLabId) : null;
+  if (!found) {
+    labContentEl.append(
+      create(
+        'p',
+        'catalog__lab-content-empty',
+        level.chapters.length === 0
+          ? 'Próximamente -- este nivel todavía no tiene capítulos publicados.'
+          : 'Selecciona un laboratorio de la lista para ver su contenido.',
+      ),
+    );
+    return;
+  }
+
+  const { chapter, lab } = found;
+
+  labContentEl.append(create('p', 'catalog__lab-content-breadcrumb', chapter.title));
+  labContentEl.append(create('h2', 'catalog__lab-content-title', lab.title));
+  labContentEl.append(
+    create('span', 'catalog__lab-content-time', formatMinutes(lab.estimatedMinutes)),
+  );
+  labContentEl.append(create('p', 'catalog__lab-content-objective', lab.objective));
+
+  for (const block of lab.content ?? []) {
+    if (block.type === 'heading') {
+      labContentEl.append(create('h3', 'catalog__lab-content-section-title', block.text));
+    } else if (block.type === 'p') {
+      labContentEl.append(create('p', 'catalog__lab-content-text', block.text));
+    } else if (block.type === 'code') {
+      labContentEl.append(renderCodeEditor(block));
+    } else if (block.type === 'note') {
+      labContentEl.append(buildLabCallout('hint', 'Nota', block.text, LIGHTBULB_ICON));
+    }
+  }
+
+  if (lab.checkpoint) {
+    labContentEl.append(buildLabCallout('check', 'Checkpoint', lab.checkpoint, CHECK_ICON));
+  }
+
+  const actions = create('div', 'catalog__lab-content-actions');
+  if (chapter.referenceDemo) {
+    const link = create('a', 'catalog__lab-reference-link', 'Ver solución →');
+    link.href = `./lab-reference-demos/${chapter.referenceDemo}/index.html`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    actions.append(link);
+  }
+  const isDone = labProgress.has(lab.id);
+  const completeButton = create(
+    'button',
+    isDone
+      ? 'catalog__lab-content-complete-button catalog__lab-content-complete-button--done'
+      : 'catalog__lab-content-complete-button',
+    isDone ? 'Completado ✓' : 'Marcar como completado',
+  );
+  completeButton.type = 'button';
+  completeButton.addEventListener('click', () => toggleLabComplete(lab.id));
+  actions.append(completeButton);
+  labContentEl.append(actions);
+}
+
+function updateLabProgressBar(level) {
   const totalLabs = level.chapters.reduce((sum, chapter) => sum + chapter.labs.length, 0);
   const doneLabs = level.chapters.reduce(
     (sum, chapter) => sum + chapter.labs.filter(lab => labProgress.has(lab.id)).length,
@@ -1133,6 +1403,10 @@ document.getElementById('catalog-lab-selector-back').addEventListener('click', g
 document.getElementById('catalog-lab-levels-back').addEventListener('click', () => {
   history.replaceState(null, '', '#laboratorio');
   showLab();
+});
+
+labNavSearchEl.addEventListener('input', () => {
+  if (activeLevel) renderLabNav(activeLevel);
 });
 
 document.getElementById('catalog-cta').addEventListener('click', () => {

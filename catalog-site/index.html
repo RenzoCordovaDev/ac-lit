@@ -1041,7 +1041,39 @@
               <span class="catalog__lab-progress-label" id="lab-progress-label">0% completado</span>
             </div>
           </div>
-          <div class="catalog__lab-chapters" id="lab-chapters"></div>
+
+          <div class="catalog__lab-body">
+            <aside class="catalog__lab-nav">
+              <label class="catalog__lab-nav-search">
+                <span class="catalog__visually-hidden">Buscar laboratorio</span>
+                <svg
+                  class="catalog__lab-nav-search-icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+                <input
+                  type="search"
+                  class="catalog__lab-nav-search-input"
+                  id="lab-nav-search"
+                  placeholder="Buscar laboratorio..."
+                  autocomplete="off"
+                />
+              </label>
+              <div class="catalog__lab-nav-list" id="lab-nav-list"></div>
+            </aside>
+
+            <div class="catalog__lab-content" id="lab-content"></div>
+          </div>
         </div>
       </main>
     </div>

@@ -1729,50 +1729,500 @@ body[data-view='lab'] .catalog__menu-button {
   white-space: nowrap;
 }
 
-.catalog__lab-chapters {
+/* Vista de un nivel: cabecera (arriba, ya existente) + cuerpo de 2 columnas
+   -- nav de capítulos/laboratorios a la izquierda, contenido del laboratorio
+   seleccionado a la derecha. Reemplaza el panel plano de <details> anterior
+   (una sola columna, sin mostrar el contenido real de cada paso). */
+.catalog__lab-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(16rem, 18rem) minmax(0, 1fr);
+  gap: var(--space-5, 1.25rem);
+  align-items: start;
+}
+
+.catalog__lab-nav {
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 0.75rem);
 }
 
-.catalog__lab-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1, 0.3rem);
-  padding: var(--space-3, 0.75rem) 0;
-  border-top: 1px solid var(--color-muted, #313335);
-}
-
-.catalog__lab-item-label {
+.catalog__lab-nav-search {
   display: flex;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-  font-weight: var(--font-weight-bold, 700);
-  cursor: pointer;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-full, 999px);
 }
 
-.catalog__lab-item-label input {
+.catalog__lab-nav-search:focus-within {
+  border-color: var(--catalog-accent);
+}
+
+.catalog__lab-nav-search-icon {
+  flex-shrink: 0;
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-nav-search-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.catalog__lab-nav-search-input::placeholder {
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-nav-search-input:focus-visible {
+  outline: none;
+}
+
+.catalog__lab-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+/* Sin tarjeta (sin borde/radio/fondo propio): es un menú lateral con
+   submenus, no una lista de cards -- la separación entre capítulos la da el
+   peso de fuente del título de cada uno, no una línea. */
+.catalog__lab-nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog__lab-nav-group-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text, #bcbec4);
+  border-radius: var(--radius-sm, 0.5rem);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+.catalog__lab-nav-group-summary:hover {
+  background: var(--color-surface, #2b2b2b);
+}
+
+.catalog__lab-nav-group-summary::-webkit-details-marker {
+  display: none;
+}
+
+.catalog__lab-nav-group-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog__lab-nav-group-time,
+.catalog__lab-nav-group-count {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs, 0.7rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-subtext);
+  white-space: nowrap;
+}
+
+.catalog__lab-nav-group-chevron {
+  flex-shrink: 0;
+  color: var(--catalog-subtext);
+  transition: transform 0.15s ease;
+}
+
+.catalog__lab-nav-group[open] > .catalog__lab-nav-group-summary .catalog__lab-nav-group-chevron {
+  transform: rotate(90deg);
+}
+
+/* Indentado como submenú, bajo el título del capítulo -- sin línea divisoria
+   propia, el sangrado ya los agrupa visualmente. */
+.catalog__lab-nav-group-body {
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--space-3, 0.75rem);
+}
+
+.catalog__lab-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem);
+  border-radius: var(--radius-sm, 0.5rem);
+  transition: background-color 0.15s ease;
+}
+
+.catalog__lab-nav-item:not(.catalog__lab-nav-item--locked):hover {
+  background: var(--color-surface, #2b2b2b);
+}
+
+.catalog__lab-nav-item input[type='checkbox'] {
+  flex-shrink: 0;
   accent-color: var(--catalog-accent);
 }
 
-.catalog__lab-item-objective {
+.catalog__lab-nav-item-button {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  text-align: left;
+  color: var(--color-text, #bcbec4);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.catalog__lab-nav-item-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  overflow-wrap: anywhere;
+}
+
+.catalog__lab-nav-item-time {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs, 0.7rem);
+  color: var(--catalog-subtext);
+  white-space: nowrap;
+}
+
+.catalog__lab-nav-item--active {
+  background: var(--catalog-active-bg);
+}
+
+.catalog__lab-nav-item--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--catalog-accent);
+}
+
+.catalog__lab-nav-item--active .catalog__lab-nav-item-title {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-active-text);
+}
+
+.catalog__lab-nav-item--active .catalog__lab-nav-item-time {
+  color: var(--catalog-active-subtext);
+}
+
+.catalog__lab-nav-item--locked {
+  opacity: 0.5;
+}
+
+.catalog__lab-nav-item--locked .catalog__lab-nav-item-button {
+  pointer-events: none;
+  cursor: default;
+}
+
+.catalog__lab-nav-empty {
   margin: 0;
+  padding: var(--space-3, 0.75rem);
   font-size: var(--font-size-sm, 0.85rem);
   color: var(--catalog-subtext);
 }
 
-.catalog__lab-item--locked {
-  opacity: 0.5;
-  pointer-events: none;
+/* Contenido del laboratorio seleccionado -- artículo de documentación, sin
+   chrome de tarjeta (mismo criterio que un doc site: el borde lo pone la
+   columna del nav de al lado, no el contenido). */
+.catalog__lab-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+.catalog__lab-content-empty {
+  margin: var(--space-6, 1.5rem) 0;
+  color: var(--catalog-subtext);
+  font-size: var(--font-size-md, 0.95rem);
+  text-align: center;
+}
+
+.catalog__lab-content-breadcrumb {
+  margin: 0;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--catalog-accent);
+}
+
+.catalog__lab-content-title {
+  margin: 0;
+  font-size: var(--font-size-xl, 1.5rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-content-time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.3rem);
+  align-self: flex-start;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+  background: var(--color-primary-100, #d1fae5);
+  padding: 0.2rem var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 999px);
+}
+
+:root[data-theme='light'] .catalog__lab-content-time {
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__lab-content-objective {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #bcbec4);
+}
+
+/* Párrafo de cuerpo normal dentro del contenido de un laboratorio (bloques
+   `{ type: 'p' }`) -- el objetivo (arriba) es el único con énfasis, el resto
+   es texto de lectura normal, igual que un artículo. */
+.catalog__lab-content-text {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.6);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__lab-content-text code {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 0.9em;
+  color: var(--catalog-accent);
+}
+
+/* Subtítulo corto dentro del contenido (bloques `{ type: 'heading' }`) --
+   funciona como el "paso a paso" de más grano fino dentro de un mismo
+   laboratorio (ej. "1. Crear el archivo de estilos", "2. Importarlo"). */
+.catalog__lab-content-section-title {
+  margin: var(--space-2, 0.5rem) 0 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-content-callout {
+  display: flex;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border-radius: var(--radius-md, 1rem);
+  border: 1px solid;
+}
+
+.catalog__lab-content-callout--hint {
+  background: var(--color-accent-100, #fef3c7);
+  border-color: var(--color-accent-300, #fcd34d);
+  color: var(--color-text, #27272a);
+}
+
+.catalog__lab-content-callout--check {
+  background: var(--color-primary-100, #d1fae5);
+  border-color: var(--color-primary-300, #6ee7b7);
+  color: var(--color-text, #27272a);
+}
+
+.catalog__lab-content-callout-icon {
+  flex-shrink: 0;
+}
+
+.catalog__lab-content-callout--hint .catalog__lab-content-callout-icon {
+  color: var(--color-accent-500, #f59e0b);
+}
+
+.catalog__lab-content-callout--check .catalog__lab-content-callout-icon {
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__lab-content-callout-title {
+  margin: 0 0 0.2rem;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-content-callout-text {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: var(--line-height, 1.5);
+}
+
+.catalog__lab-content-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--color-muted, #313335);
+}
+
+/* Editor de código -- patrón reutilizable en todo el sitio (Laboratorio y
+   cualquier otro lugar que necesite mostrar código real): paleta FIJA clara
+   (fondo blanco, no depende de data-theme -- a propósito, un editor de
+   código real se reconoce por su fondo claro, igual criterio que el
+   terminal de la Home usa una paleta oscura fija). Números de línea +
+   resaltado por tipo de token (ver `highlightCode()` en catalog.js). */
+.catalog__code-editor {
+  --ce-bg: #ffffff;
+  --ce-head-bg: #f6f8fa;
+  --ce-border: #d0d7de;
+  --ce-text: #24292f;
+  --ce-muted: #6e7781;
+  --ce-line-number: #8c959f;
+  --ce-keyword: #cf222e;
+  --ce-string: #0a3069;
+  --ce-comment: #6a737d;
+  --ce-number: #0550ae;
+  --ce-function: #8250df;
+  --ce-variable: #953800;
+  --ce-selector: #116329;
+  --ce-property: #0550ae;
+  --ce-at-rule: #cf222e;
+  --ce-tag: #116329;
+  --ce-attr: #0550ae;
+  --ce-flag: #953800;
+  --ce-hex-color: #953800;
+
+  width: 100%;
+  overflow: hidden;
+  background: var(--ce-bg);
+  border: 1px solid var(--ce-border);
+  border-radius: var(--radius-md, 1rem);
+  color: var(--ce-text);
+}
+
+.catalog__code-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  background: var(--ce-head-bg);
+  border-bottom: 1px solid var(--ce-border);
+  color: var(--ce-muted);
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+.catalog__code-editor-filename {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--ce-text);
+  overflow-wrap: anywhere;
+}
+
+.catalog__code-editor-lang {
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.catalog__code-editor-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  overflow-x: auto;
+  padding: var(--space-3, 0.75rem) 0;
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: var(--font-size-sm, 0.85rem);
+  line-height: 1.6;
+}
+
+.catalog__code-editor-line-number {
+  padding: 0 var(--space-3, 0.75rem);
+  color: var(--ce-line-number);
+  text-align: right;
+  user-select: none;
+}
+
+.catalog__code-editor-line-code {
+  padding-right: var(--space-4, 1rem);
+  white-space: pre;
+}
+
+/* Cuadradito del color real cuando el código muestra un valor hex -- "si
+   mostramos patrones de colores debemos poner los colores", no solo el
+   texto del hexadecimal. */
+.catalog__code-editor-swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 0.2em;
+  margin-right: 0.3em;
+  vertical-align: -0.1em;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.catalog__code-editor-token--keyword {
+  color: var(--ce-keyword);
+  font-weight: var(--font-weight-bold, 700);
+}
+.catalog__code-editor-token--string {
+  color: var(--ce-string);
+}
+.catalog__code-editor-token--string-key {
+  color: var(--ce-property);
+  font-weight: var(--font-weight-bold, 700);
+}
+.catalog__code-editor-token--comment {
+  color: var(--ce-comment);
+  font-style: italic;
+}
+.catalog__code-editor-token--number {
+  color: var(--ce-number);
+}
+.catalog__code-editor-token--function {
+  color: var(--ce-function);
+}
+.catalog__code-editor-token--variable {
+  color: var(--ce-variable);
+}
+.catalog__code-editor-token--selector {
+  color: var(--ce-selector);
+}
+.catalog__code-editor-token--property {
+  color: var(--ce-property);
+}
+.catalog__code-editor-token--at-rule {
+  color: var(--ce-at-rule);
+}
+.catalog__code-editor-token--tag {
+  color: var(--ce-tag);
+}
+.catalog__code-editor-token--attr {
+  color: var(--ce-attr);
+}
+.catalog__code-editor-token--flag {
+  color: var(--ce-flag);
+}
+.catalog__code-editor-token--hex-color {
+  color: var(--ce-hex-color);
 }
 
 .catalog__lab-reference-link {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1, 0.3rem);
-  margin-top: var(--space-3, 0.75rem);
-  padding-top: var(--space-3, 0.75rem);
-  border-top: 1px solid var(--color-muted, #313335);
   font-weight: var(--font-weight-bold, 700);
   color: var(--catalog-accent);
   text-decoration: none;
@@ -1780,6 +2230,26 @@ body[data-view='lab'] .catalog__menu-button {
 
 .catalog__lab-reference-link:hover {
   text-decoration: underline;
+}
+
+.catalog__lab-content-complete-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font: inherit;
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--color-primary-500, #10b981);
+  color: var(--color-primary-700, #047857);
+  background: transparent;
+  cursor: pointer;
+}
+
+.catalog__lab-content-complete-button--done {
+  background: var(--color-primary-500, #10b981);
+  color: white;
 }
 
 /* Selector de nivel -- pantalla que se muestra antes de entrar a cualquier
@@ -2480,6 +2950,10 @@ body[data-view='lab'] .catalog__menu-button {
 
   .catalog__commands-dialog {
     width: calc(100vw - var(--space-4, 1rem) * 2);
+  }
+
+  .catalog__lab-body {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
