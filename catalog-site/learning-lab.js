@@ -47,173 +47,6 @@ const BASICO_CHAPTERS = [
     ],
     labs: [
       {
-        id: 'tokens-diseno',
-        title: 'Tokens de diseño y Emerald Pro',
-        objective:
-          'Un token de diseño es un valor con nombre que representa una decisión visual compartida -- primero entiendes el concepto general de la industria, y después lo ves aplicado en Emerald Pro, el sistema de tokens real de este catálogo.',
-        estimatedMinutes: 25,
-        content: [
-          { type: 'heading', text: 'Qué es un token de diseño' },
-          {
-            type: 'p',
-            text: 'Un token de diseño es un valor con nombre que representa una decisión de diseño: un color, un espaciado, una tipografía, un radio de borde. En lugar de escribir el valor literal (por ejemplo, #2a7f62 o 16px) en cada lugar donde se usa, le das un nombre y lo reutilizas. El token es la unidad mínima de una decisión visual, guardada en un solo lugar.',
-          },
-          { type: 'heading', text: 'Características de un buen token' },
-          {
-            type: 'p',
-            text: 'Primero, se nombra según su propósito (semántico), no según su valor. Un token llamado --color-primary dice para qué sirve; uno llamado --color-verde-400 solo dice qué color es, y se vuelve confuso si la marca cambia de verde a azul. Segundo, existe una sola fuente de verdad: cada decisión se define una vez y el resto del sistema la consume. Tercero, es portable: el mismo token puede exportarse a CSS, iOS, Android o a una herramienta de diseño, porque describe la intención y no una tecnología particular.',
-          },
-          { type: 'heading', text: 'Para qué sirven' },
-          {
-            type: 'p',
-            text: 'Dan consistencia visual, porque todas las pantallas usan la misma escala de espaciados y los mismos colores. Permiten cambios centralizados: ajustar un valor en un solo lugar actualiza todo lo que lo usa. Y facilitan la comunicación entre diseño y desarrollo, porque ambos hablan del mismo nombre en vez de describir "el azul de la página de inicio".',
-          },
-          { type: 'heading', text: 'Consideraciones al usarlos' },
-          {
-            type: 'p',
-            text: 'No conviene convertir cada valor en un token: si todo es un token, nada lo es. Mantén una escala limitada (pocos pasos de color, pocos tamaños de texto) para que cada elección tenga sentido. Y documenta el propósito de cada token, para que quien lo use sepa cuándo aplicarlo y cuándo no.',
-          },
-          { type: 'heading', text: 'Un ejemplo conceptual' },
-          {
-            type: 'p',
-            text: 'Imagina una app con 50 botones primarios. Si cada botón tiene su azul escrito a mano, cambiar la marca obliga a tocar 50 lugares, y siempre queda alguno sin cambiar. Si todos usan --color-primary, cambiarlo una sola vez actualiza los 50 botones a la vez.',
-          },
-          { type: 'heading', text: 'Nuestros tokens: Emerald Pro' },
-          {
-            type: 'p',
-            text: 'Ahora veamos cómo se aplica esta idea en el catálogo. Emerald Pro es el sistema de tokens de este repo, y el caso de estudio que sigue muestra sus valores reales.',
-          },
-          {
-            type: 'p',
-            text: 'Si cada componente escribiera border-radius: 16px a mano, cambiar el radio del catálogo entero significaría editar 38 archivos. Emerald Pro resuelve esto con tokens: variables CSS con nombre, definidas una sola vez en @ac-base/ac-core, que cada componente referencia en vez de escribir el valor literal.',
-          },
-          { type: 'heading', text: 'La escala de radio de borde' },
-          {
-            type: 'p',
-            text: 'Son 4 pasos, de menor a mayor superficie: un control chico dentro de otro más grande usa un paso menos que su contenedor. --radius-full queda aparte, reservado para estados binarios y tags (switch, radio, badge) -- nunca para una superficie como una card.',
-          },
-          {
-            type: 'code',
-            lang: 'scss',
-            filename: 'packages/base/ac-core/src/tokens/base.css',
-            code: `--radius-sm: 0.5rem;  /* 8px  -- elementos chicos/icónicos (botón de cerrar, marca del checkbox) */
---radius-md: 1rem;    /* 16px -- controles (botón, input, select, tabs) */
---radius-lg: 1.5rem;  /* 24px -- superficies (card, panel, toast, popover) */
---radius-xl: 2rem;    /* 32px -- la superficie más grande del catálogo (modal) */
---radius-full: 9999px;`,
-          },
-          { type: 'heading', text: 'Espaciado y tipografía' },
-          {
-            type: 'p',
-            text: 'El espaciado sigue una grilla de 4px (--space-1 a --space-6), y la tipografía tiene 4 tamaños con nombre según su rol -- nunca un valor en px suelto.',
-          },
-          {
-            type: 'code',
-            lang: 'scss',
-            filename: 'packages/base/ac-core/src/tokens/base.css',
-            code: `--space-1: 0.25rem; /* 4px */
---space-2: 0.5rem;  /* 8px */
---space-3: 0.75rem; /* 12px */
---space-4: 1rem;    /* 16px */
-
---font-size-xs: 0.75rem; /* badge, texto micro */
---font-size-sm: 0.85rem; /* ayuda, hints */
---font-size-md: 0.95rem; /* cuerpo, default */
---font-size-lg: 1.1rem;  /* títulos */
---font-weight-bold: 700;`,
-          },
-          { type: 'heading', text: 'Cómo se ven aplicados: ac-badge-basic' },
-          {
-            type: 'p',
-            text: 'Un badge es un indicador de estado (una "pastilla"), no una superficie -- por eso usa --radius-full y no --radius-md. Así se ve su regla base real:',
-          },
-          {
-            type: 'code',
-            lang: 'scss',
-            filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
-            code: `.ac-badge-basic {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-  border-radius: var(--radius-full, 9999px);
-  font-weight: var(--font-weight-bold, 700);
-  font-size: var(--font-size-xs, 0.75rem);
-  line-height: var(--line-height-tight, 1.4);
-}`,
-          },
-          {
-            type: 'note',
-            text: 'var(--nombre, respaldo) se lee así: lo que va antes de la coma es el token que manda; lo que va después solo aplica si ese token no está definido en absoluto (no es un segundo intento, es un valor fijo de emergencia).',
-          },
-          { type: 'heading', text: 'Los 4 colores semánticos de estado' },
-          {
-            type: 'p',
-            text: 'Las 4 variantes del badge usan colores FIJOS que no cambian entre tema claro y oscuro -- un estado de "error" debe verse igual de rojo sin importar el tema de la página. Por eso no usan --color-muted ni --color-surface (esos sí cambian con el tema):',
-          },
-          {
-            type: 'code',
-            lang: 'scss',
-            filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
-            code: `.ac-badge--neutral  { background: var(--color-neutral, #44433d); color: #fff; }
-.ac-badge--success  { background: var(--color-success, #499c54); color: #000; }
-.ac-badge--warning  { background: var(--color-warning, #e8a400); color: #000; }
-.ac-badge--danger   { background: var(--color-danger, #e05555);  color: #000; }`,
-          },
-        ],
-        checkpoint:
-          'Puedes explicar qué es un token de diseño y sus tres características (nombre semántico, fuente única, portable). En Emerald Pro, puedes nombrar los 4 pasos de la escala de radio, explicar por qué un badge usa --radius-full en vez de --radius-md, y por qué sus 4 colores de estado no cambian entre tema claro y oscuro.',
-      },
-      {
-        id: 'investigacion-webcomponents',
-        title: 'Investigación: seguí profundizando',
-        objective:
-          'Este capítulo te dio las bases -- ahora te toca profundizar por tu cuenta con fuentes reales de la comunidad de Web Components.',
-        estimatedMinutes: 15,
-        content: [
-          { type: 'heading', text: 'Por qué investigar por tu cuenta' },
-          {
-            type: 'p',
-            text: 'La plataforma web cambia: aparecen nuevas APIs, cambian las buenas prácticas y los frameworks evolucionan. Un laboratorio fijo se queda como una foto del momento en que se escribió; los sitios de la comunidad siguen vivos y actualizados. Aprender a buscar y leer fuentes primarias es parte del oficio.',
-          },
-          {
-            type: 'links',
-            title: 'Para seguir explorando',
-            items: [
-              {
-                label: 'webcomponents.org',
-                url: 'https://www.webcomponents.org/',
-                description:
-                  'Sitio de la comunidad dedicado a compartir y discutir componentes web; buen punto de partida para descubrir librerías y debates sobre el tema.',
-              },
-              {
-                label: 'DesarrolloWeb.com -- Web Components',
-                url: 'https://desarrolloweb.com/home/web-components',
-                description:
-                  'Explicaciones en español sobre Custom Elements, Shadow DOM, plantillas y módulos ES, con enlaces a manuales de Polymer y Lit.',
-              },
-              {
-                label: '"Orientando a componentes: la Web" (SlideShare)',
-                url: 'https://es.slideshare.net/slideshow/orientando-a-componentes-la-web-55613507/55613507',
-                description:
-                  'Presentación en español sobre programación orientada a componentes en la web: Custom Elements, Shadow DOM, plantillas y patrones de diseño.',
-              },
-              {
-                label: 'web.dev',
-                url: 'https://web.dev/?hl=es-419',
-                description:
-                  'Guías, cursos y artículos sobre HTML, CSS, JavaScript, rendimiento y accesibilidad, escritos por el equipo de Chrome y por expertos externos.',
-              },
-            ],
-          },
-          {
-            type: 'note',
-            text: 'Vuelve a este capítulo después de explorar los recursos, con una pregunta o idea concreta en mente: qué parte de Custom Elements o de Shadow DOM quieres entender mejor, o qué práctica de tu propio componente te gustaría revisar con una fuente en la mano.',
-          },
-        ],
-        checkpoint:
-          'Visitaste al menos 2 de los 4 recursos y puedes nombrar algo nuevo que aprendiste de cada uno.',
-      },
-      {
         id: 'webcomponents-concepto',
         title: 'Qué es un Web Component',
         objective:
@@ -451,6 +284,173 @@ this.shadowRoot.appendChild(copia);`,
         checkpoint:
           'Puedes explicar en una frase qué es Lit y qué resuelve sobre la plataforma nativa, y nombrar en orden las fases principales de su ciclo de vida (conectar, detectar cambios, willUpdate, render, updated).',
       },
+      {
+        id: 'tokens-diseno',
+        title: 'Tokens de diseño y Emerald Pro',
+        objective:
+          'Un token de diseño es un valor con nombre que representa una decisión visual compartida -- primero entiendes el concepto general de la industria, y después lo ves aplicado en Emerald Pro, el sistema de tokens real de este catálogo.',
+        estimatedMinutes: 25,
+        content: [
+          { type: 'heading', text: 'Qué es un token de diseño' },
+          {
+            type: 'p',
+            text: 'Un token de diseño es un valor con nombre que representa una decisión de diseño: un color, un espaciado, una tipografía, un radio de borde. En lugar de escribir el valor literal (por ejemplo, #2a7f62 o 16px) en cada lugar donde se usa, le das un nombre y lo reutilizas. El token es la unidad mínima de una decisión visual, guardada en un solo lugar.',
+          },
+          { type: 'heading', text: 'Características de un buen token' },
+          {
+            type: 'p',
+            text: 'Primero, se nombra según su propósito (semántico), no según su valor. Un token llamado --color-primary dice para qué sirve; uno llamado --color-verde-400 solo dice qué color es, y se vuelve confuso si la marca cambia de verde a azul. Segundo, existe una sola fuente de verdad: cada decisión se define una vez y el resto del sistema la consume. Tercero, es portable: el mismo token puede exportarse a CSS, iOS, Android o a una herramienta de diseño, porque describe la intención y no una tecnología particular.',
+          },
+          { type: 'heading', text: 'Para qué sirven' },
+          {
+            type: 'p',
+            text: 'Dan consistencia visual, porque todas las pantallas usan la misma escala de espaciados y los mismos colores. Permiten cambios centralizados: ajustar un valor en un solo lugar actualiza todo lo que lo usa. Y facilitan la comunicación entre diseño y desarrollo, porque ambos hablan del mismo nombre en vez de describir "el azul de la página de inicio".',
+          },
+          { type: 'heading', text: 'Consideraciones al usarlos' },
+          {
+            type: 'p',
+            text: 'No conviene convertir cada valor en un token: si todo es un token, nada lo es. Mantén una escala limitada (pocos pasos de color, pocos tamaños de texto) para que cada elección tenga sentido. Y documenta el propósito de cada token, para que quien lo use sepa cuándo aplicarlo y cuándo no.',
+          },
+          { type: 'heading', text: 'Un ejemplo conceptual' },
+          {
+            type: 'p',
+            text: 'Imagina una app con 50 botones primarios. Si cada botón tiene su azul escrito a mano, cambiar la marca obliga a tocar 50 lugares, y siempre queda alguno sin cambiar. Si todos usan --color-primary, cambiarlo una sola vez actualiza los 50 botones a la vez.',
+          },
+          { type: 'heading', text: 'Nuestros tokens: Emerald Pro' },
+          {
+            type: 'p',
+            text: 'Ahora veamos cómo se aplica esta idea en el catálogo. Emerald Pro es el sistema de tokens de este repo, y el caso de estudio que sigue muestra sus valores reales.',
+          },
+          {
+            type: 'p',
+            text: 'Si cada componente escribiera border-radius: 16px a mano, cambiar el radio del catálogo entero significaría editar 38 archivos. Emerald Pro resuelve esto con tokens: variables CSS con nombre, definidas una sola vez en @ac-base/ac-core, que cada componente referencia en vez de escribir el valor literal.',
+          },
+          { type: 'heading', text: 'La escala de radio de borde' },
+          {
+            type: 'p',
+            text: 'Son 4 pasos, de menor a mayor superficie: un control chico dentro de otro más grande usa un paso menos que su contenedor. --radius-full queda aparte, reservado para estados binarios y tags (switch, radio, badge) -- nunca para una superficie como una card.',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/base/ac-core/src/tokens/base.css',
+            code: `--radius-sm: 0.5rem;  /* 8px  -- elementos chicos/icónicos (botón de cerrar, marca del checkbox) */
+--radius-md: 1rem;    /* 16px -- controles (botón, input, select, tabs) */
+--radius-lg: 1.5rem;  /* 24px -- superficies (card, panel, toast, popover) */
+--radius-xl: 2rem;    /* 32px -- la superficie más grande del catálogo (modal) */
+--radius-full: 9999px;`,
+          },
+          { type: 'heading', text: 'Espaciado y tipografía' },
+          {
+            type: 'p',
+            text: 'El espaciado sigue una grilla de 4px (--space-1 a --space-6), y la tipografía tiene 4 tamaños con nombre según su rol -- nunca un valor en px suelto.',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/base/ac-core/src/tokens/base.css',
+            code: `--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem;  /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem;    /* 16px */
+
+--font-size-xs: 0.75rem; /* badge, texto micro */
+--font-size-sm: 0.85rem; /* ayuda, hints */
+--font-size-md: 0.95rem; /* cuerpo, default */
+--font-size-lg: 1.1rem;  /* títulos */
+--font-weight-bold: 700;`,
+          },
+          { type: 'heading', text: 'Cómo se ven aplicados: ac-badge-basic' },
+          {
+            type: 'p',
+            text: 'Un badge es un indicador de estado (una "pastilla"), no una superficie -- por eso usa --radius-full y no --radius-md. Así se ve su regla base real:',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
+            code: `.ac-badge-basic {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 9999px);
+  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--font-size-xs, 0.75rem);
+  line-height: var(--line-height-tight, 1.4);
+}`,
+          },
+          {
+            type: 'note',
+            text: 'var(--nombre, respaldo) se lee así: lo que va antes de la coma es el token que manda; lo que va después solo aplica si ese token no está definido en absoluto (no es un segundo intento, es un valor fijo de emergencia).',
+          },
+          { type: 'heading', text: 'Los 4 colores semánticos de estado' },
+          {
+            type: 'p',
+            text: 'Las 4 variantes del badge usan colores FIJOS que no cambian entre tema claro y oscuro -- un estado de "error" debe verse igual de rojo sin importar el tema de la página. Por eso no usan --color-muted ni --color-surface (esos sí cambian con el tema):',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
+            code: `.ac-badge--neutral  { background: var(--color-neutral, #44433d); color: #fff; }
+.ac-badge--success  { background: var(--color-success, #499c54); color: #000; }
+.ac-badge--warning  { background: var(--color-warning, #e8a400); color: #000; }
+.ac-badge--danger   { background: var(--color-danger, #e05555);  color: #000; }`,
+          },
+        ],
+        checkpoint:
+          'Puedes explicar qué es un token de diseño y sus tres características (nombre semántico, fuente única, portable). En Emerald Pro, puedes nombrar los 4 pasos de la escala de radio, explicar por qué un badge usa --radius-full en vez de --radius-md, y por qué sus 4 colores de estado no cambian entre tema claro y oscuro.',
+      },
+      {
+        id: 'investigacion-webcomponents',
+        title: 'Investigación: sigue profundizando',
+        objective:
+          'Este capítulo te dio las bases -- ahora te toca profundizar por tu cuenta con fuentes reales de la comunidad de Web Components.',
+        estimatedMinutes: 15,
+        content: [
+          { type: 'heading', text: 'Por qué investigar por tu cuenta' },
+          {
+            type: 'p',
+            text: 'La plataforma web cambia: aparecen nuevas APIs, cambian las buenas prácticas y los frameworks evolucionan. Un laboratorio fijo se queda como una foto del momento en que se escribió; los sitios de la comunidad siguen vivos y actualizados. Aprender a buscar y leer fuentes primarias es parte del oficio.',
+          },
+          {
+            type: 'links',
+            title: 'Para seguir explorando',
+            items: [
+              {
+                label: 'webcomponents.org',
+                url: 'https://www.webcomponents.org/',
+                description:
+                  'Sitio de la comunidad dedicado a compartir y discutir componentes web; buen punto de partida para descubrir librerías y debates sobre el tema.',
+              },
+              {
+                label: 'DesarrolloWeb.com -- Web Components',
+                url: 'https://desarrolloweb.com/home/web-components',
+                description:
+                  'Explicaciones en español sobre Custom Elements, Shadow DOM, plantillas y módulos ES, con enlaces a manuales de Polymer y Lit.',
+              },
+              {
+                label: '"Orientando a componentes: la Web" (SlideShare)',
+                url: 'https://es.slideshare.net/slideshow/orientando-a-componentes-la-web-55613507/55613507',
+                description:
+                  'Presentación en español sobre programación orientada a componentes en la web: Custom Elements, Shadow DOM, plantillas y patrones de diseño.',
+              },
+              {
+                label: 'web.dev',
+                url: 'https://web.dev/?hl=es-419',
+                description:
+                  'Guías, cursos y artículos sobre HTML, CSS, JavaScript, rendimiento y accesibilidad, escritos por el equipo de Chrome y por expertos externos.',
+              },
+            ],
+          },
+          {
+            type: 'note',
+            text: 'Vuelve a este capítulo después de explorar los recursos, con una pregunta o idea concreta en mente: qué parte de Custom Elements o de Shadow DOM quieres entender mejor, o qué práctica de tu propio componente te gustaría revisar con una fuente en la mano.',
+          },
+        ],
+        checkpoint:
+          'Visitaste al menos 2 de los 4 recursos y puedes nombrar algo nuevo que aprendiste de cada uno.',
+      },
     ],
   },
   {
@@ -458,9 +458,9 @@ this.shadowRoot.appendChild(copia);`,
     title: 'Capítulo 1 — Construcción',
     summary:
       'Construye un componente propio de punta a punta: desde `aclit component:create` hasta un flujo completo con API pública/privada, eventos, estilos, modal, transición interna y multipasos.',
-    estimatedMinutes: 525,
+    estimatedMinutes: 545,
     outcomes: [
-      'Scaffoldear un componente real de punta a punta con el CLI propio.',
+      'Scaffoldear un componente real de punta a punta con el CLI propio y entender la estructura de carpetas y archivos que genera.',
       'Componer un flujo complejo con 18 componentes del catálogo sin montar nada a mano.',
       'Separar API pública vs. privada en una clase Lit.',
       'Cablear el 100% de los eventos de forma declarativa, incluido tu propio patrón de emisión (_emit()).',
@@ -641,6 +641,252 @@ this.shadowRoot.appendChild(copia);`,
           'Tu `package.json` tiene las 2 dependencias base (`@ac-base/ac-component-mixin` y `@ac-base/ac-intl-mixin`) con versiones reales de npm, no `workspace:^`; entiendes por qué `@ac-base/cli` es una devDependency de tu propio proyecto; y la demo abre en el navegador sin errores en la consola.',
       },
       {
+        id: 'construccion-01b-estructura-carpetas',
+        title: '1.1. La estructura de carpetas que genera el CLI',
+        estimatedMinutes: 20,
+        objective:
+          'Vas a recorrer cada carpeta y archivo que genera `aclit component:create` dentro de `ac-registro-wizard/`. Al final sabrás qué parte del proyecto es el componente real, qué parte solo sirve para la demo y los tests, y qué parte casi nunca vas a tocar.',
+        content: [
+          { type: 'heading', text: 'Por qué los archivos llevan el nombre de tu componente' },
+          {
+            type: 'p',
+            text: 'El CLI no copia archivos con nombres fijos. La plantilla tiene marcadores como `__file_base__`, `__class_name__`, `__tag__` y `__package_name__`, y al generar el proyecto los reemplaza tanto dentro del contenido de cada archivo como en los nombres de archivos y carpetas. Para `ac-registro-wizard` los valores son: `__tag__` queda como `ac-registro-wizard`, `__file_base__` como `registro-wizard` (el nombre sin el prefijo `ac-`), `__class_name__` como `RegistroWizard` y `__package_name__` como `@ac-components/ac-registro-wizard`. Por eso el archivo principal se llama `registro-wizard.js` y no `__file_base__.js`.',
+          },
+          { type: 'heading', text: 'Vista general de la estructura' },
+          {
+            type: 'p',
+            text: 'Este es el árbol completo que genera el comando. Compáralo con tu carpeta: si todavía no corriste `pnpm install`, no verás `node_modules/`, y si ya corriste `component:serve`, aparecerá un archivo más en `src/` que se explica en la siguiente sección.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: `ac-registro-wizard/
+├── README.md
+├── package.json
+├── index.js
+├── locales.json
+├── vite.config.js
+├── web-test-runner.config.js
+├── src/
+│   ├── registro-wizard.js
+│   └── registro-wizard.styles.scss
+├── demo/
+│   ├── index.html
+│   ├── demo.js
+│   ├── demo-base.css
+│   └── public/
+│       └── case-basic.html
+├── test/
+│   └── registro-wizard.test.js
+└── test_e2e/
+    ├── wdio.conf.js
+    ├── wdio.a11y.conf.js
+    ├── features/
+    │   ├── registro-wizard.feature
+    │   └── registro-wizard-accessibility.feature
+    ├── step-definitions/
+    │   └── registro-wizard.steps.js
+    └── pages/
+        ├── registro-wizard.page.js
+        └── demo.page.js`,
+          },
+          { type: 'heading', text: 'src/: el código real del componente' },
+          {
+            type: 'p',
+            text: 'Aquí vive toda la lógica del componente. `src/registro-wizard.js` define la clase que extiende `LitElement` con `ComponentMixin`: declara las propiedades reactivas, el método `render()` y los estilos. `src/registro-wizard.styles.scss` contiene los estilos en SCSS.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ac-registro-wizard/src/registro-wizard.js',
+            code: `import { LitElement, html } from 'lit';
+import { ComponentMixin, componentBaseStyles } from '@ac-base/ac-component-mixin';
+
+import { RegistroWizardStyles } from './registro-wizard.styles.js';
+
+export class RegistroWizard extends ComponentMixin(LitElement) {
+  static get is() {
+    return 'ac-registro-wizard';
+  }
+
+  static get styles() {
+    return [componentBaseStyles, RegistroWizardStyles];
+  }
+
+  // ... properties, constructor y render()
+}`,
+          },
+          {
+            type: 'p',
+            text: 'La línea que importa `RegistroWizardStyles` apunta a un archivo `.js` que no viene en la plantilla. Lo genera el script `component:build:styles` a partir del `.scss`, y se vuelve a generar cada vez que corres `component:serve`, `component:build` o `component:test`. Por eso no lo editas a mano: editas el `.scss`.',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'ac-registro-wizard/src/registro-wizard.styles.scss',
+            code: `:host {
+  display: inline-block;
+}
+
+.registro-wizard {
+  font-size: var(--font-size-md, 0.95rem);
+}`,
+          },
+          { type: 'heading', text: 'index.js: el punto de entrada del paquete' },
+          {
+            type: 'p',
+            text: 'Es el archivo que indica el campo `"main"` de `package.json`. Importa la clase desde `src/`, registra las traducciones y llama a `customElements.define`, que es lo que hace que la etiqueta `<ac-registro-wizard>` funcione en el navegador. Quien instale tu paquete hará `import` de él, y con eso se carga todo.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ac-registro-wizard/index.js',
+            code: `import locales from './locales.json' with { type: 'json' };
+import { registerTranslations } from '@ac-base/ac-intl-mixin';
+import { RegistroWizard } from './src/registro-wizard.js';
+
+export { RegistroWizard } from './src/registro-wizard.js';
+
+registerTranslations(RegistroWizard.is, locales);
+
+// Auto-registro del componente
+customElements.define(RegistroWizard.is, RegistroWizard);`,
+          },
+          { type: 'heading', text: 'locales.json: las traducciones' },
+          {
+            type: 'p',
+            text: 'Guarda los textos que el componente puede mostrar, agrupados por idioma: `es-PE`, `en-EN` y `pt-BR`. Cada texto tiene una clave con el nombre base del componente, por ejemplo `registro-wizard-label`. Si le pasas esa clave a la propiedad `text`, el mixin busca el texto en el idioma activo con `this.t()`. Lo vas a usar más adelante, cuando tu componente tenga textos propios.',
+          },
+          { type: 'heading', text: 'demo/: la vitrina de desarrollo' },
+          {
+            type: 'p',
+            text: 'La demo sirve para ver tu componente en el navegador mientras desarrollas, con `aclit component:serve`. No forma parte del paquete publicado. Tiene cuatro piezas. `index.html` es el punto de entrada de Vite: define la página con el elemento `ac-demo-content`, que pone el marco de la demo (nombre, tecnología, idiomas, modo oscuro) y en el que van los casos de uso.',
+          },
+          {
+            type: 'code',
+            lang: 'html',
+            filename: 'ac-registro-wizard/demo/index.html',
+            code: `<ac-demo-content
+  name="ac-registro-wizard"
+  tech="Lit v3"
+  package-name="@ac-components/ac-registro-wizard"
+  language="es-PE, en-EN"
+  ambients="default"
+  dark-mode
+>
+  <ac-demo-case header="Básico" href="case-basic.html"></ac-demo-case>
+</ac-demo-content>`,
+          },
+          {
+            type: 'p',
+            text: '`demo.js` declara lo que carga la demo: importa tu componente desde `../index.js`, importa `ac-demo-content` y los tokens CSS de `ac-core`. Si necesitas otro componente de apoyo o un token adicional, lo agregas aquí. `demo-base.css` contiene los estilos del marco de la demo (fondo, tipografía, márgenes, clases como `.row`). Afecta a la página de demo, no a tu componente, cuyos estilos viven en `src/`.',
+          },
+          {
+            type: 'p',
+            text: 'La carpeta `public/` es la que Vite copia tal cual, sin procesarla. `case-basic.html` es un fragmento de HTML, sin `<!doctype>` ni `<head>`, y es el archivo al que apunta el atributo `href` de `<ac-demo-case>`. Ahí van los ejemplos de uso con la etiqueta real de tu componente.',
+          },
+          {
+            type: 'code',
+            lang: 'html',
+            filename: 'ac-registro-wizard/demo/public/case-basic.html',
+            code: `<section>
+  <h2>Básico</h2>
+  <div class="row">
+    <ac-registro-wizard data-testid="registro-wizard-default">Hola</ac-registro-wizard>
+  </div>
+</section>`,
+          },
+          { type: 'heading', text: 'test/: pruebas unitarias' },
+          {
+            type: 'p',
+            text: 'Las pruebas unitarias viven en `test/` y siguen el patrón `<nombre>.test.js`. `web-test-runner.config.js` busca `test/**/*.test.js`, las ejecuta en un navegador real y usa la interfaz TDD de Mocha: `suite` y `test` en lugar de `describe` e `it`. Las corres con `aclit component:test`. Cada prueba monta el componente con `fixture` de `@open-wc/testing` y revisa el resultado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ac-registro-wizard/test/registro-wizard.test.js',
+            code: `suite('ac-registro-wizard', () => {
+  test('renders slotted content by default', async () => {
+    const el = await fixture(html\`<ac-registro-wizard>Hola</ac-registro-wizard>\`);
+    expect(el.textContent.trim()).to.equal('Hola');
+  });
+
+  // ... más pruebas
+});`,
+          },
+          { type: 'heading', text: 'test_e2e/: pruebas de punta a punta' },
+          {
+            type: 'p',
+            text: 'Estas pruebas abren la demo en un navegador real y hacen lo que haría una persona. Usan WebdriverIO para manejar el navegador y Cucumber para escribir los escenarios en lenguaje natural. Están divididas en tres carpetas que trabajan en cadena: `features/`, `step-definitions/` y `pages/`.',
+          },
+          {
+            type: 'p',
+            text: '`features/` tiene los escenarios en Gherkin, con las palabras clave `Feature`, `Scenario`, `Given`, `When` y `Then`. Hay dos archivos: `registro-wizard.feature`, con el flujo funcional, y `registro-wizard-accessibility.feature`, que revisa accesibilidad WCAG, incluido el modo oscuro. La etiqueta `@accessibility` separa a los dos grupos.',
+          },
+          {
+            type: 'p',
+            text: '`step-definitions/` tiene el código que ejecuta cada paso de Gherkin. Cada `Given`, `When` o `Then` que escribes en un feature necesita su implementación aquí, con el mismo texto. Si el texto no coincide, Cucumber no encuentra el paso.',
+          },
+          {
+            type: 'p',
+            text: '`pages/` aplica el patrón Page Object: encapsula cómo se encuentra un elemento en el DOM, para que los pasos no tengan selectores CSS sueltos. Así se ve la cadena completa para el escenario del caso básico.',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            filename: 'ac-registro-wizard/test_e2e/features/registro-wizard.feature',
+            code: 'Then el componente contiene el texto "Hola"',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ac-registro-wizard/test_e2e/step-definitions/registro-wizard.steps.js',
+            code: `Then('el componente contiene el texto {string}', async function (expectedText) {
+  const component = componentProvider.find(RegistroWizardPage);
+  await component.waitForDisplayed();
+  // ... compara el texto con expectedText
+});`,
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ac-registro-wizard/test_e2e/pages/registro-wizard.page.js',
+            code: `export class RegistroWizardPage extends ComponentObject {
+  constructor() {
+    super({ selector: '[data-testid="registro-wizard-default"]' });
+  }
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Si cambias el `data-testid` en `demo/public/case-basic.html`, tienes que cambiarlo también en el page object, o el paso no encontrará el elemento. `demo.page.js` hace lo mismo con la página de la demo.',
+          },
+          {
+            type: 'p',
+            text: 'Los dos archivos de configuración de WebdriverIO definen qué corre cada grupo. `wdio.conf.js` ejecuta los features sin la etiqueta `@accessibility`, que son los funcionales. `wdio.a11y.conf.js` ejecuta solo los que sí la tienen, y revisa WCAG con axe-core. Ambos apuntan a `http://localhost:4173` (o a lo que digas en la variable `AC_E2E_BASE_URL`), donde `component:preview` sirve la demo ya construida. Por eso `aclit component:test:e2e` y `aclit component:test:e2e:a11y` compilan la demo, la levantan y corren las pruebas por ti.',
+          },
+          { type: 'heading', text: 'Archivos sueltos en la raíz' },
+          {
+            type: 'p',
+            text: '`README.md` documenta el componente: instalación, propiedades, traducciones y comandos de desarrollo. Es el texto que verá quien lea tu paquete en npm.',
+          },
+          {
+            type: 'p',
+            text: '`vite.config.js` configura Vite para la demo. Define `root: demo` (la carpeta de la demo), el puerto 5173 para `component:serve` y `outDir: ../dist` para `component:build`, así que lo que se compila queda en `dist/` del proyecto.',
+          },
+          {
+            type: 'p',
+            text: '`web-test-runner.config.js` configura los tests unitarios: qué archivos buscar (`test/**/*.test.js`), cómo reportar los resultados y la interfaz TDD de Mocha.',
+          },
+          {
+            type: 'note',
+            text: 'Solo `src/`, `index.js` y `locales.json` se publican en npm, según la lista `files` de `package.json`. Las carpetas `demo/`, `test/` y `test_e2e/`, y los archivos `vite.config.js` y `web-test-runner.config.js`, no salen en el paquete. El `README.md` sí viaja, porque npm lo incluye siempre. No necesitas tocar `vite.config.js`, `web-test-runner.config.js` ni los archivos de WebdriverIO: son scaffolding ya resuelto. Modifícalos solo si tienes una necesidad muy puntual.',
+          },
+        ],
+        checkpoint:
+          'Puedes recorrer `ac-registro-wizard/` de arriba abajo y explicar para qué sirve cada carpeta (`src/`, `demo/`, `test/` y `test_e2e/`), cuál es el único código que se publica, y por qué el archivo principal se llama `registro-wizard.js` y no `__file_base__.js`.',
+      },
+      {
         id: 'construccion-02-first-component',
         title: '2. Instalar y declarar tu primer componente del catálogo',
         estimatedMinutes: 25,
@@ -655,7 +901,7 @@ this.shadowRoot.appendChild(copia);`,
           { type: 'heading', text: 'Agrega la dependencia con pnpm add' },
           {
             type: 'p',
-            text: 'Nunca edites a mano el rango de versión de una dependencia -- dejá que `pnpm` lo resuelva. Como `ac-input-basic` vive en el mismo workspace que tu componente, `pnpm add` escribe solo el protocolo `workspace:^` en tu `package.json` (si el componente viviera afuera del monorepo, pnpm pondría el rango real publicado en npm, no `workspace:^`):',
+            text: 'Nunca edites a mano el rango de versión de una dependencia -- deja que `pnpm` lo resuelva. Como `ac-input-basic` vive en el mismo workspace que tu componente, `pnpm add` escribe solo el protocolo `workspace:^` en tu `package.json` (si el componente viviera afuera del monorepo, pnpm pondría el rango real publicado en npm, no `workspace:^`):',
           },
           {
             type: 'code',
@@ -736,7 +982,7 @@ this.shadowRoot.appendChild(copia);`,
           },
           {
             type: 'p',
-            text: 'Un binding `.prop=${valor}` solo sirve para pasarle datos a un hijo de forma declarativa: Lit se encarga de escribirlo en la property cada vez que `valor` cambia, pero nunca te da acceso al nodo en sí. El problema es que `obtenerDatosUsuario(...)` no es una property que puedas bindear -- es un MÉTODO que necesitás invocar en un momento preciso (cuando corre `init()`), no cada vez que el componente vuelve a renderizar. Para eso existe `ref()`: te da una referencia real al elemento del DOM, resuelta por Lit en el momento correcto del ciclo de render, sin que tengas que buscarlo a mano con `querySelector` ni arriesgarte a que todavía no exista.',
+            text: 'Un binding `.prop=${valor}` solo sirve para pasarle datos a un hijo de forma declarativa: Lit se encarga de escribirlo en la property cada vez que `valor` cambia, pero nunca te da acceso al nodo en sí. El problema es que `obtenerDatosUsuario(...)` no es una property que puedas bindear -- es un MÉTODO que necesitas invocar en un momento preciso (cuando corre `init()`), no cada vez que el componente vuelve a renderizar. Para eso existe `ref()`: te da una referencia real al elemento del DOM, resuelta por Lit en el momento correcto del ciclo de render, sin que tengas que buscarlo a mano con `querySelector` ni arriesgarte a que todavía no exista.',
           },
           {
             type: 'code',
@@ -775,7 +1021,7 @@ this.shadowRoot.appendChild(copia);`,
           },
         ],
         checkpoint:
-          'Con la demo abierta, llamar `wizard.init()` dispara la lectura simulada contra `ac-api-users` sin ningún error en consola -- podés confirmarlo con un `console.log` temporal dentro del handler de éxito, o viendo que el estado interno del wizard cambia.',
+          'Con la demo abierta, llamar `wizard.init()` dispara la lectura simulada contra `ac-api-users` sin ningún error en consola -- puedes confirmarlo con un `console.log` temporal dentro del handler de éxito, o viendo que el estado interno del wizard cambia.',
       },
       {
         id: 'construccion-04-private-methods',
@@ -939,7 +1185,7 @@ this.shadowRoot.appendChild(copia);`,
           },
           {
             type: 'note',
-            text: 'Nunca vas a ver un `addEventListener` imperativo en este patrón (ni en `connectedCallback` ni en ningún otro lado): si necesitás escuchar algo, el binding `@evento=${...}` va en el template, junto al elemento que lo dispara. Eso mantiene cada escucha visible en un solo lugar, atada al propio `render()` -- sin riesgo de dejar un listener colgado si el elemento se quita del DOM.',
+            text: 'Nunca vas a ver un `addEventListener` imperativo en este patrón (ni en `connectedCallback` ni en ningún otro lado): si necesitas escuchar algo, el binding `@evento=${...}` va en el template, junto al elemento que lo dispara. Eso mantiene cada escucha visible en un solo lugar, atada al propio `render()` -- sin riesgo de dejar un listener colgado si el elemento se quita del DOM.',
           },
         ],
         checkpoint:
@@ -958,7 +1204,7 @@ this.shadowRoot.appendChild(copia);`,
           },
           {
             type: 'p',
-            text: 'Ningún componente del catálogo escribe CSS directo en el JS. El flujo es siempre el mismo: escribís un archivo `.scss` normal, un script lo compila a un módulo `.js` que exporta un `css` de Lit, y ese archivo compilado (que nunca se versiona, está en `.gitignore`) se importa en el componente. Así se ve el `.scss` real de este wizard -- 18 líneas, sin nada exótico: dos reglas de `:host` y una clase para el layout del body, usando tokens de `@ac-base/ac-core` con un valor de respaldo después de la coma.',
+            text: 'Ningún componente del catálogo escribe CSS directo en el JS. El flujo es siempre el mismo: escribes un archivo `.scss` normal, un script lo compila a un módulo `.js` que exporta un `css` de Lit, y ese archivo compilado (que nunca se versiona, está en `.gitignore`) se importa en el componente. Así se ve el `.scss` real de este wizard -- 18 líneas, sin nada exótico: dos reglas de `:host` y una clase para el layout del body, usando tokens de `@ac-base/ac-core` con un valor de respaldo después de la coma.',
           },
           {
             type: 'code',
@@ -1012,7 +1258,7 @@ this.shadowRoot.appendChild(copia);`,
           },
           {
             type: 'note',
-            text: '`src/registro-wizard.styles.js` nunca se versiona -- si cambiás de máquina o clonás el repo de nuevo, el componente va a renderizar sin estilos hasta que corras `component:build:styles` otra vez. `pnpm --filter <tu-paquete> run component:serve` ya corre ese script en modo watch en paralelo (vía `concurrently`, generado por el CLI), así que cada guardado del `.scss` recompila y recarga la demo sola.',
+            text: '`src/registro-wizard.styles.js` nunca se versiona -- si cambias de máquina o clonas el repo de nuevo, el componente va a renderizar sin estilos hasta que corras `component:build:styles` otra vez. `pnpm --filter <tu-paquete> run component:serve` ya corre ese script en modo watch en paralelo (vía `concurrently`, generado por el CLI), así que cada guardado del `.scss` recompila y recarga la demo sola.',
           },
         ],
         checkpoint:
@@ -1053,7 +1299,7 @@ this.shadowRoot.appendChild(copia);`,
           },
           {
             type: 'p',
-            text: 'El click en "Cerrar" dispara `@ac-modal-basic-primary-click`, que llama a `_onModalPrimaryClick`. En la versión final ese método también reinicia todo el formulario -- el detalle completo de `reset()` lo armás en el laboratorio 10:',
+            text: 'El click en "Cerrar" dispara `@ac-modal-basic-primary-click`, que llama a `_onModalPrimaryClick`. En la versión final ese método también reinicia todo el formulario -- el detalle completo de `reset()` lo armas en el laboratorio 10:',
           },
           {
             type: 'code',
@@ -1110,7 +1356,7 @@ this.shadowRoot.appendChild(copia);`,
           },
         ],
         checkpoint:
-          'Podés explicar por qué `ac-modal-basic` no decide solo cuándo cerrarse, qué cuatro properties recibe `registro-wizard-modal-resultado` y por qué su `render()` no pinta nada sin un nombre, y qué patrón comparte con `registro-wizard-modal-info`.',
+          'Puedes explicar por qué `ac-modal-basic` no decide solo cuándo cerrarse, qué cuatro properties recibe `registro-wizard-modal-resultado` y por qué su `render()` no pinta nada sin un nombre, y qué patrón comparte con `registro-wizard-modal-info`.',
       },
       {
         id: 'construccion-08-transition-container',
@@ -1170,7 +1416,7 @@ _resetState() {
           },
           {
             type: 'p',
-            text: 'Los dos handlers son deliberadamente simples: la flecha de volver reinicia todo el flujo en vez de navegar, y el ícono de información solo abre el modal que ya conocés del laboratorio 7.',
+            text: 'Los dos handlers son deliberadamente simples: la flecha de volver reinicia todo el flujo en vez de navegar, y el ícono de información solo abre el modal que ya conoces del laboratorio 7.',
           },
           {
             type: 'code',
@@ -1185,7 +1431,7 @@ _onInfoIconClick() { this._infoOpen = true; }`,
           },
         ],
         checkpoint:
-          'Podés explicar por qué `_open` arranca en `true`, qué diferencia hay entre `hide-menu-icon` (opcional) y la flecha de volver (fija), qué hace `_onBackIconClick` en este wizard puntual y para qué sirve el slot `header-end`.',
+          'Puedes explicar por qué `_open` arranca en `true`, qué diferencia hay entre `hide-menu-icon` (opcional) y la flecha de volver (fija), qué hace `_onBackIconClick` en este wizard puntual y para qué sirve el slot `header-end`.',
       },
       {
         id: 'construccion-09-multistep',
@@ -1352,7 +1598,7 @@ _emit(name, detail = {}) {
           },
         ],
         checkpoint:
-          'Podés explicar qué hace automáticamente `ac-expandable-multistep`, por qué `registro-wizard-steps` llama a `step.complete()` por `ref()` en vez de asignar `active`/`completed` a mano, y cómo ese mismo componente expone hacia `registro-wizard.js` properties planas y eventos consolidados en vez de obligar al padre a tratar con cada paso.',
+          'Puedes explicar qué hace automáticamente `ac-expandable-multistep`, por qué `registro-wizard-steps` llama a `step.complete()` por `ref()` en vez de asignar `active`/`completed` a mano, y cómo ese mismo componente expone hacia `registro-wizard.js` properties planas y eventos consolidados en vez de obligar al padre a tratar con cada paso.',
       },
       {
         id: 'construccion-10-close-the-loop',
@@ -1428,7 +1674,7 @@ _emit(name, detail = {}) {
           { type: 'heading', text: '`reset()` real: resetea al padre Y al hijo de pasos' },
           {
             type: 'p',
-            text: 'El botón "Cerrar" del modal (laboratorio 7) y la flecha de volver (laboratorio 8) llaman, los dos, a `reset()`. Ese método no solo restaura las properties privadas del padre -- también llama a `reset()` sobre `registro-wizard-steps`, por la misma `createRef()` que ya usás para llamar `init()`:',
+            text: 'El botón "Cerrar" del modal (laboratorio 7) y la flecha de volver (laboratorio 8) llaman, los dos, a `reset()`. Ese método no solo restaura las properties privadas del padre -- también llama a `reset()` sobre `registro-wizard-steps`, por la misma `createRef()` que ya usas para llamar `init()`:',
           },
           {
             type: 'code',
@@ -1470,7 +1716,7 @@ _emit(name, detail = {}) {
           },
         ],
         checkpoint:
-          'Podés trazar el ciclo completo (confirmar → loading → éxito o error) citando los cuatro métodos reales, y explicar por qué `reset()` del padre tiene que llamar también al `reset()` de `registro-wizard-steps`, con el bug concreto que eso evita.',
+          'Puedes trazar el ciclo completo (confirmar → loading → éxito o error) citando los cuatro métodos reales, y explicar por qué `reset()` del padre tiene que llamar también al `reset()` de `registro-wizard-steps`, con el bug concreto que eso evita.',
       },
     ],
   },
