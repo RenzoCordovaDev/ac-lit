@@ -36,22 +36,53 @@ const BASICO_CHAPTERS = [
     id: 'fundamentos',
     title: 'Capítulo 0 — Fundamentos y estándares',
     summary:
-      'Tokens de diseño, naming de scripts component:*, y Conventional Commits -- las reglas que vas a aplicar en todo lo que sigue.',
-    estimatedMinutes: 70,
+      'Qué es un Web Component y de qué piezas se arma, una introducción a Lit, qué es un token de diseño (en general y en Emerald Pro) y dónde seguir investigando por tu cuenta -- las bases conceptuales antes de construir nada.',
+    estimatedMinutes: 105,
     outcomes: [
-      'Justificar qué token de diseño corresponde a cada propiedad visual en vez de usar valores literales.',
-      'Explicar la convención component:* y el riesgo real de un script con nombre distinto.',
-      'Escribir y validar mensajes Conventional Commits, incluidos breaking changes.',
-      'Agregar claves de texto traducible siguiendo el naming y el orden de resolución del proyecto.',
+      'Explicar con tus propias palabras qué es un Web Component y qué beneficios tiene sobre depender de un framework específico.',
+      'Nombrar las 3 piezas de un Web Component (Custom Elements, Shadow DOM, HTML Templates) y qué resuelve cada una.',
+      'Explicar qué es Lit, qué resuelve sobre la plataforma nativa, y las fases principales de su ciclo de vida.',
+      'Explicar qué es un token de diseño en general (características, beneficios, consideraciones) y justificar qué token de Emerald Pro corresponde a cada propiedad visual.',
+      'Conocer dónde seguir investigando por tu cuenta sobre Web Components, con fuentes reales de la comunidad.',
     ],
     labs: [
       {
-        id: 'fund-1',
-        title: 'Tokens Emerald Pro en un componente real',
+        id: 'tokens-diseno',
+        title: 'Tokens de diseño y Emerald Pro',
         objective:
-          'Un token de diseño es un valor con nombre (un radio, un espaciado, un color) que varios componentes comparten -- cambiarlo en un solo lugar actualiza los 38 componentes del catálogo a la vez.',
-        estimatedMinutes: 20,
+          'Un token de diseño es un valor con nombre que representa una decisión visual compartida -- primero entiendes el concepto general de la industria, y después lo ves aplicado en Emerald Pro, el sistema de tokens real de este catálogo.',
+        estimatedMinutes: 25,
         content: [
+          { type: 'heading', text: 'Qué es un token de diseño' },
+          {
+            type: 'p',
+            text: 'Un token de diseño es un valor con nombre que representa una decisión de diseño: un color, un espaciado, una tipografía, un radio de borde. En lugar de escribir el valor literal (por ejemplo, #2a7f62 o 16px) en cada lugar donde se usa, le das un nombre y lo reutilizas. El token es la unidad mínima de una decisión visual, guardada en un solo lugar.',
+          },
+          { type: 'heading', text: 'Características de un buen token' },
+          {
+            type: 'p',
+            text: 'Primero, se nombra según su propósito (semántico), no según su valor. Un token llamado --color-primary dice para qué sirve; uno llamado --color-verde-400 solo dice qué color es, y se vuelve confuso si la marca cambia de verde a azul. Segundo, existe una sola fuente de verdad: cada decisión se define una vez y el resto del sistema la consume. Tercero, es portable: el mismo token puede exportarse a CSS, iOS, Android o a una herramienta de diseño, porque describe la intención y no una tecnología particular.',
+          },
+          { type: 'heading', text: 'Para qué sirven' },
+          {
+            type: 'p',
+            text: 'Dan consistencia visual, porque todas las pantallas usan la misma escala de espaciados y los mismos colores. Permiten cambios centralizados: ajustar un valor en un solo lugar actualiza todo lo que lo usa. Y facilitan la comunicación entre diseño y desarrollo, porque ambos hablan del mismo nombre en vez de describir "el azul de la página de inicio".',
+          },
+          { type: 'heading', text: 'Consideraciones al usarlos' },
+          {
+            type: 'p',
+            text: 'No conviene convertir cada valor en un token: si todo es un token, nada lo es. Mantén una escala limitada (pocos pasos de color, pocos tamaños de texto) para que cada elección tenga sentido. Y documenta el propósito de cada token, para que quien lo use sepa cuándo aplicarlo y cuándo no.',
+          },
+          { type: 'heading', text: 'Un ejemplo conceptual' },
+          {
+            type: 'p',
+            text: 'Imagina una app con 50 botones primarios. Si cada botón tiene su azul escrito a mano, cambiar la marca obliga a tocar 50 lugares, y siempre queda alguno sin cambiar. Si todos usan --color-primary, cambiarlo una sola vez actualiza los 50 botones a la vez.',
+          },
+          { type: 'heading', text: 'Nuestros tokens: Emerald Pro' },
+          {
+            type: 'p',
+            text: 'Ahora veamos cómo se aplica esta idea en el catálogo. Emerald Pro es el sistema de tokens de este repo, y el caso de estudio que sigue muestra sus valores reales.',
+          },
           {
             type: 'p',
             text: 'Si cada componente escribiera border-radius: 16px a mano, cambiar el radio del catálogo entero significaría editar 38 archivos. Emerald Pro resuelve esto con tokens: variables CSS con nombre, definidas una sola vez en @ac-base/ac-core, que cada componente referencia en vez de escribir el valor literal.',
@@ -130,164 +161,295 @@ const BASICO_CHAPTERS = [
           },
         ],
         checkpoint:
-          'Puedes nombrar los 4 pasos de la escala de radio y explicar por qué un badge usa --radius-full en vez de --radius-md, y por qué sus 4 colores de estado no cambian entre tema claro y oscuro.',
+          'Puedes explicar qué es un token de diseño y sus tres características (nombre semántico, fuente única, portable). En Emerald Pro, puedes nombrar los 4 pasos de la escala de radio, explicar por qué un badge usa --radius-full en vez de --radius-md, y por qué sus 4 colores de estado no cambian entre tema claro y oscuro.',
       },
       {
-        id: 'fund-2',
-        title: 'Scripts component:* y el riesgo del script silencioso',
+        id: 'investigacion-webcomponents',
+        title: 'Investigación: seguí profundizando',
         objective:
-          'Cada paquete expone el mismo juego de scripts (component:build, component:test, ...) bajo el mismo nombre exacto, para que la raíz del repo pueda correrlos en los 38 a la vez sin saber qué hay adentro de cada uno.',
+          'Este capítulo te dio las bases -- ahora te toca profundizar por tu cuenta con fuentes reales de la comunidad de Web Components.',
+        estimatedMinutes: 15,
+        content: [
+          { type: 'heading', text: 'Por qué investigar por tu cuenta' },
+          {
+            type: 'p',
+            text: 'La plataforma web cambia: aparecen nuevas APIs, cambian las buenas prácticas y los frameworks evolucionan. Un laboratorio fijo se queda como una foto del momento en que se escribió; los sitios de la comunidad siguen vivos y actualizados. Aprender a buscar y leer fuentes primarias es parte del oficio.',
+          },
+          {
+            type: 'links',
+            title: 'Para seguir explorando',
+            items: [
+              {
+                label: 'webcomponents.org',
+                url: 'https://www.webcomponents.org/',
+                description:
+                  'Sitio de la comunidad dedicado a compartir y discutir componentes web; buen punto de partida para descubrir librerías y debates sobre el tema.',
+              },
+              {
+                label: 'DesarrolloWeb.com -- Web Components',
+                url: 'https://desarrolloweb.com/home/web-components',
+                description:
+                  'Explicaciones en español sobre Custom Elements, Shadow DOM, plantillas y módulos ES, con enlaces a manuales de Polymer y Lit.',
+              },
+              {
+                label: '"Orientando a componentes: la Web" (SlideShare)',
+                url: 'https://es.slideshare.net/slideshow/orientando-a-componentes-la-web-55613507/55613507',
+                description:
+                  'Presentación en español sobre programación orientada a componentes en la web: Custom Elements, Shadow DOM, plantillas y patrones de diseño.',
+              },
+              {
+                label: 'web.dev',
+                url: 'https://web.dev/?hl=es-419',
+                description:
+                  'Guías, cursos y artículos sobre HTML, CSS, JavaScript, rendimiento y accesibilidad, escritos por el equipo de Chrome y por expertos externos.',
+              },
+            ],
+          },
+          {
+            type: 'note',
+            text: 'Vuelve a este capítulo después de explorar los recursos, con una pregunta o idea concreta en mente: qué parte de Custom Elements o de Shadow DOM quieres entender mejor, o qué práctica de tu propio componente te gustaría revisar con una fuente en la mano.',
+          },
+        ],
+        checkpoint:
+          'Visitaste al menos 2 de los 4 recursos y puedes nombrar algo nuevo que aprendiste de cada uno.',
+      },
+      {
+        id: 'webcomponents-concepto',
+        title: 'Qué es un Web Component',
+        objective:
+          'Un Web Component es una pieza de interfaz que encapsula su propio marcado, estilos y comportamiento, y que cualquier página puede usar como una etiqueta HTML más, sin depender del framework con el que se escribió.',
+        estimatedMinutes: 25,
+        content: [
+          { type: 'heading', text: 'Qué es un Web Component' },
+          {
+            type: 'p',
+            text: 'Un Web Component es una pieza de interfaz reutilizable que el propio navegador sabe usar. En vez de copiar el mismo bloque de HTML, CSS y JavaScript en cada página, lo empaquetas una sola vez y lo usas como si fuera una etiqueta más, por ejemplo la etiqueta mi-tarjeta. Nada de eso depende de una librería concreta: son capacidades que ya vienen integradas en el navegador.',
+          },
+          { type: 'heading', text: 'Las tres piezas del estándar' },
+          {
+            type: 'p',
+            text: 'Un Web Component no es una sola tecnología, sino tres que trabajan juntas. Cada una resuelve un problema distinto, y conviene entender qué garantiza cada una antes de mirar cualquier código.',
+          },
+          {
+            type: 'p',
+            text: 'Custom Elements te permite definir etiquetas nuevas con nombre propio (el nombre siempre lleva un guion, como mi-boton) y darles comportamiento en JavaScript. El navegador además avisa a esa clase cuando el elemento se agrega a la página, se quita, se mueve o cambia uno de sus atributos. Lo que garantiza es que tu etiqueta se comporte como un elemento nativo más.',
+          },
+          {
+            type: 'p',
+            text: 'Shadow DOM le da a cada componente un árbol de DOM privado. Lo que vive dentro de ese árbol no puede ser alcanzado por los selectores CSS ni por el JavaScript de la página, y al revés: los estilos de afuera no pisan los de adentro por accidente. Lo que garantiza es encapsulamiento; por eso dentro del componente puedes usar nombres de clase sencillos sin temor a chocar con otra parte de la página. Algunas propiedades, como la tipografía, sí se heredan desde afuera, y eso también es intencional.',
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Diagrama de tres capas apiladas. Arriba, Custom Element: la etiqueta y su lógica en JavaScript. En el medio, Shadow DOM: un recuadro cerrado con borde punteado que separa estilos y estructura internos del resto de la página. Abajo, HTML Template: el molde de marcado que se clona dentro del Shadow DOM. Flechas que muestren que el template se clona hacia el Shadow DOM de un Custom Element.',
+          },
+          {
+            type: 'p',
+            text: 'Las plantillas HTML son el molde. La etiqueta template guarda un bloque de marcado que el navegador no muestra ni ejecuta hasta que tu código lo clona. La etiqueta slot es un hueco dentro de ese molde donde se inserta el contenido que quien usa el componente escribe entre las etiquetas del componente. Lo que garantizan es que la estructura se defina una sola vez y que el contenido externo pueda componerse dentro de ella.',
+          },
+          { type: 'heading', text: 'El enfoque: componer en vez de copiar' },
+          {
+            type: 'p',
+            text: 'La idea de fondo es construir la interfaz como un conjunto de piezas independientes que se combinan, y no como un bloque enorme donde todo depende de todo. Cada pieza se encapsula, recibe lo que necesita por atributos o propiedades, y comunica lo que pasa hacia afuera mediante eventos.',
+          },
+          {
+            type: 'p',
+            text: 'Eso trae beneficios concretos. Primero, reutilización: un mismo componente puede aparecer en decenas de páginas sin reescribirse. Segundo, independencia de framework: como el navegador lo entiende de forma nativa, una página hecha con React, Vue, Angular o HTML puro puede usar el mismo componente. Tercero, menos colisiones: sus estilos no se filtran hacia afuera ni los estilos externos lo afectan. Cuarto, mantenimiento local: cambiar un componente afecta a quienes lo usan, y el resto del código no tiene por qué enterarse.',
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Comparación en dos columnas. Izquierda, titulada sin Web Components: el mismo bloque de HTML, CSS y JS copiado en tres páginas distintas, con estilos que chocan entre sí. Derecha, titulada con Web Components: una sola pieza reutilizable que aparece en las tres páginas, con sus estilos aislados.',
+          },
+          {
+            type: 'p',
+            text: 'Conviene aclarar algo: el estándar da las herramientas base, pero no obliga a escribir todo a mano. Existen librerías que facilitan crear componentes, y ese es el papel de Lit en este proyecto. Lit no reemplaza al estándar; lo usa por debajo y te ahorra el trabajo repetitivo.',
+          },
+          { type: 'heading', text: 'Un ejemplo conceptual' },
+          {
+            type: 'p',
+            text: 'Imagina una etiqueta mi-boton que, al usarla, dibuja un botón con su propio aspecto y su propio comportamiento. Quien la escribe en una página solo necesita saber que existe y qué atributos acepta; no necesita saber cómo está hecha por dentro:',
+          },
+          {
+            type: 'code',
+            lang: 'html',
+            code: `<mi-boton variante="principal">Guardar</mi-boton>`,
+          },
+          {
+            type: 'p',
+            text: 'Esa línea se lee como cualquier HTML, pero detrás hay un componente que dibuja el botón dentro de su propio espacio aislado. Si mañana cambias su color o su comportamiento, las páginas que lo usan no tienen que tocarse. Y como es una etiqueta estándar, la misma línea funciona en una página sin framework o dentro de una aplicación hecha con otra tecnología.',
+          },
+          {
+            type: 'note',
+            text: 'Esta es la idea detrás de todo el catálogo de ac-lit: sus 38 componentes se construyen como Web Components, y usamos Lit para escribirlos con menos código. En los próximos capítulos pasas de este concepto a código real del repo, pero la pregunta de fondo será siempre la misma: qué encapsula cada pieza y cómo se reutiliza.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar con tus propias palabras qué es un Web Component, nombrar las 3 tecnologías del estándar (Custom Elements, Shadow DOM y HTML Templates) y qué garantiza cada una, y explicar por qué son reutilizables entre frameworks.',
+      },
+      {
+        id: 'webcomponents-elementos',
+        title: 'Elementos de un Web Component',
+        objective: `Un Web Component se arma con tres piezas que trabajan juntas: Custom Elements (la etiqueta y su clase), Shadow DOM (el DOM y los estilos aislados) y HTML Templates (la estructura reutilizable que se clona).`,
         estimatedMinutes: 20,
         content: [
           {
             type: 'p',
-            text: 'npm/pnpm corren scripts por nombre exacto. Si la raíz del monorepo quiere "construir todos los paquetes afectados", necesita que todos usen el MISMO nombre de script -- de ahí el prefijo component:, reservado para cualquier tarea que exista en todo paquete con una demo.',
+            text: `Cuando decimos que algo es un Web Component, en realidad hablamos de tres estándares del navegador que se combinan. Ninguno es un framework: cada uno resuelve un problema distinto, y juntos permiten crear etiquetas HTML propias que se comportan como cualquier otro elemento.`,
           },
-          { type: 'heading', text: 'Los scripts reales de un componente' },
-          {
-            type: 'code',
-            lang: 'json',
-            filename: 'packages/components/ac-badge-basic/package.json',
-            code: `"scripts": {
-  "component:lint": "eslint .",
-  "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/badge-basic.styles.scss src/badge-basic.styles.js BadgeBasicStyles",
-  "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \\"pnpm run component:build:styles:watch\\" \\"vite demo\\"",
-  "component:build": "pnpm run component:build:styles && vite build",
-  "component:test": "pnpm run component:build:styles && web-test-runner \\"test/**/*.test.js\\"",
-  "component:test:e2e": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:run"
-}`,
-          },
-          { type: 'heading', text: 'Cómo los dispara la raíz del repo' },
+          { type: 'heading', text: '1. Custom Elements: tu propia etiqueta' },
           {
             type: 'p',
-            text: 'La raíz nunca corre "todos los paquetes a ciegas": scripts/affected.mjs calcula qué paquetes cambiaron (comparando contra origin/main) y le pide a pnpm que corra, SOLO en esos paquetes, un script con ese nombre exacto.',
-          },
-          {
-            type: 'code',
-            lang: 'json',
-            filename: 'package.json (raíz)',
-            code: `"scripts": {
-  "build": "node scripts/affected.mjs pnpm-run component:build",
-  "test": "node scripts/affected.mjs pnpm-run test component:test --concurrency=1",
-  "lint": "node scripts/affected.mjs eslint"
-}`,
-          },
-          {
-            type: 'p',
-            text: 'Acá está el riesgo real: pnpm corre con el flag --if-present. Si un paquete nuevo llamara a su script "test" en vez de "component:test", pnpm NO tira ningún error -- simplemente no encuentra ese nombre en ESE paquete y lo salta en silencio. El resultado: CI queda en verde sin haber corrido ni un solo test de ese paquete.',
-          },
-          {
-            type: 'note',
-            text: 'cli/test/package-scripts.test.js es la prueba que existe específicamente para que esto no pase desapercibido: falla si algún paquete con demo/ no tiene el juego completo de scripts component:*.',
-          },
-        ],
-        checkpoint:
-          'Puedes explicar por qué pnpm omite sin error un script con nombre distinto a component:test/component:build, y por qué eso dejaría el CI en verde sin haber corrido nada para ese paquete.',
-      },
-      {
-        id: 'fund-3',
-        title: 'Conventional Commits con commitlint',
-        objective:
-          'Todo commit de este repo pasa por commitlint antes de aceptarse -- un mensaje que no cumple el formato se rechaza automáticamente, antes de llegar a CI.',
-        estimatedMinutes: 15,
-        content: [
-          {
-            type: 'p',
-            text: 'El formato es tipo(scope): descripción, forzado localmente por un hook de Husky (commit-msg) que corre commitlint en cada commit.',
-          },
-          {
-            type: 'code',
-            filename: 'Formato',
-            code: `<tipo>(<scope>): <descripción en minúscula, sin punto final>
-
-[cuerpo opcional]
-
-[footer opcional]`,
-          },
-          { type: 'heading', text: 'Tipos permitidos y la regla del scope' },
-          {
-            type: 'p',
-            text: 'Tipos: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. El scope es el nombre corto del paquete afectado, pero tiene una regla propia de este repo (no es parte del estándar): debe ir en kebab-case.',
+            text: `Un custom element es una clase de JavaScript que le asigna comportamiento a una etiqueta con nombre propio. El nombre debe llevar un guion (por ejemplo mi-tarjeta) y el registro se hace con una sola llamada: customElements.define('mi-tarjeta', MiTarjeta). A partir de ahí, cada vez que el navegador encuentre <mi-tarjeta> en el documento, creará una instancia de esa clase.`,
           },
           {
             type: 'code',
             lang: 'js',
-            filename: 'commitlint.config.cjs',
-            code: `module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    'scope-case': [2, 'always', 'kebab-case'],
-  },
-};`,
-          },
-          { type: 'heading', text: 'Ejemplos reales de este repo' },
-          {
-            type: 'code',
-            filename: 'Ejemplos válidos',
-            code: `feat(cli): agregar comando \`aclit generate component\`
-fix(button): corregir foco perdido al deshabilitar el botón
-docs(conventions): documentar convención de nombres de eventos
-chore: configurar husky y commitlint`,
+            filename: 'mi-tarjeta.js',
+            code: `class MiTarjeta extends HTMLElement {
+  connectedCallback() {
+    this.textContent = 'Hola desde mi propia etiqueta';
+  }
+}
+
+customElements.define('mi-tarjeta', MiTarjeta);`,
           },
           {
             type: 'p',
-            text: 'Un cambio que rompe la API pública de un componente (por ejemplo, renombrar una propiedad) lleva un ! justo antes de los dos puntos:',
+            text: `La clase recibe callbacks de ciclo de vida: connectedCallback cuando el elemento entra al DOM, disconnectedCallback cuando sale y attributeChangedCallback cuando cambia uno de los atributos observados. Así el componente puede reaccionar a su propia existencia y a los cambios que recibe.`,
           },
-          {
-            type: 'code',
-            filename: 'Breaking change',
-            code: `feat(modal)!: renombrar la propiedad size a dimension`,
-          },
-          {
-            type: 'note',
-            text: 'Puedes validar un mensaje sin hacer ningún commit real: echo "tu mensaje" | pnpm exec commitlint -- es exactamente lo que corre el hook commit-msg al commitear de verdad.',
-          },
-        ],
-        checkpoint:
-          'Puedes escribir un feat, un fix y un cambio con ! (breaking) que pasarían commitlint, y sabes que el scope va en kebab-case, no en el estándar de Conventional Commits en sí sino como regla propia de este repo.',
-      },
-      {
-        id: 'fund-4',
-        title: 'Textos traducibles con this.t()',
-        objective:
-          "Ningún componente del catálogo escribe texto fijo en el template -- this.t('clave') resuelve el texto correcto según el idioma activo, con una cadena de 4 pasos antes de rendirse.",
-        estimatedMinutes: 15,
-        content: [
+          { type: 'heading', text: 'Atributos y properties: no son lo mismo' },
           {
             type: 'p',
-            text: 'AcIntlMixin agrega this.t(key, params?) a cualquier componente. El orden de resolución, de mayor a menor prioridad: (1) una traducción puesta en ESA instancia puntual, (2) una traducción agregada por la app consumidora vía addTextTranslations(), (3) el locales.json propio del componente, y (4) si nada de eso existe, la clave se muestra tal cual -- la señal de que algo quedó mal conectado.',
+            text: `Un atributo es lo que escribes en el HTML, por ejemplo <mi-tarjeta titulo="Ventas">. El navegador siempre lo guarda como texto, así que titulo="42" llega como "42". Una property es un valor de JavaScript sobre el objeto del elemento, como miTarjeta.datos = { total: 42 }, y puede ser de cualquier tipo: número, objeto, arreglo o función.`,
           },
-          { type: 'heading', text: 'locales.json real de un componente' },
           {
             type: 'p',
-            text: 'Un objeto por código BCP-47, con una clave por texto. El naming sigue siempre el mismo patrón: <componente>-<descripción>.',
+            text: `En la práctica, los atributos sirven para configurar algo simple que se escribe a mano, y las properties para pasar datos complejos desde otro código. Esta diferencia es justo la que vas a ver de cerca más adelante con Lit, donde un mismo componente recibe unos valores como atributo y otros como property.`,
+          },
+          { type: 'heading', text: '2. Shadow DOM: un DOM y unos estilos aislados' },
+          {
+            type: 'p',
+            text: `El Shadow DOM crea un árbol de DOM privado dentro del componente. Lo que está adentro no puede ser alterado por consultas como document.querySelector desde la página, y los estilos definidos adentro no se filtran hacia afuera. Por eso un botón del componente no hereda por accidente el color de la página, ni una regla global le rompe el diseño.`,
           },
           {
-            type: 'code',
-            lang: 'json',
-            filename: 'packages/components/ac-badge-basic/locales.json',
-            code: `{
-  "es-PE": { "badge-basic-new": "Nuevo" },
-  "en-EN": { "badge-basic-new": "New" },
-  "pt-BR": { "badge-basic-new": "Novo" }
-}`,
+            type: 'p',
+            text: `Se activa con attachShadow, normalmente en el constructor: this.attachShadow({ mode: 'open' }). Con mode 'open' el shadow root sigue accesible desde JavaScript (elemento.shadowRoot); con 'closed' queda oculto, aunque casi no se usa porque complica la depuración.`,
           },
-          { type: 'heading', text: 'Usarlo en el template' },
           {
             type: 'code',
             lang: 'js',
-            filename: 'src/badge-basic.js (fragmento ilustrativo)',
-            code: `render() {
-  return html\`<span class="ac-badge-basic">\${this.t('badge-basic-new')}</span>\`;
+            filename: 'mi-tarjeta.js (fragmento)',
+            code: `class MiTarjeta extends HTMLElement {
+  constructor() {
+    super();
+    const raiz = this.attachShadow({ mode: 'open' });
+    raiz.innerHTML = '<style>p { color: teal; }</style><p>Dentro del shadow</p>';
+  }
 }`,
           },
           {
             type: 'p',
-            text: 'Si una clave aparece tal cual en pantalla (por ejemplo "mi-componente-submit-text" en vez de "Enviar"), casi siempre el código de idioma activo no coincide exactamente con el de locales.json -- es el síntoma más común de un texto traducible mal conectado.',
+            text: `Desde adentro, el componente puede dejar huecos para recibir contenido de quien lo usa con <slot>. El contenido que se escribe entre las etiquetas del componente se proyecta en ese hueco, pero sigue siendo del documento que lo escribió, y los estilos de la página siguen aplicándose a él.`,
+          },
+          {
+            type: 'code',
+            lang: 'html',
+            filename: 'Dentro del shadow root y uso desde afuera',
+            code: `<!-- dentro del shadow root del componente -->
+<section>
+  <h2>Título fijo</h2>
+  <slot></slot>
+</section>
+
+<!-- uso desde la página -->
+<mi-tarjeta>
+  <p>Este párrafo se proyecta en el slot</p>
+</mi-tarjeta>`,
+          },
+          { type: 'heading', text: '3. HTML Templates: estructura que se clona' },
+          {
+            type: 'p',
+            text: `El elemento <template> guarda HTML que el navegador parsea pero no renderiza: no crea nodos visibles, no carga imágenes y no ejecuta scripts hasta que alguien lo usa. Su contenido vive en un fragmento aparte (template.content) que decides cuándo mostrar.`,
+          },
+          {
+            type: 'p',
+            text: `Para usarlo, clonas ese contenido con cloneNode(true) y lo insertas en el shadow root del componente. Así una misma estructura se reutiliza en cada instancia del elemento sin volver a escribir el HTML, y cada clon es independiente: cambiar uno no afecta a los demás.`,
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'Clonado de un template',
+            code: `const plantilla = document.createElement('template');
+plantilla.innerHTML = '<p class="etiqueta">Hola</p>';
+
+const copia = plantilla.content.cloneNode(true);
+this.shadowRoot.appendChild(copia);`,
+          },
+          {
+            type: 'note',
+            text: `Cómo encajan: Custom Elements define quién es el componente, Shadow DOM aísla lo que muestra y Template describe la estructura que se clona dentro de ese aislamiento. En este catálogo no vas a escribir customElements.define, attachShadow ni clonar templates a mano: Lit resuelve las tres piezas por ti. Igual, entender qué hace por dentro ayuda a explicar por qué un componente se vuelve a renderizar, por qué sus estilos no se filtran y por qué una property no es lo mismo que un atributo.`,
+          },
+        ],
+        checkpoint: `Puedes nombrar las 3 piezas de un Web Component (Custom Elements, Shadow DOM, HTML Templates), explicar qué resuelve cada una y la diferencia entre un atributo (siempre texto) y una property (cualquier tipo de dato).`,
+      },
+      {
+        id: 'lit-ciclo-vida',
+        title: 'Lit y su ciclo de vida',
+        objective:
+          'Lit es una librería mínima que hace cómodo escribir Web Components estándar: declaras propiedades reactivas y un render, y ella se encarga de volver a pintar cuando algo cambia. Entender en qué fase corre cada método es lo que evita la mayoría de los bugs típicos.',
+        estimatedMinutes: 20,
+        content: [
+          { type: 'heading', text: 'Qué es Lit' },
+          {
+            type: 'p',
+            text: 'Lit es una librería liviana, hoy mantenida bajo la OpenJS Foundation, para construir Web Components. No inventa un sistema de componentes propio: un componente Lit es un Custom Element nativo que puedes usar en cualquier página o framework. Lo que aporta es una capa mínima encima de la plataforma para escribirlo con menos código.',
+          },
+          { type: 'heading', text: 'Qué resuelve frente a hacerlo a mano' },
+          {
+            type: 'p',
+            text: 'Con la API nativa tendrías que registrar el elemento con customElements.define, crear el shadow root, escribir a mano el HTML inicial y repintar cada vez que cambia un dato. Lit te da tres cosas: propiedades reactivas (cuando una cambia, se programa un nuevo render solo), un método render() declarativo que devuelve una plantilla con html, y una clase base (LitElement) que gestiona el shadow root y el registro. Así el código se concentra en el estado y en cómo se ve ese estado.',
+          },
+          { type: 'heading', text: 'El ciclo de vida de un componente Lit' },
+          {
+            type: 'p',
+            text: 'Un componente Lit pasa por fases en un orden predecible. A grandes rasgos: se conecta al DOM (connectedCallback), detecta que una propiedad reactiva cambió y programa una actualización, calcula valores derivados en willUpdate(), genera el DOM con render() y lo aplica, y finalmente avisa con updated() y, solo la primera vez, con firstUpdated(). Cuando el elemento sale del DOM corre disconnectedCallback(), que queda fuera de esa secuencia y puede ocurrir en cualquier momento.',
+          },
+          {
+            type: 'p',
+            text: 'Antes de willUpdate() hay un paso intermedio, shouldUpdate(), que puede cancelar la actualización. El diagrama oficial de este ciclo, publicado en lit.dev, resume el orden completo:',
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Diagrama oficial del ciclo de vida de componentes de Lit, publicado en lit.dev (página Lifecycle). Pendiente: descargar o enlazar desde esa fuente.',
+          },
+          { type: 'heading', text: 'Por qué vale la pena investigarlo por tu cuenta' },
+          {
+            type: 'p',
+            text: 'Saber en qué fase estás te dice qué puedes hacer en cada una. En updated() y firstUpdated() el DOM ya está pintado, así que es el lugar seguro para medir elementos o enfocar un campo. En willUpdate() puedes calcular valores derivados sin disparar otra actualización, y en render() solo describes el DOM a partir del estado. Cambiar una propiedad dentro de updated() sí dispara un nuevo ciclo, y hacerlo sin cuidado produce bucles infinitos. Por eso conviene leer la documentación con calma: shouldUpdate, updateComplete y el orden exacto de cada método son los puntos que más se confunden al empezar.',
+          },
+          {
+            type: 'links',
+            title: 'Para seguir investigando',
+            items: [
+              {
+                label: 'Sitio oficial de Lit',
+                url: 'https://lit.dev/',
+                description:
+                  'Visión general, tutoriales y documentación de la versión actual. Empieza aquí para entender qué problema resuelve.',
+              },
+              {
+                label: 'Lit: ciclo de vida de componentes (Lifecycle)',
+                url: 'https://lit.dev/docs/components/lifecycle/',
+                description:
+                  'Detalla cada método, en qué orden corre y qué no conviene hacer dentro de cada uno. Léela antes de tocar un componente en los próximos capítulos.',
+              },
+            ],
           },
         ],
         checkpoint:
-          'Puedes enumerar los 4 pasos de resolución de un texto traducible, y escribir una clave nueva siguiendo <componente>-<descripción> con su traducción es-PE y en-EN.',
+          'Puedes explicar en una frase qué es Lit y qué resuelve sobre la plataforma nativa, y nombrar en orden las fases principales de su ciclo de vida (conectar, detectar cambios, willUpdate, render, updated).',
       },
     ],
   },
@@ -315,60 +477,168 @@ chore: configurar husky y commitlint`,
         title: '1. Scaffoldear el componente y levantar la demo vacía',
         estimatedMinutes: 25,
         objective:
-          'Vas a instalar el CLI de ac-lit y generar con él la estructura base de un componente nuevo, fuera del catálogo publicable -- tu propio banco de pruebas para construir `ac-registro-wizard` durante todo este capítulo.',
+          'Vas a instalar el CLI de ac-lit y crear tu propio proyecto de componente en una carpeta cualquiera de tu máquina, totalmente afuera de ac-lit. Al final tendrás `ac-registro-wizard` corriendo en el navegador, y vas a entender cada pieza de su `package.json`.',
         content: [
           { type: 'heading', text: 'Instala el CLI' },
           {
             type: 'p',
-            text: 'El CLI de ac-lit (`@ac-base/cli`) es el que genera la estructura base de cualquier componente del catálogo -- y también la de este laboratorio. Instálalo como paquete global:',
+            text: 'El CLI de ac-lit (`@ac-base/cli`) genera la estructura base de un componente, la misma que tiene cualquier paquete del catálogo. Lo instalas una sola vez, como paquete global:',
           },
           { type: 'code', lang: 'bash', code: 'npm install -g @ac-base/cli' },
-          { type: 'heading', text: 'Genera el scaffold fuera del catálogo publicable' },
+          { type: 'heading', text: 'Crea tu proyecto en cualquier carpeta' },
           {
             type: 'p',
-            text: 'Vas a construir `ac-registro-wizard` dentro de `catalog-site/lab-reference/`, no en `packages/components/` -- ese directorio es solo para componentes que se publican de verdad. Párate ahí y corre el mismo comando que usarías para cualquier componente real; el nombre tiene que empezar con `ac-`, el CLI lo exige igual:',
+            text: 'Este paso corre en una carpeta cualquiera de tu máquina, la que uses para tus proyectos. No necesitas clonar ni tocar el repositorio de ac-lit en ningún momento: tu componente es un proyecto propio, en su propia carpeta, totalmente afuera de ese repo.',
           },
           {
             type: 'code',
             lang: 'bash',
-            code: 'cd catalog-site/lab-reference\naclit component:create ac-registro-wizard',
+            code: 'aclit component:create ac-registro-wizard',
           },
           {
             type: 'p',
-            text: 'El comando crea la carpeta completa por ti: `package.json`, `src/`, `demo/`, `test/`, `test_e2e/` y los mismos scripts `component:*` que tendría cualquier componente real -- no hace falta crear nada a mano antes de correrlo.',
+            text: 'El comando crea la carpeta `ac-registro-wizard/` justo donde estás parado, con todo el scaffold adentro. El nombre tiene que empezar con `ac-`: el CLI lo exige, y así el tag del componente queda como `<ac-registro-wizard>`.',
           },
-          { type: 'heading', text: 'Marca el paquete como privado' },
+          { type: 'heading', text: 'Así se ve tu package.json' },
           {
             type: 'p',
-            text: 'El scaffold que genera el CLI trae un bloque `publishConfig`, porque por defecto asume que vas a publicar el componente a npm. Como este paquete nunca se publica, bórralo por completo y agrega `"private": true` justo después de `"version"` -- es la única edición manual que falta. Así se ve el `package.json` final (abreviado):',
+            text: 'Este es el `package.json` que genera el CLI para tu componente, con las versiones reales publicadas en npm:',
           },
           {
             type: 'code',
             lang: 'json',
-            filename: 'catalog-site/lab-reference/ac-registro-wizard/package.json',
-            code: '{\n  "name": "@ac-components/ac-registro-wizard",\n  "version": "0.1.1",\n  "private": true,\n  "description": "ac-lit registro-wizard Web Component — componente de referencia del Laboratorio de aprendizaje (catalog-site/), nunca publicado a npm.",\n  "scripts": {\n    "component:lint": "eslint .",\n    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs ...",\n    "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \\"pnpm run component:build:styles:watch\\" \\"vite demo\\"",\n    "component:build": "pnpm run component:build:styles && vite build",\n    "component:test": "pnpm run component:build:styles && web-test-runner \\"test/**/*.test.js\\"",\n    "component:test:e2e": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:run"\n  },\n  "dependencies": {\n    "@ac-base/ac-component-mixin": "workspace:^",\n    "@ac-base/ac-intl-mixin": "workspace:^",\n    "@ac-components/ac-api-users": "workspace:^",\n    "@ac-components/ac-button-basic": "workspace:^"\n  },\n  "peerDependencies": { "lit": "^3.0.0" }\n}',
+            filename: 'ac-registro-wizard/package.json',
+            code: `{
+  "name": "@ac-components/ac-registro-wizard",
+  "version": "0.1.0",
+  "description": "ac-lit registro-wizard Web Component",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./locales.json": "./locales.json"
+  },
+  "files": ["/src/", "index.js", "locales.json"],
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "component:lint": "eslint .",
+    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/registro-wizard.styles.scss src/registro-wizard.styles.js RegistroWizardStyles",
+    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/registro-wizard.styles.scss src/registro-wizard.styles.js RegistroWizardStyles --watch",
+    "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \\"pnpm run component:build:styles:watch\\" \\"vite demo\\"",
+    "component:build": "pnpm run component:build:styles && vite build",
+    "component:preview": "vite preview",
+    "component:test": "pnpm run component:build:styles && web-test-runner \\"test/**/*.test.js\\""
+  },
+  "dependencies": {
+    "@ac-base/ac-component-mixin": "^0.1.0",
+    "@ac-base/ac-intl-mixin": "^0.1.0"
+  },
+  "peerDependencies": { "lit": "^3.0.0" },
+  "devDependencies": {
+    "@ac-base/ac-core": "^0.1.0",
+    "@ac-base/ac-demo-content": "^0.1.0",
+    "@ac-base/cli": "^0.2.0",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "concurrently": "^9.1.0",
+    "lit": "^3.0.0",
+    "sass": "^1.79.4",
+    "vite": "^5.4.8"
+  }
+}`,
+          },
+          {
+            type: 'note',
+            text: 'El bloque `publishConfig` viene por defecto porque el CLI asume que vas a publicar tu componente a npm, con acceso público. Si este es solo un proyecto de práctica, puedes borrar ese bloque y agregar `"private": true` justo después de `"version"`: así npm nunca lo publica por error. Si algún día quieres publicarlo de verdad, el paquete ya está listo para hacerlo.',
+          },
+          { type: 'heading', text: 'Qué hace cada sección' },
+          {
+            type: 'p',
+            text: 'Los primeros campos (`name`, `version`, `description` y `license`) son la identidad del paquete: cómo se llama, en qué versión está, qué es y con qué licencia se distribuye. El `name` usa el scope `@ac-components/`, que es el que usa el catálogo para sus componentes.',
           },
           {
             type: 'p',
-            text: 'Fíjate en los `scripts`: todos llevan el prefijo `component:` (`component:serve`, `component:build`, `component:test`...) -- es la misma convención que usa cualquier paquete del catálogo real, así el agregador de scripts del monorepo los reconoce.',
+            text: '`"type": "module"` indica que el código usa `import` y `export` de ES modules. `main` y `exports` definen qué se carga cuando alguien importa el paquete (aquí, `index.js`), y `exports` además expone `locales.json`, para que las traducciones puedan leerse desde fuera. `files` dice qué se incluye si algún día publicas el paquete.',
+          },
+          {
+            type: 'p',
+            text: 'Los `scripts` son los comandos que corres con `pnpm run`. Todos llevan el prefijo `component:`, la misma convención de todo el catálogo: `component:serve` levanta la demo, `component:build` genera la versión de producción, `component:test` corre los tests unitarios y `component:lint` revisa el código.',
+          },
+          { type: 'heading', text: 'dependencies: lo que viaja con tu componente' },
+          {
+            type: 'p',
+            text: 'Estas dos se instalan también en el navegador de quien use tu componente, porque son código de runtime:',
+          },
+          {
+            type: 'p',
+            text: '`@ac-base/ac-component-mixin` te da `ComponentMixin(LitElement)`, la clase base de tu componente, con la propiedad `ambient` y `componentBaseStyles`, que fija la tipografía del sistema en `:host`.',
+          },
+          {
+            type: 'p',
+            text: '`@ac-base/ac-intl-mixin` agrega la traducción, es decir `this.t()`. No la importas directamente: `ComponentMixin` la usa por dentro, así que tú solo heredas de `ComponentMixin` y ya tienes `this.t()` disponible.',
+          },
+          {
+            type: 'p',
+            text: 'Ojo con `lit`: va como `peerDependency`, no como dependencia. Eso significa que la app que consuma tu componente debe traer su propia copia de `lit`, y tu paquete no la duplica.',
+          },
+          { type: 'heading', text: 'devDependencies: herramientas para desarrollar y probar' },
+          {
+            type: 'p',
+            text: 'Estas no viajan con el componente: son herramientas de tu proceso de desarrollo. La más importante es `@ac-base/cli`, así que empezamos por ella.',
+          },
+          { type: 'heading', text: 'Por qué @ac-base/cli es una devDependency de tu proyecto' },
+          {
+            type: 'p',
+            text: 'Instalar el CLI globalmente no alcanza. El script `component:build:styles` llama directamente a un archivo del paquete, por una ruta relativa a tu proyecto:',
+          },
+          {
+            type: 'code',
+            lang: 'json',
+            code: '"component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/registro-wizard.styles.scss src/registro-wizard.styles.js RegistroWizardStyles"',
+          },
+          {
+            type: 'p',
+            text: 'Ese archivo tiene que existir dentro de tu `node_modules`. Por eso el CLI tiene que estar como devDependency del proyecto. El CLI global solo lo usas para el comando inicial, `aclit component:create`; a partir de ahí, tu proyecto es autosuficiente: `pnpm install` le trae todo lo que necesita, incluido el compilador de estilos.',
+          },
+          {
+            type: 'p',
+            text: 'El resto de las devDependencies son más directas: `@ac-base/ac-core` trae los tokens de diseño de Emerald Pro, que tus estilos usan. `@ac-base/ac-demo-content` es el contenedor de la demo que levanta `vite demo`, con el selector de idioma, tema, tamaño de dispositivo y panel de eventos.',
+          },
+          {
+            type: 'p',
+            text: '`@open-wc/testing` y `@web/test-runner` corren tus tests unitarios en un navegador real, con `component:test`.',
+          },
+          {
+            type: 'p',
+            text: '`concurrently` corre dos procesos a la vez en `component:serve`: el watcher de estilos y `vite demo`. `sass` compila tu `.scss` a estilos, y `vite` sirve la demo y genera el build.',
+          },
+          {
+            type: 'p',
+            text: 'Y `lit` aparece también como devDependency para que la demo tenga Lit mientras desarrollas; como peerDependency, quien consuma el componente es quien lo provee.',
+          },
+          { type: 'heading', text: 'Por qué no aparece @ac-base/ac-e2e-testing' },
+          {
+            type: 'p',
+            text: 'Esa dependencia es privada: vive dentro del repo de ac-lit y nunca se publicó a npm. Como tu proyecto está afuera de ese repo, el CLI no puede instalarla, así que la omite junto con los scripts `component:test:e2e*` que dependen de ella. Dentro del workspace de ac-lit sí aparece, porque ahí sí se puede resolver.',
           },
           { type: 'heading', text: 'Instala dependencias y levanta la demo' },
           {
             type: 'p',
-            text: '`pnpm-workspace.yaml` ya incluye el patrón `catalog-site/lab-reference/*`, así que tu paquete nuevo entra automáticamente al workspace en cuanto corres `pnpm install` desde la raíz del repo.',
+            text: 'Entra a la carpeta del proyecto, instala y levanta la demo. Usamos `pnpm`, como en el resto del laboratorio: tus scripts llaman a `pnpm run` por dentro, así que necesitas pnpm activo, tal como indican los requisitos de software.',
           },
           {
             type: 'code',
             lang: 'bash',
-            code: 'pnpm install\npnpm --filter @ac-components/ac-registro-wizard run component:serve',
+            code: 'cd ac-registro-wizard\npnpm install\npnpm run component:serve',
           },
           {
-            type: 'note',
-            text: 'Si `pnpm install` falla resolviendo `workspace:^`, revisa que el nombre de la carpeta en `catalog-site/lab-reference/` coincida exactamente con el patrón del workspace -- un glob que no matchea deja el paquete afuera y el protocolo `workspace:^` no tiene contra qué resolver.',
+            type: 'p',
+            text: 'Cuando `component:serve` termine de arrancar, abre en el navegador la URL que imprime Vite (por lo general http://localhost:5173). Vas a ver la demo con `ac-demo-content` alrededor y tu componente de ejemplo adentro.',
           },
         ],
         checkpoint:
-          'La demo abre en el navegador, con `ac-demo-content` alrededor (cabecera, selector ES/EN, tema, dispositivo) y tu componente mostrando el placeholder del scaffold -- un `<span>` con el texto "Hola" -- sin ningún error en la consola.',
+          'Tu `package.json` tiene las 2 dependencias base (`@ac-base/ac-component-mixin` y `@ac-base/ac-intl-mixin`) con versiones reales de npm, no `workspace:^`; entiendes por qué `@ac-base/cli` es una devDependency de tu propio proyecto; y la demo abre en el navegador sin errores en la consola.',
       },
       {
         id: 'construccion-02-first-component',
@@ -382,14 +652,26 @@ chore: configurar husky y commitlint`,
             type: 'p',
             text: 'Se instala, se importa por su efecto de registro y se declara directo en el HTML que devuelve tu `render()` -- exactamente igual que cualquier otra dependencia del monorepo. La única diferencia con un paquete externo es el protocolo `workspace:^`, porque vive en el mismo repo.',
           },
-          { type: 'heading', text: 'Agrega la dependencia a tu package.json' },
+          { type: 'heading', text: 'Agrega la dependencia con pnpm add' },
+          {
+            type: 'p',
+            text: 'Nunca edites a mano el rango de versión de una dependencia -- dejá que `pnpm` lo resuelva. Como `ac-input-basic` vive en el mismo workspace que tu componente, `pnpm add` escribe solo el protocolo `workspace:^` en tu `package.json` (si el componente viviera afuera del monorepo, pnpm pondría el rango real publicado en npm, no `workspace:^`):',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: 'pnpm add @ac-components/ac-input-basic',
+          },
+          {
+            type: 'p',
+            text: 'Tu `package.json` queda así, sin que hayas tocado el archivo a mano:',
+          },
           {
             type: 'code',
             lang: 'json',
             filename: 'catalog-site/lab-reference/ac-registro-wizard/package.json',
-            code: '{\n  "dependencies": {\n    "@ac-base/ac-component-mixin": "workspace:^",\n    "@ac-components/ac-input-basic": "workspace:^"\n  }\n}',
+            code: '{\n  "dependencies": {\n    "@ac-base/ac-component-mixin": "workspace:^",\n    "@ac-base/ac-intl-mixin": "workspace:^",\n    "@ac-components/ac-input-basic": "workspace:^"\n  }\n}',
           },
-          { type: 'code', lang: 'bash', code: 'pnpm install' },
           { type: 'heading', text: 'Impórtalo por su efecto de registro' },
           {
             type: 'p',

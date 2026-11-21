@@ -437,7 +437,17 @@ let labProgress = new Set();
 // Capítulos abiertos en la vista de Laboratorio (sobrevive a los re-renders del nivel activo).
 const openLabChapters = new Set();
 
+let autoAdvanceTimer = null;
+
+function clearAutoAdvanceTimer() {
+  if (autoAdvanceTimer) {
+    clearInterval(autoAdvanceTimer);
+    autoAdvanceTimer = null;
+  }
+}
+
 function toggleLabComplete(labId) {
+  clearAutoAdvanceTimer();
   const allLabs = activeLevel.chapters.flatMap(chapter => chapter.labs);
   if (labProgress.has(labId)) {
     // Desmarcar un laboratorio re-bloquea los siguientes: se quitan del progreso
@@ -452,10 +462,46 @@ function toggleLabComplete(labId) {
 }
 
 function selectLab(labId) {
+  clearAutoAdvanceTimer();
   selectedLabId = labId;
   const found = findLab(activeLevel, labId);
   if (found) openLabChapters.add(found.chapter.id);
   renderLabLevel(activeLevel);
+}
+
+// Solo la usa el botón "Marcar como completado" del panel de contenido (los
+// checkboxes del nav siguen llamando a toggleLabComplete directo, sin esto) --
+// al MARCAR (no al desmarcar) arranca una cuenta regresiva de 5s en el propio
+// botón y, si hay un próximo laboratorio sin completar, navega solo ahí.
+function handleCompleteButtonClick(lab) {
+  const level = activeLevel;
+  const wasDone = labProgress.has(lab.id);
+  toggleLabComplete(lab.id);
+  if (wasDone) return;
+
+  const button = labContentEl.querySelector('.catalog__lab-content-complete-button');
+  if (!button) return;
+
+  const nextLabId = autoSelectLabId(level);
+  // autoSelectLabId cae a un laboratorio ya completado cuando no queda nada
+  // pendiente; en ese caso no hay "siguiente paso" que ofrecer.
+  if (!nextLabId || nextLabId === lab.id || labProgress.has(nextLabId)) return;
+
+  button.disabled = true;
+  let secondsLeft = 5;
+  button.textContent = `Siguiente paso en ${secondsLeft}s`;
+  autoAdvanceTimer = setInterval(() => {
+    secondsLeft -= 1;
+    if (secondsLeft > 0) {
+      button.textContent = `Siguiente paso en ${secondsLeft}s`;
+      return;
+    }
+    clearAutoAdvanceTimer();
+    button.replaceChildren(create('span', 'catalog__lab-content-loader'));
+    setTimeout(() => {
+      if (selectedLabId === lab.id) selectLab(nextLabId);
+    }, 600);
+  }, 1000);
 }
 
 // Recorre los capítulos de un nivel aplicando la regla de desbloqueo
@@ -625,6 +671,7 @@ const CODE_TOKEN_RULES = {
   js: [
     { type: 'comment', re: /\/\/[^\n]*|\/\*[\s\S]*?\*\// },
     { type: 'string', re: /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ },
+    { type: 'tag', re: /<\/?[a-zA-Z][\w-]*/ },
     { type: 'number', re: /\b\d+(?:\.\d+)?\b/ },
     { type: 'keyword', re: new RegExp(`\\b(?:${JS_KEYWORDS})\\b`) },
     { type: 'function', re: /\b[a-zA-Z_$][\w$]*(?=\()/ },
@@ -706,6 +753,46 @@ function renderCodeEditor({ lang, filename, code }) {
   return wrapper;
 }
 
+const IMAGE_ICON =
+  '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>';
+const EXTERNAL_LINK_ICON = '<path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M21 14v7H3V3h7"/>';
+
+// Hueco visual para una imagen que todavía no existe (se suma después a
+// mano) -- un cuadro con borde punteado y una nota de qué va a ir ahí, en vez
+// de dejar el hueco totalmente mudo.
+function buildImagePlaceholder(block) {
+  const box = create('div', 'catalog__lab-content-image-placeholder');
+  const iconWrap = create('span', 'catalog__lab-content-image-placeholder-icon');
+  iconWrap.innerHTML = icon(IMAGE_ICON, 28);
+  box.append(iconWrap, create('p', 'catalog__lab-content-image-placeholder-text', block.caption));
+  return box;
+}
+
+// Lista de links externos curados (ej. la sección "Investigación") -- cada
+// uno abre en una pestaña nueva, con una descripción corta opcional debajo.
+function buildLinksList(block) {
+  const wrap = create('div', 'catalog__lab-content-links');
+  if (block.title) wrap.append(create('p', 'catalog__lab-content-links-title', block.title));
+  const list = create('ul', 'catalog__lab-content-links-list');
+  for (const item of block.items) {
+    const li = create('li', 'catalog__lab-content-links-item');
+    const link = create('a', 'catalog__lab-content-link', item.label);
+    link.href = item.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const iconWrap = create('span', 'catalog__lab-content-link-icon');
+    iconWrap.innerHTML = icon(EXTERNAL_LINK_ICON, 14);
+    link.append(iconWrap);
+    li.append(link);
+    if (item.description) {
+      li.append(create('p', 'catalog__lab-content-link-description', item.description));
+    }
+    list.append(li);
+  }
+  wrap.append(list);
+  return wrap;
+}
+
 function buildLabCallout(kind, title, text, iconPath) {
   const box = create('div', `catalog__lab-content-callout catalog__lab-content-callout--${kind}`);
   const iconWrap = create('span', 'catalog__lab-content-callout-icon');
@@ -721,6 +808,10 @@ function buildLabCallout(kind, title, text, iconPath) {
 
 function renderLabContent(level) {
   labContentEl.replaceChildren();
+  // Sin esto, el scroll queda en el mismo pixel al cambiar de laboratorio
+  // (manual o por auto-avance) -- replaceChildren() no resetea el scroll de
+  // un contenedor que sigue montado, solo cambia su contenido.
+  labContentEl.scrollTop = 0;
 
   const found = selectedLabId ? findLab(level, selectedLabId) : null;
   if (!found) {
@@ -754,6 +845,10 @@ function renderLabContent(level) {
       labContentEl.append(renderCodeEditor(block));
     } else if (block.type === 'note') {
       labContentEl.append(buildLabCallout('hint', 'Nota', block.text, LIGHTBULB_ICON));
+    } else if (block.type === 'image-placeholder') {
+      labContentEl.append(buildImagePlaceholder(block));
+    } else if (block.type === 'links') {
+      labContentEl.append(buildLinksList(block));
     }
   }
 
@@ -778,7 +873,7 @@ function renderLabContent(level) {
     isDone ? 'Completado ✓' : 'Marcar como completado',
   );
   completeButton.type = 'button';
-  completeButton.addEventListener('click', () => toggleLabComplete(lab.id));
+  completeButton.addEventListener('click', () => handleCompleteButtonClick(lab));
   actions.append(completeButton);
   labContentEl.append(actions);
 }
