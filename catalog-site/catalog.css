@@ -1661,7 +1661,10 @@ body[data-view='lab'] .catalog__menu-button {
   display: flex;
   flex-direction: column;
   gap: var(--space-5, 1.25rem);
-  padding: var(--space-6, 1.5rem);
+  /* Sin padding acá: el selector de nivel lo necesita a sangre completa (para
+     que sus manchas decorativas lleguen a las esquinas reales de la pantalla)
+     y pone el suyo propio; la página de un nivel (.catalog__lab-level) pone
+     el suyo también, más abajo. */
 }
 
 .catalog__lab-header {
@@ -1777,6 +1780,325 @@ body[data-view='lab'] .catalog__menu-button {
 
 .catalog__lab-reference-link:hover {
   text-decoration: underline;
+}
+
+/* Selector de nivel -- pantalla que se muestra antes de entrar a cualquier
+   capítulo. Requisitos de software centrados arriba, 3 tarjetas-botón abajo. */
+.catalog__lab-selector {
+  --lab-purple-100: #ede9fe;
+  --lab-purple-600: #7c3aed;
+
+  position: relative;
+  /* Ocupa todo el `.catalog__lab` disponible (no solo lo que mide su
+     contenido) -- así las manchas decorativas de ::before/::after llegan
+     hasta abajo también, no solo hasta donde termina el texto. */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6, 1.5rem);
+  text-align: left;
+  /* El padding va acá (no en `.catalog__lab`): así el borde de este div llega
+     a sangre completa contra la pantalla real y las manchas de las esquinas
+     (::before/::after, posicionadas contra ESTE borde) no quedan recortadas
+     de más por un padding del contenedor. */
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Manchas decorativas en las esquinas -- puro CSS, sin imágenes. */
+.catalog__lab-selector::before,
+.catalog__lab-selector::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+.catalog__lab-selector::before {
+  top: -8rem;
+  left: -10rem;
+  background: var(--color-accent-300, #fcd34d);
+}
+
+.catalog__lab-selector::after {
+  bottom: -10rem;
+  right: -10rem;
+  background: var(--color-primary-300, #6ee7b7);
+}
+
+.catalog__lab-selector .catalog__lab-back {
+  align-self: flex-start;
+}
+
+.catalog__lab-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6, 1.5rem);
+  width: 100%;
+  max-width: 64rem;
+}
+
+.catalog__lab-hero-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.catalog__lab-hero-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-1, 0.3rem);
+  padding: 0.3rem var(--space-3, 0.75rem);
+  background: var(--color-primary-100, #d1fae5);
+  color: var(--color-primary-700, #047857);
+  border-radius: var(--radius-full, 999px);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-hero-text h1 {
+  margin: 0;
+  font-size: 2.75rem;
+  line-height: 1.05;
+  font-weight: var(--font-weight-bold, 800);
+}
+
+.catalog__lab-hero-text .catalog__lab-intro {
+  max-width: 34rem;
+  margin: 0;
+}
+
+.catalog__lab-hero-underline {
+  display: block;
+  width: 3rem;
+  height: 0.3rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-500, #10b981);
+}
+
+.catalog__lab-hero-image {
+  flex-shrink: 0;
+  width: min(26rem, 42%);
+}
+
+.catalog__lab-hero-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.catalog__lab-requirements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  width: 100%;
+  /* Mismo ancho máximo que .catalog__lab-hero, para que el borde izquierdo
+     quede alineado con el título "Laboratorio" en vez de quedar más angosto. */
+  max-width: 64rem;
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+  text-align: left;
+}
+
+.catalog__lab-requirements-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-requirements-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--color-accent-100, #fef3c7);
+  color: var(--color-accent-500, #f59e0b);
+}
+
+.catalog__lab-requirements-title {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-requirements-equipo {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-level-grid {
+  display: flex;
+  flex-wrap: wrap;
+  /* Más separación entre tarjetas que el resto de los gaps chicos de esta
+     vista -- son 3 bloques grandes, no una lista densa. */
+  gap: var(--space-5, 1.25rem);
+  width: 100%;
+  /* Mismo ancho máximo que .catalog__lab-hero, para que el borde izquierdo
+     quede alineado con el título "Laboratorio". */
+  max-width: 64rem;
+}
+
+.catalog__lab-level-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2, 0.5rem);
+  /* Crece para ocupar el ancho disponible de la fila (ya no un ancho fijo
+     centrado) -- min-width fija dónde pasa a envolver en pantallas angostas. */
+  flex: 1 1 16rem;
+  padding: var(--space-4, 1rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.catalog__lab-level-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.catalog__lab-level-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-level-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-md, 1rem);
+  background: var(--color-primary-100, #d1fae5);
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__lab-level-card-pill {
+  padding: 0.2rem var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-100, #d1fae5);
+  color: var(--color-primary-700, #047857);
+  font-size: var(--font-size-xs, 0.7rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-level-card-title {
+  font-size: 1.3rem;
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.catalog__lab-level-card-description {
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
+}
+
+.catalog__lab-level-card-divider {
+  width: 100%;
+  margin: var(--space-1, 0.3rem) 0;
+  border: none;
+  border-top: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__lab-level-card-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog__lab-level-card-feature {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.catalog__lab-level-card-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-primary-700, #047857);
+}
+
+.catalog__lab-level-card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1, 0.3rem);
+  width: 100%;
+  /* `auto` en vez de un gap fijo: empuja el CTA al borde inferior de la
+     tarjeta cuando las 3 tarjetas de la fila quedan estiradas a la misma
+     altura (align-items: stretch, el default del grid). */
+  margin-top: auto;
+  padding: 0.6rem var(--space-4, 1rem);
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--color-primary-500, #10b981);
+  color: var(--color-primary-700, #047857);
+  font-size: var(--font-size-sm, 0.85rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+/* La primera tarjeta (Básico) lleva el CTA relleno -- las otras dos quedan
+   con el contorno, mismo patrón que la imagen de referencia. */
+.catalog__lab-level-card:first-child .catalog__lab-level-card-cta {
+  background: var(--color-primary-500, #10b981);
+  color: white;
+}
+
+/* Tema de color por posición: 1ra tarjeta verde, 2da ámbar, 3ra morado
+   (morado es un acento puntual de esta vista, no un token del design system). */
+.catalog__lab-level-card:nth-child(2) .catalog__lab-level-card-icon,
+.catalog__lab-level-card:nth-child(2) .catalog__lab-level-card-pill {
+  background: var(--color-accent-100, #fef3c7);
+  color: var(--color-accent-500, #f59e0b);
+}
+
+.catalog__lab-level-card:nth-child(2) .catalog__lab-level-card-feature-icon {
+  color: var(--color-accent-500, #f59e0b);
+}
+
+.catalog__lab-level-card:nth-child(3) .catalog__lab-level-card-icon,
+.catalog__lab-level-card:nth-child(3) .catalog__lab-level-card-pill {
+  background: var(--lab-purple-100);
+  color: var(--lab-purple-600);
+}
+
+.catalog__lab-level-card:nth-child(3) .catalog__lab-level-card-feature-icon {
+  color: var(--lab-purple-600);
+}
+
+.catalog__lab-level {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 1.25rem);
+  padding: var(--space-6, 1.5rem);
 }
 
 .catalog__api-table {
@@ -2158,5 +2480,28 @@ body[data-view='lab'] .catalog__menu-button {
 
   .catalog__commands-dialog {
     width: calc(100vw - var(--space-4, 1rem) * 2);
+  }
+}
+
+@media (max-width: 640px) {
+  .catalog__lab-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .catalog__lab-hero-badge {
+    align-self: center;
+  }
+
+  .catalog__lab-hero-underline {
+    margin: 0 auto;
+  }
+
+  .catalog__lab-hero-text .catalog__lab-intro {
+    max-width: none;
+  }
+
+  .catalog__lab-hero-image {
+    width: min(18rem, 70%);
   }
 }

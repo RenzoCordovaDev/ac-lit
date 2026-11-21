@@ -1,16 +1,49 @@
-// Capítulos y laboratorios del Laboratorio de aprendizaje -- ruta progresiva y estrictamente
-// secuencial (un laboratorio se desbloquea solo cuando el anterior de su capítulo está
-// completo, y un capítulo solo cuando el anterior está 100% completo). Igual que
-// catalog-meta.js/catalog-api.js: data hand-authored, sin generación automática.
+// Niveles, capítulos y laboratorios del Laboratorio de aprendizaje -- al entrar se elige un
+// nivel (Básico/Intermedio/Avanzado); dentro de cada nivel la ruta es progresiva y
+// estrictamente secuencial (un laboratorio se desbloquea solo cuando el anterior de su
+// capítulo está completo, y un capítulo solo cuando el anterior está 100% completo). Igual
+// que catalog-meta.js/catalog-api.js: data hand-authored, sin generación automática.
 //
-// Forma de cada laboratorio: { id, title, objective, context, steps: [...], hint, selfCheck }
+// Niveles: Intermedio/Avanzado NO son "lo mismo pero más difícil" -- cada uno suma temas
+// nuevos que Básico no cubre (testing, accesibilidad, e2e, analítica...). Por eso hoy solo
+// Básico tiene contenido real; Intermedio/Avanzado existen como estructura (su propia
+// página, su propio progreso) con `chapters: []`, a escribir en otra sesión.
+//
+// Forma de cada laboratorio: { id, title, objective, context, steps: [...], hint, selfCheck, estimatedMinutes }
+// Forma de cada capítulo: { id, title, summary, labs: [...], estimatedMinutes, outcomes: [...] }
+// Forma de cada nivel: { id, title, description, prerequisite, icon, chapters: [...] }
 
-export const LAB_CHAPTERS = [
+/* Requisitos de software -- se muestran una sola vez, centrados, en la pantalla de
+   selección de nivel (aplican por igual a los 3 niveles, no se repiten por tarjeta).
+   Vista técnica: comandos reales para confirmar la versión instalada, no una lista
+   de prosa -- se omiten a propósito ítems implícitos para cualquier entorno de
+   desarrollo (editor, navegador, terminal). */
+export const LAB_REQUIREMENTS = {
+  equipo:
+    'Windows 10/11, macOS 12+ o cualquier distro Linux reciente -- sin requisito de hardware especial.',
+  checks: [
+    { command: 'node -v', comment: '>=18 requerido (el repo fija 22 en .nvmrc)' },
+    {
+      command: 'corepack enable && corepack prepare pnpm@9.15.9 --activate',
+      comment: 'activa la versión de pnpm que usa el repo',
+    },
+    { command: 'git --version', comment: null },
+  ],
+};
+
+const BASICO_CHAPTERS = [
   {
     id: 'fundamentos',
     title: 'Capítulo 0 — Fundamentos y estándares',
     summary:
       'Tokens de diseño, naming de scripts component:*, y Conventional Commits -- las reglas que vas a aplicar en todo lo que sigue.',
+    estimatedMinutes: 70,
+    outcomes: [
+      'Justificar qué token de diseño corresponde a cada propiedad visual en vez de usar valores literales.',
+      'Explicar la convención component:* y el riesgo real de un script con nombre distinto.',
+      'Escribir y validar mensajes Conventional Commits, incluidos breaking changes.',
+      'Agregar claves de texto traducible siguiendo el naming y el orden de resolución del proyecto.',
+    ],
     labs: [
       {
         id: 'fund-1',
@@ -30,6 +63,7 @@ export const LAB_CHAPTERS = [
         hint: 'Una variable se lee como var(--nombre, respaldo): lo que va antes de la coma es el token que manda; lo que va después solo aplica si el token no está definido.',
         selfCheck:
           'Tienes una tabla con las propiedades del badge, el token de cada una y su valor, y puedes justificar --radius-full (badge = tag/estado) y el uso de tokens de color fijos en la variante success.',
+        estimatedMinutes: 20,
       },
       {
         id: 'fund-2',
@@ -48,6 +82,7 @@ export const LAB_CHAPTERS = [
         hint: 'Piensa en el flag --if-present: si el script no existe con ese nombre exacto, pnpm no falla, simplemente lo salta sin decir nada.',
         selfCheck:
           'Tu explicación dice que pnpm omite sin error un script con nombre distinto, que el CI quedaría en verde sin ejecutar esos tests, y nombra cli/test/package-scripts.test.js como la prueba que lo impide.',
+        estimatedMinutes: 20,
       },
       {
         id: 'fund-3',
@@ -68,6 +103,7 @@ export const LAB_CHAPTERS = [
         hint: 'El ! va justo antes de los dos puntos, como en feat(modal)!: ..., y el scope debe ir en kebab-case, sin mayúsculas ni espacios. Si commitlint falla, el mensaje de error dice qué regla se incumplió.',
         selfCheck:
           'Los tres mensajes válidos pasan echo "..." | pnpm exec commitlint sin errores, y el mensaje sin tipo falla. No hiciste ningún commit real.',
+        estimatedMinutes: 15,
       },
       {
         id: 'fund-4',
@@ -86,6 +122,7 @@ export const LAB_CHAPTERS = [
         hint: 'Si una clave aparece tal cual en pantalla en vez de su traducción, casi siempre el código de idioma no coincide exactamente con el de locales.json.',
         selfCheck:
           'Puedes enumerar el orden de resolución en cuatro pasos, y tu clave de ejemplo sigue el patrón <componente>-<descripcion> con traducciones es-PE y en-EN.',
+        estimatedMinutes: 15,
       },
     ],
   },
@@ -94,6 +131,15 @@ export const LAB_CHAPTERS = [
     title: 'Capítulo 1 — Construcción',
     summary:
       'Construye un componente propio de punta a punta: desde `aclit component:create` hasta un flujo completo con API pública/privada, eventos, estilos, modal, transición interna y multipasos.',
+    estimatedMinutes: 525,
+    outcomes: [
+      'Scaffoldear un componente real de punta a punta con el CLI propio.',
+      'Componer un flujo complejo con 15+ componentes del catálogo sin montar nada a mano.',
+      'Separar API pública vs. privada en una clase Lit.',
+      'Cablear el 100% de los eventos de forma declarativa, incluido tu propio patrón de emisión (_emit()).',
+      'Aplicar tu propio sistema de estilos SCSS sobre los tokens del design system.',
+      'Construir un ciclo completo de guardado/éxito/error/reset usando ref().',
+    ],
     // Componente de referencia real (`catalog-site/lab-reference/<nombre>/`,
     // ver docs/CONVENTIONS.md) -- `renderLabChapters()` en catalog.js arma el
     // link "Ver solución" a partir de este nombre de carpeta cuando existe.
@@ -116,6 +162,7 @@ export const LAB_CHAPTERS = [
         hint: 'Si `pnpm install` falla resolviendo `workspace:^`, revisa que el nombre de carpeta en `catalog-site/lab-reference/` coincida exactamente con el patrón que agregaste a `pnpm-workspace.yaml` -- un patrón de glob que no matchea deja el paquete fuera del workspace y el protocolo `workspace:^` no tiene contra qué resolver.',
         selfCheck:
           'La demo carga en `http://localhost:5173` (o el puerto que hayas configurado) sin errores en la consola del navegador, con `ac-demo-content` alrededor (cabecera, selector ES/EN, tema, dispositivo) y tu componente mostrando "Hola" -- el placeholder que trae el scaffold, todavía sin tu lógica.',
+        estimatedMinutes: 25,
       },
       {
         id: 'construccion-02-first-component',
@@ -134,6 +181,7 @@ export const LAB_CHAPTERS = [
         hint: 'El `index.js` que generó el CLI ya registra el custom element e importa `src/registro-wizard.js` -- no hace falta tocarlo. Si el botón no aparece, revisa que el tag que usaste en el HTML coincida exactamente con lo que devuelve `static get is()`.',
         selfCheck:
           '`<ac-button-basic>` se ve dentro de tu componente (no al lado, como hermano en el HTML de la demo) y un click dispara su evento `ac-button-basic-click` -- visible en un `console.log` temporal o en las dev tools.',
+        estimatedMinutes: 25,
       },
       {
         id: 'construccion-03-more-components-and-init',
@@ -152,6 +200,7 @@ export const LAB_CHAPTERS = [
         hint: 'Usar `ref()` es obligatorio acá porque necesitas invocar un MÉTODO sobre `ac-api-users` (no solo leer una property) -- para eso existe, a diferencia de un binding `.prop=${...}` normal. Nunca reemplaces esto por `this.shadowRoot.querySelector(...)`.',
         selfCheck:
           'Con la demo abierta, `init()` dispara la llamada (visible como un `console.log` temporal dentro del handler de éxito, o observando que el estado interno cambia) sin lanzar ningún error en consola.',
+        estimatedMinutes: 75,
       },
       {
         id: 'construccion-04-private-methods',
@@ -169,6 +218,7 @@ export const LAB_CHAPTERS = [
         hint: 'Si te cuesta decidir qué va en un método privado separado vs. inline en el template, usa el mismo criterio de `ac-api-users`: formateo/lógica de datos en un método con nombre propio: solo lectura directa de un valor (`event.detail.value`) puede quedar en una línea dentro del handler.',
         selfCheck:
           '`grep -n "^\\s*[a-zA-Z]" src/registro-wizard.js` (o una revisión visual de la clase) muestra que los únicos dos métodos sin `_` son `init` y `reset`.',
+        estimatedMinutes: 50,
       },
       {
         id: 'construccion-05-declarative-events',
@@ -188,6 +238,7 @@ export const LAB_CHAPTERS = [
         hint: 'Un evento que bubbles desde un nieto (ej. el click de un botón dentro de un `ac-expandable-step`) sigue llegando a un `@evento` puesto en el elemento que lo declara directamente -- no necesitas "re-escucharlo" más arriba salvo que quieras delegación explícita, como hace `ac-expandable-multistep` con sus steps.',
         selfCheck:
           'Una búsqueda de `addEventListener` en `src/registro-wizard.js` no devuelve ningún resultado -- todo el cableado de eventos vive en bindings `@evento` del template. Y en el panel de eventos de la demo, completar el flujo muestra tanto los eventos que escuchás de tus hijos como los 4 `ac-registro-wizard-*` que tu propio componente dispara.',
+        estimatedMinutes: 75,
       },
       {
         id: 'construccion-06-styles',
@@ -205,6 +256,7 @@ export const LAB_CHAPTERS = [
         hint: '`src/*.styles.js` nunca se versiona (está en `.gitignore`, igual que en cualquier componente del catálogo) -- si cambias de máquina o clonas de nuevo, hay que volver a correr `component:build:styles` antes de que el componente renderice con estilos.',
         selfCheck:
           'La demo refleja los estilos del `.scss` (espaciado, bordes) sin ningún estilo inline en el HTML, y guardar el `.scss` con el watcher corriendo recarga la demo sola.',
+        estimatedMinutes: 35,
       },
       {
         id: 'construccion-07-modal',
@@ -222,6 +274,7 @@ export const LAB_CHAPTERS = [
         hint: 'El contenido del modal puede quedar vacío o con un placeholder por ahora -- lo real (nombre/correo/rol ya registrados) se llena recién en el paso 10, a partir del `detail.data` del evento de éxito de `registrarUsuario`.',
         selfCheck:
           'Forzando `_modalOpen = true` desde la consola del navegador, el modal aparece centrado con animación de entrada, y su botón "Cerrar" lo cierra sin errores.',
+        estimatedMinutes: 25,
       },
       {
         id: 'construccion-08-transition-container',
@@ -239,6 +292,7 @@ export const LAB_CHAPTERS = [
         hint: '`hide-menu-icon` es válido si tu flujo no necesita el ícono de hamburguesa -- pero la flecha de volver NO se puede ocultar (es fija en `ac-transition-container`, ver `docs/CONVENTIONS.md`): tu componente siempre necesita decidir qué hacer con ese click, aunque sea "reiniciar". Resiste la tentación de meter TODO (incluido el modal de confirmación) dentro de este contenedor "porque ya envuelve el flujo": un `<dialog>` nativo cerrado recibe `display: none`, y eso apaga también cualquier cosa anidada adentro aunque tenga su propio `open` en `true` -- el modal de confirmación del paso 10 necesita poder mostrarse justo cuando este contenedor se cierra, así que tiene que vivir afuera.',
         selfCheck:
           'Al recargar la demo, el wizard aparece ya desplegado (sin ningún botón "Abrir") y la flecha de volver de la cabecera hace algo coherente al hacer click.',
+        estimatedMinutes: 35,
       },
       {
         id: 'construccion-09-multistep',
@@ -258,6 +312,7 @@ export const LAB_CHAPTERS = [
         hint: 'Si al completar el paso 1 no avanza al paso 2, revisa que estés llamando al método público `complete()` del step (que internamente hace `completed = true; active = false` y SÍ dispara `ac-expandable-step-complete`) y no asignando las properties a mano -- asignarlas directo no pasa por el mismo flujo reactivo que el multistep escucha.',
         selfCheck:
           'Completar el paso 1 colapsa su contenido en una barra resumen y expande automáticamente el paso 2; el link "Modificar" de esa barra vuelve a abrir el paso 1 sin perder lo ya escrito.',
+        estimatedMinutes: 75,
       },
       {
         id: 'construccion-10-close-the-loop',
@@ -281,6 +336,7 @@ export const LAB_CHAPTERS = [
         hint: 'Si después de un error el botón "Confirmar" no vuelve a aparecer, revisa que `_loading` se ponga en `false` también en el handler de error -- no solo en el de éxito. Si el modal de éxito nunca se ve (aunque tu `console.log` confirme que `_modalOpen` sí pasó a `true`), inspecciona con las devtools si `<ac-modal-basic>` quedó anidado dentro de `<ac-transition-container>` en vez de ser su hermano.',
         selfCheck:
           'De punta a punta: completar los 3 pasos y confirmar con éxito cierra la transición y abre el modal con el nombre/correo/rol reales que escribiste; cerrando el modal, el wizard vuelve exactamente al paso 1 vacío, sin el resumen del paso 3 superpuesto. Repitiendo el ciclo completo una segunda vez (y con `simulateError` activo), el paso 3 muestra una `ac-notification-basic` con el mensaje de error y la transición nunca se cierra.',
+        estimatedMinutes: 105,
       },
     ],
   },
@@ -288,24 +344,107 @@ export const LAB_CHAPTERS = [
     id: 'testing-unitario',
     title: 'Capítulo 2 — Testing unitario',
     summary: 'Cubre con tests el componente que construiste en el Capítulo 1.',
+    estimatedMinutes: 150,
+    outcomes: [
+      'Escribir tests unitarios (suite/test) que cubran el componente construido en el Capítulo 1.',
+    ],
     labs: [],
   },
   {
     id: 'accesibilidad',
     title: 'Capítulo 3 — Accesibilidad',
     summary: 'Audita y corrige la accesibilidad de tu componente con axe-core.',
+    estimatedMinutes: 90,
+    outcomes: [
+      'Auditar con axe-core e interpretar/corregir violaciones reales sin romper el diseño.',
+    ],
     labs: [],
   },
   {
     id: 'e2e',
     title: 'Capítulo 4 — Testing E2E',
     summary: 'Escribe un escenario Gherkin de punta a punta para tu flujo completo.',
+    estimatedMinutes: 150,
+    outcomes: [
+      'Escribir un escenario Gherkin/WebdriverIO de punta a punta sobre el flujo completo propio.',
+    ],
     labs: [],
   },
   {
     id: 'contribucion',
     title: 'Capítulo 5 — Flujo de contribución (bonus)',
     summary: 'Changesets, abrir una PR y leer los checks de CI -- sobre tu propio fork.',
+    estimatedMinutes: 60,
+    outcomes: [
+      'Generar un changeset, abrir una PR propia, y leer/interpretar los checks de CI antes de mergear.',
+    ],
     labs: [],
+  },
+];
+
+// Íconos propios de las 3 tarjetas de nivel y de sus features -- mismo estilo
+// stroke-based del resto del sitio (viewBox 24x24), sin depender del catálogo
+// de componentes.
+const CODE_ICON = '<path d="M8 9l-3 3 3 3M16 9l3 3-3 3"/>';
+const LAYERS_ICON = '<path d="M12 3L3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/>';
+const TROPHY_ICON =
+  '<path d="M8 3h8v4a4 4 0 0 1-8 0V3z"/><path d="M8 4H5a2 2 0 0 0 2 4M16 4h3a2 2 0 0 1-2 4"/><path d="M12 11v4"/><path d="M9 19h6"/>';
+const PLAY_FEATURE_ICON = '<path d="M7 5l10 7-10 7V5z" fill="currentColor" stroke="none"/>';
+const DOC_FEATURE_ICON =
+  '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';
+const CHECK_FEATURE_ICON = '<path d="M5 12.5l4.5 4.5L15 7.5" stroke-width="2.5"/>';
+const FLASK_FEATURE_ICON =
+  '<path d="M9 2v6.5L4 18a2 2 0 0 0 1.8 3h12.4a2 2 0 0 0 1.8-3L15 8.5V2"/><path d="M8 2h8"/>';
+const BOLT_FEATURE_ICON =
+  '<path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor" stroke="none"/>';
+const CHART_FEATURE_ICON = '<path d="M4 20V10M12 20V4M20 20v-6"/>';
+const ROCKET_FEATURE_ICON =
+  '<path d="M12 2c3 2 4 6 4 10 0 2-1 4-2 5l-2 2-2-2c-1-1-2-3-2-5 0-4 1-8 4-10z"/><path d="M9 15l-3 3 1 1M15 15l3 3-1 1"/>';
+const STAR_FEATURE_ICON =
+  '<path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16l-5.3 2.8 1-5.8-4.2-4.1 5.9-.9L12 3z" fill="currentColor" stroke="none"/>';
+
+export const LAB_LEVELS = [
+  {
+    id: 'basico',
+    title: 'Básico',
+    levelLabel: 'Nivel 1',
+    description:
+      'Construí tu primer componente guiado paso a paso, con código de referencia en cada laboratorio.',
+    icon: CODE_ICON,
+    ctaLabel: 'Comenzar',
+    features: [
+      { icon: PLAY_FEATURE_ICON, text: 'Laboratorios prácticos' },
+      { icon: DOC_FEATURE_ICON, text: 'Código de ejemplo' },
+      { icon: CHECK_FEATURE_ICON, text: 'Validación inmediata' },
+    ],
+    chapters: BASICO_CHAPTERS,
+  },
+  {
+    id: 'intermedio',
+    title: 'Intermedio',
+    levelLabel: 'Nivel 2',
+    description: 'Profundizá en testing y accesibilidad sobre lo que ya construiste.',
+    icon: LAYERS_ICON,
+    ctaLabel: 'Continuar',
+    features: [
+      { icon: FLASK_FEATURE_ICON, text: 'Casos avanzados' },
+      { icon: CHECK_FEATURE_ICON, text: 'Buenas prácticas' },
+      { icon: BOLT_FEATURE_ICON, text: 'Desafíos reales' },
+    ],
+    chapters: [],
+  },
+  {
+    id: 'avanzado',
+    title: 'Avanzado',
+    levelLabel: 'Nivel 3',
+    description: 'Testing E2E, analítica y los temas de producción que básico no cubre.',
+    icon: TROPHY_ICON,
+    ctaLabel: 'Explorar',
+    features: [
+      { icon: CHART_FEATURE_ICON, text: 'Proyectos completos' },
+      { icon: ROCKET_FEATURE_ICON, text: 'Casos de uso reales' },
+      { icon: STAR_FEATURE_ICON, text: 'Optimización y performance' },
+    ],
+    chapters: [],
   },
 ];

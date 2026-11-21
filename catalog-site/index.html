@@ -987,20 +987,62 @@
       </main>
 
       <main class="catalog__lab" id="view-lab" hidden>
-        <div class="catalog__lab-header">
-          <button type="button" class="catalog__lab-back" id="catalog-lab-back">← Inicio</button>
-          <h1>Laboratorio</h1>
-          <p class="catalog__lab-intro">
-            Construye tu propio componente de punta a punta, en capítulos progresivos.
-          </p>
-          <div class="catalog__lab-progress">
-            <div class="catalog__lab-progress-bar">
-              <div class="catalog__lab-progress-fill" id="lab-progress-fill"></div>
+        <div class="catalog__lab-selector" id="lab-selector">
+          <button type="button" class="catalog__lab-back" id="catalog-lab-selector-back">
+            ← Inicio
+          </button>
+          <div class="catalog__lab-hero">
+            <div class="catalog__lab-hero-text">
+              <span class="catalog__lab-hero-badge">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="14"
+                  height="14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 2c3 2 4 6 4 10 0 2-1 4-2 5l-2 2-2-2c-1-1-2-3-2-5 0-4 1-8 4-10z"
+                  />
+                  <path d="M9 15l-3 3 1 1M15 15l3 3-1 1" />
+                </svg>
+                Aprende · Practica · Construye
+              </span>
+              <h1>Laboratorio</h1>
+              <p class="catalog__lab-intro">
+                Elegí tu nivel para empezar. Cada nivel construye sobre el anterior, con tus
+                propios temas y su propio progreso.
+              </p>
+              <span class="catalog__lab-hero-underline" aria-hidden="true"></span>
             </div>
-            <span class="catalog__lab-progress-label" id="lab-progress-label">0% completado</span>
+            <div class="catalog__lab-hero-image">
+              <img src="./assets/lab-illustration.webp" alt="" width="420" height="320" />
+            </div>
           </div>
+          <div class="catalog__lab-level-grid" id="lab-level-grid"></div>
+          <div class="catalog__lab-requirements" id="lab-requirements"></div>
         </div>
-        <div class="catalog__lab-chapters" id="lab-chapters"></div>
+
+        <div class="catalog__lab-level" id="lab-level" hidden>
+          <div class="catalog__lab-header">
+            <button type="button" class="catalog__lab-back" id="catalog-lab-levels-back">
+              ← Niveles
+            </button>
+            <h1 id="lab-level-title">Laboratorio</h1>
+            <p class="catalog__lab-intro" id="lab-level-intro"></p>
+            <div class="catalog__lab-progress">
+              <div class="catalog__lab-progress-bar">
+                <div class="catalog__lab-progress-fill" id="lab-progress-fill"></div>
+              </div>
+              <span class="catalog__lab-progress-label" id="lab-progress-label">0% completado</span>
+            </div>
+          </div>
+          <div class="catalog__lab-chapters" id="lab-chapters"></div>
+        </div>
       </main>
     </div>
   </body>

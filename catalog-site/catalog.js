@@ -10,7 +10,7 @@
 
 import { GROUPS, FALLBACK_GROUP_ID, FALLBACK_ICON, COMPONENT_META } from './catalog-meta.js';
 import { COMPONENT_API } from './catalog-api.js';
-import { LAB_CHAPTERS } from './learning-lab.js';
+import { LAB_LEVELS, LAB_REQUIREMENTS } from './learning-lab.js';
 
 const REPO_URL = 'https://github.com/RenzoCordovaDev/ac-lit';
 const API_GROUP_ID = 'apis';
@@ -28,10 +28,18 @@ const MOON_ICON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>';
 const BELL_ICON =
   '<path d="M12 2a6 6 0 0 0-6 6v3.5c0 .9-.4 1.7-1 2.3L4 15h16l-1-1.2c-.6-.6-1-1.4-1-2.3V8a6 6 0 0 0-6-6Z"/><path d="M9 19a3 3 0 0 0 6 0"/>';
 const CHEVRON_ICON = '<path d="M9 6l6 6-6 6"/>';
+const DOC_ICON =
+  '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>';
 
 const homeViewEl = document.getElementById('view-home');
 const catalogViewEl = document.getElementById('view-catalog');
 const labViewEl = document.getElementById('view-lab');
+const labSelectorEl = document.getElementById('lab-selector');
+const labLevelEl = document.getElementById('lab-level');
+const labRequirementsEl = document.getElementById('lab-requirements');
+const labLevelGridEl = document.getElementById('lab-level-grid');
+const labLevelTitleEl = document.getElementById('lab-level-title');
+const labLevelIntroEl = document.getElementById('lab-level-intro');
 const breadcrumbEl = document.getElementById('catalog-breadcrumb');
 const countEl = document.getElementById('catalog-count');
 const menuButton = document.getElementById('catalog-menu-button');
@@ -251,7 +259,11 @@ function showCatalog() {
   labViewEl.hidden = true;
 }
 
-function showLab() {
+let activeLevel = null;
+
+// `levelId` ausente -- o desconocido -- muestra el selector de nivel; un
+// `levelId` real muestra la página propia de ese nivel.
+function showLab(levelId) {
   document.body.dataset.view = 'lab';
   homeViewEl.hidden = true;
   catalogViewEl.hidden = true;
@@ -259,39 +271,161 @@ function showLab() {
   activeId = null;
   demo = null;
   frameEl.removeAttribute('src');
-  document.title = 'Laboratorio — ac-lit';
-  renderBreadcrumb(['Laboratorio']);
-  renderLabChapters();
+
+  const level = LAB_LEVELS.find(entry => entry.id === levelId);
+  if (!level) {
+    activeLevel = null;
+    document.title = 'Laboratorio — ac-lit';
+    renderBreadcrumb(['Laboratorio']);
+    labSelectorEl.hidden = false;
+    labLevelEl.hidden = true;
+    renderLabSelector();
+    return;
+  }
+
+  activeLevel = level;
+  document.title = `Laboratorio — ${level.title} — ac-lit`;
+  renderBreadcrumb(['Laboratorio', level.title]);
+  labSelectorEl.hidden = true;
+  labLevelEl.hidden = false;
+  labLevelTitleEl.textContent = `Laboratorio — ${level.title}`;
+  labLevelIntroEl.textContent = level.description;
+  labProgress = loadLabProgress(level.id);
+  openLabChapters.clear();
+  if (level.chapters.length) openLabChapters.add(level.chapters[0].id);
+  renderLabChapters(level);
+}
+
+function renderLabSelector() {
+  labRequirementsEl.replaceChildren();
+  const titleRow = create('div', 'catalog__lab-requirements-head');
+  const titleIcon = create('span', 'catalog__lab-requirements-icon');
+  titleIcon.innerHTML = icon(DOC_ICON, 20);
+  titleRow.append(
+    titleIcon,
+    create('h2', 'catalog__lab-requirements-title', 'Requisitos de software'),
+  );
+
+  const equipoEl = create('p', 'catalog__lab-requirements-equipo', LAB_REQUIREMENTS.equipo);
+
+  const terminal = create('div', 'catalog__terminal catalog__lab-requirements-terminal');
+  terminal.setAttribute('role', 'group');
+  terminal.setAttribute('aria-label', 'Comandos para confirmar tu versión instalada');
+  const titlebar = create('div', 'catalog__terminal-titlebar');
+  const dots = create('span', 'catalog__terminal-dots');
+  dots.setAttribute('aria-hidden', 'true');
+  dots.append(create('i'), create('i'), create('i'));
+  titlebar.append(dots, create('span', 'catalog__terminal-filename', 'terminal — verificación'));
+  const body = create('div', 'catalog__terminal-body');
+  for (const { command, comment } of LAB_REQUIREMENTS.checks) {
+    const lineWrap = create('div', 'catalog__terminal-command');
+    const line = create('p', 'catalog__terminal-line');
+    line.append(
+      create('span', 'catalog__terminal-prompt', '$'),
+      create('span', 'catalog__terminal-cmd', command),
+    );
+    const copyButton = create('button', 'catalog__terminal-copy');
+    copyButton.type = 'button';
+    copyButton.setAttribute('aria-label', 'Copiar comando');
+    copyButton.innerHTML = icon(COPY_ICON, 13);
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(command);
+      } catch {
+        return;
+      }
+      const original = copyButton.innerHTML;
+      copyButton.innerHTML = icon(CHECK_ICON, 13);
+      clearTimeout(copyButton._copyTimer);
+      copyButton._copyTimer = setTimeout(() => {
+        copyButton.innerHTML = original;
+      }, COPIED_FEEDBACK_MS);
+    });
+    lineWrap.append(line, copyButton);
+    body.append(lineWrap);
+    if (comment) {
+      body.append(
+        create('p', 'catalog__terminal-line catalog__terminal-line--comment', `# ${comment}`),
+      );
+    }
+  }
+  terminal.append(titlebar, body);
+
+  labRequirementsEl.append(titleRow, equipoEl, terminal);
+
+  labLevelGridEl.replaceChildren();
+  for (const level of LAB_LEVELS) {
+    const card = create('button', 'catalog__lab-level-card');
+    card.type = 'button';
+
+    const head = create('div', 'catalog__lab-level-card-head');
+    const iconWrap = create('span', 'catalog__lab-level-card-icon');
+    iconWrap.innerHTML = icon(level.icon, 22);
+    const levelPill = create('span', 'catalog__lab-level-card-pill', level.levelLabel);
+    head.append(iconWrap, levelPill);
+
+    const featuresList = create('ul', 'catalog__lab-level-card-features');
+    for (const feature of level.features) {
+      const item = create('li', 'catalog__lab-level-card-feature');
+      const featureIconWrap = create('span', 'catalog__lab-level-card-feature-icon');
+      featureIconWrap.innerHTML = icon(feature.icon, 14);
+      item.append(featureIconWrap, create('span', null, feature.text));
+      featuresList.append(item);
+    }
+
+    const cta = create('span', 'catalog__lab-level-card-cta');
+    const ctaIconWrap = create('span', 'catalog__lab-level-card-cta-icon');
+    ctaIconWrap.innerHTML = icon(CHEVRON_ICON, 16);
+    cta.append(create('span', null, level.ctaLabel), ctaIconWrap);
+
+    card.append(
+      head,
+      create('span', 'catalog__lab-level-card-title', level.title),
+      create('span', 'catalog__lab-level-card-description', level.description),
+      create('hr', 'catalog__lab-level-card-divider'),
+      featuresList,
+      cta,
+    );
+    card.addEventListener('click', () => {
+      history.replaceState(null, '', `#laboratorio/${level.id}`);
+      showLab(level.id);
+    });
+    labLevelGridEl.append(card);
+  }
 }
 
 /* Progreso del Laboratorio: ids de laboratorios completados, persistidos en
-   localStorage (por navegador; si no hay storage, simplemente no persiste). */
+   localStorage (por navegador y por nivel; si no hay storage, simplemente no
+   persiste). Cada nivel es una ruta independiente -- completar Básico no debe
+   interferir con el progreso de Intermedio ni Avanzado. */
 
-const LAB_PROGRESS_KEY = 'ac-lit:lab-progress';
+function progressKeyFor(levelId) {
+  return `ac-lit:lab-progress:${levelId}`;
+}
 
-function loadLabProgress() {
+function loadLabProgress(levelId) {
   try {
-    const raw = localStorage.getItem(LAB_PROGRESS_KEY);
+    const raw = localStorage.getItem(progressKeyFor(levelId));
     return raw ? new Set(JSON.parse(raw)) : new Set();
   } catch {
     return new Set();
   }
 }
 
-function saveLabProgress(completedSet) {
+function saveLabProgress(levelId, completedSet) {
   try {
-    localStorage.setItem(LAB_PROGRESS_KEY, JSON.stringify([...completedSet]));
+    localStorage.setItem(progressKeyFor(levelId), JSON.stringify([...completedSet]));
   } catch {
     // localStorage puede fallar (modo privado, cuota) -- el progreso simplemente no persiste esa vez.
   }
 }
 
-let labProgress = loadLabProgress();
-// Capítulos abiertos en la vista de Laboratorio (sobrevive a los re-renders).
-const openLabChapters = new Set(LAB_CHAPTERS.length ? [LAB_CHAPTERS[0].id] : []);
+let labProgress = new Set();
+// Capítulos abiertos en la vista de Laboratorio (sobrevive a los re-renders del nivel activo).
+const openLabChapters = new Set();
 
 function toggleLabComplete(labId) {
-  const allLabs = LAB_CHAPTERS.flatMap(chapter => chapter.labs);
+  const allLabs = activeLevel.chapters.flatMap(chapter => chapter.labs);
   if (labProgress.has(labId)) {
     // Desmarcar un laboratorio re-bloquea los siguientes: se quitan del progreso
     // para que la ruta siga siendo estrictamente secuencial.
@@ -300,16 +434,27 @@ function toggleLabComplete(labId) {
   } else {
     labProgress.add(labId);
   }
-  saveLabProgress(labProgress);
-  renderLabChapters();
+  saveLabProgress(activeLevel.id, labProgress);
+  renderLabChapters(activeLevel);
 }
 
-function renderLabChapters() {
+function renderLabChapters(level) {
   const chaptersEl = document.getElementById('lab-chapters');
   chaptersEl.replaceChildren();
 
+  if (level.chapters.length === 0) {
+    chaptersEl.append(
+      create(
+        'p',
+        'catalog__api-empty',
+        'Próximamente -- este nivel todavía no tiene capítulos publicados.',
+      ),
+    );
+    return;
+  }
+
   let previousChapterComplete = true;
-  for (const chapter of LAB_CHAPTERS) {
+  for (const chapter of level.chapters) {
     const doneCount = chapter.labs.filter(lab => labProgress.has(lab.id)).length;
     // Un capítulo sin labs no bloquea a los siguientes; uno con labs bloquea
     // hasta que esté 100% completo.
@@ -369,8 +514,8 @@ function renderLabChapters() {
     chaptersEl.append(section);
   }
 
-  const totalLabs = LAB_CHAPTERS.reduce((sum, chapter) => sum + chapter.labs.length, 0);
-  const doneLabs = LAB_CHAPTERS.reduce(
+  const totalLabs = level.chapters.reduce((sum, chapter) => sum + chapter.labs.length, 0);
+  const doneLabs = level.chapters.reduce(
     (sum, chapter) => sum + chapter.labs.filter(lab => labProgress.has(lab.id)).length,
     0,
   );
@@ -984,7 +1129,11 @@ document.getElementById('catalog-home-lab-link').addEventListener('click', () =>
   history.replaceState(null, '', '#laboratorio');
   showLab();
 });
-document.getElementById('catalog-lab-back').addEventListener('click', goHome);
+document.getElementById('catalog-lab-selector-back').addEventListener('click', goHome);
+document.getElementById('catalog-lab-levels-back').addEventListener('click', () => {
+  history.replaceState(null, '', '#laboratorio');
+  showLab();
+});
 
 document.getElementById('catalog-cta').addEventListener('click', () => {
   if (components.length === 0) return;
@@ -1010,14 +1159,23 @@ document.addEventListener('keydown', event => {
   }
 });
 
+// `undefined` -- no es una ruta del laboratorio. `null` -- es `#laboratorio`
+// a secas (selector de nivel). Un string -- el id del nivel pedido.
+function labLevelFromHash(id) {
+  if (id === 'laboratorio') return null;
+  if (id.startsWith('laboratorio/')) return id.slice('laboratorio/'.length);
+  return undefined;
+}
+
 window.addEventListener('hashchange', () => {
   const id = normalizeHash();
   if (!id) {
     showHome();
     return;
   }
-  if (id === 'laboratorio') {
-    showLab();
+  const labLevel = labLevelFromHash(id);
+  if (labLevel !== undefined) {
+    showLab(labLevel);
     return;
   }
   if (id !== activeId && components.some(c => c.id === id)) {
@@ -1038,8 +1196,9 @@ async function init() {
   renderHomeCategories();
 
   const fromHash = normalizeHash();
-  if (fromHash === 'laboratorio') {
-    showLab();
+  const labLevel = labLevelFromHash(fromHash);
+  if (labLevel !== undefined) {
+    showLab(labLevel);
   } else if (fromHash && components.some(c => c.id === fromHash)) {
     expandedGroups.clear();
     showCatalog();
