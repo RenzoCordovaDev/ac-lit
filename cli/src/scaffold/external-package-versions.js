@@ -19,6 +19,9 @@ export const EXTERNAL_PACKAGE_RANGES = {
   '@ac-components/ac-badge-basic': '^0.1.2',
   '@ac-components/ac-card-basic': '^0.1.1',
   '@ac-components/ac-divider-basic': '^0.1.0',
+  '@ac-components/ac-icon-basic': '^0.1.0',
+  '@ac-components/ac-link-basic': '^0.1.1',
+  '@ac-components/ac-text-basic': '^0.1.1',
 };
 
 // @ac-base/ac-e2e-testing no está acá a propósito: es `private`, nunca se
