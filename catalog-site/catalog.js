@@ -266,6 +266,10 @@ function showCatalog() {
 
 let activeLevel = null;
 let selectedLabId = null;
+// Último laboratorio que `renderLabContent()` efectivamente pintó -- permite
+// distinguir "cambió el laboratorio mostrado" (sí reinicia el scroll) de "este
+// mismo laboratorio se volvió a renderizar" (no lo toca).
+let lastRenderedLabId = null;
 
 // `levelId` ausente -- o desconocido -- muestra el selector de nivel; un
 // `levelId` real muestra la página propia de ese nivel.
@@ -299,6 +303,7 @@ function showLab(levelId) {
   labProgress = loadLabProgress(level.id);
   openLabChapters.clear();
   labNavSearchEl.value = '';
+  lastRenderedLabId = null;
   selectedLabId = autoSelectLabId(level);
   if (selectedLabId) {
     const found = findLab(level, selectedLabId);
@@ -808,10 +813,16 @@ function buildLabCallout(kind, title, text, iconPath) {
 
 function renderLabContent(level) {
   labContentEl.replaceChildren();
-  // Sin esto, el scroll queda en el mismo pixel al cambiar de laboratorio
-  // (manual o por auto-avance) -- replaceChildren() no resetea el scroll de
-  // un contenedor que sigue montado, solo cambia su contenido.
-  labContentEl.scrollTop = 0;
+  // El scroll se reinicia SOLO cuando el laboratorio mostrado cambió de
+  // verdad (navegación manual o auto-avance) -- nunca cuando este mismo
+  // laboratorio se vuelve a renderizar por otro motivo (ej. togglear su
+  // propio checkbox), que no debe mover la posición de lectura del usuario.
+  // replaceChildren() no resetea el scroll de un contenedor que sigue
+  // montado, así que hace falta esta comparación explícita.
+  if (selectedLabId !== lastRenderedLabId) {
+    labContentEl.scrollTop = 0;
+  }
+  lastRenderedLabId = selectedLabId;
 
   const found = selectedLabId ? findLab(level, selectedLabId) : null;
   if (!found) {
