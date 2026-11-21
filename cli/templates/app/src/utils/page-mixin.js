@@ -15,30 +15,14 @@ export const pageBaseStyles = css`
   .page {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4, 1.5rem);
+    gap: var(--space-3, 1rem);
   }
 
   .page-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3, 1rem);
-    align-items: center;
-  }
-
-  .icon-row {
-    display: flex;
-    align-items: center;
     gap: var(--space-2, 0.5rem);
-  }
-
-  ac-card-basic::part(body) {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2, 0.5rem);
-  }
-
-  ac-badge-basic {
-    align-self: flex-start;
+    align-items: center;
   }
 `;
 

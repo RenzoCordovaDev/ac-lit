@@ -1,6 +1,6 @@
 # __title__
 
-Proyecto generado con `aclit app:create __package_name__`. Es una app propia construida con los componentes de `ac-lit`, no un paquete publicable. Usa el tema claro de "Emerald Pro" por defecto y, donde existe un componente equivalente del catálogo (encabezados, párrafos, enlaces, botones, badges, tarjetas, divisores, íconos), evita los elementos HTML nativos a favor de ese componente.
+Proyecto generado con `aclit app:create __package_name__`. Es una app propia construida con los componentes de `ac-lit`, no un paquete publicable.
 
 ## Estructura
 
@@ -35,7 +35,7 @@ pnpm run app:lint      # Lint del proyecto
 
 ## Navegación por rutas
 
-Las páginas se navegan con [`@ac-base/ac-router`](https://github.com/RenzoCordovaDev/ac-lit/blob/main/packages/base/ac-router/README.md), un enrutador vanilla por hash con parámetros de ruta, sin ninguna librería externa. La ruta `/usuarios/:id` captura el id en la URL (`#/usuarios/2`) y **Detalle** lo recibe como `this.routeParams.id`. Puedes navegar con un enlace (`<ac-link-basic href="#/usuarios/2">`) o programáticamente con `router.navigate({ name: 'usuario-detalle', params: { id: 2 } })`.
+Las páginas se navegan con [`@ac-base/ac-router`](https://github.com/RenzoCordovaDev/ac-lit/blob/main/packages/base/ac-router/README.md), un enrutador vanilla por hash con parámetros de ruta, sin ninguna librería externa. La ruta `/usuarios/:id` captura el id en la URL (`#/usuarios/2`) y **Detalle** lo recibe como `this.routeParams.id`. Puedes navegar con un enlace plano (`<a href="#/usuarios/2">`) o programáticamente con `router.navigate({ name: 'usuario-detalle', params: { id: 2 } })`.
 
 ## Comunicación entre páginas
 
@@ -73,4 +73,4 @@ Una página que no necesita canales (como `user-detail-page.js`) puede usar solo
 1. Crea el archivo en `src/pages/`, por ejemplo `mi-pagina.js`, con un custom element (por ejemplo `app-mi-pagina`).
 2. Importa el archivo en `src/app.js`.
 3. Agrega la ruta al array de `createRouter([...])` en `src/app.js` (`{ path: '/mi-ruta', name: 'mi-pagina' }`, con `:param` si necesita uno) y la página al mapa `views`, con la misma clave (`name`).
-4. Agrega un enlace en la navegación de `index.html` (`<ac-link-basic href="#/mi-ruta">...</ac-link-basic>`) y el elemento correspondiente dentro de `<main>`, con el atributo `hidden`.
+4. Agrega un enlace en la navegación de `index.html` (`<a href="#/mi-ruta">...</a>`) y el elemento correspondiente dentro de `<main>`, con el atributo `hidden`.

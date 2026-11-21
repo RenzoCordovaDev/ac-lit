@@ -3,9 +3,6 @@ import '@ac-components/ac-badge-basic';
 import '@ac-components/ac-button-basic';
 import '@ac-components/ac-card-basic';
 import '@ac-components/ac-divider-basic';
-import '@ac-components/ac-icon-basic';
-import '@ac-components/ac-link-basic';
-import '@ac-components/ac-text-basic';
 import { PageMixin, pageBaseStyles } from '../utils/page-mixin.js';
 
 const USERS = [
@@ -14,6 +11,15 @@ const USERS = [
   { id: 3, name: 'Carla' },
 ];
 
+/**
+ * Página "Usuarios": muestra una lista fija de usuarios y publica en el canal
+ * `'users.selected'` el usuario cuyo botón se presionó (retenido). También
+ * muestra el usuario global recibido por `'global.user.data'` (publicado por
+ * la página Home).
+ *
+ * @element app-users-table-page
+ * @fires ac-button-basic-click - Propagado desde cada botón de selección.
+ */
 class AppUsersTablePage extends PageMixin(LitElement) {
   static get properties() {
     return {
@@ -45,13 +51,15 @@ class AppUsersTablePage extends PageMixin(LitElement) {
     return [
       pageBaseStyles,
       css`
-        .user-list {
-          display: flex;
-          flex-direction: column;
+        ul {
+          display: grid;
           gap: var(--space-2, 0.5rem);
+          list-style: none;
+          margin: 0;
+          padding: 0;
         }
 
-        .user-row {
+        li {
           display: flex;
           align-items: center;
           gap: var(--space-2, 0.5rem);
@@ -63,43 +71,33 @@ class AppUsersTablePage extends PageMixin(LitElement) {
   render() {
     return html`
       <div class="page">
-        <ac-text-basic tag="h2">Usuarios</ac-text-basic>
+        <h2>Usuarios</h2>
         ${this._globalUser
-          ? html`<ac-badge-basic ambient="neutral">
-              <ac-icon-basic name="check" size="sm"></ac-icon-basic> Usuario global:
-              ${this._globalUser.nombre}
-            </ac-badge-basic>`
+          ? html`<ac-badge-basic ambient="neutral">Usuario global: ${this._globalUser.nombre}</ac-badge-basic>`
           : nothing}
         <ac-card-basic header-text="Selecciona un usuario">
-          <div class="user-list">
+          <ul>
             ${USERS.map(
               user => html`
-                <div class="user-row">
+                <li>
                   <ac-button-basic
                     ambient="primary"
                     @ac-button-basic-click=${() => this._onSelectClick(user)}
                   >
                     Seleccionar a ${user.name}
                   </ac-button-basic>
-                  <ac-link-basic href="#/usuarios/${user.id}"
-                    >Ver detalle <ac-icon-basic name="arrow-right" size="sm"></ac-icon-basic
-                  ></ac-link-basic>
-                </div>
+                  <a href="#/usuarios/${user.id}">Ver detalle</a>
+                </li>
               `,
             )}
-          </div>
+          </ul>
           <ac-divider-basic></ac-divider-basic>
           ${this._selected
-            ? html`<ac-badge-basic ambient="success">
-                <ac-icon-basic name="success" size="sm"></ac-icon-basic> Seleccionaste:
-                ${this._selected.name}
-              </ac-badge-basic>`
+            ? html`<ac-badge-basic ambient="success">Seleccionaste: ${this._selected.name}</ac-badge-basic>`
             : html`<ac-badge-basic ambient="neutral">Todavía nadie seleccionado</ac-badge-basic>`}
         </ac-card-basic>
         <div class="page-actions">
-          <ac-link-basic href="#/"
-            ><ac-icon-basic name="arrow-left" size="sm"></ac-icon-basic> Volver</ac-link-basic
-          >
+          <a href="#/">← Volver</a>
         </div>
       </div>
     `;

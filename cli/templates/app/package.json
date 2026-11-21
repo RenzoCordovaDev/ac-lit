@@ -19,9 +19,6 @@
     "@ac-components/ac-button-basic": "workspace:^",
     "@ac-components/ac-card-basic": "workspace:^",
     "@ac-components/ac-divider-basic": "workspace:^",
-    "@ac-components/ac-icon-basic": "workspace:^",
-    "@ac-components/ac-link-basic": "workspace:^",
-    "@ac-components/ac-text-basic": "workspace:^",
     "lit": "^3.0.0"
   },
   "devDependencies": {
