@@ -1739,13 +1739,22 @@ body[data-view='lab'] .catalog__menu-button {
   display: grid;
   grid-template-columns: minmax(16rem, 18rem) minmax(0, 1fr);
   gap: var(--space-5, 1.25rem);
-  align-items: start;
+  align-items: stretch;
+  overflow: hidden;
 }
 
 .catalog__lab-nav {
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 0.75rem);
+}
+
+/* Mismo motivo que `.catalog__lab-content > *` más abajo: sin esto, los
+   grupos de capítulo se encogerían en vez de dejar que este nav scrollee. */
+.catalog__lab-nav > * {
+  flex-shrink: 0;
 }
 
 .catalog__lab-nav-search {
@@ -1948,9 +1957,21 @@ body[data-view='lab'] .catalog__menu-button {
    columna del nav de al lado, no el contenido). */
 .catalog__lab-content {
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-4, 1rem);
+}
+
+/* Sin esto, un hijo "grande" (sobre todo un bloque de código largo) se
+   encoge por debajo de su tamaño real: un flex item puede ENCOGERSE
+   (flex-shrink: 1 es el default) cuando su contenedor es un flex column con
+   overflow -- en vez de desbordar y dejar que el contenedor scrollee, el
+   algoritmo de flexbox los aplasta para que "entren". Cada hijo directo debe
+   mantener su tamaño natural; el que sobra lo maneja el scroll del padre. */
+.catalog__lab-content > * {
+  flex-shrink: 0;
 }
 
 .catalog__lab-content-empty {
@@ -2067,6 +2088,80 @@ body[data-view='lab'] .catalog__menu-button {
   margin: 0;
   font-size: var(--font-size-sm, 0.85rem);
   line-height: var(--line-height, 1.5);
+}
+
+/* Hueco de imagen pendiente -- cuadro con borde punteado, sin imágenes ni
+   assets externos todavía. */
+.catalog__lab-content-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+  min-height: 12rem;
+  padding: var(--space-5, 1.25rem);
+  border: 2px dashed var(--color-muted, #313335);
+  border-radius: var(--radius-lg, 1.5rem);
+  color: var(--catalog-subtext);
+  text-align: center;
+}
+
+.catalog__lab-content-image-placeholder-text {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  max-width: 28rem;
+}
+
+/* Lista de links externos curados (ej. la sección "Investigación"). */
+.catalog__lab-content-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-content-links-title {
+  margin: 0;
+  font-size: var(--font-size-md, 0.95rem);
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__lab-content-links-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__lab-content-links-item {
+  padding: var(--space-3, 0.75rem);
+  background: var(--color-surface, #2b2b2b);
+  border: 1px solid var(--color-muted, #313335);
+  border-radius: var(--radius-md, 1rem);
+}
+
+.catalog__lab-content-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--catalog-accent);
+  text-decoration: none;
+}
+
+.catalog__lab-content-link:hover {
+  text-decoration: underline;
+}
+
+.catalog__lab-content-link-icon {
+  flex-shrink: 0;
+}
+
+.catalog__lab-content-link-description {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-size: var(--font-size-sm, 0.85rem);
+  color: var(--catalog-subtext);
 }
 
 .catalog__lab-content-actions {
@@ -2235,6 +2330,8 @@ body[data-view='lab'] .catalog__menu-button {
 .catalog__lab-content-complete-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 13rem;
   gap: var(--space-2, 0.5rem);
   font: inherit;
   font-size: var(--font-size-sm, 0.85rem);
@@ -2250,6 +2347,26 @@ body[data-view='lab'] .catalog__menu-button {
 .catalog__lab-content-complete-button--done {
   background: var(--color-primary-500, #10b981);
   color: white;
+}
+
+.catalog__lab-content-complete-button:disabled {
+  cursor: default;
+}
+
+.catalog__lab-content-loader {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: catalog-lab-spin 0.6s linear infinite;
+}
+
+@keyframes catalog-lab-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Selector de nivel -- pantalla que se muestra antes de entrar a cualquier
@@ -2565,6 +2682,8 @@ body[data-view='lab'] .catalog__menu-button {
 }
 
 .catalog__lab-level {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-5, 1.25rem);
@@ -2857,7 +2976,8 @@ body[data-view='lab'] .catalog__menu-button {
 @media (prefers-reduced-motion: reduce) {
   .catalog__skeleton-avatar,
   .catalog__skeleton-block,
-  .catalog__skeleton-pill {
+  .catalog__skeleton-pill,
+  .catalog__lab-content-loader {
     animation: none;
   }
 
