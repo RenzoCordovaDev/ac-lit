@@ -43,6 +43,49 @@ const API_SIMULATOR_PROPERTIES = [
 ];
 
 export const COMPONENT_API = {
+  'ac-amount-basic': {
+    properties: [
+      {
+        name: 'amount',
+        attribute: 'amount',
+        type: 'Number',
+        default: '0',
+        description: 'Valor numérico a formatear.',
+      },
+      {
+        name: 'currency',
+        attribute: 'currency',
+        type: 'String',
+        default: "'PEN'",
+        description:
+          'Código de moneda ISO 4217 (ej. USD, EUR, PEN). Un código inválido/no soportado por Intl.NumberFormat cae a PEN.',
+      },
+      {
+        name: 'size',
+        attribute: 'size',
+        type: 'String',
+        default: "'md'",
+        description: 'Passthrough al ac-text-basic interno: sm, md o lg.',
+      },
+      {
+        name: 'tag',
+        attribute: 'tag',
+        type: 'String',
+        default: "'span'",
+        description:
+          'Passthrough al ac-text-basic interno: etiqueta renderizada (span, p, div, strong, em, small, label o h1–h6).',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'default'",
+        description:
+          'Heredado de ComponentMixin, forwardeado al ac-text-basic interno: default o primary.',
+      },
+    ],
+    events: [],
+  },
   'ac-avatar-basic': {
     properties: [
       {
@@ -231,6 +274,56 @@ export const COMPONENT_API = {
           'El usuario marca o desmarca la casilla. No se dispara si la casilla está deshabilitada.',
       },
     ],
+  },
+  'ac-date-basic': {
+    properties: [
+      {
+        name: 'value',
+        attribute: 'value',
+        type: 'String',
+        default: "''",
+        description:
+          "Fecha de entrada, parseable con new Date(this.value) (ISO 8601, ej. '2026-11-22').",
+      },
+      {
+        name: 'type',
+        attribute: 'type',
+        type: 'String',
+        default: "'short'",
+        description:
+          'short (fecha corta) o long (fecha larga). Cualquier otro valor cae a short (lista blanca).',
+      },
+      {
+        name: 'format',
+        attribute: 'format',
+        type: 'String',
+        default: "''",
+        description:
+          'Patrón de formato personalizado (reemplazo de tokens simple: YYYY, MM, DD), opcional. Si está definido, tiene prioridad sobre type.',
+      },
+      {
+        name: 'size',
+        attribute: 'size',
+        type: 'String',
+        default: "'md'",
+        description: 'Se reenvía al ac-text-basic interno (sm, md o lg).',
+      },
+      {
+        name: 'tag',
+        attribute: 'tag',
+        type: 'String',
+        default: "'span'",
+        description: 'Se reenvía al ac-text-basic interno (etiqueta renderizada).',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'light'",
+        description: 'Heredado de ComponentMixin, se reenvía al ac-text-basic interno.',
+      },
+    ],
+    events: [],
   },
   'ac-divider-basic': {
     properties: [

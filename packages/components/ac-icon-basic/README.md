@@ -30,7 +30,14 @@ Sin eventos. Sin `ambient` — el color del ícono es siempre `currentColor`, he
 
 Whitelist fija de esta primera versión (`viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`):
 
-`check`, `close`, `info`, `success`, `warning`, `danger`, `chevron-down`, `chevron-up`, `chevron-left`, `chevron-right`, `search`, `menu`, `arrow-left`, `arrow-right`.
+`check`, `close`, `info`, `success`, `warning`, `danger`, `chevron-down`, `chevron-up`, `chevron-left`, `chevron-right`, `search`, `menu`, `arrow-left`, `arrow-right`, `email`, `calendar`, `currency`, `hash`.
+
+| Ícono      | Descripción                             |
+| ---------- | --------------------------------------- |
+| `email`    | Sobre de correo — campos de tipo email. |
+| `calendar` | Calendario — campos de tipo fecha.      |
+| `currency` | Billete/moneda — campos de tipo monto.  |
+| `hash`     | Numeral (#) — campos numéricos.         |
 
 > `info`/`success`/`warning`/`danger` son deliberadamente idénticos a los paths ya usados en `ICON_MAP` de `ac-notification-basic` — misma identidad visual, no una reinterpretación.
 

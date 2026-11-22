@@ -37,7 +37,8 @@
   },
   "dependencies": {
     "@ac-base/ac-component-mixin": "workspace:^",
-    "@ac-base/ac-intl-mixin": "workspace:^"
+    "@ac-base/ac-intl-mixin": "workspace:^",
+    "@ac-components/ac-icon-basic": "workspace:^"
   },
   "peerDependencies": {
     "lit": "^3.0.0"

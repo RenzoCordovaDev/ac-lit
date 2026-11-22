@@ -42,6 +42,10 @@ const ICON_MAP = {
   menu: svg`<path d="M4 6h16M4 12h16M4 18h16" />`,
   'arrow-left': svg`<path d="M19 12H5M11 18l-6-6 6-6" />`,
   'arrow-right': svg`<path d="M5 12h14M13 6l6 6-6 6" />`,
+  email: svg`<rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" />`,
+  calendar: svg`<rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" />`,
+  currency: svg`<rect x="2" y="7" width="20" height="10" rx="2" /><circle cx="12" cy="12" r="2.5" />`,
+  hash: svg`<path d="M5 9h14M5 15h14M9 4L7 20M17 4l-2 16" />`,
 };
 
 // Fallback para cualquier `name` fuera de la whitelist de arriba — un círculo

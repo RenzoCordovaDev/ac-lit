@@ -1,0 +1,37 @@
+<section>
+  <h2>Tipos semánticos (ícono + placeholder automático)</h2>
+  <ac-input-basic
+    data-testid="input-amount"
+    label="Monto"
+    type="amount"
+    name="amount"
+  ></ac-input-basic>
+  <ac-input-basic
+    data-testid="input-date"
+    label="Fecha"
+    type="date"
+    name="birth-date"
+  ></ac-input-basic>
+  <ac-input-basic
+    data-testid="input-number"
+    label="Cantidad"
+    type="number"
+    name="quantity"
+  ></ac-input-basic>
+  <ac-input-basic
+    data-testid="input-email-semantic"
+    label="Correo"
+    type="email"
+    name="email-semantic"
+  ></ac-input-basic>
+</section>
+
+<section>
+  <h2>El `placeholder` propio siempre gana</h2>
+  <ac-input-basic
+    data-testid="input-amount-custom-placeholder"
+    label="Monto en soles"
+    type="amount"
+    placeholder="Ej. 150.50"
+  ></ac-input-basic>
+</section>

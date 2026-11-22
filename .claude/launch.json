@@ -216,6 +216,18 @@
       "port": 5173
     },
     {
+      "name": "ac-amount-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-amount-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
+      "name": "ac-date-basic-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-date-basic", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "ac-registro-wizard-demo",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ac-components/ac-registro-wizard", "run", "component:serve"],

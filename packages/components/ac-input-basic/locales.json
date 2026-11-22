@@ -3,18 +3,30 @@
     "input-basic-email-label": "Correo electrónico",
     "input-basic-email-placeholder": "nombre@empresa.com",
     "input-basic-email-hint": "Usaremos este correo solo para avisarte.",
-    "input-basic-email-error": "Ingresa un correo válido."
+    "input-basic-email-error": "Ingresa un correo válido.",
+    "input-basic-placeholder-amount": "0.00",
+    "input-basic-placeholder-date": "DD/MM/AAAA",
+    "input-basic-placeholder-number": "0",
+    "input-basic-placeholder-email": "nombre@dominio.com"
   },
   "en-EN": {
     "input-basic-email-label": "Email",
     "input-basic-email-placeholder": "name@company.com",
     "input-basic-email-hint": "We will only use this email to notify you.",
-    "input-basic-email-error": "Enter a valid email."
+    "input-basic-email-error": "Enter a valid email.",
+    "input-basic-placeholder-amount": "0.00",
+    "input-basic-placeholder-date": "MM/DD/YYYY",
+    "input-basic-placeholder-number": "0",
+    "input-basic-placeholder-email": "name@domain.com"
   },
   "pt-BR": {
     "input-basic-email-label": "E-mail",
     "input-basic-email-placeholder": "nome@empresa.com",
     "input-basic-email-hint": "Usaremos este e-mail apenas para avisar você.",
-    "input-basic-email-error": "Digite um e-mail válido."
+    "input-basic-email-error": "Digite um e-mail válido.",
+    "input-basic-placeholder-amount": "0,00",
+    "input-basic-placeholder-date": "DD/MM/AAAA",
+    "input-basic-placeholder-number": "0",
+    "input-basic-placeholder-email": "nome@dominio.com"
   }
 }
