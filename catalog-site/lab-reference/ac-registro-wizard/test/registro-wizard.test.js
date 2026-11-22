@@ -72,11 +72,6 @@ async function advanceToStep3(el) {
 }
 
 suite('ac-registro-wizard', () => {
-  test('contained por defecto es false', async () => {
-    const el = await fixture(html`<ac-registro-wizard></ac-registro-wizard>`);
-    expect(el.contained).to.be.false;
-  });
-
   test('_open es true al conectarse', async () => {
     const el = await fixture(html`<ac-registro-wizard></ac-registro-wizard>`);
     expect(el._open).to.be.true;

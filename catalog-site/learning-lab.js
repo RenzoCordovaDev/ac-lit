@@ -998,7 +998,7 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
             type: 'code',
             lang: 'js',
             filename: 'catalog-site/lab-reference/ac-registro-wizard/src/registro-wizard.js',
-            code: 'constructor() {\n  super();\n  this.contained = false;\n  this.getBoundary = null;\n  this._infoOpen = false;\n  this._resetState();\n  this._apiUsersRef = createRef();\n  this._stepsRef = createRef();\n}',
+            code: 'constructor() {\n  super();\n  this._infoOpen = false;\n  this._resetState();\n  this._apiUsersRef = createRef();\n  this._stepsRef = createRef();\n}',
           },
           {
             type: 'p',
@@ -1052,7 +1052,7 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
           { type: 'heading', text: 'Estado interno: `state: true`, nunca `type`/`reflect`' },
           {
             type: 'p',
-            text: 'Cada property que guarda estado interno del wizard (el valor de un campo, si el modal está abierto, si se está guardando) se declara con `{ state: true }` en `static get properties()`. Es distinto de una property pública como `contained` (que SÍ usa `type: Boolean, reflect: true`, porque es parte de la API del componente y necesita verse como atributo HTML). `state: true` le dice a Lit "esto dispara un re-render, pero no es un atributo ni una API pública" -- justo lo que necesitan las 11 properties que solo le importan al componente mismo.',
+            text: 'Cada property que guarda estado interno del wizard (el valor de un campo, si el modal está abierto, si se está guardando) se declara con `{ state: true }` en `static get properties()`. Las 13 properties de este wizard son así -- ninguna usa `type`/`reflect`, porque su API pública completa son los 2 métodos de arriba, sin ninguna property propia. Eso no es la regla general del catálogo: `ac-modal-basic`, por ejemplo (laboratorio 7), SÍ tiene una property pública real con `type: Boolean, reflect: true` (su `open`, que necesita verse como atributo HTML). `state: true` le dice a Lit "esto dispara un re-render, pero no es un atributo ni una API pública" -- lo que corresponde cuando, como acá, el dato es puramente interno.',
           },
           {
             type: 'code',
@@ -1060,7 +1060,6 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
             filename: 'src/registro-wizard.js',
             code: `  static get properties() {
     return {
-      contained: { type: Boolean, reflect: true },   // si debe contenerse en un marco simulado (lo asigna ac-demo-content)
       _open: { state: true },           // transición raíz visible -- arranca en true, este wizard ES la pantalla raíz
       _modalOpen: { state: true },      // modal de éxito visible
       _infoOpen: { state: true },       // modal de info general visible
@@ -1282,8 +1281,6 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
             filename: 'src/registro-wizard.js',
             code: `<ac-modal-basic
   ?open=\${this._modalOpen}
-  ?contained=\${this.contained}
-  .getBoundary=\${this.getBoundary}
   size="full"
   header=\${this.t('registro-wizard-modal-header')}
   primary-text=\${this.t('registro-wizard-modal-primary')}
@@ -1310,7 +1307,7 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
           { type: 'heading', text: 'El contenido real vive en un componente hijo' },
           {
             type: 'p',
-            text: '`ac-modal-basic` solo aporta la estructura (overlay, header, botones). Lo que se ve adentro -- avatar, mensaje, badge del rol -- es un componente propio, `registro-wizard-modal-resultado`, que recibe cuatro properties planas (`userId`, `nombre`, `email`, `rol`) y no dispara ningún evento: es puramente de presentación. Fijate que su `render()` no pinta nada hasta tener un nombre real, para no mostrar el modal vacío un instante antes de que lleguen los datos:',
+            text: '`ac-modal-basic` solo aporta la estructura (overlay, header, botones). Lo que se ve adentro -- avatar, mensaje, badge del rol -- es un componente propio, `registro-wizard-modal-resultado`, que recibe cuatro properties planas (`userId`, `nombre`, `email`, `rol`) y no dispara ningún evento: es puramente de presentación. Fíjate que su `render()` no pinta nada hasta tener un nombre real, para no mostrar el modal vacío un instante antes de que lleguen los datos:',
           },
           {
             type: 'code',
@@ -1342,8 +1339,6 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
             filename: 'src/registro-wizard.js',
             code: `<ac-modal-basic
   ?open=\${this._infoOpen}
-  ?contained=\${this.contained}
-  .getBoundary=\${this.getBoundary}
   header=\${this.t('registro-wizard-info-title')}
   @ac-modal-basic-close=\${this._onInfoModalClose}
 >
@@ -1399,8 +1394,6 @@ _resetState() {
             filename: 'src/registro-wizard.js',
             code: `<ac-transition-container
   ?open=\${this._open}
-  ?contained=\${this.contained}
-  .getBoundary=\${this.getBoundary}
   header-text=\${this.t('registro-wizard-header-text')}
   hide-menu-icon
   @ac-transition-container-header-back-icon-click=\${this._onBackIconClick}

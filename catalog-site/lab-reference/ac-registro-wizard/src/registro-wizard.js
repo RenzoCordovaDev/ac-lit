@@ -30,12 +30,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
   static get properties() {
     return {
       /**
-       * Si el componente debe contener sus superposiciones (ac-transition-container/ac-modal-basic) dentro de un marco simulado en vez del viewport real -- lo asigna ac-demo-content en el catálogo.
-       * @type {Boolean}
-       * @default false
-       */
-      contained: { type: Boolean, reflect: true },
-      /**
        * Si la transición raíz (ac-transition-container) está visible. Arranca en true: este wizard no tiene pantalla "anterior", es la raíz del flujo.
        * @type {Boolean}
        * @default true
@@ -131,8 +125,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
   constructor() {
     super();
-    this.contained = false;
-    this.getBoundary = null;
     this._infoOpen = false;
     this._resetState();
     this._apiUsersRef = createRef();
@@ -354,8 +346,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
       <ac-transition-container
         ?open=${this._open}
-        ?contained=${this.contained}
-        .getBoundary=${this.getBoundary}
         header-text=${this.t('registro-wizard-header-text')}
         hide-menu-icon
         @ac-transition-container-header-back-icon-click=${this._onBackIconClick}
@@ -401,8 +391,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
       <ac-modal-basic
         ?open=${this._modalOpen}
-        ?contained=${this.contained}
-        .getBoundary=${this.getBoundary}
         size="full"
         header=${this.t('registro-wizard-modal-header')}
         primary-text=${this.t('registro-wizard-modal-primary')}
@@ -418,8 +406,6 @@ export class RegistroWizard extends ComponentMixin(LitElement) {
 
       <ac-modal-basic
         ?open=${this._infoOpen}
-        ?contained=${this.contained}
-        .getBoundary=${this.getBoundary}
         header=${this.t('registro-wizard-info-title')}
         @ac-modal-basic-close=${this._onInfoModalClose}
       >

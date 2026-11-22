@@ -34,7 +34,10 @@ When('el usuario activa el modo oscuro', async function () {
 });
 
 When('el usuario abre el modal con el botón {string}', async function (triggerTestId) {
-  const trigger = $(`[data-testid="${triggerTestId}"]`);
+  const scope = await this.demoPage.caseFrame();
+  const trigger = scope
+    ? scope.$(`[data-testid="${triggerTestId}"]`)
+    : $(`[data-testid="${triggerTestId}"]`);
   await trigger.waitForDisplayed();
   await trigger.click();
 });
@@ -61,36 +64,43 @@ When('el usuario hace click fuera del modal', async function () {
     .perform();
 });
 
+/** El modal puede vivir dentro del iframe de un caso "documento completo"
+ * (ver PageObject.caseFrame() en @ac-base/ac-e2e-testing) — se le pasa el
+ * browsing context que corresponda en vez de asumir el documento principal. */
+async function findModal(world, testId) {
+  return componentProvider.find(ModalBasicPage, testId, await world.demoPage.caseFrame());
+}
+
 When('el usuario cierra el modal {string} con su botón de cerrar', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await modal.waitForSettled();
-  await modal.closeButton.waitForDisplayed();
-  await modal.closeButton.click();
+  await modal.waitForPartDisplayed('close');
+  await modal.clickPart('close');
 });
 
 When('el usuario pulsa el botón principal del modal {string}', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await modal.waitForSettled();
-  await modal.primaryButton.waitForDisplayed();
-  await modal.primaryButton.click();
+  await modal.waitForPartDisplayed('primary');
+  await modal.clickPart('primary');
 });
 
 When('el usuario pulsa el botón secundario del modal {string}', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await modal.waitForSettled();
-  await modal.secondaryButton.waitForDisplayed();
-  await modal.secondaryButton.click();
+  await modal.waitForPartDisplayed('secondary');
+  await modal.clickPart('secondary');
 });
 
 When('el usuario pulsa el enlace del modal {string}', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await modal.waitForSettled();
-  await modal.link.waitForDisplayed();
-  await modal.link.click();
+  await modal.waitForPartDisplayed('link');
+  await modal.clickPart('link');
 });
 
-async function waitForModalOpen(testId, expected) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+async function waitForModalOpen(world, testId, expected) {
+  const modal = await findModal(world, testId);
   await browser.waitUntil(async () => (await modal.snapshot()).open === expected, {
     timeout: 4000,
     timeoutMsg: `El modal "${testId}" no llegó a estar ${expected ? 'abierto' : 'cerrado'}`,
@@ -98,15 +108,15 @@ async function waitForModalOpen(testId, expected) {
 }
 
 Then('el modal {string} está abierto', async function (testId) {
-  await waitForModalOpen(testId, true);
+  await waitForModalOpen(this, testId, true);
 });
 
 Then('el modal {string} está cerrado', async function (testId) {
-  await waitForModalOpen(testId, false);
+  await waitForModalOpen(this, testId, false);
 });
 
 Then('el título del modal {string} es {string}', async function (testId, expected) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await browser.waitUntil(async () => (await modal.snapshot()).title === expected, {
     timeout: 3000,
     timeoutMsg: `El título de "${testId}" no llegó a ser "${expected}"`,
@@ -114,7 +124,7 @@ Then('el título del modal {string} es {string}', async function (testId, expect
 });
 
 Then('el modal {string} ocupa la mitad de la altura de la pantalla', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await browser.waitUntil(
     async () => {
       const { height, viewportHeight } = await modal.snapshot();
@@ -125,7 +135,7 @@ Then('el modal {string} ocupa la mitad de la altura de la pantalla', async funct
 });
 
 Then('el modal {string} ocupa toda la altura de la pantalla', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await browser.waitUntil(
     async () => {
       const { height, viewportHeight } = await modal.snapshot();
@@ -136,7 +146,7 @@ Then('el modal {string} ocupa toda la altura de la pantalla', async function (te
 });
 
 Then('el modal {string} deja un espacio arriba', async function (testId) {
-  const modal = componentProvider.find(ModalBasicPage, testId);
+  const modal = await findModal(this, testId);
   await browser.waitUntil(
     async () => {
       const { top, viewportTop, height, viewportHeight } = await modal.snapshot();

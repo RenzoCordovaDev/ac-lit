@@ -8,7 +8,7 @@ Given('el usuario está en el demo de {string}', async function (_componentName)
 });
 
 Then('el componente contiene el texto {string}', async function (expectedText) {
-  const component = componentProvider.find(__class_name__Page);
+  const component = componentProvider.find(__class_name__Page, await this.demoPage.caseFrame());
   await component.waitForDisplayed();
   const actualText = (await component.root.getText()).trim();
   if (actualText !== expectedText) {

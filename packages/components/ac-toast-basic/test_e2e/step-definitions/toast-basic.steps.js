@@ -28,25 +28,35 @@ When('el usuario activa el modo oscuro', async function () {
 });
 
 When('el usuario pulsa el botón {string}', async function (triggerTestId) {
-  const trigger = $(`[data-testid="${triggerTestId}"]`);
+  const scope = await this.demoPage.caseFrame();
+  const trigger = scope
+    ? scope.$(`[data-testid="${triggerTestId}"]`)
+    : $(`[data-testid="${triggerTestId}"]`);
   await trigger.waitForDisplayed();
   await trigger.click();
 });
 
+/** El toast puede vivir dentro del iframe de un caso "documento completo"
+ * (ver PageObject.caseFrame() en @ac-base/ac-e2e-testing) — se le pasa el
+ * browsing context que corresponda en vez de asumir el documento principal. */
+async function findToast(world, testId) {
+  return componentProvider.find(ToastBasicPage, testId, await world.demoPage.caseFrame());
+}
+
 When('el usuario cierra el toast {string} con su botón de cerrar', async function (testId) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
-  await toast.closeButton.waitForDisplayed();
-  await toast.closeButton.click();
+  const toast = await findToast(this, testId);
+  await toast.waitForPartDisplayed('close');
+  await toast.clickPart('close');
 });
 
 When('el usuario pulsa la acción del toast {string}', async function (testId) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
-  await toast.actionButton.waitForDisplayed();
-  await toast.actionButton.click();
+  const toast = await findToast(this, testId);
+  await toast.waitForPartDisplayed('action');
+  await toast.clickPart('action');
 });
 
-async function waitForShown(testId, expected, timeout = 5000) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
+async function waitForShown(world, testId, expected, timeout = 5000) {
+  const toast = await findToast(world, testId);
   await browser.waitUntil(async () => (await toast.snapshot()).shown === expected, {
     timeout,
     timeoutMsg: `El toast "${testId}" no llegó a estar ${expected ? 'visible' : 'oculto'}`,
@@ -54,27 +64,27 @@ async function waitForShown(testId, expected, timeout = 5000) {
 }
 
 Then('el toast {string} está visible', async function (testId) {
-  await waitForShown(testId, true);
+  await waitForShown(this, testId, true);
 });
 
 Then('el toast {string} se oculta solo', async function (testId) {
-  await waitForShown(testId, false, 6000);
+  await waitForShown(this, testId, false, 6000);
 });
 
 Then('el toast {string} sigue visible tras {int} segundos', async function (testId, seconds) {
   await browser.pause(seconds * 1000);
-  const toast = componentProvider.find(ToastBasicPage, testId);
+  const toast = await findToast(this, testId);
   if (!(await toast.snapshot()).shown) {
     throw new Error(`Se esperaba que "${testId}" siguiera visible tras ${seconds} s.`);
   }
 });
 
 Then('el toast {string} está oculto', async function (testId) {
-  await waitForShown(testId, false);
+  await waitForShown(this, testId, false);
 });
 
 Then('el toast {string} muestra el texto {string}', async function (testId, expected) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
+  const toast = await findToast(this, testId);
   await browser.waitUntil(async () => (await toast.snapshot()).text.includes(expected), {
     timeout: 3000,
     timeoutMsg: `El toast "${testId}" no llegó a mostrar "${expected}"`,
@@ -82,7 +92,7 @@ Then('el toast {string} muestra el texto {string}', async function (testId, expe
 });
 
 Then('el toast {string} aparece arriba de la pantalla', async function (testId) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
+  const toast = await findToast(this, testId);
   await browser.waitUntil(
     async () => {
       const { top, viewportTop } = await toast.snapshot();
@@ -93,7 +103,7 @@ Then('el toast {string} aparece arriba de la pantalla', async function (testId) 
 });
 
 Then('el toast {string} aparece abajo de la pantalla', async function (testId) {
-  const toast = componentProvider.find(ToastBasicPage, testId);
+  const toast = await findToast(this, testId);
   await browser.waitUntil(
     async () => {
       const { bottom, viewportBottom } = await toast.snapshot();
@@ -107,8 +117,8 @@ Then('el toast {string} no se superpone con el toast {string}', async function (
   // El desplazamiento del apilado se anima (transition de bottom/top): se espera a que asiente.
   await browser.waitUntil(
     async () => {
-      const a = await componentProvider.find(ToastBasicPage, upper).snapshot();
-      const b = await componentProvider.find(ToastBasicPage, lower).snapshot();
+      const a = await (await findToast(this, upper)).snapshot();
+      const b = await (await findToast(this, lower)).snapshot();
       const [higher, lowerOne] = a.top < b.top ? [a, b] : [b, a];
       return higher.bottom <= lowerOne.top + 1;
     },

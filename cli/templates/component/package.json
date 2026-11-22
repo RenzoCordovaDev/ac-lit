@@ -19,8 +19,8 @@
   },
   "scripts": {
     "component:lint": "eslint .",
-    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/__file_base__.styles.scss src/__file_base__.styles.js __styles_export__",
-    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src/__file_base__.styles.scss src/__file_base__.styles.js __styles_export__ --watch",
+    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src",
+    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src --watch",
     "component:serve": "pnpm run component:build:styles && concurrently -k -n styles,vite -c blue,green \"pnpm run component:build:styles:watch\" \"vite demo\"",
     "component:build": "pnpm run component:build:styles && vite build",
     "component:preview": "vite preview",
