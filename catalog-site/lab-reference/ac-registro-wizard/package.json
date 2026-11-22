@@ -1,6 +1,6 @@
 {
   "name": "@ac-components/ac-registro-wizard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "ac-lit registro-wizard Web Component — componente de referencia del Laboratorio de aprendizaje (catalog-site/), nunca publicado a npm.",
   "license": "MIT",
