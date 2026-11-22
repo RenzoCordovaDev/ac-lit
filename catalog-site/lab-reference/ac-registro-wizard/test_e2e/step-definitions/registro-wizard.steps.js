@@ -5,7 +5,14 @@ import { RegistroWizardPage } from '../pages/registro-wizard.page.js';
 
 Given('el usuario está en el demo de {string}', async function (_componentName) {
   this.demoPage = await pageProvider.open(DemoPage);
-  this.wizard = componentProvider.find(RegistroWizardPage);
+  // El caso de este demo es un documento completo cargado en <iframe> (ver
+  // ac-demo-case.js) — hay que pasarle su browsing context, si no busca el
+  // wizard en el documento principal, donde ya no vive.
+  this.wizard = componentProvider.find(
+    RegistroWizardPage,
+    undefined,
+    await this.demoPage.caseFrame(),
+  );
   await this.wizard.waitForDisplayed();
   await this.wizard.setApiTimeout(1);
 });
