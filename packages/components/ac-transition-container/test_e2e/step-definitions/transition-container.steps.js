@@ -28,7 +28,10 @@ When('el usuario activa el modo oscuro', async function () {
 });
 
 When('el usuario abre el contenedor con el botón {string}', async function (triggerTestId) {
-  const trigger = $(`[data-testid="${triggerTestId}"]`);
+  const scope = await this.demoPage.caseFrame();
+  const trigger = scope
+    ? scope.$(`[data-testid="${triggerTestId}"]`)
+    : $(`[data-testid="${triggerTestId}"]`);
   await trigger.waitForClickable();
   await trigger.click();
 });
@@ -37,22 +40,30 @@ When('el usuario pulsa Escape', async function () {
   await browser.keys('Escape');
 });
 
+/** El contenedor puede vivir dentro del iframe de un caso "documento
+ * completo" (ver PageObject.caseFrame() en @ac-base/ac-e2e-testing) — se le
+ * pasa el browsing context que corresponda en vez de asumir el documento
+ * principal. */
+async function findContainer(world, testId) {
+  return componentProvider.find(TransitionContainerPage, testId, await world.demoPage.caseFrame());
+}
+
 When('el usuario pulsa la flecha de volver del contenedor {string}', async function (testId) {
-  const container = componentProvider.find(TransitionContainerPage, testId);
+  const container = await findContainer(this, testId);
   await container.waitForSettled();
-  await container.backButton.waitForClickable();
-  await container.backButton.click();
+  await container.waitForPartDisplayed('back');
+  await container.clickPart('back');
 });
 
 When('el usuario pulsa el ícono de menú del contenedor {string}', async function (testId) {
-  const container = componentProvider.find(TransitionContainerPage, testId);
+  const container = await findContainer(this, testId);
   await container.waitForSettled();
-  await container.menuButton.waitForClickable();
-  await container.menuButton.click();
+  await container.waitForPartDisplayed('menu');
+  await container.clickPart('menu');
 });
 
-async function waitForContainerVisible(testId, expected) {
-  const container = componentProvider.find(TransitionContainerPage, testId);
+async function waitForContainerVisible(world, testId, expected) {
+  const container = await findContainer(world, testId);
   await browser.waitUntil(async () => (await container.snapshot()).open === expected, {
     timeout: 4000,
     timeoutMsg: `El contenedor "${testId}" no llegó a estar ${expected ? 'visible' : 'cerrado'}`,
@@ -60,15 +71,15 @@ async function waitForContainerVisible(testId, expected) {
 }
 
 Then('el contenedor {string} está visible', async function (testId) {
-  await waitForContainerVisible(testId, true);
+  await waitForContainerVisible(this, testId, true);
 });
 
 Then('el contenedor {string} está cerrado', async function (testId) {
-  await waitForContainerVisible(testId, false);
+  await waitForContainerVisible(this, testId, false);
 });
 
 Then('el título del contenedor {string} es {string}', async function (testId, expected) {
-  const container = componentProvider.find(TransitionContainerPage, testId);
+  const container = await findContainer(this, testId);
   await browser.waitUntil(async () => (await container.snapshot()).title === expected, {
     timeout: 3000,
     timeoutMsg: `El título de "${testId}" no llegó a ser "${expected}"`,
@@ -76,7 +87,7 @@ Then('el título del contenedor {string} es {string}', async function (testId, e
 });
 
 Then('el contenedor {string} muestra la flecha de volver', async function (testId) {
-  const container = componentProvider.find(TransitionContainerPage, testId);
+  const container = await findContainer(this, testId);
   const { hasBackIcon } = await container.snapshot();
   if (!hasBackIcon) throw new Error(`El contenedor "${testId}" no muestra la flecha de volver`);
 });

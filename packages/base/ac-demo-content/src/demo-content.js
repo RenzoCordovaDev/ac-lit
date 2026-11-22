@@ -177,6 +177,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
     this._onEvent = this._onEvent.bind(this);
     this._onPanelKeydown = this._onPanelKeydown.bind(this);
     this._onCaseLoad = this._onCaseLoad.bind(this);
+    this._onBridgeMessage = this._onBridgeMessage.bind(this);
   }
 
   get _languages() {
@@ -221,6 +222,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       document.addEventListener(name, this._onEvent);
     }
     this.addEventListener('ac-demo-case-load', this._onCaseLoad);
+    window.addEventListener('message', this._onBridgeMessage);
   }
 
   disconnectedCallback() {
@@ -228,6 +230,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       document.removeEventListener(name, this._onEvent);
     }
     this.removeEventListener('ac-demo-case-load', this._onCaseLoad);
+    window.removeEventListener('message', this._onBridgeMessage);
     document.removeEventListener('keydown', this._onPanelKeydown);
     clearTimeout(this._copiedTimer);
     super.disconnectedCallback();
@@ -264,6 +267,31 @@ export class DemoContent extends ComponentMixin(LitElement) {
       caseEl.active = i === index;
     });
     this._activeCaseIndex = index;
+    this._syncThemeToActiveCase();
+    this._syncLanguageToActiveCase();
+    this._syncViewportPadding();
+  }
+
+  /** Un caso cargado en iframe (ver demo-case.js) tiene su propio documento:
+   * no hereda el `data-theme` del documento padre, hay que replicarlo. */
+  _syncThemeToActiveCase() {
+    const iframe = this._cases[this._activeCaseIndex]?.iframe;
+    iframe?.contentDocument?.documentElement.setAttribute('data-theme', this._theme);
+  }
+
+  /** `.ac-demo-content__viewport` trae 1rem de padding pensado para contenido
+   * suelto (fragmento) que necesita respirar sobre el fondo del marco. Un
+   * caso "documento completo" (iframe) suele ser una pantalla real de punta a
+   * punta (ej. `ac-transition-container` a pantalla completa) — con ese
+   * padding de por medio nunca puede llegar a los bordes del marco simulado,
+   * aunque internamente esté midiendo/llenando el 100% de su propio iframe.
+   * Se anula a mano en línea (mismo motivo que el resto de estilos en línea
+   * de demo-case.js: CSS con scope de shadow DOM no alcanza el DOM liviano). */
+  _syncViewportPadding() {
+    const viewport = this.renderRoot.querySelector('.ac-demo-content__viewport');
+    if (!viewport) return;
+    const isIframeCase = Boolean(this._cases[this._activeCaseIndex]?.iframe);
+    viewport.style.padding = isIframeCase ? '0' : '';
   }
 
   selectCase(index) {
@@ -275,6 +303,20 @@ export class DemoContent extends ComponentMixin(LitElement) {
     if (this._languages.length !== 2 || (index !== 0 && index !== 1)) return;
     this._langIndex = index;
     setGlobalLocale(this._languages[index]);
+    this._syncLanguageToActiveCase();
+  }
+
+  /** Mismo motivo que `_syncThemeToActiveCase`: un caso en iframe tiene su
+   * propia copia del módulo de `@ac-base/ac-intl-mixin` — `setGlobalLocale()`
+   * de arriba solo cambió la del documento padre. Se replica vía
+   * case-event-bridge.js (import de cada caso en documento completo). */
+  _syncLanguageToActiveCase() {
+    if (this._languages.length !== 2) return;
+    const iframe = this._cases[this._activeCaseIndex]?.iframe;
+    iframe?.contentWindow?.postMessage(
+      { __acDemoBridgeSetLocale: true, locale: this._languages[this._langIndex] },
+      '*',
+    );
   }
 
   selectAmbient(value) {
@@ -292,6 +334,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
     if (!THEMES.includes(theme)) return;
     this._theme = theme;
     document.documentElement.setAttribute('data-theme', theme);
+    this._syncThemeToActiveCase();
   }
 
   selectDevice(key) {
@@ -338,7 +381,29 @@ export class DemoContent extends ComponentMixin(LitElement) {
   // viewport simulado por JS. `getBoundary` es una función (no el elemento)
   // porque ese div se reconstruye al alternar Visual/Código.
   _onCaseLoad(event) {
-    this._applyContainment(event.target);
+    const caseEl = event.target;
+    const iframe = caseEl.iframe;
+    if (iframe) {
+      // Camino "documento completo" (demo-case.js): el iframe es su propio
+      // browsing context, con su propia capa superior — un <dialog> nativo
+      // ya queda acotado a sus límites sin contained/getBoundary. Lo único
+      // que hay que cruzar a mano es lo que de verdad depende del documento
+      // (tema) y lo que no cruza el límite del iframe por su cuenta (eventos
+      // compuestos para el panel de eventos — ver case-event-bridge.js).
+      this._syncThemeToActiveCase();
+      this._syncLanguageToActiveCase();
+      this._syncViewportPadding();
+      if (this._eventNames.length) {
+        iframe.contentWindow?.postMessage(
+          { __acDemoBridgeInit: true, eventNames: this._eventNames },
+          '*',
+        );
+      }
+      return;
+    }
+    // Camino "fragmento" (innerHTML): mismo documento, se puede aplicar
+    // contained/getBoundary a mano a lo que esté en el DOM liviano del caso.
+    this._applyContainment(caseEl);
   }
 
   _applyContainment(caseEl) {
@@ -349,6 +414,17 @@ export class DemoContent extends ComponentMixin(LitElement) {
         el.contained = true;
       }
     }
+  }
+
+  /** Recibe los eventos que `case-event-bridge.js` reenvía desde el iframe de
+   * un caso "documento completo" — el equivalente a `_onEvent` para el
+   * camino fragmento, que escucha directo en `document`. */
+  _onBridgeMessage(event) {
+    if (!event.data || event.data.__acDemoBridgeEvent !== true) return;
+    const iframe = this._cases[this._activeCaseIndex]?.iframe;
+    if (!iframe || event.source !== iframe.contentWindow) return;
+    if (!this._eventNames.includes(event.data.name)) return;
+    this._onEvent({ type: event.data.name, detail: event.data.detail });
   }
 
   _onThemeSelect(theme) {

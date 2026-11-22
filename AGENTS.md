@@ -17,7 +17,7 @@ No dupliques esas convenciones acá — si algo cambia, se actualiza en esos arc
 - Todo componente nuevo usa la propiedad **`ambient`** (heredada de `ComponentMixin`), nunca `variant`.
 - Toda demo de componente usa **`@ac-base/ac-demo-content`** — nunca reimplementes a mano un selector de caso/idioma/tema/tamaño/panel de eventos. Ver la API completa en `packages/base/ac-demo-content/README.md`.
 - Tests unitarios: interfaz TDD de Mocha (**`suite`/`test`**, no `describe`/`it`), **un solo `expect` por test**.
-- Los archivos `href` de cada `ac-demo-case` van en `demo/public/`, nunca directo en `demo/` (Vite solo copia `public/` tal cual al build).
+- Los archivos `href` de cada `ac-demo-case` que son un FRAGMENTO de HTML (cargado con `fetch`+`innerHTML`) van en `demo/public/`, nunca directo en `demo/` (Vite solo copia `public/` tal cual al build). Un `href` que es un DOCUMENTO COMPLETO (`<!doctype html>...<html>...`, cargado en un `<iframe>`) va en `demo/` a secas, con su propio entry en `vite.config.js` (`build.rollupOptions.input`) para que Vite resuelva sus imports.
 - **Nunca uses `opacity` para atenuar texto** — rompe contraste WCAG de forma impredecible entre temas. Para fondos sólidos con texto fijo, usa los tokens semánticos fijos (`--color-neutral`, `--color-success`, etc.), nunca `--color-muted`/`--color-bg`/`--color-surface` (cambian entre modo claro/oscuro). Para texto sin caja propia (va directo sobre la página), usa `:host-context([data-theme='light'])` para adaptarlo al tema. Ver "Dark-mode y colores de fondo sólido" en `docs/CONVENTIONS.md`.
 - Valida accesibilidad en **ambos temas** (claro y oscuro), no solo el default — varios bugs reales de contraste solo aparecían en uno de los dos.
 

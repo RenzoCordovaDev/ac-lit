@@ -431,6 +431,12 @@
   border-radius: 0 0 0.5rem 0.5rem;
 }
 
+// NOTA: `ac-demo-case`/`.ac-demo-case__iframe` (demo-case.js) son DOM liviano
+// proyectado por <slot> — el CSS con scope de shadow DOM de este componente
+// NUNCA los alcanza (ni siquiera `::slotted()` llega a un descendiente como
+// el <iframe>, solo al propio elemento slotteado). Por eso ese tamaño se fija
+// con estilos en línea desde el propio demo-case.js, no acá.
+
 /* Vista de código: editor con barra de título, líneas numeradas y resaltado de
    sintaxis. Paleta FIJA (oscura en ambos temas, como un editor real) — los
    colores no dependen de --color-bg/--color-text, que cambian con el tema. */

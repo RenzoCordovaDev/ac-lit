@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -9,5 +10,12 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./demo/index.html', import.meta.url)),
+        'case-basic': fileURLToPath(new URL('./demo/case-basic.html', import.meta.url)),
+        'case-behavior': fileURLToPath(new URL('./demo/case-behavior.html', import.meta.url)),
+      },
+    },
   },
 });

@@ -22,12 +22,6 @@ import '@ac-components/ac-registro-wizard';
 <ac-registro-wizard></ac-registro-wizard>
 ```
 
-## Propiedades
-
-| Propiedad   | Atributo    | Tipo    | Default | Descripción                                                                                                                                                                                                 |
-| ----------- | ----------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `contained` | `contained` | Boolean | `false` | Si sus superposiciones (`ac-transition-container`/`ac-modal-basic`) deben quedar contenidas en un marco simulado en vez del viewport real — lo asigna `ac-demo-content` en el catálogo, no se setea a mano. |
-
 ## Métodos públicos
 
 | Método    | Qué hace                                                                                  |

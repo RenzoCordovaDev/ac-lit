@@ -11,7 +11,8 @@
   "type": "module",
   "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./case-event-bridge.js": "./src/case-event-bridge.js"
   },
   "files": [
     "/src/",

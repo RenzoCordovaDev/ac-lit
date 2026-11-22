@@ -216,6 +216,12 @@
       "port": 5173
     },
     {
+      "name": "ac-registro-wizard-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ac-components/ac-registro-wizard", "run", "component:serve"],
+      "port": 5173
+    },
+    {
       "name": "catalog-site",
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4300", "--directory", "catalog-dist"],
