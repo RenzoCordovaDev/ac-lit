@@ -96,8 +96,8 @@ describe('componentCreate', () => {
     assert.equal(pkg.dependencies['@ac-base/ac-component-mixin'], '^0.1.0');
     assert.equal(pkg.dependencies['@ac-base/ac-intl-mixin'], '^0.1.0');
     assert.equal(pkg.devDependencies['@ac-base/ac-core'], '^0.1.0');
-    assert.equal(pkg.devDependencies['@ac-base/ac-demo-content'], '^0.1.0');
-    assert.equal(pkg.devDependencies['@ac-base/cli'], '^0.2.0');
+    assert.equal(pkg.devDependencies['@ac-base/ac-demo-content'], '^0.3.0');
+    assert.equal(pkg.devDependencies['@ac-base/cli'], '^0.5.0');
     // @ac-base/ac-e2e-testing nunca llega a este punto: el e2e ya se
     // desactivó antes de pinear versiones (ver test de arriba).
     assert.equal(pkg.devDependencies['@ac-base/ac-e2e-testing'], undefined);
