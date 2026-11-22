@@ -13,12 +13,12 @@ const STEP_ACTIONS_CLASS = [
 ];
 
 export class RegistroWizardPage extends ComponentObject {
-  constructor(testId = 'registro-wizard-default') {
-    super({ selector: `[data-testid="${testId}"]` });
+  constructor(testId = 'registro-wizard-default', scope) {
+    super({ selector: `[data-testid="${testId}"]`, scope });
   }
 
   async snapshot() {
-    return browser.execute(selector => {
+    return this.executor.execute(selector => {
       const el = document.querySelector(selector);
       const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
       const steps = [...stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')];
@@ -33,7 +33,7 @@ export class RegistroWizardPage extends ComponentObject {
   }
 
   async setApiTimeout(ms) {
-    await browser.execute(
+    await this.executor.execute(
       (selector, timeout) => {
         document.querySelector(selector).shadowRoot.querySelector('ac-api-users').timeout = timeout;
       },
@@ -43,7 +43,7 @@ export class RegistroWizardPage extends ComponentObject {
   }
 
   async setSimulateError(value) {
-    await browser.execute(
+    await this.executor.execute(
       (selector, simulateError) => {
         document.querySelector(selector).shadowRoot.querySelector('ac-api-users').simulateError =
           simulateError;
@@ -54,7 +54,7 @@ export class RegistroWizardPage extends ComponentObject {
   }
 
   async fillStep1(nombre, email) {
-    await browser.execute(
+    await this.executor.execute(
       (selector, nombreValue, emailValue, contentTag) => {
         const el = document.querySelector(selector);
         const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
@@ -76,7 +76,7 @@ export class RegistroWizardPage extends ComponentObject {
   }
 
   async acceptTerminos() {
-    await browser.execute(
+    await this.executor.execute(
       (selector, contentTag) => {
         const el = document.querySelector(selector);
         const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
@@ -93,7 +93,7 @@ export class RegistroWizardPage extends ComponentObject {
   }
 
   async clickActionButton(index) {
-    await browser.execute(
+    await this.executor.execute(
       (selector, i, contentTags, actionsClasses) => {
         const el = document.querySelector(selector);
         const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
