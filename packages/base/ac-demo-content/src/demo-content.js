@@ -14,6 +14,35 @@ const DEVICE_PRESETS = [
   { key: 'desktop', label: 'Desktop', width: 1280, height: 800 },
 ];
 const MAX_EVENT_LOG_ENTRIES = 50;
+// Persiste el caso activo por componente (`name`), para que guardar un
+// cambio con el demo corriendo (HMR) o recargar la página a mano no vuelva
+// siempre al primer caso -- solo debería pasar la primera vez que se visita
+// la demo (nada guardado todavía) o al elegir un caso a mano. 100% cliente,
+// sin cuenta -- mismo patrón que el progreso del Laboratorio, envuelto en
+// try/catch porque localStorage puede no estar disponible (privacidad, modo
+// incógnito, cuota).
+const ACTIVE_CASE_STORAGE_PREFIX = 'ac-lit:demo-active-case:';
+
+function loadStoredCaseIndex(name) {
+  if (!name) return null;
+  try {
+    const raw = localStorage.getItem(ACTIVE_CASE_STORAGE_PREFIX + name);
+    if (raw === null) return null;
+    const index = Number(raw);
+    return Number.isInteger(index) && index >= 0 ? index : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function saveActiveCaseIndex(name, index) {
+  if (!name) return;
+  try {
+    localStorage.setItem(ACTIVE_CASE_STORAGE_PREFIX + name, String(index));
+  } catch (_) {
+    /* no-op */
+  }
+}
 const THEMES = ['light', 'dark'];
 const VIEW_MODES = ['visual', 'code'];
 const STATE_PROPERTIES = [
@@ -122,6 +151,12 @@ function renderToken(token) {
  *
  * Con `embedded` no dibuja cabecera ni toolbar: quien lo incrusta maneja los
  * mismos controles desde afuera con los métodos `select*()` y lee `demoState`.
+ *
+ * El caso activo se persiste en `localStorage` por `name` (ver
+ * `ACTIVE_CASE_STORAGE_PREFIX`): guardar un cambio con el demo corriendo
+ * (HMR) o recargar la página a mano mantiene el caso elegido en vez de
+ * volver siempre al primero -- solo vuelve al primer caso si nunca se guardó
+ * nada todavía (primera vez que se visita esta demo) o al elegirlo a mano.
  */
 export class DemoContent extends ComponentMixin(LitElement) {
   static get is() {
@@ -237,7 +272,9 @@ export class DemoContent extends ComponentMixin(LitElement) {
   }
 
   firstUpdated() {
-    this._activateCase(0);
+    const storedIndex = loadStoredCaseIndex(this.name);
+    const initialIndex = storedIndex !== null && storedIndex < this._cases.length ? storedIndex : 0;
+    this._activateCase(initialIndex);
     document.documentElement.setAttribute('data-theme', this._theme);
     if (this._languages.length === 2) {
       setGlobalLocale(this._languages[this._langIndex]);
@@ -267,6 +304,7 @@ export class DemoContent extends ComponentMixin(LitElement) {
       caseEl.active = i === index;
     });
     this._activeCaseIndex = index;
+    saveActiveCaseIndex(this.name, index);
     this._syncThemeToActiveCase();
     this._syncLanguageToActiveCase();
     this._syncViewportPadding();

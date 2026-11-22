@@ -15,6 +15,23 @@ export class PageObject {
     // `browser.url()` devuelve el browsing context de nivel superior; hay que
     // guardarlo, es la única forma de pedirle después su propio frame.
     this.context = await browser.url(this.path);
+    // ac-demo-content persiste el caso activo en localStorage (por nombre de
+    // componente) para que un desarrollador no vuelva siempre al primer caso
+    // al guardar/recargar. Pero los escenarios de una misma corrida comparten
+    // sesión de navegador (mismo origen) — sin esto, un escenario que cambió
+    // de caso dejaría esa elección puesta para el PRÓXIMO escenario, que
+    // asume arrancar siempre en el primero. Se limpia solo la clave de este
+    // componente (no todo localStorage) y se recarga para que la "primera
+    // visita" sea real en cada escenario.
+    await browser.execute(() => {
+      try {
+        const name = document.querySelector('ac-demo-content')?.name;
+        if (name) localStorage.removeItem(`ac-lit:demo-active-case:${name}`);
+      } catch (_) {
+        /* no-op */
+      }
+    });
+    this.context = await browser.url(this.path);
     return this;
   }
 
