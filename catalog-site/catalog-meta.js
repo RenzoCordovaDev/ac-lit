@@ -15,6 +15,7 @@ export const GROUPS = [
     label: 'General',
     icon: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
     members: [
+      'ac-amount-basic',
       'ac-button-basic',
       'ac-icon-button-basic',
       'ac-icon-basic',
@@ -56,6 +57,7 @@ export const GROUPS = [
       'ac-avatar-basic',
       'ac-badge-basic',
       'ac-card-basic',
+      'ac-date-basic',
       'ac-profile-card-basic',
       'ac-divider-basic',
       'ac-tooltip-basic',
@@ -103,6 +105,11 @@ export const GROUPS = [
 // `summary` va en la sidebar (corto); `description` en la cabecera del
 // componente (una oración).
 export const COMPONENT_META = {
+  'ac-amount-basic': {
+    icon: '<path d="M12 3v18M8 7.5c0-1.9 1.8-3.5 4-3.5s4 1.3 4 3.2c0 2.1-1.9 2.8-4 3.3-2.1.5-4 1.2-4 3.3 0 1.9 1.8 3.2 4 3.2s4-1.6 4-3.5"/>',
+    summary: 'Monto monetario',
+    description: 'Monto formateado como moneda, según el idioma activo.',
+  },
   'ac-avatar-basic': {
     icon: '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>',
     summary: 'Avatar de usuario',
@@ -127,6 +134,11 @@ export const COMPONENT_META = {
     icon: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/>',
     summary: 'Casilla de verificación',
     description: 'Casilla para marcar o desmarcar una opción.',
+  },
+  'ac-date-basic': {
+    icon: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    summary: 'Fecha formateada',
+    description: 'Formatea y muestra una fecha, corta, larga o con un patrón personalizado.',
   },
   'ac-divider-basic': {
     icon: '<path d="M4 12h16"/><path d="M8 6h8M8 18h8"/>',

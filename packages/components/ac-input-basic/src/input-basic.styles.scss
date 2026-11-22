@@ -38,6 +38,30 @@
   font-weight: var(--font-weight-medium, 600);
 }
 
+/* Envoltorio del campo: sin ícono se ve exactamente igual que antes (sin
+   `position`/layout propio, el `<input>` ocupa el 100% como siempre). Con
+   ícono (`--with-icon`), queda `position: relative` para anclar el ícono
+   absoluto a la izquierda y el campo gana padding-left para no superponerse. */
+.ac-input-basic__field-wrapper {
+  display: contents;
+}
+
+.ac-input-basic__field-wrapper--with-icon {
+  position: relative;
+  display: block;
+}
+
+.ac-input-basic__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3, 0.75rem);
+  transform: translateY(-50%);
+  /* Decorativo: el campo ya se identifica por su label/placeholder, el
+     ícono nunca debe interceptar clics/foco. */
+  pointer-events: none;
+  color: var(--color-subtext, #787a80);
+}
+
 .ac-input-basic__field {
   box-sizing: border-box;
   width: 100%;
@@ -55,6 +79,12 @@
   transition:
     border-color 120ms ease,
     box-shadow 120ms ease;
+}
+
+.ac-input-basic__field-wrapper--with-icon .ac-input-basic__field {
+  /* Espacio a la izquierda del ícono (sm, 16px) + el mismo gap que el padding
+     derecho del campo: 0.75rem (borde) + 16px (ícono) + 0.55rem (gap) */
+  padding-left: calc(var(--space-3, 0.75rem) + 16px + var(--space-2, 0.55rem));
 }
 
 .ac-input-basic__field::placeholder {

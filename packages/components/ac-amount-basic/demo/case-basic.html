@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ac-amount-basic demo</title>
+    <script type="module" src="./case.js"></script>
+    <link rel="stylesheet" href="./demo-base.css" />
+  </head>
+  <body>
+    <section>
+      <h2>Monto por defecto</h2>
+      <div class="row">
+        <ac-amount-basic data-testid="amount-default"></ac-amount-basic>
+      </div>
+    </section>
+
+    <section>
+      <h2>Distintas monedas (<code>currency</code>)</h2>
+      <div class="row">
+        <ac-amount-basic data-testid="amount-pen" amount="1234.5" currency="PEN"></ac-amount-basic>
+        <ac-amount-basic data-testid="amount-usd" amount="1234.5" currency="USD"></ac-amount-basic>
+        <ac-amount-basic data-testid="amount-eur" amount="1234.5" currency="EUR"></ac-amount-basic>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tamaños (<code>size</code>)</h2>
+      <div class="row">
+        <ac-amount-basic amount="99.9" currency="PEN" size="sm"></ac-amount-basic>
+        <ac-amount-basic amount="99.9" currency="PEN" size="md"></ac-amount-basic>
+        <ac-amount-basic amount="99.9" currency="PEN" size="lg"></ac-amount-basic>
+      </div>
+    </section>
+
+    <section>
+      <h2>Ambient y etiqueta (<code>ambient</code>, <code>tag</code>)</h2>
+      <div class="row">
+        <ac-amount-basic amount="500" currency="USD" ambient="primary" tag="strong"></ac-amount-basic>
+      </div>
+    </section>
+
+    <section>
+      <h2>Moneda inválida: cae a <code>PEN</code></h2>
+      <div class="row">
+        <ac-amount-basic
+          data-testid="amount-invalid-currency"
+          amount="10"
+          currency="NOPE"
+        ></ac-amount-basic>
+      </div>
+    </section>
+  </body>
+</html>

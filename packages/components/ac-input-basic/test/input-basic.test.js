@@ -2,6 +2,7 @@ import { fixture, expect, html, oneEvent } from '@open-wc/testing';
 import '../index.js';
 
 const inputOf = el => el.shadowRoot.querySelector('input');
+const iconOf = el => el.shadowRoot.querySelector('ac-icon-basic');
 
 suite('ac-input-basic', () => {
   test('renders an internal <input>', async () => {
@@ -196,5 +197,107 @@ suite('ac-input-basic', () => {
     const el = await fixture(html`<ac-input-basic></ac-input-basic>`);
     el.focus();
     expect(el.shadowRoot.activeElement).to.equal(inputOf(el));
+  });
+
+  test('does not render an icon with the default type="text"', async () => {
+    const el = await fixture(html`<ac-input-basic></ac-input-basic>`);
+    expect(iconOf(el)).to.not.exist;
+  });
+
+  test('does not render an icon for type="password"', async () => {
+    const el = await fixture(html`<ac-input-basic type="password"></ac-input-basic>`);
+    expect(iconOf(el)).to.not.exist;
+  });
+
+  test('does not render an icon for type="search"', async () => {
+    const el = await fixture(html`<ac-input-basic type="search"></ac-input-basic>`);
+    expect(iconOf(el)).to.not.exist;
+  });
+
+  test('does not render an icon for type="tel"', async () => {
+    const el = await fixture(html`<ac-input-basic type="tel"></ac-input-basic>`);
+    expect(iconOf(el)).to.not.exist;
+  });
+
+  test('does not render an icon for type="url"', async () => {
+    const el = await fixture(html`<ac-input-basic type="url"></ac-input-basic>`);
+    expect(iconOf(el)).to.not.exist;
+  });
+
+  test('type="password" keeps the native input type unchanged', async () => {
+    const el = await fixture(html`<ac-input-basic type="password"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('password');
+  });
+
+  test('type="search" keeps the native input type unchanged', async () => {
+    const el = await fixture(html`<ac-input-basic type="search"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('search');
+  });
+
+  test('type="tel" keeps the native input type unchanged', async () => {
+    const el = await fixture(html`<ac-input-basic type="tel"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('tel');
+  });
+
+  test('type="url" keeps the native input type unchanged', async () => {
+    const el = await fixture(html`<ac-input-basic type="url"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('url');
+  });
+
+  test('renders the "currency" icon for type="amount"', async () => {
+    const el = await fixture(html`<ac-input-basic type="amount"></ac-input-basic>`);
+    expect(iconOf(el).getAttribute('name')).to.equal('currency');
+  });
+
+  test('type="amount" falls back to text on the native input (not a valid native type)', async () => {
+    const el = await fixture(html`<ac-input-basic type="amount"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('text');
+  });
+
+  test('renders the "calendar" icon for type="date"', async () => {
+    const el = await fixture(html`<ac-input-basic type="date"></ac-input-basic>`);
+    expect(iconOf(el).getAttribute('name')).to.equal('calendar');
+  });
+
+  test('type="date" falls back to text on the native input (not a valid native type)', async () => {
+    const el = await fixture(html`<ac-input-basic type="date"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('text');
+  });
+
+  test('renders the "hash" icon for type="number"', async () => {
+    const el = await fixture(html`<ac-input-basic type="number"></ac-input-basic>`);
+    expect(iconOf(el).getAttribute('name')).to.equal('hash');
+  });
+
+  test('type="number" keeps the native input type unchanged', async () => {
+    const el = await fixture(html`<ac-input-basic type="number"></ac-input-basic>`);
+    expect(inputOf(el).type).to.equal('number');
+  });
+
+  test('renders the "email" icon for type="email"', async () => {
+    const el = await fixture(html`<ac-input-basic type="email"></ac-input-basic>`);
+    expect(iconOf(el).getAttribute('name')).to.equal('email');
+  });
+
+  test('uses the suggested placeholder for type="amount" when none is set', async () => {
+    const el = await fixture(html`<ac-input-basic type="amount"></ac-input-basic>`);
+    expect(inputOf(el).placeholder).to.equal('0.00');
+  });
+
+  test('uses the suggested placeholder for type="date" when none is set', async () => {
+    const el = await fixture(html`<ac-input-basic type="date"></ac-input-basic>`);
+    expect(inputOf(el).placeholder).to.equal('DD/MM/AAAA');
+  });
+
+  test("the consumer's own placeholder always wins over the suggested one", async () => {
+    const el = await fixture(
+      html`<ac-input-basic type="amount" placeholder="Ej. 150.50"></ac-input-basic>`,
+    );
+    expect(inputOf(el).placeholder).to.equal('Ej. 150.50');
+  });
+
+  test('type="password" has no suggested placeholder', async () => {
+    const el = await fixture(html`<ac-input-basic type="password"></ac-input-basic>`);
+    expect(inputOf(el).placeholder).to.equal('');
   });
 });

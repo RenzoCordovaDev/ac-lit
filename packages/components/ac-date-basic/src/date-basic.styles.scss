@@ -1,0 +1,11 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+// El formateo visual (tipografía, tamaño, color por ambient) lo resuelve el
+// `ac-text-basic` interno — este componente no necesita estilos propios más
+// allá del `display` del `:host`.

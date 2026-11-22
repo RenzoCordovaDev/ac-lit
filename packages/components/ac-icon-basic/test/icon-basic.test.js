@@ -25,6 +25,28 @@ suite('ac-icon-basic', () => {
     expect(svgOf(el).querySelector('circle')).to.exist;
   });
 
+  test('renders the "email" icon as an envelope (rect + path)', async () => {
+    const el = await fixture(html`<ac-icon-basic name="email"></ac-icon-basic>`);
+    expect(svgOf(el).querySelector('rect')).to.exist;
+  });
+
+  test('renders the "calendar" icon path', async () => {
+    const el = await fixture(html`<ac-icon-basic name="calendar"></ac-icon-basic>`);
+    expect(svgOf(el).querySelector('path').getAttribute('d')).to.equal('M16 3v4M8 3v4M3 10h18');
+  });
+
+  test('renders the "currency" icon as a rect with a dot (circle)', async () => {
+    const el = await fixture(html`<ac-icon-basic name="currency"></ac-icon-basic>`);
+    expect(svgOf(el).querySelector('circle')).to.exist;
+  });
+
+  test('renders the "hash" icon path', async () => {
+    const el = await fixture(html`<ac-icon-basic name="hash"></ac-icon-basic>`);
+    expect(svgOf(el).querySelector('path').getAttribute('d')).to.equal(
+      'M5 9h14M5 15h14M9 4L7 20M17 4l-2 16',
+    );
+  });
+
   test('defaults size to "md"', async () => {
     const el = await fixture(html`<ac-icon-basic></ac-icon-basic>`);
     expect(el._size).to.equal('md');
