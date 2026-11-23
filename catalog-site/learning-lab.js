@@ -1079,7 +1079,7 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
           { type: 'heading', text: 'Qué va en un método separado vs. una línea inline' },
           {
             type: 'p',
-            text: 'El criterio es simple: si un handler solo lee un valor del evento y lo guarda (`this._nombre = event.detail.value`), puede quedar en una línea dentro del propio handler. Pero si hace algo más -- validar, armar un payload, decidir qué otras properties cambian -- va en un método privado con nombre propio. Mirá `_onConfirmClick`: valida `_terminos`, y solo si pasa arma el objeto que le manda a `registrarUsuario`. Y `_onRegisterSuccess`: no es solo "guardar el dato", son 4 cambios de estado coordinados más la emisión de un evento propio.',
+            text: 'El criterio es simple: si un handler solo lee un valor del evento y lo guarda (`this._nombre = event.detail.value`), puede quedar en una línea dentro del propio handler. Pero si hace algo más -- validar, armar un payload, decidir qué otras properties cambian -- va en un método privado con nombre propio. Mira `_onConfirmClick`: valida `_terminos`, y solo si pasa arma el objeto que le manda a `registrarUsuario`. Y `_onRegisterSuccess`: no es solo "guardar el dato", son 4 cambios de estado coordinados más la emisión de un evento propio.',
           },
           {
             type: 'code',
@@ -1723,9 +1723,16 @@ _emit(name, detail = {}) {
     ],
     labs: [],
   },
+];
+
+// Intermedio retoma el mismo proyecto (ac-registro-wizard) y suma los temas
+// que Básico no cubre en profundidad -- numeración propia (Capítulo 1, 2, 3...)
+// porque cada nivel es su propia página independiente, no una continuación
+// lineal de los capítulos de Básico.
+const INTERMEDIO_CHAPTERS = [
   {
     id: 'accesibilidad',
-    title: 'Capítulo 3 — Accesibilidad',
+    title: 'Capítulo 1 — Accesibilidad',
     summary: 'Audita y corrige la accesibilidad de tu componente con axe-core.',
     estimatedMinutes: 90,
     outcomes: [
@@ -1735,7 +1742,7 @@ _emit(name, detail = {}) {
   },
   {
     id: 'e2e',
-    title: 'Capítulo 4 — Testing E2E',
+    title: 'Capítulo 2 — Testing E2E',
     summary: 'Escribe un escenario Gherkin de punta a punta para tu flujo completo.',
     estimatedMinutes: 150,
     outcomes: [
@@ -1745,7 +1752,7 @@ _emit(name, detail = {}) {
   },
   {
     id: 'contribucion',
-    title: 'Capítulo 5 — Flujo de contribución (bonus)',
+    title: 'Capítulo 3 — Flujo de contribución (bonus)',
     summary: 'Changesets, abrir una PR y leer los checks de CI -- sobre tu propio fork.',
     estimatedMinutes: 60,
     outcomes: [
@@ -1782,7 +1789,7 @@ export const LAB_LEVELS = [
     title: 'Básico',
     levelLabel: 'Nivel 1',
     description:
-      'Construí tu primer componente guiado paso a paso, con código de referencia en cada laboratorio.',
+      'Construye tu primer componente guiado paso a paso, con código de referencia en cada laboratorio.',
     icon: CODE_ICON,
     ctaLabel: 'Comenzar',
     features: [
@@ -1796,7 +1803,7 @@ export const LAB_LEVELS = [
     id: 'intermedio',
     title: 'Intermedio',
     levelLabel: 'Nivel 2',
-    description: 'Profundizá en testing y accesibilidad sobre lo que ya construiste.',
+    description: 'Profundiza en testing y accesibilidad sobre lo que ya construiste.',
     icon: LAYERS_ICON,
     ctaLabel: 'Continuar',
     features: [
@@ -1804,7 +1811,7 @@ export const LAB_LEVELS = [
       { icon: CHECK_FEATURE_ICON, text: 'Buenas prácticas' },
       { icon: BOLT_FEATURE_ICON, text: 'Desafíos reales' },
     ],
-    chapters: [],
+    chapters: INTERMEDIO_CHAPTERS,
   },
   {
     id: 'avanzado',
