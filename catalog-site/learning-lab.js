@@ -1720,7 +1720,7 @@ _emit(name, detail = {}) {
       'Cubre con tests reales el componente que construiste en el Capítulo 1: la convención suite/test de ac-lit, cómo correr y leer la suite de un paquete, y cómo testear estado inicial y flujos asíncronos con fixture(), oneEvent() y los helpers del archivo de tests.',
     estimatedMinutes: 150,
     outcomes: [
-      'Explicar por qué ac-lit usa suite/test (no describe/it) y la regla de un solo expect por test, citando la convención real documentada en docs/CONVENTIONS.md.',
+      'Explicar por qué ac-lit usa suite/test (no describe/it) y la regla de un solo expect por test, citando la convención real del proyecto.',
       'Ejecutar la suite de tests de un paquete con component:test y leer su salida en la terminal.',
       'Escribir un test que verifique el estado inicial de un componente Lit montándolo con fixture().',
       'Escribir un test que simule interacción real del usuario y espere un evento asíncrono con oneEvent().',
@@ -1731,18 +1731,24 @@ _emit(name, detail = {}) {
         title: '1. La convención real: suite/test y un solo expect',
         estimatedMinutes: 45,
         objective:
-          'Entender por qué los tests de ac-lit usan suite/test en vez de describe/it, y por qué cada test valida una sola cosa con un único expect, citando la convención real documentada en docs/CONVENTIONS.md y el archivo de tests de ac-registro-wizard.',
+          'Entender por qué los tests de ac-lit usan suite/test en vez de describe/it, y por qué cada test valida una sola cosa con un único expect, citando la convención real del proyecto y el archivo de tests de ac-registro-wizard.',
         content: [
           { type: 'heading', text: 'suite y test, no describe e it' },
           {
             type: 'p',
-            text: 'Los tests de cada componente de ac-lit no usan la interfaz BDD de Mocha (describe/it, la que ves en la mayoría de tutoriales) sino su interfaz TDD: suite y test. No es un detalle de estilo -- está documentado como convención del proyecto en docs/CONVENTIONS.md, y se activa con una opción real de configuración.',
+            text: 'Los tests de cada componente de ac-lit no usan la interfaz BDD de Mocha (describe/it, la que ves en la mayoría de tutoriales) sino su interfaz TDD: suite y test. No es un detalle de estilo -- es una convención real del proyecto, y se activa con una opción real de configuración.',
           },
           {
             type: 'code',
-            lang: 'md',
-            filename: 'docs/CONVENTIONS.md (sección Testing)',
-            code: `- **Interfaz TDD de Mocha**: \`suite\`/\`test\` en vez de \`describe\`/\`it\` (y \`setup\`/\`teardown\` en vez de \`before\`/\`after\`, si hace falta) -- se activa con \`testFramework: { config: { ui: 'tdd' } }\` en \`web-test-runner.config.js\`. Así se alinea el naming con el framework del cliente que \`ac-lit\` prepara a los desarrolladores a usar.`,
+            lang: 'js',
+            filename: 'web-test-runner.config.js (ac-registro-wizard)',
+            code: `// Interfaz TDD de Mocha (suite/test/setup/teardown en vez de
+// describe/it/before/after) — alinea el naming con el framework del cliente.
+testFramework: {
+  config: {
+    ui: 'tdd',
+  },
+},`,
           },
           {
             type: 'p',
@@ -1834,7 +1840,7 @@ _emit(name, detail = {}) {
           },
           {
             type: 'p',
-            text: 'Para correrlo mientras trabajas en un componente puntual, no corras la suite completa del monorepo -- acótalo al paquete con --filter, igual que indica docs/CONVENTIONS.md sobre la validación local.',
+            text: 'Para correrlo mientras trabajas en un componente puntual, no corras la suite completa del monorepo -- acótalo al paquete con --filter, la práctica real de validación local en este proyecto.',
           },
           {
             type: 'code',
@@ -2220,12 +2226,12 @@ export const ACCESSIBILITY_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];`
             filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
             code: `/* Variants - fondo sólido + texto calculado para cumplir contraste WCAG AA
    (4.5:1) contra ESE fondo, no contra la página: el texto blanco/negro de
-   cada variant fue elegido por cálculo, no a ojo (ver docs/CONVENTIONS.md).
+   cada variant fue elegido por cálculo, no a ojo.
    Los 4 usan tokens semánticos fijos (--color-neutral/success/warning/danger)
    que NO cambian entre light/dark-mode — un badge debe verse igual sin
    importar el tema de la página (a diferencia de --color-muted/--color-bg,
-   que sí cambian y por eso NO se usan acá: ver el bug real que esto
-   corrigió en docs/CONVENTIONS.md). */
+   que sí cambian y por eso NO se usan acá: fue justo el bug real que esto
+   corrigió). */
 .ac-badge--neutral {
   background: var(--color-neutral, #44433d);
   color: #fff;
@@ -2263,8 +2269,7 @@ export const ACCESSIBILITY_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];`
   /* Color del punto/borde cuando está marcado: el control no tiene caja
      propia (va directo sobre el fondo de la página), así que el tono de
      marca se redefine por tema más abajo — mismo criterio que
-     ac-link-basic/ac-spinner-basic (ver "Dark-mode y colores de fondo
-     sólido" en docs/CONVENTIONS.md). */
+     ac-link-basic/ac-spinner-basic. */
   --ac-radio-active: var(--color-primary-500, #10b981);
 }
 
@@ -2342,7 +2347,7 @@ Feature: ac-registro-wizard - flujo completo
           { type: 'heading', text: 'Background, tags y dos escenarios independientes' },
           {
             type: 'p',
-            text: 'El `Background` corre antes de cada `Scenario` de este archivo: ambos escenarios arrancan con el usuario ya parado en el demo del componente, así ninguno de los dos repite ese paso. El tag `@e2e` arriba del `Feature` identifica toda la suite funcional del componente (distinta de la suite de accesibilidad, que según `docs/CONVENTIONS.md` vive en un segundo .feature con el tag `@accessibility`); `@smoke` sobre el primer escenario marca el camino feliz completo -- el que normalmente correrías primero si tuvieras que elegir uno solo. El segundo escenario reutiliza los mismos dos primeros pasos del primero (llegar hasta el paso 2) pero verifica algo totalmente distinto: que la página no generó scroll horizontal, un detalle visual que no tiene nada que ver con registrar un usuario.',
+            text: 'El `Background` corre antes de cada `Scenario` de este archivo: ambos escenarios arrancan con el usuario ya parado en el demo del componente, así ninguno de los dos repite ese paso. El tag `@e2e` arriba del `Feature` identifica toda la suite funcional del componente (distinta de la suite de accesibilidad, que vive en un segundo .feature con el tag `@accessibility`); `@smoke` sobre el primer escenario marca el camino feliz completo -- el que normalmente correrías primero si tuvieras que elegir uno solo. El segundo escenario reutiliza los mismos dos primeros pasos del primero (llegar hasta el paso 2) pero verifica algo totalmente distinto: que la página no generó scroll horizontal, un detalle visual que no tiene nada que ver con registrar un usuario.',
           },
           {
             type: 'note',
@@ -2406,7 +2411,7 @@ export class ComponentObject {
           },
           {
             type: 'p',
-            text: 'Cada componente extiende `ComponentObject` con su propio selector y sus propios métodos de dominio. Así se ve el de ac-registro-wizard: el constructor fija el selector por `data-testid` (la ancla que, según `docs/CONVENTIONS.md`, todo elemento que la suite necesita ubicar debe exponer en el `demo/index.html`) y cada método público describe una acción completa del wizard, no un clic suelto.',
+            text: 'Cada componente extiende `ComponentObject` con su propio selector y sus propios métodos de dominio. Así se ve el de ac-registro-wizard: el constructor fija el selector por `data-testid` (la ancla que todo elemento que la suite necesita ubicar expone en el `demo/index.html`) y cada método público describe una acción completa del wizard, no un clic suelto.',
           },
           {
             type: 'code',
@@ -2509,7 +2514,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           },
           {
             type: 'note',
-            text: '`docs/CONVENTIONS.md` advierte sobre otra trampa de las Cucumber Expressions, no presente en este .feature pero real en otros del catálogo: una `/` en el texto de un step significa alternancia ("tea/coffee" matchea "tea" **o** "coffee"), nunca una barra literal. Si tu propio escenario necesita una barra literal (por ejemplo "WCAG 2.0/2.1"), ese step necesita una expresión regex (`/.../`) en vez de una Cucumber Expression.',
+            text: 'Otra trampa real de las Cucumber Expressions, no presente en este .feature pero real en otros del catálogo: una `/` en el texto de un step significa alternancia ("tea/coffee" matchea "tea" **o** "coffee"), nunca una barra literal. Si tu propio escenario necesita una barra literal (por ejemplo "WCAG 2.0/2.1"), ese step necesita una expresión regex (`/.../`) en vez de una Cucumber Expression.',
           },
         ],
         checkpoint:
@@ -2546,7 +2551,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           },
           {
             type: 'note',
-            text: 'Según `docs/CONVENTIONS.md`, en CI la suite e2e corre en un job separado (`e2e`) marcado `continue-on-error: true` -- no bloquea el merge todavía, a diferencia de `lint-and-test`. Eso no es excusa para ignorar un fallo real: es una concesión mientras se demuestra estable en la práctica, no una suite que no importa.',
+            text: 'En CI la suite e2e corre en un job separado (`e2e`) marcado `continue-on-error: true` -- no bloquea el merge todavía, a diferencia de `lint-and-test`. Eso no es excusa para ignorar un fallo real: es una concesión mientras se demuestra estable en la práctica, no una suite que no importa.',
           },
         ],
         checkpoint:
@@ -2576,7 +2581,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           { type: 'heading', text: 'Una sola rama permanente: main' },
           {
             type: 'p',
-            text: '`CONTRIBUTING.md` describe el flujo de ramas como trunk-based: `main` es la única rama permanente y siempre debe quedar en estado desplegable. Todo cambio se hace en una rama corta creada desde `main`, con un prefijo igual al tipo de commit que predomina en el cambio (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `ci/`). Esa rama nunca se pushea directo a `main` -- `main` está protegida -- así que todo llega vía Pull Request, y se recomienda squash merge para que el historial de `main` quede limpio: el título del squash termina siendo el commit final.',
+            text: 'Este repo sigue un flujo trunk-based: `main` es la única rama permanente y siempre debe quedar en estado desplegable. Todo cambio se hace en una rama corta creada desde `main`, con un prefijo igual al tipo de commit que predomina en el cambio (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `ci/`). Esa rama nunca se pushea directo a `main` -- `main` está protegida -- así que todo llega vía Pull Request, y se recomienda squash merge para que el historial de `main` quede limpio: el título del squash termina siendo el commit final.',
           },
           {
             type: 'code',
@@ -2596,7 +2601,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           },
           {
             type: 'p',
-            text: 'El formato exigido, según `CONTRIBUTING.md`, es `<tipo>(<scope>): <descripción en minúscula, sin punto final>`. Los tipos permitidos son `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. El `scope` es el nombre corto del paquete afectado, en kebab-case y sin el scope de npm (`cli`, `button`, `component-mixin`, no `@ac-base/cli` ni `componentMixin`) -- esa regla de kebab-case es justamente lo que agrega este repo por encima de `@commitlint/config-conventional`, que por sí solo no la exige. Puedes usar `*` o dejar el scope vacío para un cambio que toca todo el monorepo.',
+            text: 'El formato exigido es `<tipo>(<scope>): <descripción en minúscula, sin punto final>`. Los tipos permitidos son `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. El `scope` es el nombre corto del paquete afectado, en kebab-case y sin el scope de npm (`cli`, `button`, `component-mixin`, no `@ac-base/cli` ni `componentMixin`) -- esa regla de kebab-case es justamente lo que agrega este repo por encima de `@commitlint/config-conventional`, que por sí solo no la exige. Puedes usar `*` o dejar el scope vacío para un cambio que toca todo el monorepo.',
           },
           {
             type: 'code',
@@ -2631,7 +2636,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           { type: 'heading', text: 'La forma real de un changeset ya mergeado' },
           {
             type: 'p',
-            text: "Estos archivos se consumen y se borran cuando alguien corre `pnpm version-packages` (ver `docs/RELEASING.md`), así que no vas a encontrar ninguno en el working tree actual -- pero sí en el historial de git, con `git log --all --diff-filter=A -- '.changeset/*.md'`. Así se ve uno real, para un cambio que tocó un solo paquete:",
+            text: "Estos archivos se consumen y se borran cuando alguien corre `pnpm version-packages`, así que no vas a encontrar ninguno en el working tree actual -- pero sí en el historial de git, con `git log --all --diff-filter=A -- '.changeset/*.md'`. Así se ve uno real, para un cambio que tocó un solo paquete:",
           },
           {
             type: 'code',
@@ -2688,7 +2693,7 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
           },
           {
             type: 'p',
-            text: 'Como lo resume `docs/CONVENTIONS.md`: `lint-and-test` (lint + `format:check` + `test` + `build`) es bloqueante -- si falla, el botón de merge queda deshabilitado. `e2e` (`test:e2e` + `test:e2e:a11y`) es no bloqueante gracias a `continue-on-error: true`: corre igual en cada PR y te muestra el resultado, pero una falla ahí no te impide mergear.',
+            text: '`lint-and-test` (lint + `format:check` + `test` + `build`) es bloqueante -- si falla, el botón de merge queda deshabilitado. `e2e` (`test:e2e` + `test:e2e:a11y`) es no bloqueante gracias a `continue-on-error: true`: corre igual en cada PR y te muestra el resultado, pero una falla ahí no te impide mergear.',
           },
           {
             type: 'note',
