@@ -1079,7 +1079,7 @@ customElements.define(RegistroWizard.is, RegistroWizard);`,
           { type: 'heading', text: 'Qué va en un método separado vs. una línea inline' },
           {
             type: 'p',
-            text: 'El criterio es simple: si un handler solo lee un valor del evento y lo guarda (`this._nombre = event.detail.value`), puede quedar en una línea dentro del propio handler. Pero si hace algo más -- validar, armar un payload, decidir qué otras properties cambian -- va en un método privado con nombre propio. Mirá `_onConfirmClick`: valida `_terminos`, y solo si pasa arma el objeto que le manda a `registrarUsuario`. Y `_onRegisterSuccess`: no es solo "guardar el dato", son 4 cambios de estado coordinados más la emisión de un evento propio.',
+            text: 'El criterio es simple: si un handler solo lee un valor del evento y lo guarda (`this._nombre = event.detail.value`), puede quedar en una línea dentro del propio handler. Pero si hace algo más -- validar, armar un payload, decidir qué otras properties cambian -- va en un método privado con nombre propio. Mira `_onConfirmClick`: valida `_terminos`, y solo si pasa arma el objeto que le manda a `registrarUsuario`. Y `_onRegisterSuccess`: no es solo "guardar el dato", son 4 cambios de estado coordinados más la emisión de un evento propio.',
           },
           {
             type: 'code',
@@ -1716,42 +1716,994 @@ _emit(name, detail = {}) {
   {
     id: 'testing-unitario',
     title: 'Capítulo 2 — Testing unitario',
-    summary: 'Cubre con tests el componente que construiste en el Capítulo 1.',
+    summary:
+      'Cubre con tests reales el componente que construiste en el Capítulo 1: la convención suite/test de ac-lit, cómo correr y leer la suite de un paquete, y cómo testear estado inicial y flujos asíncronos con fixture(), oneEvent() y los helpers del archivo de tests.',
     estimatedMinutes: 150,
     outcomes: [
-      'Escribir tests unitarios (suite/test) que cubran el componente construido en el Capítulo 1.',
+      'Explicar por qué ac-lit usa suite/test (no describe/it) y la regla de un solo expect por test, citando la convención real del proyecto.',
+      'Ejecutar la suite de tests de un paquete con component:test y leer su salida en la terminal.',
+      'Escribir un test que verifique el estado inicial de un componente Lit montándolo con fixture().',
+      'Escribir un test que simule interacción real del usuario y espere un evento asíncrono con oneEvent().',
     ],
-    labs: [],
+    labs: [
+      {
+        id: 'testing-unitario-01-convencion-suite-test',
+        title: '1. La convención real: suite/test y un solo expect',
+        estimatedMinutes: 45,
+        objective:
+          'Entender por qué los tests de ac-lit usan suite/test en vez de describe/it, y por qué cada test valida una sola cosa con un único expect, citando la convención real del proyecto y el archivo de tests de ac-registro-wizard.',
+        content: [
+          { type: 'heading', text: 'suite y test, no describe e it' },
+          {
+            type: 'p',
+            text: 'Los tests de cada componente de ac-lit no usan la interfaz BDD de Mocha (describe/it, la que ves en la mayoría de tutoriales) sino su interfaz TDD: suite y test. No es un detalle de estilo -- es una convención real del proyecto, y se activa con una opción real de configuración.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'web-test-runner.config.js (ac-registro-wizard)',
+            code: `// Interfaz TDD de Mocha (suite/test/setup/teardown en vez de
+// describe/it/before/after) — alinea el naming con el framework del cliente.
+testFramework: {
+  config: {
+    ui: 'tdd',
   },
+},`,
+          },
+          {
+            type: 'p',
+            text: 'Así se ve en código real: el archivo completo de tests de ac-registro-wizard arranca con un único suite(...) que envuelve todos los test(...) del componente.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (ac-registro-wizard)',
+            code: `suite('ac-registro-wizard', () => {
+  test('_open es true al conectarse', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    expect(el._open).to.be.true;
+  });
+
+  // ...el resto de los test() del componente, todos dentro del mismo suite()
+});`,
+          },
+          {
+            type: 'note',
+            text: 'suite/test y describe/it son, en Mocha, literalmente el mismo motor con dos nombres distintos -- no cambia nada en cómo corren los tests. La razón de elegir suite/test en ac-lit es de comunicación: el framework de testing que el equipo usa en el código que consume estos componentes también usa esa interfaz, y mantener el mismo vocabulario en todo el stack evita que alguien lea "describe" en un lado y "suite" en otro y se pregunte si son dos herramientas distintas.',
+          },
+          { type: 'heading', text: 'Un solo expect por test' },
+          {
+            type: 'p',
+            text: 'La segunda mitad de la convención es más estricta todavía: cada test valida una sola aserción. Si una interacción produce varios efectos observables, eso no es un test con varios expect -- son varios tests, cada uno con su propio fixture(...), aunque eso signifique repetir setup.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (tres test, una sola interacción)',
+            code: `  test('confirmar con éxito dispara ac-registro-wizard-register-success', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    fastApi(el);
+    await advanceToStep3(el);
+    const successEvent = oneEvent(el, 'ac-registro-wizard-register-success');
+    clickActionButton(el, 2);
+    const event = await successEvent;
+    expect(event.detail.data.nombre).to.equal('Juan Perez');
+  });
+
+  test('confirmar con éxito abre el modal de confirmación', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    fastApi(el);
+    await advanceToStep3(el);
+    const successEvent = oneEvent(el, 'ac-registro-wizard-register-success');
+    clickActionButton(el, 2);
+    await successEvent;
+    await el.updateComplete;
+    expect(el._modalOpen).to.be.true;
+  });
+
+  test('confirmar con éxito cierra la transición del wizard', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    fastApi(el);
+    await advanceToStep3(el);
+    const successEvent = oneEvent(el, 'ac-registro-wizard-register-success');
+    clickActionButton(el, 2);
+    await successEvent;
+    await el.updateComplete;
+    expect(el._open).to.be.false;
+  });`,
+          },
+          {
+            type: 'note',
+            text: 'Las tres repiten exactamente la misma secuencia (fastApi, advanceToStep3, clickActionButton) y solo cambia la última línea. Es deliberado: si mañana se rompe únicamente el cierre de la transición (_open ya no pasa a false) pero el evento y el modal siguen funcionando, vas a ver fallar solo el tercer test -- con un expect por test, el nombre del test que falla te dice exactamente qué se rompió, sin tener que leer el cuerpo.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar, sin mirar el código, por qué ac-lit usa suite/test en vez de describe/it, y por qué los tres tests de "confirmar con éxito" repiten el mismo setup en vez de juntarse en uno solo con tres expect.',
+      },
+      {
+        id: 'testing-unitario-02-entorno-y-estado-inicial',
+        title: '2. Levantar el entorno de test y verificar el estado inicial',
+        estimatedMinutes: 45,
+        objective:
+          'Ejecutar la suite de tests de un componente con component:test, leer su salida, y escribir un test que verifique el estado inicial de un componente Lit montándolo con fixture().',
+        content: [
+          { type: 'heading', text: 'El script component:test' },
+          {
+            type: 'p',
+            text: 'Cada paquete de ac-lit expone el mismo juego de scripts component:*. El que te interesa ahora es component:test: compila los estilos .scss del componente (los tests importan el componente real, que a su vez importa su .styles.js generado) y después corre @web/test-runner sobre todos los archivos test/**/*.test.js del paquete.',
+          },
+          {
+            type: 'code',
+            lang: 'json',
+            filename: 'packages/components/ac-registro-wizard/package.json (scripts)',
+            code: `"component:test": "pnpm run component:build:styles && web-test-runner \\"test/**/*.test.js\\"",`,
+          },
+          {
+            type: 'p',
+            text: 'Para correrlo mientras trabajas en un componente puntual, no corras la suite completa del monorepo -- acótalo al paquete con --filter, la práctica real de validación local en este proyecto.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            filename: '(desde la raíz del monorepo)',
+            code: `pnpm --filter @ac-components/ac-registro-wizard run component:test`,
+          },
+          {
+            type: 'note',
+            text: 'A diferencia de un test con jsdom, @web/test-runner levanta un navegador real (Chromium por defecto) para cada corrida. Es más lento que jsdom, pero necesario: estás testeando Custom Elements con Shadow DOM real, y jsdom no implementa Shadow DOM con la fidelidad que estos tests necesitan (querySelector contra shadowRoot, eventos que cruzan el límite del shadow boundary, etc.).',
+          },
+          { type: 'heading', text: 'Montar el componente real con fixture()' },
+          {
+            type: 'p',
+            text: 'open-wc/testing expone fixture(), que recibe un template de lit-html y devuelve el elemento ya conectado al DOM (con connectedCallback() corrido). Es la base de todos los tests del archivo: ningún test de este componente lo instancia con document.createElement ni lo testea desconectado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (imports)',
+            code: `import { fixture, expect, html, oneEvent, aTimeout } from '@open-wc/testing';
+import '../index.js';`,
+          },
+          {
+            type: 'p',
+            text: 'Con eso ya puedes escribir el test más simple del archivo: verificar una property privada en su valor inicial, justo después de montar el componente.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js',
+            code: `  test('_open es true al conectarse', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    expect(el._open).to.be.true;
+  });`,
+          },
+          {
+            type: 'note',
+            text: '_open es una property privada (prefijo _, sin reflect a atributo) que controla la transición de entrada/salida del wizard completo -- se testea igual que cualquier property pública, porque fixture() te da la instancia real de la clase, no una vista limitada a su API pública. El guion bajo es una convención de nombre, no una barrera de acceso en JS.',
+          },
+        ],
+        checkpoint:
+          'Puedes correr pnpm --filter @ac-components/ac-registro-wizard run component:test desde la raíz del repo, ver los tests existentes pasar en la salida de la terminal, y explicar en qué se diferencia fixture() de instanciar el elemento a mano con document.createElement.',
+      },
+      {
+        id: 'testing-unitario-03-flujos-y-eventos-async',
+        title: '3. Testear flujos asíncronos: eventos, helpers y reset()',
+        estimatedMinutes: 60,
+        objective:
+          'Escribir tests que simulan interacción real (llenar campos, hacer click) y esperan eventos asíncronos con oneEvent(), apoyándote en los helpers del archivo de tests para llegar al estado que necesitas sin repetir lógica de navegación en cada test.',
+        content: [
+          { type: 'heading', text: 'Simular al usuario real, no llamar al método interno' },
+          {
+            type: 'p',
+            text: 'El primer paso (datos personales) requiere nombre y correo antes de poder avanzar. El test no asigna _nombre y _email directamente -- busca el ac-input-basic real dentro del shadow DOM del paso, le pone un valor al input nativo y dispara un evento input de verdad. Eso es lo que hace el helper fillStep1.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (helper fillStep1)',
+            code: `async function fillStep1(el, { nombre = 'Juan Perez', email = 'juan@test.com' } = {}) {
+  const datos = stepContent(el, 0);
+  const [nombreInput, emailInput] = datos.shadowRoot.querySelectorAll('ac-input-basic');
+  const nombreField = nombreInput.shadowRoot.querySelector('input');
+  nombreField.value = nombre;
+  nombreField.dispatchEvent(new Event('input'));
+  const emailField = emailInput.shadowRoot.querySelector('input');
+  emailField.value = email;
+  emailField.dispatchEvent(new Event('input'));
+  await el.updateComplete;
+}`,
+          },
+          {
+            type: 'note',
+            text: 'Esto atraviesa tres niveles de shadow DOM (ac-registro-wizard -> registro-wizard-steps -> registro-wizard-step-datos -> ac-input-basic) con shadowRoot.querySelector encadenado, nunca con un selector plano compuesto. Disparar el evento input real -- no asignar la property y listo -- es lo que efectivamente ejercita el binding declarativo del Capítulo 1: si ese binding se rompiera, este test fallaría igual que le fallaría a un usuario real escribiendo en el campo.',
+          },
+          { type: 'heading', text: 'Esperar un evento con oneEvent()' },
+          {
+            type: 'p',
+            text: 'init() dispara una petición a ac-api-users que resuelve de forma asíncrona. El test no puede llamar a init() y revisar el estado en la siguiente línea -- tiene que esperar el evento que marca que la petición terminó. Para eso está oneEvent(el, nombreDelEvento): devuelve una promesa que se resuelve con el primer evento de ese tipo que el elemento emita.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js',
+            code: `  test('init() invoca obtenerDatosUsuario sobre el ac-api-users interno', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    fastApi(el);
+    const successEvent = oneEvent(el, 'ac-api-users-get-user-success');
+    el.init();
+    const event = await successEvent;
+    expect(event.detail.method).to.equal('obtenerDatosUsuario');
+  });`,
+          },
+          {
+            type: 'note',
+            text: 'fastApi(el) (otro helper del archivo) le baja el timeout al ac-api-users interno a 1ms antes de llamar a init() -- sin eso, cada test de este tipo tardaría lo mismo que la latencia simulada real de la API, y la suite completa se volvería lenta. oneEvent() se suscribe antes de disparar la acción (const successEvent = oneEvent(...) va antes de el.init()), nunca después: un evento que ya se emitió no se puede volver a esperar.',
+          },
+          { type: 'heading', text: 'Componer helpers para llegar al paso 3: reset()' },
+          {
+            type: 'p',
+            text: 'Varios tests necesitan el wizard ya en el paso 3 (resumen) para poder testear la confirmación. En vez de repetir fillStep1 + click + aceptar términos + click en cada test, el archivo define advanceToStep3(el), que encadena los helpers anteriores una sola vez.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (helper advanceToStep3)',
+            code: `async function advanceToStep3(el) {
+  await fillStep1(el);
+  clickActionButton(el, 0);
+  await aTimeout(30);
+  acceptTerminos(el);
+  await stepsHost(el).updateComplete;
+  clickActionButton(el, 1);
+  await aTimeout(30);
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Con ese helper disponible, testear reset() vuelve a aplicar la misma regla del Laboratorio 1: una interacción, varios efectos observables, un test por efecto.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test/registro-wizard.test.js (tres test de reset())',
+            code: `  test('reset() dispara ac-registro-wizard-reset', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    const resetEvent = oneEvent(el, 'ac-registro-wizard-reset');
+    el.reset();
+    const event = await resetEvent;
+    expect(event.type).to.equal('ac-registro-wizard-reset');
+  });
+
+  test('reset() vuelve _nombre a una cadena vacía', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    await fillStep1(el);
+    el.reset();
+    expect(el._nombre).to.equal('');
+  });
+
+  test('reset() vuelve a activar el paso 1', async () => {
+    const el = await fixture(html\`<ac-registro-wizard></ac-registro-wizard>\`);
+    await fillStep1(el);
+    clickActionButton(el, 0);
+    await aTimeout(30);
+    el.reset();
+    expect(steps(el)[0].active).to.be.true;
+  });`,
+          },
+          {
+            type: 'note',
+            text: 'Los tres montan su propio fixture y repiten el setup mínimo que necesitan -- ninguno reutiliza una instancia entre tests. Eso es intencional: un fixture por test evita que el estado de un test se filtre al siguiente, que es exactamente el tipo de bug intermitente y difícil de rastrear que esta convención busca evitar.',
+          },
+        ],
+        checkpoint:
+          'Puedes escribir un test nuevo para este componente que llegue al paso 3 con advanceToStep3(el), dispare un error con api.simulateError = true, y verifique con un único expect que el wizard no cierra su transición -- explicando por qué eso no puede ir en el mismo test que verifica que aparece la notificación de error.',
+      },
+    ],
+  },
+];
+
+// Intermedio retoma el mismo proyecto (ac-registro-wizard) y suma los temas
+// que Básico no cubre en profundidad -- numeración propia (Capítulo 1, 2, 3...)
+// porque cada nivel es su propia página independiente, no una continuación
+// lineal de los capítulos de Básico.
+const INTERMEDIO_CHAPTERS = [
   {
     id: 'accesibilidad',
-    title: 'Capítulo 3 — Accesibilidad',
-    summary: 'Audita y corrige la accesibilidad de tu componente con axe-core.',
+    title: 'Capítulo 1 — Accesibilidad',
+    summary:
+      'Corre la auditoría de accesibilidad real del proyecto con axe-core, entiende cómo se inyecta sin la librería típica, y corrige una violación de contraste real de este mismo catálogo.',
     estimatedMinutes: 90,
     outcomes: [
-      'Auditar con axe-core e interpretar/corregir violaciones reales sin romper el diseño.',
+      'Correr la auditoría de accesibilidad (`component:test:e2e:a11y`) e interpretar un reporte de violaciones reales.',
+      'Explicar por qué este proyecto inyecta axe-core directo en vez de usar `@axe-core/webdriverio`.',
+      'Reconocer y corregir una violación real de contraste con el patrón "fondo sólido + texto fijo".',
     ],
-    labs: [],
+    labs: [
+      {
+        id: 'accesibilidad-01-correr-la-auditoria',
+        title: '1. Correr la auditoría de accesibilidad real',
+        estimatedMinutes: 30,
+        objective:
+          'Correr la suite de accesibilidad real de `ac-registro-wizard` y leer su reporte de violaciones, entendiendo de dónde sale cada pieza (feature, config, comando).',
+        content: [
+          { type: 'heading', text: 'Dos feature files, separados por un tag' },
+          {
+            type: 'p',
+            text: 'Cada componente del catálogo que tiene suite E2E trae dos feature files: uno funcional y uno de accesibilidad, separados por el tag `@accessibility` para que cada suite corra de forma independiente. Este es el feature de accesibilidad real de `ac-registro-wizard`, completo: dos escenarios, uno en el tema por defecto (claro) y otro que primero activa el modo oscuro.',
+          },
+          {
+            type: 'code',
+            lang: 'gherkin',
+            filename:
+              'test_e2e/features/registro-wizard-accessibility.feature (ac-registro-wizard)',
+            code: `@e2e @accessibility
+Feature: ac-registro-wizard - accesibilidad
+
+  Como desarrollador del catálogo ac-lit
+  Quiero que ac-registro-wizard no introduzca violaciones WCAG
+  Para mantener el componente accesible
+
+  Background:
+    Given el usuario está en el demo de "ac-registro-wizard"
+
+  @smoke
+  Scenario: El demo de ac-registro-wizard no tiene violaciones de accesibilidad
+    Then el demo no tiene violaciones de accesibilidad WCAG
+
+  Scenario: El demo de ac-registro-wizard no tiene violaciones de accesibilidad en modo oscuro
+    When el usuario activa el modo oscuro
+    Then el demo no tiene violaciones de accesibilidad WCAG`,
+          },
+          {
+            type: 'note',
+            text: 'El segundo escenario no es redundante: el contraste de un color puede cumplir WCAG en un tema y fallar en el otro. Lo vas a ver con un caso real en el laboratorio 3 de este capítulo.',
+          },
+          { type: 'heading', text: 'Una config de WebdriverIO que solo corre ese tag' },
+          {
+            type: 'p',
+            text: "`wdio.a11y.conf.js` no define nada propio: llama a `buildWdioConfig` (el helper compartido de `@ac-base/ac-e2e-testing`, el mismo que usa `wdio.conf.js` para la suite funcional) y le pasa `tags: '@accessibility'` para que solo levante los escenarios marcados con ese tag.",
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test_e2e/wdio.a11y.conf.js (ac-registro-wizard)',
+            code: `import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { buildWdioConfig } from '@ac-base/ac-e2e-testing';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+
+export const config = buildWdioConfig({
+  baseUrl: process.env.AC_E2E_BASE_URL ?? 'http://localhost:4173',
+  specs: [path.join(here, 'features/**/*.feature')],
+  tags: '@accessibility',
+  cucumberOpts: {
+    import: [path.join(here, 'step-definitions/**/*.js')],
+  },
+});`,
+          },
+          { type: 'heading', text: 'Correrla' },
+          {
+            type: 'p',
+            text: 'El `package.json` del componente define el script completo: compila, levanta un `vite preview` en el puerto 4173, espera a que esté listo y recién ahí corre la suite contra ese servidor -- todo con `start-server-and-test`, sin que tengas que levantar nada a mano en otra terminal.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            filename: 'package.json (ac-registro-wizard, scripts)',
+            code: `"component:test:e2e:a11y": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:a11y:run",
+"component:test:e2e:a11y:run": "wdio run test_e2e/wdio.a11y.conf.js"`,
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: 'pnpm --filter @ac-components/ac-registro-wizard run component:test:e2e:a11y',
+          },
+          {
+            type: 'p',
+            text: 'Cuando hay una violación real, el paso que la detecta no se limita a decir "falló": arma un resumen legible con el id de la regla, su descripción (`help`) y el selector de cada nodo afectado, y recién ahí lanza el error.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test_e2e/step-definitions/registro-wizard.steps.js (ac-registro-wizard)',
+            code: `Then('el demo no tiene violaciones de accesibilidad WCAG', async function () {
+  const results = await runAccessibilityCheck();
+  if (results.violations.length > 0) {
+    const summary = results.violations
+      .map(violation => {
+        const targets = violation.nodes.map(node => node.target.join(' ')).join(', ');
+        return \`- \${violation.id}: \${violation.help} (\${targets})\`;
+      })
+      .join('\\n');
+    throw new Error(
+      \`Se encontraron \${results.violations.length} violaciones de accesibilidad:\\n\${summary}\`,
+    );
+  }
+});`,
+          },
+          {
+            type: 'note',
+            text: 'El `id` de la regla (ej. `color-contrast`, `label-content-name-mismatch`) es tu punto de partida para buscar en la documentación de axe-core qué espera exactamente esa regla -- no hace falta memorizarlas, pero sí saber que el id es el dato que importa, no el texto genérico de "hay una violación".',
+          },
+        ],
+        checkpoint:
+          'Puedes correr `component:test:e2e:a11y` sobre `ac-registro-wizard` (o sobre tu propio componente, si ya tiene su `test_e2e/`) y, si forzás una violación a propósito (por ejemplo bajando el contraste de un texto), leer el resumen que imprime el paso y identificar el `id` de la regla y el selector del nodo afectado.',
+      },
+      {
+        id: 'accesibilidad-02-como-se-inyecta-axe-core',
+        title: '2. Cómo se inyecta axe-core, sin `@axe-core/webdriverio`',
+        estimatedMinutes: 25,
+        objective:
+          'Entender por qué el proyecto no usa el paquete típico de integración de axe-core con WebdriverIO, y cómo `runAccessibilityCheck` logra lo mismo inyectando axe-core "crudo".',
+        content: [
+          { type: 'heading', text: 'Por qué no `@axe-core/webdriverio`' },
+          {
+            type: 'p',
+            text: 'La integración más conocida de axe-core con WebdriverIO es el paquete `@axe-core/webdriverio`. Este proyecto no lo usa: a la fecha, su versión publicada depende de `client.executeAsync`, un comando que WebdriverIO v10 eliminó a favor de `execute()` con funciones async. El comentario que explica esto vive directo arriba de la función que resuelve el problema.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-e2e-testing/src/accessibility.js',
+            code: `// axe-core se inyecta como script "crudo" en la página bajo prueba. No se usa
+// el paquete @axe-core/webdriverio: a la fecha de este paquete su versión
+// publicada (4.14.0) depende de \`client.executeAsync\`, un comando que
+// WebdriverIO v10 eliminó a favor de \`execute()\` con funciones async. Inyectar
+// axe-core directamente es además el camino sin intermediarios desactualizados.`,
+          },
+          { type: 'heading', text: '`runAccessibilityCheck`: inyectar y correr' },
+          {
+            type: 'p',
+            text: 'La función hace dos cosas, en ese orden: primero inyecta el script de axe-core completo en la página (leído una sola vez del propio paquete `axe-core` instalado como dependencia, con `require.resolve` + `readFileSync`, y cacheado en `axeSource` para no releerlo en cada llamada), y después corre `window.axe.run` dentro del navegador con `browser.execute()` -- la función async que WDIO v10 sí soporta.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-e2e-testing/src/accessibility.js',
+            code: `let axeSource;
+function getAxeSource() {
+  axeSource ??= readFileSync(require.resolve('axe-core/axe.min.js'), 'utf-8');
+  return axeSource;
+}
+
+/**
+ * Corre axe-core contra el documento actual y devuelve el resultado completo
+ * de \`axe.run\` (\`{ violations, passes, ... }\`).
+ */
+export async function runAccessibilityCheck({ tags = ACCESSIBILITY_TAGS, context } = {}) {
+  await browser.execute(getAxeSource());
+  return browser.execute(
+    async (runOnlyTags, runContext) => {
+      return window.axe.run(runContext ?? document, {
+        runOnly: { type: 'tag', values: runOnlyTags },
+      });
+    },
+    tags,
+    context ?? null,
+  );
+}`,
+          },
+          {
+            type: 'note',
+            text: 'El primer `browser.execute(getAxeSource())` no "llama" a nada propio: el string que recibe es el contenido completo de `axe.min.js`, así que WebdriverIO lo ejecuta tal cual en la página -- es el mismo efecto que pegar ese script en una etiqueta `<script>` del documento. Recién después de eso existe `window.axe` para que el segundo `browser.execute` lo use.',
+          },
+          { type: 'heading', text: 'Qué reglas WCAG evalúa' },
+          {
+            type: 'p',
+            text: 'El segundo `browser.execute` le pasa a `axe.run` un `runOnly` por tag, no la lista completa de reglas de axe-core. Esos tags son una constante compartida, así que todas las suites de accesibilidad del catálogo evalúan exactamente el mismo conjunto de criterios WCAG.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-e2e-testing/src/config.js',
+            code: `/** Tags WCAG evaluados en las suites de accesibilidad (axe-core). */
+export const ACCESSIBILITY_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];`,
+          },
+          {
+            type: 'note',
+            text: 'Este helper vive una sola vez en `@ac-base/ac-e2e-testing`, el paquete base de testing E2E compartido por todo el monorepo -- ningún componente (ni `ac-registro-wizard`, ni el que vayas a construir tú) reimplementa su propia inyección de axe-core. `runAccessibilityCheck` es lo único que importa el step definition del laboratorio anterior.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar, sin mirar el código, por qué `runAccessibilityCheck` no usa `@axe-core/webdriverio` (la incompatibilidad concreta con WDIO v10) y qué hace cada uno de los dos `browser.execute()` -- el primero inyecta el script, el segundo lo corre.',
+      },
+      {
+        id: 'accesibilidad-03-contraste-fondo-solido',
+        title: '3. Un bug de contraste real: fondo sólido + texto fijo',
+        estimatedMinutes: 35,
+        objective:
+          'Entender, con un bug real de este catálogo, por qué un fondo sólido con texto fijo necesita tokens de color que NO cambien entre modo claro/oscuro, y por qué un color sin caja propia (texto plano o borde sobre la página) es todavía más frágil.',
+        content: [
+          { type: 'heading', text: 'El bug real en `ac-badge-basic`' },
+          {
+            type: 'p',
+            text: 'Un componente que pinta un fondo sólido con un color de texto fijo (como un badge: fondo de color + texto blanco o negro) tiene que usar los tokens semánticos fijos de la paleta (`--color-neutral`, `--color-success`, `--color-warning`, `--color-danger`), nunca `--color-muted`/`--color-bg`/`--color-surface` -- esos sí cambian entre modo claro y oscuro. `ac-badge-basic` se armó así desde el principio, justo por este bug ya conocido en el catálogo: si el fondo del badge cambiara con el tema, el texto blanco/negro que se eligió por contraste contra el color ORIGINAL dejaría de cumplir WCAG AA en el tema donde ese color ya no es el mismo.',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/components/ac-badge-basic/src/badge-basic.styles.scss',
+            code: `/* Variants - fondo sólido + texto calculado para cumplir contraste WCAG AA
+   (4.5:1) contra ESE fondo, no contra la página: el texto blanco/negro de
+   cada variant fue elegido por cálculo, no a ojo.
+   Los 4 usan tokens semánticos fijos (--color-neutral/success/warning/danger)
+   que NO cambian entre light/dark-mode — un badge debe verse igual sin
+   importar el tema de la página (a diferencia de --color-muted/--color-bg,
+   que sí cambian y por eso NO se usan acá: fue justo el bug real que esto
+   corrigió). */
+.ac-badge--neutral {
+  background: var(--color-neutral, #44433d);
+  color: #fff;
+}
+
+.ac-badge--success {
+  background: var(--color-success, #499c54);
+  color: #000;
+}
+
+.ac-badge--warning {
+  background: var(--color-warning, #e8a400);
+  color: #000;
+}
+
+.ac-badge--danger {
+  background: var(--color-danger, #e05555);
+  color: #000;
+}`,
+          },
+          {
+            type: 'note',
+            text: 'La regla práctica: si tu componente tiene caja propia (fondo sólido) y texto fijo adentro, el color de fondo tiene que ser un token que NO se redefina en `modern-warm-palette-light.css` -- si lo redefine, es un token "de tema", pensado para fondos/superficies de página, no para una caja con su propio color de marca.',
+          },
+          { type: 'heading', text: 'Sin caja propia, el problema es peor: `ac-radio-basic`' },
+          {
+            type: 'p',
+            text: 'Un control sin fondo propio (borde o punto de marca directo sobre la página, como `ac-radio-basic`, `ac-link-basic` o `ac-spinner-basic`) es todavía más frágil: su contraste depende por completo del fondo de la PÁGINA, que sí cambia entre temas. En la revisión de accesibilidad de estos componentes se encontró justo este caso en `ac-radio-basic`: el borde y el punto del estado marcado usaban `--color-primary-500` fijo, un verde pensado para fondo oscuro (ahí daba 7:1 de contraste) que en tema claro caía a ~2.4:1 contra la página -- no llega al 3:1 no-textual que exige WCAG 1.4.11 para el borde/relleno de un control.',
+          },
+          {
+            type: 'code',
+            lang: 'scss',
+            filename: 'packages/components/ac-radio-basic/src/radio-basic.styles.scss',
+            code: `.ac-radio-basic {
+  /* Color del punto/borde cuando está marcado: el control no tiene caja
+     propia (va directo sobre el fondo de la página), así que el tono de
+     marca se redefine por tema más abajo — mismo criterio que
+     ac-link-basic/ac-spinner-basic. */
+  --ac-radio-active: var(--color-primary-500, #10b981);
+}
+
+:host-context([data-theme='light']) .ac-radio-basic {
+  --ac-radio-active: var(--color-primary-700, #047857);
+}`,
+          },
+          {
+            type: 'p',
+            text: 'El fix no es "elegir un color intermedio que funcione más o menos en los dos temas" -- eso casi siempre falla en alguno de los dos. Es definir una custom property propia del componente (`--ac-radio-active`) y redefinirla a un tono distinto bajo `:host-context([data-theme=\'light\'])`: oscuro sobre fondo claro, claro sobre fondo oscuro, cada uno validado por separado contra el fondo real de SU tema.',
+          },
+          {
+            type: 'note',
+            text: '`ac-divider-basic` confirma esto mismo con números reales: su label usaba `--color-subtext` (`#787a80`) tal como sugería la spec inicial -- pasaba en tema claro (~6.2:1) pero el escenario de accesibilidad en modo oscuro lo marcó como violación real de `color-contrast` (~3.9:1 contra `--color-bg` en oscuro, por debajo del 4.5:1 que exige WCAG AA para texto normal). El smoke test en tema claro no lo detectaba -- solo el escenario que activa el toggle de tema, el mismo que viste en el laboratorio 1 de este capítulo. Por eso `--color-subtext` tal cual nunca es seguro para texto suelto sin caja, ni siquiera en el tema para el que a simple vista parece pensado: hay que medir, no asumir.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar con tus palabras la diferencia entre los dos casos (fondo sólido con texto fijo vs. color sin caja propia sobre la página), por qué cada uno necesita una solución distinta, y por qué el escenario de accesibilidad en modo oscuro existe como caso separado del smoke test -- con el número real de `ac-divider-basic` (~3.9:1 vs. 4.5:1) como evidencia de que "se ve bien" no alcanza.',
+      },
+    ],
   },
   {
     id: 'e2e',
-    title: 'Capítulo 4 — Testing E2E',
-    summary: 'Escribe un escenario Gherkin de punta a punta para tu flujo completo.',
+    title: 'Capítulo 2 — Testing E2E',
+    summary:
+      'Lee el escenario Gherkin real de ac-registro-wizard, entiende el patrón Page Object/Component Object que lo sostiene, conecta cada step con su implementación en JS y corre la suite completa.',
     estimatedMinutes: 150,
     outcomes: [
-      'Escribir un escenario Gherkin/WebdriverIO de punta a punta sobre el flujo completo propio.',
+      'Leer un escenario Gherkin y distinguir Given/When/Then como descripción de comportamiento, no de implementación.',
+      'Explicar por qué existe un Page Object/Component Object por encima de WebdriverIO crudo, citando el patrón base compartido.',
+      'Trazar cada step de un .feature hasta su step definition en JS y el método del Page Object que invoca.',
+      'Correr la suite e2e real de un componente y explicar qué hace cada pieza del comando (build, preview, wdio).',
     ],
-    labs: [],
+    labs: [
+      {
+        id: 'e2e-01-gherkin-feature',
+        title: '1. Leer el escenario Gherkin real',
+        estimatedMinutes: 35,
+        objective:
+          'Leer el .feature real de ac-registro-wizard y entender por qué un escenario Gherkin describe comportamiento en lenguaje natural, nunca selectores ni detalles de implementación.',
+        content: [
+          { type: 'heading', text: 'Gherkin: lenguaje natural, no código' },
+          {
+            type: 'p',
+            text: 'Un escenario Gherkin describe lo que hace una persona y lo que debería pasar, en oraciones que cualquiera del equipo puede leer sin saber WebdriverIO ni Cucumber. Nunca menciona un selector CSS, un shadow root ni un método -- eso vive más abajo, en los step definitions y el Page Object. Este es el archivo completo de ac-registro-wizard, sin recortar.',
+          },
+          {
+            type: 'code',
+            lang: 'gherkin',
+            filename: 'test_e2e/features/registro-wizard.feature',
+            code: `@e2e
+Feature: ac-registro-wizard - flujo completo
+
+  Como desarrollador del catálogo ac-lit
+  Quiero que ac-registro-wizard avance por sus 3 pasos y registre un usuario
+  Para asegurar que el wizard de referencia funciona de punta a punta
+
+  Background:
+    Given el usuario está en el demo de "ac-registro-wizard"
+
+  @smoke
+  Scenario: Completar el wizard de registro muestra el modal con los datos reales
+    When el usuario completa el paso 1 con nombre "Juan Pérez" y correo "juan@test.com"
+    And el usuario avanza al paso 2
+    And el usuario acepta los términos y avanza al paso 3
+    And el usuario confirma el registro
+    Then el modal de registro exitoso se muestra
+    And el usuario registrado es "Juan Pérez"
+
+  Scenario: La página no tiene scroll horizontal durante el flujo
+    When el usuario completa el paso 1 con nombre "Juan Pérez" y correo "juan@test.com"
+    And el usuario avanza al paso 2
+    Then la página no tiene scroll horizontal`,
+          },
+          { type: 'heading', text: 'Background, tags y dos escenarios independientes' },
+          {
+            type: 'p',
+            text: 'El `Background` corre antes de cada `Scenario` de este archivo: ambos escenarios arrancan con el usuario ya parado en el demo del componente, así ninguno de los dos repite ese paso. El tag `@e2e` arriba del `Feature` identifica toda la suite funcional del componente (distinta de la suite de accesibilidad, que vive en un segundo .feature con el tag `@accessibility`); `@smoke` sobre el primer escenario marca el camino feliz completo -- el que normalmente correrías primero si tuvieras que elegir uno solo. El segundo escenario reutiliza los mismos dos primeros pasos del primero (llegar hasta el paso 2) pero verifica algo totalmente distinto: que la página no generó scroll horizontal, un detalle visual que no tiene nada que ver con registrar un usuario.',
+          },
+          {
+            type: 'note',
+            text: 'Fíjate que ningún paso dice "hace clic en el botón con selector .foo" -- dice "el usuario avanza al paso 2" o "el usuario confirma el registro". Esa distancia deliberada respecto de la implementación es la que te permite leer el .feature como una lista de casos de uso, incluso sin saber todavía cómo está hecho el componente por dentro.',
+          },
+        ],
+        checkpoint:
+          'Puedes señalar, línea por línea del .feature, cuál paso es Given, cuáles son When y cuáles son Then (recordando que `And` hereda el tipo del paso anterior), y explicar en una frase qué verifica cada uno de los dos escenarios sin mencionar un solo selector.',
+      },
+      {
+        id: 'e2e-02-page-object-pattern',
+        title: '2. El patrón Page Object / Component Object',
+        estimatedMinutes: 45,
+        objective:
+          'Entender por qué todos los componentes del catálogo pasan por el mismo patrón `PageObject`/`ComponentObject` de `@ac-base/ac-e2e-testing` en vez de llamar a WebdriverIO directo desde cada step, y leer la implementación real de ambos.',
+        content: [
+          { type: 'heading', text: 'El problema que resuelve: selectores fuera del .feature' },
+          {
+            type: 'p',
+            text: 'Si cada step definition buscara el DOM a mano (`$(\'[data-testid="..."]\').$(\'...\')`), cualquier cambio interno del componente -- una clase CSS, un nivel más de shadow DOM -- rompería los steps aunque el comportamiento visible siguiera siendo el mismo. El Page Object (para páginas completas) y el Component Object (para un componente dentro de una página) resuelven esto encapsulando selectores y acciones detrás de métodos con nombre: el step solo dice "completa el paso 1 con estos datos", nunca cómo.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-e2e-testing/src/page-object.js',
+            code: `export class PageObject {
+  constructor({ path = '' } = {}) {
+    this.path = path;
+  }
+
+  async open() {
+    this.context = await browser.url(this.path);
+    // ...
+    return this;
+  }
+}
+
+export class ComponentObject {
+  constructor({ selector, scope = null }) {
+    this.selector = selector;
+    this.scope = scope;
+  }
+
+  get root() {
+    return this.scope ? this.scope.$(this.selector) : $(this.selector);
+  }
+
+  get executor() {
+    return this.scope ?? browser;
+  }
+
+  async waitForDisplayed(options) {
+    await this.root.waitForDisplayed(options);
+    return this;
+  }
+
+  async click() {
+    await this.root.click();
+  }
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Cada componente extiende `ComponentObject` con su propio selector y sus propios métodos de dominio. Así se ve el de ac-registro-wizard: el constructor fija el selector por `data-testid` (la ancla que todo elemento que la suite necesita ubicar expone en el `demo/index.html`) y cada método público describe una acción completa del wizard, no un clic suelto.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test_e2e/pages/registro-wizard.page.js',
+            code: `export class RegistroWizardPage extends ComponentObject {
+  constructor(testId = 'registro-wizard-default', scope) {
+    super({ selector: \`[data-testid="\${testId}"]\`, scope });
+  }
+
+  async snapshot() {
+    return this.executor.execute(selector => {
+      const el = document.querySelector(selector);
+      const stepsHost = el.shadowRoot.querySelector('registro-wizard-steps');
+      const steps = [...stepsHost.shadowRoot.querySelectorAll('ac-expandable-step')];
+      return {
+        open: el._open,
+        modalOpen: el._modalOpen,
+        activeStepIndex: steps.findIndex(step => step.active),
+        errorMessage: el._errorMessage,
+        registeredUser: el._registeredUser,
+      };
+    }, this.selector);
+  }
+}`,
+          },
+          {
+            type: 'note',
+            text: 'El getter `executor` (`this.scope ?? browser`) existe porque el demo de este componente carga su caso activo como un documento completo dentro de un `<iframe>` (ver `ac-demo-case`), así que no hay un "frame actual" global al que apuntar con WebDriver BiDi -- cada comando necesita el browsing context explícito. Todos los métodos que atraviesan varios shadow roots a mano (como `snapshot()`, `fillStep1()`, `clickActionButton()`) usan `this.executor.execute(...)` en vez de `this.root` justamente por eso: necesitan ese contexto correcto, que llega desde afuera como `scope`.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar, sin mirar el código, qué pasaría con el .feature del laboratorio anterior si cambiara el nombre de la clase `ac-expandable-step` dentro del shadow root del wizard: nada en el .feature se toca, solo `snapshot()` en `registro-wizard.page.js`.',
+      },
+      {
+        id: 'e2e-03-step-definitions',
+        title: '3. Conectar el .feature con los step definitions',
+        estimatedMinutes: 40,
+        objective:
+          'Leer los step definitions reales de ac-registro-wizard y trazar cada Given/When/Then del .feature hasta el método del Page Object que termina ejecutando.',
+        content: [
+          { type: 'heading', text: 'Cucumber Expressions: del texto del step a una función' },
+          {
+            type: 'p',
+            text: 'Cada `Given`/`When`/`Then` del .feature tiene una contraparte en JS con el mismo texto (con `{string}` donde el .feature pone un valor entre comillas). Cucumber empareja uno con otro por ese texto -- por eso importa escribirlo igual en ambos lados. El primer `Given` del Background abre el demo y ubica el componente; fíjate que necesita el `caseFrame()` del `DemoPage` (el `null`-o-frame del laboratorio anterior) para encontrar el wizard adentro del iframe de su caso.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test_e2e/step-definitions/registro-wizard.steps.js',
+            code: `Given('el usuario está en el demo de {string}', async function (_componentName) {
+  this.demoPage = await pageProvider.open(DemoPage);
+  this.wizard = componentProvider.find(
+    RegistroWizardPage,
+    undefined,
+    await this.demoPage.caseFrame(),
+  );
+  await this.wizard.waitForDisplayed();
+  await this.wizard.setApiTimeout(1);
+});
+
+When(
+  'el usuario completa el paso 1 con nombre {string} y correo {string}',
+  async function (nombre, email) {
+    await this.wizard.fillStep1(nombre, email);
+  },
+);
+
+When('el usuario avanza al paso 2', async function () {
+  await this.wizard.clickActionButton(0);
+  await browser.waitUntil(async () => (await this.wizard.snapshot()).activeStepIndex === 1, {
+    timeout: 3000,
+    timeoutMsg: 'El wizard no avanzó al paso 2',
+  });
+});`,
+          },
+          {
+            type: 'p',
+            text: 'Fíjate en `el usuario avanza al paso 2`: no alcanza con hacer clic y seguir -- el wizard anima la transición entre pasos, así que el step espera con `browser.waitUntil(...)` hasta que `snapshot()` confirme que `activeStepIndex` realmente cambió, con un `timeoutMsg` explícito si nunca pasa. Los dos `Then` finales del escenario `@smoke` también pasan por `snapshot()` para leer el estado interno del componente (`modalOpen`, `registeredUser`) en vez de buscar texto en el DOM renderizado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'test_e2e/step-definitions/registro-wizard.steps.js',
+            code: `Then('el modal de registro exitoso se muestra', async function () {
+  await browser.waitUntil(async () => (await this.wizard.snapshot()).modalOpen === true, {
+    timeout: 3000,
+    timeoutMsg: 'El modal de registro exitoso no se abrió',
+  });
+});
+
+Then('el usuario registrado es {string}', async function (nombreEsperado) {
+  const { registeredUser } = await this.wizard.snapshot();
+  if (registeredUser?.nombre !== nombreEsperado) {
+    throw new Error(
+      \`Se esperaba el usuario registrado "\${nombreEsperado}", pero se encontró "\${registeredUser?.nombre}".\`,
+    );
+  }
+});`,
+          },
+          {
+            type: 'note',
+            text: 'Otra trampa real de las Cucumber Expressions, no presente en este .feature pero real en otros del catálogo: una `/` en el texto de un step significa alternancia ("tea/coffee" matchea "tea" **o** "coffee"), nunca una barra literal. Si tu propio escenario necesita una barra literal (por ejemplo "WCAG 2.0/2.1"), ese step necesita una expresión regex (`/.../`) en vez de una Cucumber Expression.',
+          },
+        ],
+        checkpoint:
+          'Tomas cada línea del escenario `@smoke` del laboratorio 1 y dices, de memoria o señalando el archivo, qué `Given`/`When`/`Then` de `registro-wizard.steps.js` la implementa y qué método de `RegistroWizardPage` termina llamando.',
+      },
+      {
+        id: 'e2e-04-correr-la-suite',
+        title: '4. Correr la suite e2e real',
+        estimatedMinutes: 30,
+        objective:
+          'Correr `component:test:e2e` sobre un componente y explicar qué hace cada pieza de ese comando: compilar, servir y ejecutar WebdriverIO contra el build real.',
+        content: [
+          { type: 'heading', text: 'Un comando, tres pasos encadenados' },
+          {
+            type: 'p',
+            text: 'La suite e2e no corre contra el código fuente (a diferencia de los tests unitarios del Capítulo 2) sino contra el componente ya compilado, servido como lo vería un navegador real. Por eso `component:test:e2e` no es un solo comando sino tres encadenados, tal como están en el `package.json` real de ac-registro-wizard.',
+          },
+          {
+            type: 'code',
+            lang: 'json',
+            filename: 'package.json (de ac-registro-wizard)',
+            code: `"component:test:e2e": "pnpm run component:build && start-server-and-test component:preview http://localhost:4173 component:test:e2e:run",
+"component:test:e2e:run": "wdio run test_e2e/wdio.conf.js"`,
+          },
+          {
+            type: 'p',
+            text: 'En orden: `component:build` compila los `.scss` a `.styles.js` y corre `vite build` -- el mismo build que usarías en producción. Después, `start-server-and-test` levanta `component:preview` (un `vite preview` sobre ese build, en `http://localhost:4173`), espera a que esa URL responda, y solo entonces dispara `component:test:e2e:run`. Ese último script es el que realmente arranca WebdriverIO: `wdio run test_e2e/wdio.conf.js` lee la config del paquete, carga los step definitions y corre el .feature contra el servidor que acaba de levantarse. Si el servidor nunca responde, `start-server-and-test` nunca llega a correr WDIO -- así que un timeout ahí casi siempre es un problema del build, no de la suite.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            filename: '(desde la raíz del monorepo, o dentro del paquete)',
+            code: 'pnpm --filter @ac-components/ac-registro-wizard run component:test:e2e\n# equivalente, parado dentro del paquete:\naclit component:test:e2e',
+          },
+          {
+            type: 'note',
+            text: 'En CI la suite e2e corre en un job separado (`e2e`) marcado `continue-on-error: true` -- no bloquea el merge todavía, a diferencia de `lint-and-test`. Eso no es excusa para ignorar un fallo real: es una concesión mientras se demuestra estable en la práctica, no una suite que no importa.',
+          },
+        ],
+        checkpoint:
+          'Corriste `component:test:e2e` de un componente con suite propia (o, si no tienes uno a mano, puedes explicar sin ejecutarlo) y puedes decir en qué orden se ejecutan build, preview y wdio, y qué significa un timeout de `start-server-and-test` en ese orden.',
+      },
+    ],
   },
   {
     id: 'contribucion',
-    title: 'Capítulo 5 — Flujo de contribución (bonus)',
-    summary: 'Changesets, abrir una PR y leer los checks de CI -- sobre tu propio fork.',
+    title: 'Capítulo 3 — Flujo de contribución (bonus)',
+    summary:
+      'Conventional Commits, un changeset real y abrir tu propia PR para leer los checks de CI -- sobre tu propio fork.',
     estimatedMinutes: 60,
     outcomes: [
-      'Generar un changeset, abrir una PR propia, y leer/interpretar los checks de CI antes de mergear.',
+      'Escribir un commit que pase el hook de commitlint y explicar por qué el repo usa una sola rama permanente.',
+      'Generar un changeset real para un cambio propio y leer cada campo, comparándolo con changesets ya mergeados en el historial.',
+      'Abrir una PR sobre tu propio fork y distinguir el check de CI que bloquea el merge del que es solo informativo.',
     ],
-    labs: [],
+    labs: [
+      {
+        id: 'contribucion-01-commits-y-ramas',
+        title: '1. Conventional Commits y trunk-based',
+        estimatedMinutes: 20,
+        objective:
+          'Entender por qué este repo usa una sola rama permanente y Conventional Commits, y escribir un commit que pase el hook de commitlint sin que tengas que confiar en tu propia memoria del formato.',
+        content: [
+          { type: 'heading', text: 'Una sola rama permanente: main' },
+          {
+            type: 'p',
+            text: 'Este repo sigue un flujo trunk-based: `main` es la única rama permanente y siempre debe quedar en estado desplegable. Todo cambio se hace en una rama corta creada desde `main`, con un prefijo igual al tipo de commit que predomina en el cambio (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, `ci/`). Esa rama nunca se pushea directo a `main` -- `main` está protegida -- así que todo llega vía Pull Request, y se recomienda squash merge para que el historial de `main` quede limpio: el título del squash termina siendo el commit final.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: 'git checkout main && git pull --ff-only origin main\ngit checkout -b feat/mi-cambio',
+          },
+          { type: 'heading', text: 'El hook que no te deja mentir: commitlint + Husky' },
+          {
+            type: 'p',
+            text: 'El `pnpm install` inicial deja activados los git hooks locales (Husky) automáticamente. Uno de ellos es `commit-msg`, que corre commitlint contra cada mensaje de commit antes de aceptarlo -- si no respeta Conventional Commits, el commit se rechaza ahí mismo, antes de que llegue a ningún lado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'commitlint.config.js',
+            code: "module.exports = {\n  extends: ['@commitlint/config-conventional'],\n  rules: {\n    'scope-case': [2, 'always', 'kebab-case'],\n  },\n};",
+          },
+          {
+            type: 'p',
+            text: 'El formato exigido es `<tipo>(<scope>): <descripción en minúscula, sin punto final>`. Los tipos permitidos son `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. El `scope` es el nombre corto del paquete afectado, en kebab-case y sin el scope de npm (`cli`, `button`, `component-mixin`, no `@ac-base/cli` ni `componentMixin`) -- esa regla de kebab-case es justamente lo que agrega este repo por encima de `@commitlint/config-conventional`, que por sí solo no la exige. Puedes usar `*` o dejar el scope vacío para un cambio que toca todo el monorepo.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: 'feat(cli): agregar comando `aclit generate component`\nfix(button): corregir foco perdido al deshabilitar el botón\ndocs(conventions): documentar convención de nombres de eventos\nchore: configurar husky y commitlint',
+          },
+          {
+            type: 'note',
+            text: 'La regla `scope-case` rechaza un scope como `fix(acButton):` o `fix(ac-registro-wizard):` con mayúsculas -- tiene que ser kebab-case puro. Y el tipo va siempre en inglés (`feat`, no `funcionalidad`): Conventional Commits define los tipos en inglés aunque el resto del mensaje esté en español.',
+          },
+        ],
+        checkpoint:
+          'Sobre tu propio fork, intenta un commit con un mensaje que no respete el formato (por ejemplo `git commit -m "arreglo cosas"`) y confirma que Husky/commitlint lo rechaza antes de crearse. Después repite el commit con un mensaje válido (`fix(<scope>): <descripción>`) y confirma que esta vez pasa.',
+      },
+      {
+        id: 'contribucion-02-generar-changeset',
+        title: '2. Generar un changeset real',
+        estimatedMinutes: 25,
+        objective:
+          'Correr `pnpm changeset` para un cambio propio y entender cada campo del archivo que genera, comparándolo con dos changesets reales ya mergeados en el historial del repo.',
+        content: [
+          { type: 'heading', text: 'Por qué cada paquete versiona por separado' },
+          {
+            type: 'p',
+            text: 'Cada paquete en `packages/` y `cli/` versiona de forma independiente vía Changesets. Cuando tu cambio afecta uno o más paquetes publicables, el paso es generar un changeset para ese cambio, dentro de la misma rama y el mismo PR:',
+          },
+          { type: 'code', lang: 'bash', code: 'pnpm changeset' },
+          {
+            type: 'p',
+            text: 'El comando te pregunta, de forma interactiva, qué paquetes cambiaron y el tipo de bump para cada uno (`patch`/`minor`/`major`), y termina generando un archivo nuevo en `.changeset/` con un nombre aleatorio de dos o tres palabras.',
+          },
+          { type: 'heading', text: 'La forma real de un changeset ya mergeado' },
+          {
+            type: 'p',
+            text: "Estos archivos se consumen y se borran cuando alguien corre `pnpm version-packages`, así que no vas a encontrar ninguno en el working tree actual -- pero sí en el historial de git, con `git log --all --diff-filter=A -- '.changeset/*.md'`. Así se ve uno real, para un cambio que tocó un solo paquete:",
+          },
+          {
+            type: 'code',
+            lang: 'md',
+            filename:
+              '.changeset/cli-ac-router-range-fix.md (ya consumido -- visible solo en el historial de git)',
+            code: "---\n'@ac-base/cli': patch\n---\n\nCorrige el rango externo de `@ac-base/ac-router` (`^0.1.0` → `^0.2.0`) en el scaffolding de `app:create` fuera del workspace -- la versión anterior no existe en el registro público y rompía `npm install` en cualquier app generada afuera de `ac-lit`.",
+          },
+          {
+            type: 'p',
+            text: 'El frontmatter YAML (entre los dos `---`) es una lista de paquetes afectados, cada uno con su tipo de bump como valor -- acá, un solo paquete en `patch`. Todo lo que va después del frontmatter es prosa libre: la descripción que Changesets copia tal cual al `CHANGELOG.md` de ese paquete cuando corre `version-packages`, así que vale la pena escribirla pensando en quien la lea ahí, no en quien revisa el PR.',
+          },
+          {
+            type: 'p',
+            text: 'Un mismo changeset puede listar varios paquetes a la vez, cada uno con su propio bump, cuando un solo PR los cambia juntos -- por ejemplo, este otro, para un cambio que tocó dos paquetes del catálogo con la misma descripción:',
+          },
+          {
+            type: 'code',
+            lang: 'md',
+            filename:
+              '.changeset/icon-input-semantic-types.md (ya consumido -- visible solo en el historial de git)',
+            code: "---\n'@ac-components/ac-icon-basic': minor\n'@ac-components/ac-input-basic': minor\n---\n\n`ac-icon-basic` suma 4 íconos nuevos (`email`, `calendar`, `currency`, `hash`). `ac-input-basic` suma una capa semántica sobre `type` (`amount`, `date`, `number`, `email`) que muestra un ícono a la izquierda y un placeholder sugerido por tipo, sin cambiar el `type` nativo del `<input>` ni el comportamiento existente de `password`/`search`/`tel`/`url`.",
+          },
+          {
+            type: 'note',
+            text: 'Si tu componente nuevo depende de otro paquete interno vía `workspace:^`, no necesitas declarar a mano que esa dependencia también sube de versión -- `updateInternalDependencies: "patch"` en `.changeset/config.json` ya lo resuelve solo cuando alguien corre `version-packages`.',
+          },
+        ],
+        checkpoint:
+          'Sobre tu propio fork, corre `pnpm changeset` para un cambio real (aunque sea mínimo) en un paquete de `packages/` o `cli/`, elige un tipo de bump, y confirma que el `.md` generado en `.changeset/` tiene el nombre de tu paquete en el frontmatter y una descripción que te gustaría leer en un CHANGELOG.',
+      },
+      {
+        id: 'contribucion-03-pr-y-ci',
+        title: '3. Abrir tu PR y leer los 2 checks de CI',
+        estimatedMinutes: 15,
+        objective:
+          'Abrir una PR real sobre tu propio fork con el commit y el changeset de los laboratorios anteriores, y entender la diferencia entre el check de CI que bloquea el merge y el que es solo informativo.',
+        content: [
+          { type: 'heading', text: 'PR sobre tu fork, nunca push directo' },
+          {
+            type: 'p',
+            text: '`main` está protegida: no se puede pushear directo, así que tu rama llega siempre vía Pull Request, y ese PR debe pasar CI (lint + test) antes de poder mergearse. Se recomienda squash merge, con el título del squash en formato Conventional Commits -- el mismo formato que ya practicaste en el primer laboratorio, porque ese título termina siendo el commit final en `main`.',
+          },
+          { type: 'heading', text: 'Los 2 jobs de .github/workflows/ci.yml' },
+          {
+            type: 'p',
+            text: 'Cada PR dispara dos jobs. Así se ve la cabecera real de cada uno:',
+          },
+          {
+            type: 'code',
+            lang: 'yaml',
+            filename: '.github/workflows/ci.yml',
+            code: 'jobs:\n  lint-and-test:\n    runs-on: ubuntu-latest\n    # ... Lint, Format check, Test, Build\n\n  e2e:\n    runs-on: ubuntu-latest\n    # No bloqueante todavía: no es (ni debe agregarse a) un required status check\n    # de `main` hasta que la suite demuestre estabilidad en varias corridas.\n    continue-on-error: true\n    # ... E2E tests, Accessibility tests',
+          },
+          {
+            type: 'p',
+            text: '`lint-and-test` (lint + `format:check` + `test` + `build`) es bloqueante -- si falla, el botón de merge queda deshabilitado. `e2e` (`test:e2e` + `test:e2e:a11y`) es no bloqueante gracias a `continue-on-error: true`: corre igual en cada PR y te muestra el resultado, pero una falla ahí no te impide mergear.',
+          },
+          {
+            type: 'note',
+            text: 'Que `e2e` sea no bloqueante no significa que no importe: `continue-on-error: true` evita que una falla ahí tumbe el check obligatorio, pero el resultado sigue visible en la lista de checks del PR. Si falla, vale la pena abrir sus logs antes de mergear -- la suite todavía no es lo bastante estable como para exigirla, pero una falla real sigue siendo una señal real.',
+          },
+        ],
+        checkpoint:
+          'Abre una PR real desde tu fork con el commit del laboratorio 1 y el changeset del laboratorio 2, espera a que terminen los dos checks en la lista de la PR, y confirma cuál de los dos (`lint-and-test` o `e2e`) es el que de verdad bloquea el botón de merge si falla.',
+      },
+    ],
   },
 ];
 
@@ -1782,7 +2734,7 @@ export const LAB_LEVELS = [
     title: 'Básico',
     levelLabel: 'Nivel 1',
     description:
-      'Construí tu primer componente guiado paso a paso, con código de referencia en cada laboratorio.',
+      'Construye tu primer componente guiado paso a paso, con código de referencia en cada laboratorio.',
     icon: CODE_ICON,
     ctaLabel: 'Comenzar',
     features: [
@@ -1796,7 +2748,7 @@ export const LAB_LEVELS = [
     id: 'intermedio',
     title: 'Intermedio',
     levelLabel: 'Nivel 2',
-    description: 'Profundizá en testing y accesibilidad sobre lo que ya construiste.',
+    description: 'Profundiza en testing y accesibilidad sobre lo que ya construiste.',
     icon: LAYERS_ICON,
     ctaLabel: 'Continuar',
     features: [
@@ -1804,7 +2756,7 @@ export const LAB_LEVELS = [
       { icon: CHECK_FEATURE_ICON, text: 'Buenas prácticas' },
       { icon: BOLT_FEATURE_ICON, text: 'Desafíos reales' },
     ],
-    chapters: [],
+    chapters: INTERMEDIO_CHAPTERS,
   },
   {
     id: 'avanzado',
