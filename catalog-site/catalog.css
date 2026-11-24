@@ -587,6 +587,12 @@ body[data-view='lab'] .catalog__menu-button {
   padding-top: var(--space-4, 1rem);
 }
 
+.catalog__home-hero-icon {
+  height: 7.5rem;
+  width: auto;
+  display: block;
+}
+
 .catalog__home-title {
   margin: 0;
   /* Hero: la única superficie del catálogo que necesita un título más grande
