@@ -2000,6 +2000,19 @@ import '../index.js';`,
       },
     ],
   },
+  {
+    id: 'js-basico-repaso',
+    title: 'Capítulo 3 — Repaso: scope, closures y contexto',
+    summary:
+      'Repaso corto de scope, closures y cómo se resuelve this -- base para lo que sigue en Intermedio y Avanzado.',
+    estimatedMinutes: 60,
+    outcomes: [
+      'Distinguir scope de bloque (let/const) de scope de función (var), y explicar qué es hoisting.',
+      'Explicar qué es un closure y reconocer uno real en este mismo proyecto.',
+      'Explicar cómo se resuelve this según la forma de la llamada (función, método, arrow function) y por qué una arrow function preserva el this del lugar donde se define.',
+    ],
+    labs: [],
+  },
 ];
 
 // Intermedio retoma el mismo proyecto (ac-registro-wizard) y suma los temas
@@ -2705,6 +2718,56 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
       },
     ],
   },
+  {
+    id: 'js-intermedio',
+    title: 'Capítulo 4 — JavaScript intermedio: prototipos, módulos y programación defensiva',
+    summary:
+      'Prototipos y herencia prototípica, módulos y encapsulación, el event loop, y hábitos de programación defensiva -- todo con ejemplos reales de este mismo catálogo.',
+    estimatedMinutes: 180,
+    outcomes: [
+      'Explicar la cadena de prototipos y cómo class/extends y las mixins de este catálogo la usan en la práctica.',
+      'Explicar cómo los módulos ESM encapsulan estado, conectando con el closure de módulo que ya viste en Básico.',
+      'Trazar el orden de ejecución entre código síncrono, microtasks y macrotasks en el event loop.',
+      'Aplicar optional chaining, nullish coalescing, parámetros por defecto, copiar antes de modificar, un default en switch, y explicar por qué el modo estricto ya viene activado en este proyecto.',
+    ],
+    labs: [],
+  },
+];
+
+// Avanzado retoma el mismo proyecto, primero con un repaso profundo de
+// JavaScript (Capítulo 0) y después con la guía real de construcción de
+// una aplicación completa (Capítulo 1 en adelante) -- numeración propia,
+// igual criterio que Intermedio: cada nivel es su propia página.
+const AVANZADO_CHAPTERS = [
+  {
+    id: 'js-avanzado',
+    title: 'Capítulo 0 — JavaScript avanzado',
+    summary:
+      'Promesas y funciones asíncronas, funciones de orden superior, currying y composición, metaprogramación con Proxy/Reflect, generadores e iteradores, y tagged template literals -- la base real de html`` y css`` de Lit.',
+    estimatedMinutes: 250,
+    outcomes: [
+      'Escribir y razonar sobre código asíncrono con promesas y async/await, entendiendo su relación con el event loop ya visto en Intermedio.',
+      'Escribir funciones de orden superior, aplicar currying y componer funciones pequeñas en una sola operación.',
+      'Explicar qué resuelven Proxy y Reflect, con un caso de uso real y sus límites.',
+      'Escribir un generador propio y explicar la relación entre iterables, iteradores y el protocolo Symbol.iterator.',
+      'Explicar qué es una tagged template literal y cómo exactamente ese mecanismo es lo que hace funcionar a html`` y css`` de Lit.',
+    ],
+    labs: [],
+  },
+  {
+    id: 'guia-apps',
+    title: 'Capítulo 1 — Construcción de una aplicación completa',
+    summary:
+      'Guía paso a paso para crear una app real con aclit app:create: su estructura de carpetas, archivos importantes, el enrutador y los canales de comunicación entre páginas.',
+    estimatedMinutes: 160,
+    outcomes: [
+      'Generar una aplicación nueva con aclit app:create y explicar para qué sirve cada archivo de su estructura.',
+      'Declarar rutas, incluidas rutas con parámetros, y navegar entre páginas con un enlace o de forma programática.',
+      'Usar PageMixin para publicarse y suscribirse a canales de comunicación entre páginas, incluida la diferencia entre un canal retenido y uno que no lo es.',
+      'Agregar una página nueva a una app existente: archivo, ruta, entrada en la navegación.',
+    ],
+    labs: [],
+  },
 ];
 
 // Íconos propios de las 3 tarjetas de nivel y de sus features -- mismo estilo
@@ -2762,7 +2825,8 @@ export const LAB_LEVELS = [
     id: 'avanzado',
     title: 'Avanzado',
     levelLabel: 'Nivel 3',
-    description: 'Testing E2E, analítica y los temas de producción que básico no cubre.',
+    description:
+      'Un repaso profundo de JavaScript y la guía real para construir una aplicación completa con ac-lit.',
     icon: TROPHY_ICON,
     ctaLabel: 'Explorar',
     features: [
@@ -2770,6 +2834,6 @@ export const LAB_LEVELS = [
       { icon: ROCKET_FEATURE_ICON, text: 'Casos de uso reales' },
       { icon: STAR_FEATURE_ICON, text: 'Optimización y performance' },
     ],
-    chapters: [],
+    chapters: AVANZADO_CHAPTERS,
   },
 ];
