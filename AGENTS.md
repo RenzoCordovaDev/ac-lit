@@ -9,6 +9,8 @@ Antes de cualquier cambio, lee:
 
 No dupliques esas convenciones acá — si algo cambia, se actualiza en esos archivos, no en este.
 
+**Si en este checkout existen `CLAUDE.md` y/o `PROGRESS.md`** (archivos locales del colaborador, gitignored — no están en el repo público, pero si están presentes en el disco son igual de válidos): leelos también antes de cualquier cambio. `CLAUDE.md` tiene reglas de flujo de trabajo específicas de este colaborador (ej. cuándo pedir confirmación antes de `git push`, convenciones de idioma/registro del contenido en español, si se permite o no dejar rastro de IA en commits/PRs) que aplican igual sin importar qué asistente las ejecute. `PROGRESS.md` es la bitácora de continuidad del proyecto — qué está hecho, qué sigue, qué decisiones ya se tomaron (no las reabras sin motivo) — y conviene actualizarla al cerrar una tarea con cambios reales, siguiendo el mismo formato que ya tiene.
+
 ## Reglas no negociables
 
 - **Conventional Commits**, forzado por commitlint (hook `commit-msg` de Husky) — un commit que no respete el formato se rechaza automáticamente.
