@@ -2000,6 +2000,214 @@ import '../index.js';`,
       },
     ],
   },
+  {
+    id: 'js-basico-repaso',
+    title: 'Capítulo 3 — Repaso: scope, closures y contexto',
+    summary:
+      'Repaso corto de scope, closures y cómo se resuelve this -- base para lo que sigue en Intermedio y Avanzado.',
+    estimatedMinutes: 60,
+    outcomes: [
+      'Distinguir scope de bloque (let/const) de scope de función (var), y explicar qué es hoisting.',
+      'Explicar qué es un closure y reconocer uno real en este mismo proyecto.',
+      'Explicar cómo se resuelve this según la forma de la llamada (función, método, arrow function) y por qué una arrow function preserva el this del lugar donde se define.',
+    ],
+    labs: [
+      {
+        id: 'js-basico-repaso-01-scope-y-closures',
+        title: '1. Scope: var, let/const y closures',
+        estimatedMinutes: 35,
+        objective:
+          'Distinguir el scope de función (var) del scope de bloque (let/const), entender qué es hoisting, y reconocer un closure real de este proyecto a nivel de módulo, no solo como función anidada.',
+        content: [
+          { type: 'heading', text: 'var: scope de función' },
+          {
+            type: 'p',
+            text: 'Cuando declaras una variable con var, su alcance no es el bloque donde la escribiste (un if, un for, o un bloque suelto entre llaves) sino toda la función que la contiene. Si la declaras fuera de cualquier función, su alcance es global.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `function procesarPedido(items) {
+  if (items.length > 0) {
+    var primerItem = items[0];
+  }
+  // primerItem sigue existiendo aquí, aunque el if ya terminó --
+  // var no respeta el bloque, solo la función.
+  return primerItem;
+}`,
+          },
+          { type: 'heading', text: 'let y const: scope de bloque' },
+          {
+            type: 'p',
+            text: 'let y const sí respetan el bloque: una variable declarada con let o const dentro de un if, un for o un bloque suelto deja de existir en cuanto ese bloque termina. Es la diferencia práctica que te conviene memorizar.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `function procesarPedido(items) {
+  if (items.length > 0) {
+    let primerItem = items[0];
+    console.log(primerItem); // accesible aquí, dentro del bloque
+  }
+  console.log(primerItem); // ReferenceError: primerItem no está definida
+}`,
+          },
+          {
+            type: 'note',
+            text: 'const no significa "inmutable" -- significa que esa referencia no se puede reasignar. Un objeto o arreglo declarado con const sigue pudiendo mutar su contenido: const lista = []; lista.push(1) funciona sin problema, lo que falla es lista = [] (una reasignación completa). La trampa real es asumir que const congela el valor cuando solo congela el enlace entre el nombre y ese valor.',
+          },
+          { type: 'heading', text: 'Hoisting: declaraciones que suben, pero no todas igual' },
+          {
+            type: 'p',
+            text: 'Hoisting es el comportamiento por el cual el motor de JavaScript procesa las declaraciones de un scope antes de ejecutar el código línea por línea. var, let y const se hoistean los tres, pero no de la misma forma -- y esa diferencia es justo la que conviene entender.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `console.log(a); // undefined -- var ya existe, todavía sin valor asignado
+var a = 10;
+
+console.log(b); // ReferenceError: Cannot access 'b' before initialization
+let b = 20;`,
+          },
+          {
+            type: 'note',
+            text: 'var se hoistea e inicializa de inmediato con undefined, por eso console.log(a) no revienta. let y const también se hoistean, pero quedan en lo que se llama la "temporal dead zone": existen en el scope, pero acceder a ellas antes de la línea donde se declaran lanza un ReferenceError en vez de devolver undefined en silencio. Esa diferencia no es un capricho -- si let se comportara como var, un typo de orden en el código pasaría desapercibido devolviendo undefined, en vez de avisarte con un error exactamente donde está el problema.',
+          },
+          { type: 'heading', text: 'Closures: una función recuerda el scope donde nació' },
+          {
+            type: 'p',
+            text: 'Un closure ocurre cuando una función conserva acceso a variables de su scope exterior, incluso después de que ese scope ya terminó de ejecutarse. El ejemplo que más se repite en tutoriales es una función que devuelve otra función anidada, pero esa no es la única forma en la que aparece un closure: el mismo mecanismo aplica también a nivel de módulo, con funciones exportadas que comparten una variable que vive en el scope del propio archivo.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-intl-mixin/src/intl-mixin.js',
+            code: `let globalLocale = 'es-PE';
+
+// ...
+
+export function getGlobalLocale() {
+  return globalLocale;
+}
+
+export function setGlobalLocale(locale) {
+  globalLocale = locale;
+  try {
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('ac-locale-changed', { detail: { locale } }));
+    }
+  } catch (_) {
+    /* no-op: dispatch is best-effort outside a browser environment */
+  }
+}`,
+          },
+          {
+            type: 'p',
+            text: 'globalLocale es una variable del scope del módulo -- nunca se exporta, así que ningún otro archivo puede tocarla directamente. Lo único que sí se exporta son getGlobalLocale y setGlobalLocale, y las dos "cierran sobre" (eso es, literalmente, un closure) esa misma variable: la leen o la reasignan sin que nadie se la pase como argumento.',
+          },
+          {
+            type: 'note',
+            text: 'Esto no es el típico "función adentro de función" de los tutoriales -- es el mismo mecanismo (una función conserva acceso al scope en el que fue definida) aplicado al scope de un módulo completo en vez de al scope de otra función. Como un módulo de JavaScript se ejecuta una sola vez sin importar cuántos archivos lo importen, los cien componentes que importan este archivo comparten la misma globalLocale -- por eso cambiar el idioma desde un único selector actualiza a todos los componentes montados.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar por qué console.log(b) antes de su propia línea let b = 20 lanza ReferenceError en vez de devolver undefined como pasaría con var, y por qué getGlobalLocale y setGlobalLocale son un closure aunque ninguna de las dos está anidada dentro de la otra.',
+      },
+      {
+        id: 'js-basico-repaso-02-contexto-this',
+        title: '2. Contexto: cómo se resuelve `this`',
+        estimatedMinutes: 25,
+        objective:
+          'Explicar cómo se resuelve this según la forma en la que se llama a una función -- suelta, como método, o desde una arrow function -- y reconocer por qué una arrow function real de este proyecto necesita serlo.',
+        content: [
+          { type: 'heading', text: 'this se decide en la llamada, no en la definición' },
+          {
+            type: 'p',
+            text: 'La regla de fondo es esta: this no depende de dónde escribiste la función, sino de cómo la llamaste. La misma función puede devolver un this distinto según la forma en la que se invoque cada vez.',
+          },
+          { type: 'heading', text: 'Función suelta: this no apunta a nada útil' },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `function mostrarLocale() {
+  console.log(this);
+}
+
+mostrarLocale(); // this es undefined`,
+          },
+          {
+            type: 'note',
+            text: 'En un script clásico sin modo estricto, this ahí sería el objeto global (window en el navegador). Pero los módulos ES corren siempre en modo estricto -- y todo el código fuente de este proyecto está escrito como módulos ES -- así que una función suelta como esta recibe this === undefined.',
+          },
+          {
+            type: 'heading',
+            text: 'Método de un objeto o de una clase: this es quien hizo la llamada',
+          },
+          {
+            type: 'p',
+            text: 'Cuando llamas a una función como propiedad de un objeto (objeto.metodo()), this dentro del método es ese objeto -- no la clase donde se definió el método, sino lo que está a la izquierda del punto en la llamada concreta.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-intl-mixin/src/intl-mixin.js',
+            code: `getLocale() {
+  return this.locale;
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Llamado como miComponente.getLocale(), this dentro del método es miComponente -- por eso puede leer this.locale sin que nadie se lo pase como argumento.',
+          },
+          {
+            type: 'note',
+            text: 'Si extraes el método de su objeto y lo llamas suelto (const fn = miComponente.getLocale; fn()), this se pierde: ya no es miComponente, vuelve a ser el mismo this inútil de una función suelta. El método no "recuerda" a qué objeto pertenece -- solo lo sabe en el instante en que alguien lo llama con la sintaxis objeto.metodo(). Esa pérdida es justo el problema real que resuelve, de otra forma, el ejemplo siguiente.',
+          },
+          {
+            type: 'heading',
+            text: 'Arrow function: no tiene this propio, hereda el de donde se define',
+          },
+          {
+            type: 'p',
+            text: 'Una arrow function nunca crea su propio this -- dentro de ella, this es el mismo this que ya existía en el scope donde la arrow function fue escrita, sin importar después cómo se la llame. Así se usa en código real, dentro del render() de una página:',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'cli/templates/app/src/pages/users-table-page.js (dentro de render())',
+            code: `\${USERS.map(
+  user => html\`
+    <li>
+      <ac-button-basic
+        ambient="primary"
+        @ac-button-basic-click=\${() => this._onSelectClick(user)}
+      >
+        Seleccionar a \${user.name}
+      </ac-button-basic>
+      <a href="#/usuarios/\${user.id}">Ver detalle</a>
+    </li>
+  \`,
+)}`,
+          },
+          {
+            type: 'p',
+            text: 'render() es un método de la clase AppUsersTablePage, así que dentro de él this ya es la instancia del componente. La arrow function () => this._onSelectClick(user) se define ahí mismo, dentro de render() -- por eso, cuando Lit la invoque más adelante al hacer click, this._onSelectClick sigue resolviéndose contra la instancia del componente, nunca contra el botón que disparó el evento.',
+          },
+          {
+            type: 'note',
+            text: 'Un matiz importante: un binding @ac-button-basic-click=${this._onSelectClick} sin envolver en arrow function también resolvería this correctamente aquí -- Lit llama a los listeners de un binding @evento con el host del componente como this, a diferencia de un addEventListener nativo del DOM. Pero eso no alcanza para este caso: _onSelectClick necesita el user de cada elemento, y ese valor cambia en cada vuelta del .map(). No hay forma de pasarle ese argumento sin una función que lo capture. La arrow function está ahí sobre todo por el argumento variable (user); que además resuelva bien this es, en este caso puntual, una ventaja añadida, no la razón principal.',
+          },
+          {
+            type: 'p',
+            text: 'Y hay un paralelo directo con el laboratorio anterior: () => this._onSelectClick(user) es, en sí misma, un closure -- conserva acceso a user, la variable del scope de la función que pasaste a .map(), incluso después de que esa vuelta puntual del .map() ya terminó de ejecutarse.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar por qué dentro de getLocale() this es la instancia que lo llamó, por qué esa referencia se perdería si extrajeras el método y lo llamaras suelto, y por qué la arrow function de users-table-page.js necesita serlo aunque Lit ya resuelva bien el this de un binding @evento sin envolver.',
+      },
+    ],
+  },
 ];
 
 // Intermedio retoma el mismo proyecto (ac-registro-wizard) y suma los temas
@@ -2705,6 +2913,1172 @@ Then('el usuario registrado es {string}', async function (nombreEsperado) {
       },
     ],
   },
+  {
+    id: 'js-intermedio',
+    title: 'Capítulo 4 — JavaScript intermedio: prototipos, módulos y programación defensiva',
+    summary:
+      'Prototipos y herencia prototípica, módulos y encapsulación, el event loop, y hábitos de programación defensiva -- todo con ejemplos reales de este mismo catálogo.',
+    estimatedMinutes: 180,
+    outcomes: [
+      'Explicar la cadena de prototipos y cómo class/extends y las mixins de este catálogo la usan en la práctica.',
+      'Explicar cómo los módulos ESM encapsulan estado, conectando con el closure de módulo que ya viste en Básico.',
+      'Trazar el orden de ejecución entre código síncrono, microtasks y macrotasks en el event loop.',
+      'Aplicar optional chaining, nullish coalescing, parámetros por defecto, copiar antes de modificar, un default en switch, y explicar por qué el modo estricto ya viene activado en este proyecto.',
+    ],
+    labs: [
+      {
+        id: 'js-intermedio-01-prototipos-y-modulos',
+        title: '1. Prototipos y módulos',
+        estimatedMinutes: 60,
+        objective:
+          'Entender qué construye realmente class/extends por debajo, cómo los mixins de este catálogo encadenan ese mismo mecanismo varias veces, y cómo un módulo ESM encapsula estado con la misma lógica que un closure.',
+        content: [
+          { type: 'heading', text: 'Qué construye realmente class/extends' },
+          {
+            type: 'p',
+            text: '`class Hijo extends Padre {}` es azúcar sintáctico sobre un mecanismo más viejo: cada instancia de Hijo tiene como prototipo a Hijo.prototype, y Hijo.prototype tiene como su propio prototipo a Padre.prototype. Cuando llamas un método, el motor busca primero en el objeto, después en Hijo.prototype, después en Padre.prototype, y así sube la cadena hasta Object.prototype. extends solo arma ese enlace por ti.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `class Animal {
+  hacerSonido() {
+    return 'algún sonido';
+  }
+}
+
+class Perro extends Animal {
+  hacerSonido() {
+    return 'guau';
+  }
+}
+
+const rex = new Perro();
+Object.getPrototypeOf(rex) === Perro.prototype; // true
+Object.getPrototypeOf(Perro.prototype) === Animal.prototype; // true`,
+          },
+          {
+            type: 'note',
+            text: 'Object.getPrototypeOf no es un truco de laboratorio: es la forma directa de leer esa cadena en cualquier objeto real, incluyendo un elemento del DOM. Lo vas a usar en el checkpoint de este laboratorio.',
+          },
+          { type: 'heading', text: 'Un mixin es el mismo mecanismo, aplicado en cadena' },
+          {
+            type: 'p',
+            text: 'Todo componente de este catálogo extiende ComponentMixin(LitElement) en vez de LitElement directo. Un "mixin" acá no es magia nueva: es una función que recibe una clase y devuelve otra clase que la extiende -- exactamente el mismo extends de arriba, solo que la clase padre se calcula en tiempo de ejecución en vez de escribirse a mano.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-component-mixin/src/component-mixin.js',
+            code: `export const ComponentMixin = superClass =>
+  class extends IntlMixin(ScopedElementsMixin(superClass)) {
+    static get properties() {
+      return {
+        ...(super.properties || {}),
+        ambient: { type: String, reflect: true },
+        mode: { type: String, reflect: true },
+        loading: { type: Boolean, reflect: true },
+        loadingA11yLabel: { type: String, attribute: 'loading-a11y-label' },
+        mediaRangeConfig: { type: Object, attribute: 'media-range-config' },
+      };
+    }`,
+          },
+          {
+            type: 'p',
+            text: 'Fíjate en el orden: primero se evalúa ScopedElementsMixin(superClass), que devuelve una clase intermedia; IntlMixin envuelve esa clase intermedia; y la clase de ComponentMixin extiende el resultado de todo eso. Cada capa se inserta en la cadena de prototipos entre la clase final y superClass (LitElement, en este caso) -- no son tres mecanismos distintos conviviendo, es un solo extends aplicado tres veces, una dentro de la otra.',
+          },
+          {
+            type: 'note',
+            text: 'Por eso un componente como ac-tabs-basic, que escribe `class TabsBasic extends ComponentMixin(LitElement)`, termina con una cadena de cinco o más eslabones antes de llegar a HTMLElement.prototype: su propio prototype, el de la clase de ComponentMixin, el de IntlMixin, el de ScopedElementsMixin, y el de LitElement/ReactiveElement.',
+          },
+          { type: 'heading', text: 'Módulos y encapsulación' },
+          {
+            type: 'p',
+            text: 'Ya viste en Básico un closure real de ac-intl-mixin que encapsula estado a nivel de módulo: una variable de locale global y dos Map que ningún otro archivo puede tocar directamente. La encapsulación por módulo es justamente ese mismo mecanismo, sin necesitar ninguna función envolvente de por medio -- alcanza con que algo esté declarado en el nivel superior de un archivo y nunca se exporte con export.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-intl-mixin/src/intl-mixin.js',
+            code: `let globalLocale = 'es-PE';
+const translationsCache = new Map();
+const translationsRegistry = new Map();
+
+export function registerTranslations(tagName, localesData) {
+  if (typeof tagName !== 'string' || !tagName) return;
+  translationsRegistry.set(tagName, localesData || {});
+}
+
+export function getRegisteredTranslations(tagName) {
+  if (typeof tagName !== 'string' || !tagName) return undefined;
+  return translationsRegistry.get(tagName);
+}`,
+          },
+          {
+            type: 'p',
+            text: 'globalLocale, translationsCache y translationsRegistry no aparecen en ningún export de este archivo, así que son invisibles fuera de él. La única manera de leer o escribir translationsRegistry desde otro módulo es a través de registerTranslations y getRegisteredTranslations -- dos funciones exportadas que actúan como la API pública de ese estado privado, igual que un closure expone solo lo que decide devolver.',
+          },
+        ],
+        checkpoint:
+          'Con el demo de ac-tabs-basic montado en la página, guarda el elemento en una variable desde la consola del navegador y encadena Object.getPrototypeOf varias veces (el.__proto__, su propio __proto__, y así) hasta llegar a HTMLElement.prototype. Confirma que pasas por una clase de ComponentMixin, una de IntlMixin y una de ScopedElementsMixin antes de llegar ahí.',
+      },
+      {
+        id: 'js-intermedio-02-event-loop',
+        title: '2. El event loop: call stack, macrotasks y microtasks',
+        estimatedMinutes: 60,
+        objective:
+          'Entender el mecanismo del event loop -- call stack, cola de macrotasks y cola de microtasks -- y predecir con certeza el orden de ejecución entre código síncrono, temporizadores y promesas.',
+        content: [
+          { type: 'heading', text: 'Una sola hebra, un call stack' },
+          {
+            type: 'p',
+            text: 'JavaScript corre en una sola hebra: solo hay un call stack, y mientras ese stack no esté vacío, no se ejecuta nada más -- ni un temporizador, ni el callback de una promesa, ni un evento de clic. Cada función que llamas se apila arriba, y se desapila cuando termina.',
+          },
+          { type: 'heading', text: 'Dos colas, no una' },
+          {
+            type: 'p',
+            text: 'Cuando el call stack se vacía, el motor no va directo a "lo que sigue" de forma simple: tiene dos colas separadas. La cola de microtasks guarda los callbacks de promesas (.then, .catch, .finally) y queueMicrotask. La cola de macrotasks (a veces llamada "cola de tareas") guarda cosas como setTimeout, setInterval y la mayoría de eventos del DOM. La regla es: cada vez que el call stack queda vacío, el motor vacía completo la cola de microtasks (todas, una por una, incluyendo las que se agregan mientras la vacía) antes de sacar una sola macrotask de la otra cola.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `console.log('1 - sincrónico');
+
+setTimeout(() => console.log('4 - macrotask (setTimeout)'), 0);
+
+Promise.resolve().then(() => console.log('3 - microtask (promise)'));
+
+console.log('2 - sincrónico');
+
+// Orden real: 1, 2, 3, 4`,
+          },
+          {
+            type: 'note',
+            text: 'setTimeout(fn, 0) no significa "ejecuta ya": significa "encola fn como macrotask tan pronto como sea posible". Esa macrotask siempre espera a que el código síncrono actual termine y a que la cola de microtasks quede completamente vacía, así el delay sea 0.',
+          },
+          { type: 'heading', text: 'Un caso real: esperar un timer encadenado con await' },
+          {
+            type: 'p',
+            text: 'Este helper real de la suite de ac-registro-wizard avanza el wizard hasta el paso 3 encadenando varios await. aTimeout viene de @open-wc/testing y es, literalmente, un setTimeout envuelto en una promesa: resolver esa promesa es una macrotask que se encola y se resuelve recién cuando le toca su turno.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'catalog-site/lab-reference/ac-registro-wizard/test/registro-wizard.test.js',
+            code: `async function advanceToStep3(el) {
+  await fillStep1(el);
+  clickActionButton(el, 0);
+  await aTimeout(30);
+  acceptTerminos(el);
+  await stepsHost(el).updateComplete;
+  clickActionButton(el, 1);
+  await aTimeout(30);
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Cada await aTimeout(30) pausa la función async en ese punto exacto: el resto de advanceToStep3 no se sigue ejecutando hasta que esa macrotask de 30ms se resuelva y, además, se vacíe la cola de microtasks que se haya acumulado mientras tanto. Por eso el orden entre esta función y cualquier otro código que corra "al mismo tiempo" en la suite es predecible, no accidental.',
+          },
+          {
+            type: 'note',
+            text: "La misma suite usa oneEvent(el, nombreDelEvento) para esperar un evento real en vez de un timer: const successEvent = oneEvent(el, 'ac-registro-wizard-register-success'); clickActionButton(el, 2); const event = await successEvent;. También es una promesa, pero la dispara un listener de evento, no un setTimeout -- el disparador es distinto, pero una vez que se resuelve, pasa por la misma cola de microtasks que cualquier otra promesa.",
+          },
+          {
+            type: 'note',
+            text: 'En Avanzado vas a usar este mismo mecanismo para entender promesas y async/await a fondo -- acá solo necesitas el orden de ejecución, no construir tus propias promesas todavía.',
+          },
+        ],
+        checkpoint:
+          'Antes de ejecutar nada, predice en papel el orden exacto en que se imprimen los console.log del snippet de este laboratorio que mezcla código síncrono, un setTimeout y un Promise.resolve().then(). Después corre ese mismo snippet en la consola del navegador y confirma si tu predicción fue correcta.',
+      },
+      {
+        id: 'js-intermedio-03-programacion-defensiva',
+        title: '3. Programación defensiva',
+        estimatedMinutes: 60,
+        objective:
+          'Reconocer y aplicar un conjunto de hábitos de programación defensiva -- optional chaining, nullish coalescing, parámetros por defecto, scope de bloque, un default en switch y copiar antes de modificar -- con ejemplos reales de este catálogo.',
+        content: [
+          {
+            type: 'heading',
+            text: 'Optional chaining y nullish coalescing, juntos en un componente real',
+          },
+          {
+            type: 'p',
+            text: 'ac-tabs-basic recibe sus pestañas como un array que puede traer strings sueltos u objetos parciales. normalizeTab y _selectedId muestran optional chaining (?.) y nullish coalescing (??) trabajando en conjunto para nunca asumir que un valor existe.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/components/ac-tabs-basic/src/tabs-basic.js',
+            code: `function normalizeTab(tab) {
+  if (typeof tab === 'string') return { id: tab, label: tab, disabled: false };
+  const id = String(tab?.id ?? '');
+  return { id, label: String(tab?.label ?? id), disabled: Boolean(tab?.disabled) };
+}
+
+get _selectedId() {
+  const tabs = this._tabs;
+  const match = tabs.find(tab => tab.id === this.selected && !tab.disabled);
+  return (match ?? tabs.find(tab => !tab.disabled))?.id ?? '';
+}`,
+          },
+          {
+            type: 'p',
+            text: 'tab?.id devuelve undefined en vez de lanzar un error si tab fuera null o undefined. El operador ?? solo entra en acción cuando el valor de la izquierda es null o undefined -- nunca para 0, cadena vacía o false. En _selectedId, el encadenamiento completo dice: "usa la pestaña seleccionada y habilitada; si no hay, usa la primera habilitada que encuentres; si tampoco hay ninguna habilitada, devuelve una cadena vacía en vez de undefined".',
+          },
+          {
+            type: 'note',
+            text: "?? no es lo mismo que ||. 0 || 'valor' da 'valor' porque 0 es falsy para ||, pero 0 ?? 'valor' da 0 porque 0 no es null ni undefined. Si alguna vez necesitas distinguir \"no me mandaron nada\" de \"me mandaron un 0 real\", ?? es el operador correcto y || te va a jugar en contra.",
+          },
+          { type: 'heading', text: 'Parámetros por defecto, en el mismo mixin que ya conoces' },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-component-mixin/src/component-mixin.js',
+            code: `sanitizeHtml(content, allowedTags = null, tagNameCheck = null) {
+  const config = allowedTags ? { ALLOWED_TAGS: allowedTags } : {};
+
+  if (typeof tagNameCheck !== 'function') {
+    return DOMPurify.sanitize(content ?? '', config);
+  }`,
+          },
+          {
+            type: 'note',
+            text: 'Un parámetro por defecto solo se activa cuando el argumento llega como undefined -- no cuando llega como null. Por eso sanitizeHtml no confía en allowedTags = null para filtrar: si alguien llama sanitizeHtml(texto, null) a propósito, allowedTags sigue siendo null (el default no se activa), y la línea siguiente lo trata como "sin filtro" con el operador ternario, no con otro ??. Es la misma razón por la que tagNameCheck se valida con typeof en vez de confiar en que el default alcance para cualquier entrada rara.',
+          },
+          { type: 'heading', text: 'Bloques {} y un default que nunca falta, dentro de un switch' },
+          {
+            type: 'p',
+            text: 'Un switch comparte un único scope entre todos sus case a menos que abras tu propio bloque {} dentro de cada uno. Si dos case declaran const o let con el mismo nombre sin su propio bloque, el motor lanza un error de identificador duplicado -- aunque los case nunca se ejecuten juntos.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `function etiquetaDeAmbient(ambient) {
+  switch (ambient) {
+    case 'light': {
+      const etiqueta = 'Modo claro';
+      return etiqueta;
+    }
+    case 'dark': {
+      const etiqueta = 'Modo oscuro';
+      return etiqueta;
+    }
+    default:
+      return 'Modo desconocido';
+  }
+}`,
+          },
+          {
+            type: 'note',
+            text: 'El default no es solo cortesía para quien lee el código: es la red que atrapa un valor que no anticipaste (un typo, un valor viejo que quedó guardado, una respuesta inesperada de una API) antes de que se propague como undefined silencioso más adelante en la aplicación.',
+          },
+          {
+            type: 'heading',
+            text: 'Copiar antes de modificar: el bug real que evita que Lit vuelva a renderizar',
+          },
+          {
+            type: 'p',
+            text: 'tabs en ac-tabs-basic es una property reactiva declarada como tabs: { type: Array }. Lit decide si debe volver a renderizar comparando, en cada asignación, la referencia anterior contra la nueva -- no el contenido. Si mutas el mismo array en el lugar, la referencia nunca cambia, y Lit no detecta ningún cambio.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `// NO dispara render: la referencia de \`tabs\` no cambia
+elemento.tabs.push({ id: 'nueva', label: 'Nueva' });
+
+// Sí dispara render: Lit ve una referencia nueva y vuelve a pintar
+elemento.tabs = [...elemento.tabs, { id: 'nueva', label: 'Nueva' }];`,
+          },
+          {
+            type: 'note',
+            text: 'La misma regla aplica a un objeto: elemento.config.x = 1 muta el objeto existente (ninguna referencia cambió), mientras que elemento.config = { ...elemento.config, x: 1 } crea uno nuevo y sí dispara el render. El hábito defensivo es siempre el mismo: nunca llames push, splice, sort o una asignación de propiedad directa sobre un array u objeto que sea una property reactiva -- copia primero, modifica la copia, y asigna la copia completa.',
+          },
+          { type: 'heading', text: 'Por qué "use strict" ya viene activado solo' },
+          {
+            type: 'p',
+            text: 'Ningún archivo de este catálogo escribe la directiva "use strict" a mano, y no hace falta: todos los package.json del monorepo declaran "type": "module", y los módulos ES son estrictos por defecto según la propia especificación del lenguaje, sin que nadie tenga que pedirlo.',
+          },
+          {
+            type: 'code',
+            lang: 'json',
+            filename: 'packages/components/ac-text-basic/package.json',
+            code: `"type": "module",
+"main": "index.js",`,
+          },
+          {
+            type: 'note',
+            text: 'El modo estricto es justamente lo que vuelve defensivos varios de los hábitos de este laboratorio en algo obligatorio y no opcional: por ejemplo, asignar a una variable no declarada lanza un error en vez de crear silenciosamente una variable global, y un parámetro duplicado en la firma de una función es un error de sintaxis directo.',
+          },
+        ],
+        checkpoint:
+          'Con el demo de ac-tabs-basic montado, guarda el elemento en una variable desde la consola, ejecuta elemento.tabs.push({ id: "x", label: "X" }) y confirma que no cambia nada en pantalla. Después ejecuta elemento.tabs = [...elemento.tabs, { id: "x", label: "X" }] y confirma que la pestaña nueva sí aparece.',
+      },
+    ],
+  },
+];
+
+// Avanzado retoma el mismo proyecto, primero con un repaso profundo de
+// JavaScript (Capítulo 0) y después con la guía real de construcción de
+// una aplicación completa (Capítulo 1 en adelante) -- numeración propia,
+// igual criterio que Intermedio: cada nivel es su propia página.
+const AVANZADO_CHAPTERS = [
+  {
+    id: 'js-avanzado',
+    title: 'Capítulo 0 — JavaScript avanzado',
+    summary:
+      'Promesas y funciones asíncronas, funciones de orden superior, currying y composición, metaprogramación con Proxy/Reflect, generadores e iteradores, y tagged template literals -- la base real de html`` y css`` de Lit.',
+    estimatedMinutes: 250,
+    outcomes: [
+      'Escribir y razonar sobre código asíncrono con promesas y async/await, entendiendo su relación con el event loop ya visto en Intermedio.',
+      'Escribir funciones de orden superior, aplicar currying y componer funciones pequeñas en una sola operación.',
+      'Explicar qué resuelven Proxy y Reflect, con un caso de uso real y sus límites.',
+      'Escribir un generador propio y explicar la relación entre iterables, iteradores y el protocolo Symbol.iterator.',
+      'Explicar qué es una tagged template literal y cómo exactamente ese mecanismo es lo que hace funcionar a html`` y css`` de Lit.',
+    ],
+    labs: [
+      {
+        id: 'js-avanzado-01-promesas-async-await',
+        title: '1. Promesas y funciones asíncronas',
+        estimatedMinutes: 50,
+        objective:
+          'Entender qué es una promesa, encadenarla con .then()/.catch(), y escribir el mismo flujo con async/await, incluido el manejo de errores con try/catch.',
+        content: [
+          { type: 'heading', text: 'Qué es una promesa' },
+          {
+            type: 'p',
+            text: 'Una promesa es un objeto que representa un valor que todavía no existe, pero que en algún momento va a existir (o va a fallar). Tiene exactamente tres estados posibles: `pending` (ni resuelta ni rechazada todavía), `fulfilled` (se resolvió con un valor) y `rejected` (se rechazó con un error). Una vez que pasa de `pending` a cualquiera de los otros dos, queda fija para siempre -- no puede volver a cambiar de estado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `const esperar = ms =>
+  new Promise((resolve, reject) => {
+    if (ms < 0) {
+      reject(new Error('ms no puede ser negativo'));
+      return;
+    }
+    setTimeout(() => resolve(\`esperaste \${ms}ms\`), ms);
+  });
+
+esperar(100); // pending al crearla -- todavía no se resolvió ni se rechazó`,
+          },
+          {
+            type: 'note',
+            text: 'El constructor `new Promise((resolve, reject) => {...})` recibe una función con dos parámetros: llamar a `resolve(valor)` pasa la promesa a `fulfilled`, llamar a `reject(error)` la pasa a `rejected`. Nada obliga a llamar a ninguna de las dos -- si no llamas a ninguna, la promesa queda en `pending` para siempre, una fuga real y difícil de detectar.',
+          },
+          { type: 'heading', text: 'Encadenar con .then() y .catch()' },
+          {
+            type: 'p',
+            text: '`.then(onFulfilled, onRejected)` registra qué hacer cuando la promesa se resuelve (y, opcionalmente, qué hacer si se rechaza). Cada `.then()` devuelve una promesa nueva, así que se pueden encadenar uno tras otro: el valor que devuelve un `.then()` se convierte en el valor que recibe el siguiente. `.catch()` es equivalente a un `.then(undefined, onRejected)` al final de la cadena -- atrapa cualquier rechazo ocurrido en cualquier paso anterior, no solo el inmediatamente anterior.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `esperar(200)
+  .then(mensaje => {
+    console.log(mensaje); // "esperaste 200ms"
+    return esperar(50);
+  })
+  .then(mensaje => console.log(mensaje)) // "esperaste 50ms"
+  .catch(error => console.error('algo falló en la cadena:', error.message));`,
+          },
+          { type: 'heading', text: 'async/await: azúcar sintáctica sobre promesas' },
+          {
+            type: 'p',
+            text: 'Una función declarada con `async` siempre devuelve una promesa, aunque dentro de ella escribas un `return` normal -- el valor devuelto se envuelve solo. Dentro de una función `async`, `await promesa` pausa esa función (no el programa entero) hasta que la promesa se resuelve, y el `await` "se convierte" en el valor resuelto. Es exactamente el mismo mecanismo de `.then()` por debajo, solo que se lee como código secuencial en vez de una cadena de callbacks.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename:
+              'ejemplo autocontenido -- mismo flujo que el bloque anterior, con async/await',
+            code: `async function demo() {
+  const primero = await esperar(200);
+  console.log(primero); // "esperaste 200ms"
+
+  const segundo = await esperar(50);
+  console.log(segundo); // "esperaste 50ms"
+}`,
+          },
+          {
+            type: 'note',
+            text: 'Ya viste en Intermedio que una promesa resuelta encola su callback como microtask, y que las microtasks se vacían completas antes de que el event loop tome la siguiente macrotask pendiente. `await` no cambia ese mecanismo -- sigue siendo una microtask por debajo. Lo único que cambia es la sintaxis: en vez de pasar un callback a `.then()`, el motor "pausa" la función `async` en ese punto y la retoma cuando la microtask de esa promesa se ejecuta.',
+          },
+          { type: 'heading', text: 'Manejo de errores con try/catch en código async' },
+          {
+            type: 'p',
+            text: 'Dentro de una función `async`, un `await` sobre una promesa rechazada lanza esa excepción en el punto exacto donde está el `await`, así que se atrapa con un `try/catch` normal -- la misma herramienta que ya usas para código síncrono, sin aprender nada nuevo.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `async function demoConError() {
+  try {
+    const resultado = await esperar(-5); // esta promesa se rechaza
+    console.log(resultado); // nunca se llega aquí
+  } catch (error) {
+    console.error('capturado:', error.message); // "capturado: ms no puede ser negativo"
+  }
+}`,
+          },
+          {
+            type: 'note',
+            text: 'Una trampa real: si llamas a una función `async` sin `await` (por ejemplo dentro de un `.forEach()`, que no espera nada), un rechazo dentro de ella no lo atrapa ningún `try/catch` que la rodee -- esa promesa queda rechazada "al aire". Si necesitas lanzar varias llamadas async desde un bucle y esperar a todas, usa `await Promise.all([...])` sobre un `.map()`, nunca un `.forEach()` con `await` adentro (el `await` ahí no detiene al `forEach`, que ya sigue a la siguiente iteración sin esperar).',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar en una frase qué significa cada uno de los tres estados de una promesa, y reescribir una cadena de `.then()`/`.catch()` como una función `async` equivalente con `try/catch`, sin que cambie el comportamiento.',
+      },
+      {
+        id: 'js-avanzado-02-orden-superior-currying-composicion',
+        title: '2. Funciones de orden superior, currying y composición',
+        estimatedMinutes: 50,
+        objective:
+          'Reconocer una función de orden superior en código real del repositorio, escribir una función curry propia, y componer funciones pequeñas en una sola con compose/pipe.',
+        content: [
+          { type: 'heading', text: 'Qué es una función de orden superior' },
+          {
+            type: 'p',
+            text: 'Una función de orden superior (higher-order function, HOF) es una función que recibe otra función como argumento, devuelve una función, o ambas cosas. No hace falta buscar un ejemplo inventado: `.filter()` y `.map()`, que ya usas todo el tiempo sobre arrays, son HOF -- cada una recibe una función como argumento y la aplica. Este es un fragmento real del propio repositorio que encadena varias.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'scripts/catalog-serve.mjs',
+            code: `const names = readdirSync(componentsDir, { withFileTypes: true })
+  .filter(entry => entry.isDirectory())
+  .map(entry => entry.name)
+  .filter(name => existsSync(join(componentsDir, name, 'package.json')))
+  .filter(name => only.length === 0 || only.includes(name))
+  .sort();`,
+          },
+          {
+            type: 'p',
+            text: 'Cada `.filter()` recibe una función que decide, entrada por entrada, si se queda o se descarta; `.map()` recibe una función que transforma cada entrada en otra cosa (de un objeto `Dirent` a su nombre de string). Ninguna de esas cuatro llamadas sabe de antemano qué condición vas a aplicar -- reciben esa lógica como argumento, en vez de tenerla escrita adentro. Eso es exactamente lo que hace a una función "de orden superior": no importa el resultado final, importa que la función en sí misma es un parámetro.',
+          },
+          { type: 'heading', text: 'Currying' },
+          {
+            type: 'p',
+            text: 'Currying es transformar una función que recibe varios argumentos a la vez en una cadena de funciones que reciben un argumento cada una, y van devolviendo la siguiente función hasta que ya tienen todos los datos que necesitan para calcular el resultado final.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `// Sin curry: los tres argumentos llegan juntos.
+function calcularDescuento(precio, porcentaje, impuesto) {
+  return precio * (1 - porcentaje) * (1 + impuesto);
+}
+
+// Con curry: uno a la vez, cada llamada devuelve la siguiente función.
+const calcularDescuentoCurry = precio => porcentaje => impuesto =>
+  precio * (1 - porcentaje) * (1 + impuesto);
+
+calcularDescuentoCurry(100)(0.2)(0.18); // 94.4 -- mismo resultado
+
+// La utilidad real: fijar un argumento y reutilizar la función resultante.
+const descuentoSobre100 = calcularDescuentoCurry(100);
+descuentoSobre100(0.1)(0.18); // 106.2
+descuentoSobre100(0.3)(0.18); // 82.6`,
+          },
+          {
+            type: 'note',
+            text: 'El valor del currying no es la sintaxis en sí, sino poder fijar los primeros argumentos de una función y quedarte con una versión especializada y reutilizable, sin tener que repetir esos argumentos cada vez que la llamas.',
+          },
+          { type: 'heading', text: 'Composición: compose y pipe' },
+          {
+            type: 'p',
+            text: 'Componer funciones es combinar varias funciones pequeñas, cada una con una sola responsabilidad, en una sola operación que las aplica en cadena. `pipe` las aplica de izquierda a derecha (en el orden en que las escribes); `compose` las aplica de derecha a izquierda (el orden clásico de composición matemática, `f(g(x))`).',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `const pipe = (...fns) => valorInicial => fns.reduce((valor, fn) => fn(valor), valorInicial);
+const compose = (...fns) => valorInicial => fns.reduceRight((valor, fn) => fn(valor), valorInicial);
+
+const limpiar = texto => texto.trim();
+const minusculas = texto => texto.toLowerCase();
+const sinEspaciosDobles = texto => texto.replace(/\\s+/g, ' ');
+
+const normalizar = pipe(limpiar, minusculas, sinEspaciosDobles);
+normalizar('  Hola   Mundo  '); // "hola mundo"
+
+// compose([a, b, c])(x) === a(b(c(x))) -- mismo resultado, orden invertido al leerlo
+const normalizarCompose = compose(sinEspaciosDobles, minusculas, limpiar);
+normalizarCompose('  Hola   Mundo  '); // "hola mundo"`,
+          },
+          {
+            type: 'note',
+            text: 'Una trampa común: confundir el orden de `pipe` y `compose` al leer código de otra persona. Si tienes dudas sobre cuál usa una función dada, prueba con dos funciones muy distintas entre sí (por ejemplo una que suma y otra que multiplica) y compara el resultado contra aplicar cada una a mano -- el orden equivocado casi siempre da un resultado visiblemente distinto, no un error silencioso.',
+          },
+        ],
+        checkpoint:
+          'Puedes señalar, en el fragmento de `catalog-serve.mjs`, por qué cada `.filter()`/`.map()` es una función de orden superior, y escribir desde cero una función `pipe` (o `compose`) de dos líneas que combine tres funciones simples en una.',
+      },
+      {
+        id: 'js-avanzado-03-metaprogramacion-proxy-reflect',
+        title: '3. Metaprogramación: Proxy y Reflect',
+        estimatedMinutes: 50,
+        objective:
+          'Entender qué operaciones fundamentales sobre un objeto permiten interceptar Proxy y Reflect, construir un caso de uso real, y reconocer sus límites y costos.',
+        content: [
+          { type: 'heading', text: 'Qué resuelven Proxy y Reflect' },
+          {
+            type: 'p',
+            text: 'Un `Proxy` envuelve un objeto y te deja interceptar las operaciones fundamentales que se hacen sobre él -- leer una propiedad, escribirla, comprobar si existe con `in`, borrarla, listar sus claves, etc. -- en vez de dejar que el motor de JavaScript las resuelva directamente contra el objeto original. Se crea con `new Proxy(objetivo, handler)`, donde `handler` es un objeto cuyas funciones ("traps") se ejecutan en el momento de cada operación interceptada.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido -- validación automática al escribir',
+            code: `function crearPersonaValidada() {
+  return new Proxy(
+    {},
+    {
+      set(objetivo, propiedad, valor) {
+        if (propiedad === 'edad' && (typeof valor !== 'number' || valor < 0)) {
+          throw new TypeError('edad debe ser un número mayor o igual a 0');
+        }
+        objetivo[propiedad] = valor;
+        return true; // obligatorio: indica que la asignación se aceptó
+      },
+    },
+  );
+}
+
+const persona = crearPersonaValidada();
+persona.nombre = 'Ana'; // pasa derecho, no hay regla para "nombre"
+persona.edad = 30; // pasa la validación
+persona.edad = -5; // lanza TypeError antes de llegar a guardarse`,
+          },
+          { type: 'heading', text: 'Reflect: el complemento de Proxy' },
+          {
+            type: 'p',
+            text: '`Reflect` expone, como funciones normales, el comportamiento por defecto de esas mismas operaciones fundamentales (`Reflect.get`, `Reflect.set`, `Reflect.has`, `Reflect.deleteProperty`, etc.). Dentro de un handler de `Proxy` casi siempre conviene llamar a la función `Reflect` correspondiente para delegar el comportamiento estándar, en vez de reimplementarlo a mano (como hizo `objetivo[propiedad] = valor` arriba, que funciona pero no es la forma recomendada en casos más complejos, por ejemplo con herencia de por medio).',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido -- logger de accesos, con Reflect como fallback',
+            code: `function conLoggerDeAccesos(objetivo) {
+  return new Proxy(objetivo, {
+    get(objetivo, propiedad, receptor) {
+      console.log(\`lectura de "\${String(propiedad)}"\`);
+      return Reflect.get(objetivo, propiedad, receptor); // comportamiento estándar
+    },
+    set(objetivo, propiedad, valor, receptor) {
+      console.log(\`escritura de "\${String(propiedad)}" = \${valor}\`);
+      return Reflect.set(objetivo, propiedad, valor, receptor);
+    },
+  });
+}
+
+const config = conLoggerDeAccesos({ tema: 'oscuro' });
+config.tema; // log: lectura de "tema" -- y devuelve "oscuro"
+config.tema = 'claro'; // log: escritura de "tema" = claro`,
+          },
+          { type: 'heading', text: 'Límites y costos' },
+          {
+            type: 'note',
+            text: 'Proxy tiene un costo real, no solo teórico: cada operación interceptada pasa por una función adicional antes de llegar al objeto real, así que un acceso a través de un Proxy es más lento que un acceso directo. También es más difícil de depurar -- un `console.log` sobre un objeto envuelto en Proxy no siempre muestra sus valores reales directamente, y un stack trace no deja ver que una asignación pasó por un trap antes de guardarse. Por eso, usarlo solo cuando el problema concreto (validación transversal, objetos de solo lectura, logging automático) lo justifica, no como primera opción.',
+          },
+          {
+            type: 'note',
+            text: 'Este catálogo no usa Proxy ni Reflect en ningún componente real de `packages/` -- es una decisión deliberada: el catálogo prioriza código explícito y fácil de rastrear sobre mecanismos "mágicos" como este, incluso cuando Proxy resolvería algo de forma más compacta. Eso no significa que no sirva conocerlos: son parte real del lenguaje y aparecen en librerías de terceros (frameworks de reactividad, ORMs, mocks de pruebas), solo que no es el estilo que este repositorio elige para su propio código.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar con tus palabras qué hace el trap `set` del primer ejemplo si le quitas la validación de `edad`, y por qué llamar a `Reflect.get`/`Reflect.set` dentro de un handler es preferible a acceder al objetivo directamente.',
+      },
+      {
+        id: 'js-avanzado-04-generadores-e-iteradores',
+        title: '4. Generadores e iteradores',
+        estimatedMinutes: 50,
+        objective:
+          'Escribir una función generadora con function*/yield, entender el protocolo iterable (Symbol.iterator), y ver por qué un generador es la forma más corta de implementarlo a mano.',
+        content: [
+          { type: 'heading', text: 'function* y yield' },
+          {
+            type: 'p',
+            text: 'Una función declarada con `function*` (una función generadora) no se ejecuta de una sola vez al llamarla -- devuelve un objeto generador, y cada llamada a `.next()` sobre ese objeto corre el cuerpo de la función hasta el próximo `yield`, donde se pausa. `.next()` devuelve siempre un objeto `{ value, done }`: `value` es lo que se pasó a `yield` (o al `return` final), y `done` indica si el generador ya terminó.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `function* contarHasta(limite) {
+  let actual = 1;
+  while (actual <= limite) {
+    yield actual;
+    actual += 1;
+  }
+}
+
+const generador = contarHasta(3);
+generador.next(); // { value: 1, done: false }
+generador.next(); // { value: 2, done: false }
+generador.next(); // { value: 3, done: false }
+generador.next(); // { value: undefined, done: true }`,
+          },
+          { type: 'heading', text: 'El protocolo iterable: Symbol.iterator' },
+          {
+            type: 'p',
+            text: 'Un objeto es iterable (lo puedes recorrer con `for...of`, o expandir con `...`) si tiene un método en la clave especial `Symbol.iterator` que devuelve un iterador: un objeto con un método `.next()` que, igual que el generador de arriba, devuelve `{ value, done }`. Implementar ese protocolo a mano, sin generadores, es más verboso de lo que parece.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename:
+              'ejemplo autocontenido -- protocolo iterable implementado a mano, sin generador',
+            code: `const rangoManual = {
+  desde: 1,
+  hasta: 3,
+  [Symbol.iterator]() {
+    let actual = this.desde;
+    const hasta = this.hasta;
+    return {
+      next() {
+        if (actual > hasta) return { value: undefined, done: true };
+        const value = actual;
+        actual += 1;
+        return { value, done: false };
+      },
+    };
+  },
+};
+
+[...rangoManual]; // [1, 2, 3] -- for...of también funciona sobre rangoManual`,
+          },
+          { type: 'heading', text: 'Por qué un generador es la forma más simple de implementarlo' },
+          {
+            type: 'p',
+            text: 'Un objeto generador (el que devuelve una función `function*` al llamarla) ya cumple el protocolo iterable por sí solo: tiene `.next()`, y además su propio `[Symbol.iterator]` devuelve el generador mismo. Eso significa que, en vez de escribir a mano un objeto con `next()` que rastrea estado manualmente (como arriba), basta con poner una función generadora directamente en la clave `Symbol.iterator`.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename:
+              'ejemplo autocontenido -- el mismo rango, con generador en vez de iterador manual',
+            code: `const rangoConGenerador = {
+  desde: 1,
+  hasta: 3,
+  *[Symbol.iterator]() {
+    for (let actual = this.desde; actual <= this.hasta; actual += 1) {
+      yield actual;
+    }
+  },
+};
+
+[...rangoConGenerador]; // [1, 2, 3] -- mismo resultado, mucho menos código que el objeto manual`,
+          },
+          {
+            type: 'note',
+            text: 'Una trampa real: un generador ya iniciado se agota -- si recorres `rangoConGenerador` con `for...of` y después lo recorres de nuevo, funciona porque `[Symbol.iterator]` se vuelve a llamar y crea un generador nuevo cada vez. Pero si guardas el resultado de llamar al generador una sola vez (`const g = rangoConGenerador[Symbol.iterator]()`) y lo recorres dos veces, la segunda vuelta no devuelve nada: ese generador en particular ya llegó a `done: true` y no se reinicia.',
+          },
+        ],
+        checkpoint:
+          'Puedes escribir desde cero un generador que produzca los primeros N números pares, y explicar con tus palabras por qué ese generador, puesto en `[Symbol.iterator]`, ya hace iterable a cualquier objeto sin escribir un `.next()` a mano.',
+      },
+      {
+        id: 'js-avanzado-05-tagged-template-literals',
+        title: '5. Tagged template literals: la base real de html`` y css`` de Lit',
+        estimatedMinutes: 50,
+        objective:
+          'Entender qué es una función tag, verificar con código real del catálogo que html`` y css`` de Lit son exactamente eso, y escribir una versión mínima que reconstruya el mecanismo.',
+        content: [
+          { type: 'heading', text: 'Qué es una función tag' },
+          {
+            type: 'p',
+            text: 'Cuando el nombre de una función va pegado justo antes de un template literal (sin paréntesis, sin punto), eso no produce un string ya armado -- llama a esa función con dos tipos de argumentos separados: primero un array con los fragmentos de texto literal (todo lo que no está dentro de `${...}`), y después, uno por uno, los valores que se interpolaron. Esa función se llama "función tag".',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'ejemplo autocontenido',
+            code: `function etiqueta(strings, ...values) {
+  console.log(strings); // ['<div>', '</div>']
+  console.log(values); // [42]
+}
+
+const x = 42;
+etiqueta\\\`<div>\${x}</div>\\\`;`,
+          },
+          {
+            type: 'note',
+            text: 'El array `strings` siempre tiene exactamente un elemento más que `values`: un fragmento de texto antes de cada valor interpolado, más uno final después del último. En el ejemplo de arriba, con un solo valor interpolado, `strings` tiene 2 elementos y `values` tiene 1.',
+          },
+          {
+            type: 'heading',
+            text: 'Cómo exactamente esto es lo que hace funcionar a html`` de Lit',
+          },
+          {
+            type: 'p',
+            text: '`html` y `css`, las funciones que importas de `lit` en todos los componentes de este catálogo, son funciones tag -- ni más ni menos que el mismo mecanismo de arriba. Este es el `render()` real de `ac-amount-basic`.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/components/ac-amount-basic/src/amount-basic.js',
+            code: `  render() {
+    // El texto ya formateado se pasa como contenido del slot por defecto
+    // (luz, no shadow) de \\\`ac-text-basic\\\` — NUNCA vía su propiedad \\\`text\\\`,
+    // que trata el valor como clave de traducción (this.t(key)).
+    return html\\\`<ac-text-basic part="root" size=\${this.size} tag=\${this.tag} ambient=\${this.ambient}
+      >\${this._formattedAmount}</ac-text-basic
+    >\\\`;
+  }`,
+          },
+          {
+            type: 'p',
+            text: "Esa llamada a `html` recibe internamente `strings` (los fragmentos fijos: `'<ac-text-basic part=\"root\" size=\"'`, `'\" tag=\"'`, `'\" ambient=\"'`, `'>'`, `'</ac-text-basic>'`...) y, por separado, `values` (`[this.size, this.tag, this.ambient, this._formattedAmount]`). Lit nunca recibe un string de HTML ya armado con esos valores metidos adentro -- recibe las dos partes separadas, igual que la función `etiqueta` del ejemplo anterior.",
+          },
+          { type: 'heading', text: 'Una versión mínima para desmitificar el mecanismo' },
+          {
+            type: 'p',
+            text: 'El `html` real de Lit no concatena un string nuevo en cada render -- parsea los fragmentos fijos una sola vez en un `<template>`, y en cada actualización posterior solo toca los valores interpolados que cambiaron, sin volver a tocar el HTML fijo. Pero para entender qué son `strings` y `values`, sirve ver una versión mínima (y deliberadamente ingenua) que sí concatena, solo para desmitificar la idea central.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename:
+              'ejemplo autocontenido -- NO es cómo funciona Lit por dentro, solo el concepto',
+            code: `function htmlSimplificado(strings, ...values) {
+  return strings.reduce((acumulado, fragmento, i) => {
+    const valor = i < values.length ? String(values[i]) : '';
+    return acumulado + fragmento + valor;
+  }, '');
+}
+
+const nombre = 'Ana';
+htmlSimplificado\\\`<span>Hola \${nombre}</span>\\\`;
+// "<span>Hola Ana</span>" -- reconstruido a mano desde strings + values`,
+          },
+          {
+            type: 'note',
+            text: 'No pierdas de vista la diferencia: `htmlSimplificado` de arriba reconstruye un string nuevo cada vez que se llama, que es exactamente lo que Lit evita (por eso es más rápido que armar HTML a mano con concatenación de strings en cada render). La función de arriba solo existe para mostrar, de forma mínima, qué datos recibe una función tag -- no para mostrar cómo Lit los usa por dentro.',
+          },
+          { type: 'heading', text: 'css`` usa exactamente el mismo mecanismo' },
+          {
+            type: 'p',
+            text: '`css` es la otra función tag que ya usas en cada componente, sobre los estilos en vez del markup. Este es un fragmento real del mixin base que comparten todos los componentes del catálogo.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'packages/base/ac-component-mixin/src/component-mixin.js',
+            code: `export const componentBaseStyles = css\\\`
+  :host {
+    font-family: var(
+      --font-family,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Arial,
+      sans-serif
+    );
+  }
+\\\`;`,
+          },
+          {
+            type: 'note',
+            text: 'Como no hay ningún `${...}` dentro de ese template literal en particular, `values` llega vacío y `strings` tiene un solo elemento con todo el CSS -- pero sigue siendo, por definición, una llamada a una función tag. La diferencia con `html` no está en el mecanismo (es idéntico), sino en qué hace cada función con el resultado: una construye un fragmento de DOM, la otra una hoja de estilos.',
+          },
+        ],
+        checkpoint:
+          'Puedes tomar cualquier uso real de `html` o `css` como función tag en un componente del catálogo y decir, sin ejecutarlo, qué contendría su array `strings` y qué contendría su array `values` si esa función imprimiera ambos como hace `etiqueta` en el primer ejemplo.',
+      },
+    ],
+  },
+  {
+    id: 'guia-apps',
+    title: 'Capítulo 1 — Construcción de una aplicación completa',
+    summary:
+      'Guía paso a paso para crear una app real con aclit app:create: su estructura de carpetas, archivos importantes, el enrutador y los canales de comunicación entre páginas.',
+    estimatedMinutes: 160,
+    outcomes: [
+      'Generar una aplicación nueva con aclit app:create y explicar para qué sirve cada archivo de su estructura.',
+      'Declarar rutas, incluidas rutas con parámetros, y navegar entre páginas con un enlace o de forma programática.',
+      'Usar PageMixin para publicarse y suscribirse a canales de comunicación entre páginas, incluida la diferencia entre un canal retenido y uno que no lo es.',
+      'Agregar una página nueva a una app existente: archivo, ruta, entrada en la navegación.',
+    ],
+    labs: [
+      {
+        id: 'guia-apps-01-generar-app-y-estructura',
+        title: '1. Generar la app y su estructura',
+        estimatedMinutes: 40,
+        objective:
+          'Generar una aplicación nueva con aclit app:create y explicar para qué sirve cada archivo y cada carpeta de la estructura que deja lista.',
+        content: [
+          { type: 'heading', text: 'Un comando, una app completa' },
+          {
+            type: 'p',
+            text: 'Toda aplicación nueva con este framework arranca con un solo comando: aclit app:create, seguido del nombre que quieras darle. Ese nombre se usa para derivar el nombre de la carpeta, el nombre del paquete dentro de package.json y el título que aparece en la cabecera de la página.',
+          },
+          { type: 'code', lang: 'bash', code: 'aclit app:create mi-tienda' },
+          {
+            type: 'p',
+            text: 'El comando no hace ninguna pregunta adicional: crea la carpeta mi-tienda dentro del directorio donde lo ejecutas, copia ahí la plantilla completa y reemplaza el nombre en los lugares donde corresponde. Si ya existe una carpeta con ese nombre, el comando se detiene con un error en vez de sobrescribir nada.',
+          },
+          {
+            type: 'note',
+            text: 'A diferencia de un componente del catálogo (aclit component:create), lo que genera app:create no es un paquete publicable: es tu propia aplicación, pensada para que la edites libremente y la despliegues como quieras.',
+          },
+          { type: 'heading', text: 'La estructura generada' },
+          {
+            type: 'p',
+            text: 'Dentro de la carpeta nueva encuentras un proyecto completo y listo para correr. La pieza más importante es src/, donde vive todo el código propio de la aplicación: el punto de entrada, cada página y un archivo de utilidades compartidas.',
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Árbol de carpetas de una app generada con aclit app:create. Mostrar la jerarquía completa: index.html en la raíz, la carpeta src/ con app.js y app.css al mismo nivel, y dentro de src/ dos subcarpetas: utils/ (con page-mixin.js) y pages/ (con home-page.js, users-table-page.js, user-detail-page.js y selected-user-badge-page.js). A un lado, vite.config.js y package.json en la raíz. Usar íconos distintos para carpetas y archivos, y una etiqueta que diga "generado por aclit app:create".',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            filename: 'estructura de la app generada',
+            code: `mi-tienda/
+├── index.html
+├── src/
+│   ├── app.js
+│   ├── app.css
+│   ├── utils/
+│   │   └── page-mixin.js
+│   └── pages/
+│       ├── home-page.js
+│       ├── users-table-page.js
+│       ├── user-detail-page.js
+│       └── selected-user-badge-page.js
+├── vite.config.js
+└── package.json`,
+          },
+          { type: 'heading', text: 'Qué hace cada archivo' },
+          {
+            type: 'p',
+            text: 'index.html es el esqueleto de toda la aplicación: la cabecera, la navegación por hash y las cuatro páginas, cada una como su propia etiqueta personalizada dentro de main. Todas las páginas salvo la primera arrancan con el atributo hidden.',
+          },
+          {
+            type: 'p',
+            text: 'src/app.js es el shell de la aplicación: crea una única instancia del canal de comunicación con createCCP(), crea el enrutador con createRouter() y decide qué página mostrar según la ruta activa. Es el único archivo que conoce a todas las páginas a la vez.',
+          },
+          {
+            type: 'p',
+            text: 'src/app.css contiene el layout propio del shell: la cabecera, la navegación y la regla que oculta las páginas marcadas con el atributo hidden. No tiene nada que ver con los estilos internos de cada página, esos viven encapsulados dentro de cada componente.',
+          },
+          {
+            type: 'p',
+            text: 'src/utils/page-mixin.js resuelve la parte repetitiva de conectar una página al canal de comunicación: declarar la property ccp, esperar a que esté disponible y simplificar publicar y suscribirse. Vas a verlo de cerca en el tercer laboratorio de este capítulo.',
+          },
+          {
+            type: 'p',
+            text: 'src/pages/ tiene una página por archivo, y cada una se registra como un custom element independiente: home-page.js es la portada, users-table-page.js lista usuarios y publica al seleccionar uno, user-detail-page.js muestra el usuario de la ruta activa, y selected-user-badge-page.js muestra el último usuario seleccionado.',
+          },
+          {
+            type: 'note',
+            text: 'El propio index.html que te genera aclit app:create no es el único lugar con documentación: la carpeta también incluye un README.md con la misma explicación de la estructura, las rutas y los canales que vas a recorrer en este capítulo, pensado para que lo consultes directamente desde tu proyecto.',
+          },
+        ],
+        checkpoint:
+          'Puedes generar una app nueva con aclit app:create y, sin mirar la plantilla, explicar con tus propias palabras para qué sirve cada archivo de primer nivel y cada archivo dentro de src/pages/.',
+      },
+      {
+        id: 'guia-apps-02-rutas-con-ac-router',
+        title: '2. Rutas con @ac-base/ac-router',
+        estimatedMinutes: 40,
+        objective:
+          'Declarar rutas (incluida una con parámetro), entender cómo se decide qué página se muestra, y navegar entre páginas con un enlace plano y de forma programática.',
+        content: [
+          { type: 'heading', text: 'Rutas declaradas en un solo lugar' },
+          {
+            type: 'p',
+            text: 'El enrutador de la aplicación es vanilla: un enrutador por hash con soporte para parámetros de ruta, sin ninguna librería externa. Se crea una sola vez, en src/app.js, con createRouter() y un arreglo de rutas. Cada ruta tiene un path (el patrón de la URL) y un name (el identificador interno que vas a usar para decidir qué mostrar y para navegar programáticamente).',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/app.js (de la app generada)',
+            code: `const router = createRouter([
+  { path: '/', name: 'home' },
+  { path: '/usuarios', name: 'usuarios' },
+  { path: '/usuarios/:id', name: 'usuario-detalle' },
+  { path: '/seleccionado', name: 'seleccionado' },
+]);`,
+          },
+          {
+            type: 'p',
+            text: 'La tercera ruta tiene un segmento dinámico: :id. Cualquier valor que aparezca ahí en la URL (por ejemplo, el 2 en #/usuarios/2) queda disponible como parámetro de ruta, con esa misma clave, id.',
+          },
+          { type: 'heading', text: 'Cómo se decide qué página se muestra' },
+          {
+            type: 'p',
+            text: 'El shell mantiene un mapa views, con la misma clave name de cada ruta apuntando al elemento de esa página. Cuando el enrutador avisa que la ruta activa cambió, applyRoute recorre ese mapa: oculta todas las páginas salvo la que coincide con el nombre de la ruta activa, y le asigna los parámetros de la ruta solo a esa página.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/app.js (de la app generada)',
+            code: `function applyRoute(route) {
+  const name = route.matched ? route.name : 'home';
+  for (const [key, view] of Object.entries(views)) {
+    view.hidden = key !== name;
+  }
+  views[name].routeParams = route.params;
+}
+
+applyRoute(router.current);
+router.subscribe(applyRoute);`,
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Diagrama que muestre una barra de dirección con el hash #/usuarios/2 a la izquierda, una flecha hacia el centro con el enrutador identificando name: "usuario-detalle" y params: { id: "2" }, y a la derecha las 4 páginas en una columna, con "Detalle" resaltada (visible) y las otras 3 en gris/atenuadas (ocultas con el atributo hidden).',
+          },
+          {
+            type: 'p',
+            text: 'Si la URL no coincide con ninguna ruta declarada, route.matched es falso y applyRoute cae de vuelta a home. Por eso siempre hay una página visible, nunca una pantalla en blanco.',
+          },
+          { type: 'heading', text: 'Navegar con un enlace plano' },
+          {
+            type: 'p',
+            text: 'Como el enrutador trabaja sobre el hash de la URL, un enlace común ya alcanza para navegar, sin ningún manejador de clics propio: el navegador cambia el hash, y el enrutador reacciona solo.',
+          },
+          { type: 'code', lang: 'html', code: `<a href="#/usuarios/2">Ver detalle</a>` },
+          { type: 'heading', text: 'Navegar de forma programática' },
+          {
+            type: 'p',
+            text: 'Cuando la navegación depende de código (por ejemplo, después de guardar algo), usas router.navigate() con el name de la ruta y, si la ruta lo pide, sus params.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `router.navigate({ name: 'usuario-detalle', params: { id: 2 } });`,
+          },
+          { type: 'heading', text: 'Leer un parámetro de ruta desde la página' },
+          {
+            type: 'p',
+            text: 'La página activa recibe sus parámetros de ruta como la property routeParams, asignada por applyRoute. Dentro de la página, simplemente los lees con this.routeParams.id.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/pages/user-detail-page.js (de la app generada)',
+            code: `render() {
+  const user = USERS.find(candidate => String(candidate.id) === this.routeParams.id);
+  // ...
+}`,
+          },
+          {
+            type: 'note',
+            text: 'applyRoute solo asigna routeParams a la página que coincide con la ruta activa (views[name].routeParams = route.params), no a las cuatro páginas a la vez. Si mañana una página oculta necesitara conocer parámetros de otra ruta, routeParams no te sirve para eso: para comunicación entre páginas que no depende de la URL existe un mecanismo distinto, que ves en el siguiente laboratorio.',
+          },
+        ],
+        checkpoint:
+          'Puedes declarar una ruta nueva con un parámetro, explicar cómo applyRoute decide qué página mostrar y cuál oculta, y navegar hacia esa ruta tanto con un enlace plano como con router.navigate().',
+      },
+      {
+        id: 'guia-apps-03-canales-comunicacion',
+        title: '3. Canales de comunicación con @ac-base/ac-ccp y PageMixin',
+        estimatedMinutes: 45,
+        objective:
+          'Entender qué problema resuelve el Channel Communication Pattern, usar PageMixin para publicar y suscribirse a canales, y distinguir un canal retenido de uno que no lo es.',
+        content: [
+          { type: 'heading', text: 'Un problema que las rutas no resuelven' },
+          {
+            type: 'p',
+            text: 'Las rutas sirven para decidir qué página se muestra, pero no para que dos páginas intercambien datos entre ellas. Piensa en la página Usuarios: cuando seleccionas uno, la página Seleccionado necesita enterarse, pero esa relación no tiene nada que ver con ninguna URL. Forzarla dentro de la ruta sería artificial.',
+          },
+          {
+            type: 'p',
+            text: 'Para esto existe @ac-base/ac-ccp (Channel Communication Pattern): un mecanismo separado del enrutador, pensado para publicar y suscribirse a canales con nombre, sin que una página necesite conocer a la otra.',
+          },
+          { type: 'heading', text: 'PageMixin: connectionOut y connectionIn' },
+          {
+            type: 'p',
+            text: 'Conectar una página al canal de comunicación a mano implica declarar la property ccp, esperar a que esté disponible y crear un controlador de canal. PageMixin resuelve toda esa parte repetitiva: una página que necesita canales solo extiende PageMixin(LitElement) y sobreescribe setupChannels(), un método que se llama una sola vez, desde firstUpdated().',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `class MiPagina extends PageMixin(LitElement) {
+  setupChannels() {
+    this.publicarAlgo = this.connectionOut('mi.canal', { retain: true });
+    this.connectionIn('otro.canal', payload => {
+      this._valor = payload;
+    });
+  }
+  // ...
+}`,
+          },
+          {
+            type: 'p',
+            text: 'connectionOut(nombre, { retain }) crea el canal de salida y devuelve una función lista para publicar: la llamas con el valor que quieras enviar. connectionIn(nombre, onPayload, { replay }) se suscribe a un canal; onPayload recibe el payload ya desenvuelto, no el mensaje completo.',
+          },
+          { type: 'heading', text: 'La diferencia real entre retener y no retener' },
+          {
+            type: 'p',
+            text: 'retain: true hace que el canal guarde el último mensaje publicado. Cuando una página nueva se suscribe a ese canal, recibe ese último mensaje de inmediato, aunque se haya publicado antes de que esa página existiera. Sin retain (el valor por defecto es false), el canal no guarda nada: solo las páginas que ya estaban suscritas en el momento exacto de la publicación la reciben: una suscripción posterior se queda sin ese mensaje hasta la próxima publicación.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/pages/users-table-page.js (de la app generada)',
+            code: `setupChannels() {
+  this.publishSelected = this.connectionOut('users.selected', { retain: true });
+  // ...
+}
+
+_onSelectClick(user) {
+  this.publishSelected(user);
+  this._selected = user;
+}`,
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/pages/selected-user-badge-page.js (de la app generada)',
+            code: `setupChannels() {
+  this.connectionIn('users.selected', user => {
+    this._lastMessage = user;
+  });
+  // ...
+}`,
+          },
+          {
+            type: 'p',
+            text: 'Con este par de páginas, el orden de navegación no importa: si seleccionas un usuario en Usuarios y luego entras a Seleccionado, la ves con el usuario correcto, porque retain: true hizo que el canal retuviera ese último mensaje para ella.',
+          },
+          {
+            type: 'image-placeholder',
+            caption:
+              'Diagrama de dos páginas (Usuarios a la izquierda, Seleccionado a la derecha) conectadas por una caja central etiquetada "canal: users.selected (retain: true)". Una flecha de Usuarios hacia el canal marcada "publica al hacer clic", y otra flecha del canal hacia Seleccionado marcada "recibe el último mensaje retenido, aunque se haya publicado antes de entrar a esta página". Incluir una línea de tiempo pequeña debajo mostrando: 1) Usuarios publica, 2) el usuario navega a Seleccionado, 3) Seleccionado se suscribe y recibe igual el mensaje.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `// Sin retain (el valor por defecto): un suscriptor que llega después
+// de la publicación no recibe nada hasta la próxima vez que se publique.
+this.connectionOut('canal.sin.retener');`,
+          },
+          {
+            type: 'note',
+            text: 'En la app generada, home-page.js también publica con retain: true, pero no como reacción a un clic, sino al montarse la página: apenas se conecta, publica un usuario de ejemplo en el canal global global.user.data. Es el mismo mecanismo de retención, disparado por un motivo distinto: el montaje de una página, no una acción de quien la usa.',
+          },
+        ],
+        checkpoint:
+          'Puedes explicar con tus propias palabras qué resuelve un canal frente al enrutador, usar connectionOut y connectionIn a través de PageMixin, y decir con precisión qué cambia en el comportamiento cuando un canal usa retain: true frente a cuando no lo usa.',
+      },
+      {
+        id: 'guia-apps-04-agregar-pagina-nueva',
+        title: '4. Agregar una página nueva',
+        estimatedMinutes: 35,
+        objective:
+          'Sumar una página nueva a una app ya generada, siguiendo los 4 pasos reales: el archivo de la página, su import, su entrada en las rutas y en la navegación.',
+        content: [
+          { type: 'heading', text: 'Los 4 pasos' },
+          {
+            type: 'p',
+            text: 'Agregar una página a una app que ya existe siempre sigue el mismo orden: primero el archivo de la página, después conectarla al shell (import, ruta y vista), y por último el enlace para llegar a ella. Ningún paso es opcional: si omites uno, la página queda a medias.',
+          },
+          { type: 'heading', text: '1. Crea el archivo en src/pages/' },
+          {
+            type: 'p',
+            text: 'Por convención, un archivo por página, con un custom element propio. Si no necesita canales de comunicación, le basta con pageBaseStyles; si los necesita, extiende PageMixin como viste en el laboratorio anterior.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/pages/mi-pagina.js',
+            code: `import { LitElement, html } from 'lit';
+import { pageBaseStyles } from '../utils/page-mixin.js';
+
+class AppMiPagina extends LitElement {
+  static get styles() {
+    return [pageBaseStyles];
+  }
+
+  render() {
+    return html\`
+      <div class="page">
+        <h2>Mi página</h2>
+      </div>
+    \`;
+  }
+}
+
+customElements.define('app-mi-pagina', AppMiPagina);`,
+          },
+          { type: 'heading', text: '2. Importa el archivo en src/app.js' },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/app.js',
+            code: `import './pages/mi-pagina.js';`,
+          },
+          { type: 'heading', text: '3. Agrega la ruta y la vista' },
+          {
+            type: 'p',
+            text: 'Una entrada nueva en el arreglo de createRouter([...]), con el path que quieras (con :param si necesita un parámetro) y un name propio, y esa misma clave en el mapa views, apuntando al elemento recién creado.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            filename: 'src/app.js',
+            code: `const router = createRouter([
+  { path: '/', name: 'home' },
+  { path: '/usuarios', name: 'usuarios' },
+  { path: '/usuarios/:id', name: 'usuario-detalle' },
+  { path: '/seleccionado', name: 'seleccionado' },
+  { path: '/mi-ruta', name: 'mi-pagina' },
+]);
+
+const views = {
+  home: document.querySelector('app-home-page'),
+  usuarios: document.querySelector('app-users-table-page'),
+  'usuario-detalle': document.querySelector('app-user-detail-page'),
+  seleccionado: document.querySelector('app-selected-user-badge-page'),
+  'mi-pagina': document.querySelector('app-mi-pagina'),
+};`,
+          },
+          { type: 'heading', text: '4. Agrega un enlace en index.html' },
+          {
+            type: 'p',
+            text: 'Un enlace nuevo en la navegación, y el elemento de la página dentro de main, con el atributo hidden: applyRoute se encarga de mostrarlo u ocultarlo según la ruta activa.',
+          },
+          {
+            type: 'code',
+            lang: 'html',
+            filename: 'index.html',
+            code: `<nav class="app-nav">
+  <a href="#/">Home</a>
+  <a href="#/usuarios">Usuarios</a>
+  <a href="#/seleccionado">Seleccionado</a>
+  <a href="#/mi-ruta">Mi página</a>
+</nav>
+
+<main>
+  <app-home-page></app-home-page>
+  <app-users-table-page hidden></app-users-table-page>
+  <app-user-detail-page hidden></app-user-detail-page>
+  <app-selected-user-badge-page hidden></app-selected-user-badge-page>
+  <app-mi-pagina hidden></app-mi-pagina>
+</main>`,
+          },
+          {
+            type: 'note',
+            text: 'La clave que usas en createRouter([...]) (name), en el mapa views y en el atributo hidden de index.html tiene que coincidir exactamente entre los tres lugares. applyRoute recorre views con Object.entries(views), así que una clave distinta entre el enrutador y el mapa deja tu página nueva siempre oculta, sin ningún error visible que lo delate.',
+          },
+        ],
+        checkpoint:
+          'Puedes agregar una página nueva a una app ya generada siguiendo los 4 pasos, y explicar qué pasaría (y por qué no se notaría con un error) si el name de la ruta nueva no coincide exactamente con su clave en el mapa views.',
+      },
+    ],
+  },
 ];
 
 // Íconos propios de las 3 tarjetas de nivel y de sus features -- mismo estilo
@@ -2762,7 +4136,8 @@ export const LAB_LEVELS = [
     id: 'avanzado',
     title: 'Avanzado',
     levelLabel: 'Nivel 3',
-    description: 'Testing E2E, analítica y los temas de producción que básico no cubre.',
+    description:
+      'Un repaso profundo de JavaScript y la guía real para construir una aplicación completa con ac-lit.',
     icon: TROPHY_ICON,
     ctaLabel: 'Explorar',
     features: [
@@ -2770,6 +4145,6 @@ export const LAB_LEVELS = [
       { icon: ROCKET_FEATURE_ICON, text: 'Casos de uso reales' },
       { icon: STAR_FEATURE_ICON, text: 'Optimización y performance' },
     ],
-    chapters: [],
+    chapters: AVANZADO_CHAPTERS,
   },
 ];
