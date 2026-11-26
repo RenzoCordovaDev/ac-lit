@@ -129,8 +129,11 @@ body[data-view='lab'] .catalog__menu-button {
   cursor: pointer;
 }
 
-.catalog__logo {
+.catalog__logo-image {
   flex-shrink: 0;
+  height: 2.5rem;
+  width: auto;
+  display: block;
 }
 
 .catalog__brand-text {
@@ -138,18 +141,6 @@ body[data-view='lab'] .catalog__menu-button {
   flex-direction: column;
   gap: var(--space-1, 0.25rem);
   min-width: 0;
-}
-
-.catalog__brand-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-}
-
-.catalog__name {
-  font-size: calc(var(--font-size-lg, 1.1rem) * 1.25);
-  font-weight: var(--font-weight-bold, 700);
-  line-height: 1.1;
 }
 
 .catalog__tagline {
@@ -594,6 +585,12 @@ body[data-view='lab'] .catalog__menu-button {
 
 .catalog__home-hero {
   padding-top: var(--space-4, 1rem);
+}
+
+.catalog__home-hero-icon {
+  height: 7.5rem;
+  width: auto;
+  display: block;
 }
 
 .catalog__home-title {
