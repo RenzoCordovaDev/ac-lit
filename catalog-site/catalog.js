@@ -1468,22 +1468,29 @@ for (const button of commandsDialog.querySelectorAll('.catalog__terminal-copy'))
    GROUPS que arma la sidebar) -- lleva directo al primer componente del
    grupo elegido. */
 
+/* Cada tarjeta es un link real (`<a href="#id-del-primer-componente">"),
+   no un botón -- navega por hash como cualquier otro link del catálogo, y
+   el listener de `hashchange` ya existente (`window.addEventListener(
+   'hashchange', ...)`) hace el resto (showCatalog + selectComponent), sin
+   necesitar un handler de click propio. */
 function renderHomeCategories() {
   const entries = groupComponents(components);
   homeCategoriesEl.replaceChildren(
-    ...entries.map(({ group, items }) => {
-      const pill = create(
-        'button',
-        'catalog__home-category-pill',
-        `${group.label} (${items.length})`,
-      );
-      pill.type = 'button';
-      pill.addEventListener('click', () => {
-        showCatalog();
-        selectComponent(items[0].id);
-      });
-      return pill;
-    }),
+    ...entries
+      .filter(({ items }) => items.length > 0)
+      .map(({ group, items }) => {
+        const tile = create('a', 'catalog__home-category-tile');
+        tile.href = `#${items[0].id}`;
+        tile.innerHTML = `
+          <span class="catalog__home-category-icon" aria-hidden="true">${icon(group.icon, 28)}</span>
+          <span class="catalog__home-category-copy">
+            <span class="catalog__home-category-label">${group.label}</span>
+            <span class="catalog__home-category-count">${items.length} componente${items.length === 1 ? '' : 's'}</span>
+          </span>
+          <span class="catalog__home-category-chevron" aria-hidden="true">${icon(CHEVRON_ICON, 16)}</span>
+        `;
+        return tile;
+      }),
   );
 }
 
@@ -1492,19 +1499,39 @@ function renderHomeCategories() {
 function goHome() {
   showHome();
   setNavOpen(false);
+  setHomeMenuOpen(false);
+}
+
+function goToLab() {
+  history.replaceState(null, '', '#laboratorio');
+  showLab();
+  setHomeMenuOpen(false);
+}
+
+function goToComponents() {
+  if (components.length === 0) return;
+  showCatalog();
+  selectComponent(groupComponents(components)[0].items[0].id);
+  setHomeMenuOpen(false);
 }
 
 document.getElementById('catalog-home-link').addEventListener('click', goHome);
+document.getElementById('catalog-topbar-home-link').addEventListener('click', goHome);
+document.getElementById('catalog-home-nav-home').addEventListener('click', goHome);
+document.getElementById('catalog-home-nav-home-mobile').addEventListener('click', goHome);
+document.getElementById('catalog-home-nav-components').addEventListener('click', goToComponents);
+document
+  .getElementById('catalog-home-nav-components-mobile')
+  .addEventListener('click', goToComponents);
+document.getElementById('catalog-home-nav-lab').addEventListener('click', goToLab);
+document.getElementById('catalog-home-nav-lab-mobile').addEventListener('click', goToLab);
 document.getElementById('catalog-sidebar-home').addEventListener('click', goHome);
 document.getElementById('catalog-sidebar-lab').addEventListener('click', () => {
   history.replaceState(null, '', '#laboratorio');
   showLab();
   setNavOpen(false);
 });
-document.getElementById('catalog-home-lab-link').addEventListener('click', () => {
-  history.replaceState(null, '', '#laboratorio');
-  showLab();
-});
+document.getElementById('catalog-home-lab-link').addEventListener('click', goToLab);
 document.getElementById('catalog-lab-selector-back').addEventListener('click', goHome);
 document.getElementById('catalog-lab-levels-back').addEventListener('click', () => {
   history.replaceState(null, '', '#laboratorio');
@@ -1515,13 +1542,29 @@ labNavSearchEl.addEventListener('input', () => {
   if (activeLevel) renderLabNav(activeLevel);
 });
 
-document.getElementById('catalog-cta').addEventListener('click', () => {
-  if (components.length === 0) return;
-  showCatalog();
-  selectComponent(groupComponents(components)[0].items[0].id);
-});
+document.getElementById('catalog-cta').addEventListener('click', goToComponents);
 
 menuButton.addEventListener('click', () => setNavOpen(document.body.dataset.navOpen !== 'true'));
+
+/* Menú móvil del Home: disclosure independiente del toggle de la sidebar
+   (ese es de la vista Catálogo, este vive en la topbar del Home) -- ver
+   especificación de header aprobada (fuera del repo, adjuntada por Renzo). */
+const homeMenuToggle = document.getElementById('catalog-home-menu-toggle');
+const homeMobileNav = document.getElementById('catalog-home-mobile-nav');
+
+function setHomeMenuOpen(open) {
+  homeMenuToggle.setAttribute('aria-expanded', String(open));
+  homeMobileNav.hidden = !open;
+}
+
+homeMenuToggle.addEventListener('click', () => {
+  setHomeMenuOpen(homeMenuToggle.getAttribute('aria-expanded') !== 'true');
+});
+
+homeMobileNav.addEventListener('click', event => {
+  if (event.target.closest('a, button')) setHomeMenuOpen(false);
+});
+
 backdropEl.addEventListener('click', () => setNavOpen(false));
 
 searchInput.addEventListener('input', renderNav);
@@ -1529,6 +1572,10 @@ searchInput.addEventListener('input', renderNav);
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
     setNavOpen(false);
+    if (homeMenuToggle.getAttribute('aria-expanded') === 'true') {
+      setHomeMenuOpen(false);
+      homeMenuToggle.focus();
+    }
     return;
   }
   if (event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey)) {

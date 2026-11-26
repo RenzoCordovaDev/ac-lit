@@ -45,6 +45,11 @@ body {
   /* --color-subtext no llega a 4.5:1 contra --color-bg en modo oscuro
      (~3.9:1) -- mismo valor propio que usa ac-divider-basic para ese caso. */
   --catalog-subtext: #9496a0;
+  /* Sombra de las tarjetas de "Ruta de aprendizaje" -- ninguna en oscuro
+     (--elev-1/--elev-2 están pensadas para overlays sobre fondo oscuro, no
+     para una elevación sutil de tarjeta; acá el contraste superficie/borde
+     ya separa la tarjeta del canvas sin necesitar sombra). */
+  --category-tile-shadow: none;
 }
 
 :root[data-theme='light'] body {
@@ -53,6 +58,7 @@ body {
   --catalog-active-bg: var(--color-primary-100, #d1fae5);
   --catalog-active-text: var(--color-text, #27272a);
   --catalog-active-subtext: var(--color-subtext, #5f5e58);
+  --category-tile-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
 }
 
 /* Home, Laboratorio y catálogo son páginas separadas: ni Home ni Laboratorio
@@ -552,10 +558,69 @@ body[data-view='lab'] .catalog__menu-button {
   text-decoration: underline;
 }
 
+/* En Home el mockup aprobado solo muestra el ícono de GitHub (26px, sin
+   label) -- en catálogo/laboratorio el link sigue mostrando "Repositorio" +
+   ícono chico, sin cambios. */
+body[data-view='home'] .catalog__repo-link-text {
+  display: none;
+}
+
+body[data-view='home'] .catalog__repo-link-icon {
+  width: 1.625rem;
+  height: 1.625rem;
+}
+
+/* Área interactiva 44×44px, radio 12px (no full/píldora) -- especificación
+   de header del Home, sección "Acceso a GitHub". */
+body[data-view='home'] .catalog__repo-link {
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.15s ease;
+}
+
+body[data-view='home'] .catalog__repo-link:hover {
+  background: var(--catalog-active-bg);
+  text-decoration: none;
+}
+
+/* Selector de tema: píldora de 64×36px visuales con borde -- especificación
+   de header del Home, sección "Selector de tema". Fuera de Home sigue siendo
+   el botón redondo de `.catalog__icon-button`, sin cambios. */
+body[data-view='home'] .catalog__theme-toggle {
+  width: 4rem; /* 64px */
+  height: 2.25rem; /* 36px */
+  border-radius: var(--radius-full, 999px);
+  background: none;
+}
+
+body[data-view='home'] .catalog__theme-icon {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem;
+}
+
+/* Tipografía del Home (ver especificación de tipografía aprobada, fuera del
+   repo, adjuntada por Renzo): Plus Jakarta Sans para títulos/nav/botones/
+   contenido, JetBrains Mono para terminal/código. Escopada a
+   `data-view='home'` via estas custom properties -- fuera de Home ambas
+   quedan sin definir y `.catalog__terminal`/`.catalog__topbar` caen a sus
+   stacks de sistema de siempre, sin cambiar catálogo ni laboratorio. */
+body[data-view='home'] {
+  --home-font-sans: 'Plus Jakarta Sans', var(--font-family);
+  --home-font-mono:
+    'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+}
+
+body[data-view='home'] .catalog__topbar {
+  font-family: var(--home-font-sans);
+}
+
 /* Home: hero centrado, vista previa, CLI, categorías y pie con copyright */
 .catalog__home {
   flex: 1;
   min-height: 0;
+  font-family: var(--home-font-sans);
   display: flex;
   flex-direction: column;
 }
@@ -624,8 +689,11 @@ body[data-view='lab'] .catalog__menu-button {
 
 .catalog__cta {
   font: inherit;
-  font-size: var(--font-size-md, 1rem);
-  font-weight: var(--font-weight-bold, 700);
+  /* 17px/600, altura 52px -- especificación de tipografía del Home, sección
+     "Hero principal". */
+  font-size: 1.0625rem;
+  font-weight: 600;
+  min-height: 3.25rem;
   color: var(--color-primary-50, #ecfdf5);
   background: var(--color-primary-700, #047857);
   border: none;
@@ -642,14 +710,15 @@ body[data-view='lab'] .catalog__menu-button {
   box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
-/* Hero: botón(es) fantasma (outline) junto al primario -- usada tanto en un
-   <a> (ancla a #cli-quickstart) como en un <button> (ir al laboratorio), por
-   eso fija cursor y font-family explícitos (un <button> no los hereda solo). */
+/* Hero: botón fantasma (outline) junto al primario -- "Explorar catálogo".
+   Es un <button>, no fija font-family/cursor por necesidad de un <a>, pero
+   se dejan explícitos igual por si en algún momento vuelve a ser un link. */
 .catalog__home-cta-ghost {
   font: inherit;
   font-family: inherit;
-  font-size: var(--font-size-md, 1rem);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  min-height: 3.25rem;
   color: var(--color-text, #bcbec4);
   background: var(--color-bg, #1e1e1e);
   border: 1px solid var(--color-muted, #313335);
@@ -662,13 +731,6 @@ body[data-view='lab'] .catalog__menu-button {
 
 .catalog__home-cta-ghost:hover {
   border-color: var(--catalog-accent);
-}
-
-.catalog__home-stats {
-  margin: 0;
-  color: var(--catalog-subtext);
-  font-size: var(--font-size-sm, 0.85rem);
-  line-height: 1.6;
 }
 
 .catalog__home-section-title {
@@ -686,62 +748,426 @@ body[data-view='lab'] .catalog__menu-button {
   line-height: var(--line-height, 1.5);
 }
 
-/* Objetivos de formación: grid 2x2 de tarjetas (1 columna en mobile, ver media query). */
-.catalog__home-goals {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3, 0.75rem);
-  text-align: left;
-}
-
-.catalog__home-goal {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
+/* Logo + navegación del Home en la barra superior -- ocultos salvo en
+   data-view="home" (ver regla junto a .catalog__breadcrumb más abajo), que es
+   cuando la sidebar (con el logo real) también está oculta. */
+/* El wordmark de frontspark-logo.webp tiene texto en gris oscuro fijo -- solo
+   es legible sobre fondo claro o el verde fijo de la sidebar (ver "La sidebar
+   usa una paleta fija" en docs/CONVENTIONS.md). Acá, en la topbar, el fondo
+   cambia con el tema -- se repite el mismo criterio de paleta fija con un
+   chip claro detrás, en vez de tocar el asset. */
+.catalog__topbar-logo {
+  display: none;
+  flex-shrink: 0;
   align-items: center;
   gap: var(--space-2, 0.5rem);
-  padding: var(--space-4, 1rem);
-  background: var(--color-surface, #2b2b2b);
-  border: 1px solid var(--color-muted, #313335);
-  border-radius: var(--radius-md, 1rem);
-  text-align: center;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-/* La última tarjeta queda sola en su fila (5 tarjetas en un grid de 2
-   columnas) -- se centra ocupando el ancho de una sola columna, en vez de
-   quedar pegada a la izquierda, para mantener la armonía del conjunto. */
-.catalog__home-goal:last-child {
-  grid-column: 1 / -1;
-  width: 100%;
-  max-width: calc(50% - var(--space-3, 0.75rem) / 2);
-  margin: 0 auto;
+.catalog__topbar-logo img {
+  display: block;
+  /* 54×48px, object-fit:contain -- especificación de header del Home (no es
+     cuadrado -- el ícono conserva su proporción real). El ícono
+     (frontspark-icon.webp) es un gradiente verde sin texto horneado, a
+     diferencia del wordmark completo -- theme-safe en ambos temas sin
+     necesitar un chip de fondo fijo (ver nota de frontspark-logo.webp más
+     abajo, junto a la sidebar). */
+  width: 3.375rem;
+  height: 3rem;
+  object-fit: contain;
 }
 
-.catalog__home-goal-icon {
-  color: var(--catalog-accent);
-}
-
-.catalog__home-goal-title {
-  margin: 0;
-  font-size: var(--font-size-md, 0.95rem);
-  font-weight: var(--font-weight-bold, 700);
+.catalog__topbar-logo-text {
+  /* 26px/800, line-height 1.2, tracking -0.04em -- especificación de header
+     del Home. */
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
   color: var(--color-text, #bcbec4);
 }
 
-.catalog__home-goal-text {
-  margin: 0;
-  color: var(--catalog-subtext);
-  font-size: var(--font-size-sm, 0.85rem);
-  line-height: var(--line-height, 1.5);
+body[data-view='home'] .catalog__topbar {
+  min-height: 5rem;
 }
 
-.catalog__home-goal-text code {
-  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
-  font-size: 0.9em;
+.catalog__home-nav {
+  display: none;
+  flex: 1;
+  min-width: 0;
+  justify-content: center;
+}
+
+.catalog__home-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  /* 4px -- especificación de header: el padding-inline de cada píldora (18px)
+     ya aporta la separación visual, no se suma además un gap grande. */
+  gap: 0.25rem;
+}
+
+/* Píldora de navegación: área interactiva de 44px de alto con el fondo/radio
+   en un ::before desplazado hacia adentro (inset: 4px 0) -- deja un target
+   táctil generoso sin que la píldora VISIBLE crezca más allá de los ~36px
+   del mockup. Mismo patrón para el link "Comunidad" (texto + ícono
+   external-link). */
+.catalog__home-nav-link {
+  position: relative;
+  isolation: isolate;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem; /* 44px */
+  padding-inline: 1.125rem; /* 18px */
+  white-space: nowrap;
+  /* 15px/500, 600 para la opción activa, line-height 20px -- especificación
+     de header del Home. */
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: var(--color-text, #bcbec4);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.catalog__home-nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0.25rem 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.catalog__home-nav-link:hover {
+  color: var(--catalog-accent);
+}
+
+.catalog__home-nav-link:hover::before {
+  background: var(--catalog-active-bg);
+}
+
+.catalog__home-nav-link:active::before {
+  background: var(--catalog-active-bg);
+  filter: brightness(0.92);
+}
+
+.catalog__home-nav-link[aria-current='page'] {
+  font-weight: 600;
+}
+
+.catalog__home-nav-link[aria-current='page']::before {
+  background: var(--catalog-active-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog__home-nav-link,
+  .catalog__home-nav-link::before {
+    transition: none;
+  }
+}
+
+body[data-view='home'] .catalog__topbar-logo,
+body[data-view='home'] .catalog__home-nav {
+  display: flex;
+}
+
+/* Menú móvil del Home: oculto por defecto (atributo `hidden`), con su propio
+   botón de disclosure en la topbar -- ver especificación de header
+   aprobada. Reutiliza `.catalog__home-nav-link` para cada ítem, apilados en
+   columna. */
+.catalog__home-menu-toggle {
+  display: none;
+}
+
+.catalog__home-mobile-nav {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem var(--space-6, 1.5rem);
+  border-bottom: 1px solid var(--color-muted, #313335);
+}
+
+.catalog__home-mobile-nav .catalog__home-nav-link {
+  justify-content: flex-start;
+}
+
+.catalog__home-mobile-github {
+  display: none;
+}
+
+body[data-view='home'] .catalog__home-mobile-nav:not([hidden]) {
+  display: flex;
+}
+
+body[data-view='home'] .catalog__breadcrumb {
+  display: none;
+}
+
+/* Hero: eyebrow con línea de acento, título grande con "Lit v3" resaltado, y
+   grid de 2 columnas (copy + terminal) en desktop -- 1 columna en mobile. */
+.catalog__home-eyebrow {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  /* 20px -- especificación de ruta de aprendizaje, sección "Etiqueta
+     editorial" (misma etiqueta compartida con el Hero). */
+  gap: 1.25rem;
+  color: var(--catalog-accent);
+  /* 13px/700, line-height 1.5, letter-spacing 0.18em -- especificación de
+     tipografía del Home, token "Overline" (sección 3, reutilizado en Hero y
+     Ruta de aprendizaje). */
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.catalog__home-eyebrow span {
+  display: inline-block;
+  flex-shrink: 0;
+  /* 40×2px -- especificación de ruta de aprendizaje. */
+  width: 2.5rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.catalog__home-hero--split {
+  align-items: stretch;
+  text-align: left;
+}
+
+.catalog__home-hero-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-6, 2rem);
+}
+
+.catalog__home-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4, 1rem);
+}
+
+.catalog__home-hero-copy .catalog__home-title,
+.catalog__home-hero-copy .catalog__home-text {
+  max-width: none;
+  text-align: left;
+}
+
+/* Título y descripción del hero -- especificación de tipografía del Home,
+   sección "Hero principal" (52px/800 y 21px/400 en desktop) y sus propios
+   tokens CSS de referencia (clamp fluido hasta esos máximos); el breakpoint
+   de 900px/640px ajusta a los valores discretos de tablet/mobile de la
+   tabla "Responsive". */
+.catalog__home-hero-copy .catalog__home-title {
+  font-size: clamp(2.125rem, 3.4vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+.catalog__home-hero-copy .catalog__home-text {
+  font-size: clamp(1rem, 1.4vw, 1.3125rem);
+  line-height: 1.6;
+}
+
+.catalog__home-title-accent {
+  color: var(--catalog-accent);
+}
+
+.catalog__home-hero-copy .catalog__home-actions {
+  justify-content: flex-start;
+}
+
+.catalog__home-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.catalog__home-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5, 1.25rem);
+  color: var(--catalog-subtext);
+  /* 14px/500 -- especificación de tipografía del Home, sección "Hero
+     principal", fila "Indicadores tecnológicos". */
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.catalog__home-stats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.catalog__home-stats svg {
+  /* 20px -- misma fila, "Iconos indicadores" (gana por especificidad sobre
+     el width/height del atributo HTML del <svg>). */
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--catalog-accent);
+}
+
+.catalog__home-hero-terminal {
+  max-width: none;
+  width: 100%;
+}
+
+/* Franja de beneficios ("Feature Highlights"): sin tarjetas -- sin fondo, sin
+   borde ni sombra individual por elemento. Fila horizontal, ícono a la
+   izquierda + bloque de texto a la derecha, separadas por un divisor vertical
+   fino (salvo el último elemento de cada fila). Ver especificación de
+   feature highlights aprobada (fuera del repo, adjuntada por Renzo). */
+.catalog__home-features {
+  width: 100%;
+  padding-block: 2.5rem; /* 40px */
+}
+
+.catalog__home-feature-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem; /* 32px */
+}
+
+.catalog__home-feature {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem; /* 24px */
+  min-width: 0;
+  text-align: left;
+}
+
+/* Divisor vertical en el gutter entre columnas -- no en el último elemento
+   de la fila (el `nth-child` por breakpoint se ajusta en responsive). */
+.catalog__home-feature:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  right: -1rem; /* mitad del gap de 2rem, centra la línea en el gutter */
+  width: 1px;
+  height: 4.5rem; /* 72px */
+  background: var(--color-muted, #313335);
+}
+
+.catalog__home-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3.375rem; /* 54px */
+  height: 3.375rem;
+  color: var(--catalog-accent);
+  background: var(--catalog-active-bg);
+  border-radius: 1.125rem; /* 18px */
+}
+
+.catalog__home-feature-icon svg {
+  width: 1.75rem; /* 28px */
+  height: 1.75rem;
+}
+
+.catalog__home-feature-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog__home-feature-title {
+  margin: 0 0 0.25rem; /* 4px */
+  /* 18px/700, line-height 24px, tracking -0.02em -- especificación de
+     feature highlights. */
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--color-text, #bcbec4);
+}
+
+.catalog__home-feature-text {
+  margin: 0;
+  color: var(--catalog-subtext);
+  /* 16px/400, line-height 24px -- misma especificación. */
+  font-size: 1rem;
+  line-height: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+/* Secciones "anchas" (hero, features, ruta de aprendizaje): más espacio que
+   las secciones narrativas angostas (760px), para que sus grids de varias
+   columnas no se vean apretados. */
+.catalog__home-hero,
+.catalog__home-section--wide {
+  max-width: 1320px;
+}
+
+/* Encabezado asimétrico: título a la izquierda (ancho flexible), descripción
+   a la derecha en una columna angosta fija -- especificación de ruta de
+   aprendizaje, sección "Encabezado asimétrico". 32px de separación hacia la
+   cuadrícula de tarjetas (el `gap` genérico de `.catalog__home-section` no
+   alcanza a ser tan preciso). */
+.catalog__home-categories-header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 28.75rem); /* 460px */
+  align-items: center;
+  gap: 3rem; /* 48px */
+  margin-bottom: 2rem; /* 32px */
+  text-align: left;
+}
+
+.catalog__home-categories-header > div {
+  max-width: 30rem; /* 480px */
+}
+
+.catalog__home-categories-header .catalog__home-eyebrow {
+  margin-bottom: 0.75rem; /* 12px */
+}
+
+.catalog__home-categories-header .catalog__home-section-title {
+  margin: 0;
+  /* 34px/800, line-height 1.10, tracking -0.035em -- especificación de ruta
+     de aprendizaje (clamp fluido hasta ese máximo; el breakpoint de 900px/
+     640px ajusta a los valores discretos de tablet/mobile). */
+  font-size: clamp(1.625rem, 2.3vw, 2.125rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.catalog__home-categories-header .catalog__home-section-intro {
+  max-width: 28.75rem; /* 460px */
+  /* 16px/400, line-height 24px -- misma especificación. */
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
 /* Vista previa: 3 tarjetas decorativas (mockups estáticos, no son componentes reales). */
@@ -924,34 +1350,138 @@ body[data-view='lab'] .catalog__menu-button {
   border-radius: var(--radius-full, 999px);
 }
 
-/* Categorías: contenedor de chips que se llena desde JS (queda vacío por ahora). */
+/* Cuadrícula de 6 tarjetas-link -- especificación de ruta de aprendizaje. */
 .catalog__home-categories {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2, 0.5rem);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1rem; /* 16px */
 }
 
-.catalog__home-category-pill {
-  font: inherit;
-  font-size: var(--font-size-sm, 0.85rem);
-  font-weight: var(--font-weight-medium, 600);
+/* Anatomía horizontal (ícono | texto | chevron) en una sola fila -- la
+   pista de texto usa `minmax(0, 1fr)`, no `1fr` a secas: sin el `0`, un
+   grid item no se achica por debajo de su contenido preferido
+   (`min-width: auto` por default) y un label largo como "Información"
+   desborda la tarjeta en vez de hacer wrap (bug real, encontrado y
+   documentado en docs/CONVENTIONS.md la primera vez que se armó esta
+   cuadrícula con texto al lado del ícono). Con el `minmax(0, 1fr)` puesto
+   desde el inicio, el wrap funciona bien sin necesitar `overflow: hidden`
+   de contención. */
+.catalog__home-category-tile {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) 1rem; /* 28px ícono, texto, 16px chevron */
+  align-items: center;
+  gap: 0.5rem; /* 8px -- separación base, ver margin del ícono abajo */
+  min-height: 4.5rem; /* 72px */
+  padding: 0.875rem 1.125rem; /* 14px / 18px */
+  text-align: left;
+  text-decoration: none;
   color: var(--color-text, #bcbec4);
-  background: var(--color-surface, #2b2b2b);
+  /* El fondo de la tarjeta es el mismo que el canvas del Home, no
+     --color-surface -- la tarjeta se distingue por el borde/sombra, no por
+     un tono de superficie distinto (feedback de diseño: el "blanco" esperado
+     es el fondo de la página, no un gris/beige de superficie). */
+  background: var(--color-bg, #1e1e1e);
   border: 1px solid var(--color-muted, #313335);
-  border-radius: var(--radius-full, 999px);
-  padding: 0.4rem 0.9rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
+  border-radius: 1rem; /* 16px */
+  box-shadow: var(--category-tile-shadow, none);
+  transition:
+    background-color 0.18s ease-out,
+    border-color 0.18s ease-out,
+    box-shadow 0.18s ease-out,
+    transform 0.18s ease-out;
 }
 
-.catalog__home-category-pill:hover {
+/* Ninguna tarjeta lleva énfasis permanente -- "General" no es la categoría
+   activa solo por ser la primera, así que solo el hover (y el focus/active
+   de abajo) cambian el fondo/borde. (Antes tenía un `:first-child` fijo
+   imitando el "énfasis editorial" del mockup; feedback de diseño: se veía
+   como si esa tarjeta estuviera siempre seleccionada, confundiendo.) */
+.catalog__home-category-tile:hover {
+  background: var(--catalog-active-bg);
   border-color: var(--catalog-accent);
 }
 
-#cli-quickstart {
-  scroll-margin-top: var(--space-6, 1.5rem);
+@media (hover: hover) {
+  .catalog__home-category-tile:hover {
+    transform: translateY(-2px);
+  }
+
+  .catalog__home-category-tile:hover .catalog__home-category-chevron {
+    transform: translateX(2px);
+  }
+}
+
+.catalog__home-category-tile:active {
+  transform: none;
+  border-color: var(--catalog-accent);
+  filter: brightness(0.97);
+}
+
+/* El ícono no lleva fondo ni caja propia -- especificación de ruta de
+   aprendizaje ("Tarjeta de módulo: anatomía"): solo el trazo, del mismo
+   tamaño/color/grosor para los 6 módulos. */
+.catalog__home-category-icon {
+  display: inline-flex;
+  margin-right: 0.25rem; /* +4px sobre el gap base = 12px hasta el texto */
+  color: var(--catalog-accent);
+}
+
+.catalog__home-category-icon svg {
+  width: 1.75rem; /* 28px */
+  height: 1.75rem;
+}
+
+.catalog__home-category-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem; /* 2px */
+  min-width: 0;
+}
+
+.catalog__home-category-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  /* 15px/700, line-height 20px, tracking -0.015em -- especificación de
+     ruta de aprendizaje. */
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  letter-spacing: -0.015em;
+}
+
+.catalog__home-category-count {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--catalog-subtext);
+  /* 13px/400, line-height 18px -- misma especificación. */
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.catalog__home-category-chevron {
+  display: inline-flex;
+  justify-self: end;
+  color: var(--color-text, #bcbec4);
+  transition: transform 0.18s ease-out;
+}
+
+.catalog__home-category-chevron svg {
+  width: 1rem; /* 16px */
+  height: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog__home-category-tile,
+  .catalog__home-category-chevron {
+    transition: none;
+  }
+
+  .catalog__home-category-tile:hover,
+  .catalog__home-category-tile:hover .catalog__home-category-chevron {
+    transform: none;
+  }
 }
 
 /* Home: mockup de terminal con comandos del CLI -- paleta FIJA (oscura en
@@ -982,7 +1512,14 @@ body[data-view='lab'] .catalog__menu-button {
   background: var(--term-titlebar-bg);
   border-bottom: 1px solid var(--term-border);
   color: var(--term-text);
-  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-family: var(
+    --home-font-mono,
+    ui-monospace,
+    'Cascadia Code',
+    'Fira Code',
+    Consolas,
+    monospace
+  );
   font-size: var(--font-size-xs, 0.75rem);
 }
 
@@ -1021,7 +1558,14 @@ body[data-view='lab'] .catalog__menu-button {
   flex-direction: column;
   gap: var(--space-1, 0.3rem);
   padding: var(--space-4, 1rem);
-  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-family: var(
+    --home-font-mono,
+    ui-monospace,
+    'Cascadia Code',
+    'Fira Code',
+    Consolas,
+    monospace
+  );
   font-size: var(--font-size-sm, 0.8rem);
   line-height: 1.7;
 }
@@ -1042,6 +1586,33 @@ body[data-view='lab'] .catalog__menu-button {
   margin-right: 0.5rem;
   color: var(--color-primary-500, #10b981);
   font-weight: var(--font-weight-bold, 700);
+}
+
+/* Tamaños de la especificación de tipografía del Home, sección "Terminal
+   FrontSpark CLI" -- escopados a Home: el terminal del modal "Comandos" y el
+   del Laboratorio (mismas clases, fuera de Home) no cambian. */
+body[data-view='home'] .catalog__terminal-filename {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
+}
+
+body[data-view='home'] .catalog__terminal-cmd {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 500;
+}
+
+body[data-view='home'] .catalog__terminal-line--comment {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 400;
+}
+
+body[data-view='home'] .catalog__terminal-prompt {
+  font-size: 1.0625rem; /* 17px */
+  font-weight: 600;
+}
+
+body[data-view='home'] .catalog__terminal-body {
+  line-height: 1.75rem; /* 28px */
 }
 
 /* Cada comando del modal "Comandos del CLI" tiene su propia fila con botón
@@ -2986,7 +3557,8 @@ body[data-view='lab'] .catalog__menu-button {
   .catalog__icon-button,
   .catalog__cta,
   .catalog__home-cta-ghost,
-  .catalog__home-category-pill,
+  .catalog__home-category-tile,
+  .catalog__home-nav-link,
   .catalog__button,
   .catalog__segmented-button,
   .catalog__events-button,
@@ -3042,23 +3614,133 @@ body[data-view='lab'] .catalog__menu-button {
     height: 4rem;
   }
 
-  .catalog__home-previews,
-  .catalog__home-goals {
+  .catalog__home-previews {
     grid-template-columns: 1fr;
-  }
-
-  .catalog__home-goal:last-child {
-    max-width: none;
   }
 
   .catalog__home-preview-box {
     min-height: 0;
   }
 
+  /* Tier "tablet"/"mobile" de la especificación de header: la nav horizontal
+     pasa a un menú de disclosure, con su propio botón -- ver
+     `catalog-home-menu-toggle`/`catalog-home-mobile-nav` en catalog.js. */
+  .catalog__home-nav {
+    display: none !important;
+  }
+
+  body[data-view='home'] .catalog__home-menu-toggle {
+    display: inline-flex;
+  }
+
+  .catalog__home-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .catalog__home-hero--split {
+    text-align: center;
+  }
+
+  .catalog__home-hero-copy {
+    align-items: center;
+  }
+
+  .catalog__home-hero-copy .catalog__home-title,
+  .catalog__home-hero-copy .catalog__home-text {
+    text-align: center;
+  }
+
+  .catalog__home-hero-copy .catalog__home-actions,
+  .catalog__home-stats {
+    justify-content: center;
+  }
+
+  /* Tier "tablet" de la tabla "Responsive" (especificación de feature
+     highlights): 900px es el breakpoint existente más cercano a su rango
+     768–1199px. */
+  .catalog__home-features {
+    padding-block: 2rem; /* 32px */
+  }
+
+  .catalog__home-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog__home-feature {
+    gap: 1.25rem; /* 20px */
+  }
+
+  .catalog__home-feature-icon {
+    width: 3.125rem; /* 50px */
+    height: 3.125rem;
+  }
+
+  .catalog__home-feature-icon svg {
+    width: 1.625rem; /* 26px */
+    height: 1.625rem;
+  }
+
+  /* 2 columnas: el divisor pasa a marcar el límite de cada fila (tras el 1º
+     y el 3º elemento), no tras cada elemento salvo el último. */
+  .catalog__home-feature:not(:last-child)::after {
+    display: none;
+  }
+
+  .catalog__home-feature:nth-child(odd)::after {
+    display: block;
+  }
+
+  /* 3 columnas -- especificación de ruta de aprendizaje, tier "768–1279px"
+     (900px es el breakpoint existente más cercano a ese rango). */
+  .catalog__home-categories {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .catalog__home-categories-header {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: left;
+  }
+
+  .catalog__home-categories-header .catalog__home-section-intro {
+    justify-self: start;
+    text-align: left;
+  }
+
   .catalog__home-cta-ghost,
   .catalog__cta {
     padding-left: var(--space-4, 1rem);
     padding-right: var(--space-4, 1rem);
+  }
+
+  /* Tier "tablet" de la tabla "Responsive" (especificación de tipografía del
+     Home): 900px es el breakpoint existente más cercano a su rango
+     768–1199px. */
+  .catalog__home-hero-copy .catalog__home-title {
+    font-size: 2.75rem; /* 44px */
+  }
+
+  .catalog__home-hero-copy .catalog__home-text {
+    font-size: 1.125rem; /* 18px */
+  }
+
+  .catalog__home-categories-header .catalog__home-section-title {
+    font-size: 1.875rem; /* 30px */
+  }
+
+  .catalog__home-cta-ghost,
+  .catalog__cta {
+    font-size: 1rem; /* 16px */
+    min-height: 3rem; /* 48px */
+  }
+
+  body[data-view='home'] .catalog__terminal-filename,
+  body[data-view='home'] .catalog__terminal-cmd,
+  body[data-view='home'] .catalog__terminal-line--comment {
+    font-size: 0.875rem; /* 14px */
+  }
+
+  body[data-view='home'] .catalog__terminal-prompt {
+    font-size: 1rem;
   }
 
   .catalog__api-content {
@@ -3075,6 +3757,30 @@ body[data-view='lab'] .catalog__menu-button {
 }
 
 @media (max-width: 640px) {
+  /* Tier "mobile" de la especificación de header: header más bajo, logo y
+     GitHub se achican/mueven -- GitHub entra al menú de disclosure en vez de
+     quedar suelto en la topbar (no entra el ícono + el selector de tema). */
+  body[data-view='home'] .catalog__topbar {
+    min-height: 4rem; /* 64px */
+  }
+
+  .catalog__topbar-logo img {
+    width: 2.5rem; /* 40px */
+    height: 2.5rem;
+  }
+
+  .catalog__topbar-logo-text {
+    font-size: 1.3125rem; /* 21px */
+  }
+
+  body[data-view='home'] .catalog__repo-link {
+    display: none;
+  }
+
+  .catalog__home-mobile-github {
+    display: flex;
+  }
+
   .catalog__lab-hero {
     flex-direction: column;
     text-align: center;
@@ -3094,5 +3800,97 @@ body[data-view='lab'] .catalog__menu-button {
 
   .catalog__lab-hero-image {
     width: min(18rem, 70%);
+  }
+
+  .catalog__home-feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 2 columnas hasta 560px (abajo), 1 por debajo -- especificación de ruta
+     de aprendizaje, tier "<768px". */
+  .catalog__home-categories {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem; /* 12px */
+  }
+
+  /* Tier "mobile" de la tabla "Responsive" (especificación de feature
+     highlights): 1 columna, sin divisores, gap e ícono más chicos. */
+  .catalog__home-features {
+    padding-block: 1.5rem; /* 24px */
+  }
+
+  .catalog__home-feature-grid {
+    gap: 1.5rem; /* 24px */
+  }
+
+  .catalog__home-feature {
+    gap: 1rem; /* 16px */
+  }
+
+  /* Misma especificidad que `:nth-child(odd)::after` del tier tablet (si no,
+     esa regla gana por especificidad sin importar el orden en el archivo, y
+     el divisor de los elementos impares seguía ahí -- desbordaba la tarjeta
+     por su `right: -1rem`, bug real encontrado a 320px). */
+  .catalog__home-feature::after,
+  .catalog__home-feature:nth-child(odd)::after {
+    display: none;
+  }
+
+  .catalog__home-feature-icon {
+    width: 3rem; /* 48px */
+    height: 3rem;
+  }
+
+  .catalog__home-feature-icon svg {
+    width: 1.5rem; /* 24px */
+    height: 1.5rem;
+  }
+
+  .catalog__home-feature-title {
+    font-size: 1.0625rem; /* 17px */
+  }
+
+  .catalog__home-feature-text {
+    font-size: 0.9375rem; /* 15px */
+  }
+
+  /* Tier "mobile" de la tabla "Responsive" (especificación de tipografía del
+     Home). */
+  .catalog__home-hero-copy .catalog__home-title {
+    font-size: 2.125rem; /* 34px */
+  }
+
+  .catalog__home-hero-copy .catalog__home-text {
+    font-size: 1rem; /* 16px */
+  }
+
+  .catalog__home-categories-header .catalog__home-section-title {
+    font-size: 1.625rem; /* 26px */
+  }
+
+  .catalog__home-cta-ghost,
+  .catalog__cta {
+    font-size: 0.9375rem; /* 15px */
+  }
+
+  body[data-view='home'] .catalog__terminal-filename,
+  body[data-view='home'] .catalog__terminal-cmd,
+  body[data-view='home'] .catalog__terminal-line--comment {
+    font-size: 0.75rem; /* 12px */
+  }
+
+  body[data-view='home'] .catalog__terminal-prompt {
+    font-size: 0.875rem;
+  }
+}
+
+/* Especificación de ruta de aprendizaje, tier "<768px": 2 columnas hasta
+   560px, 1 columna por debajo -- un breakpoint propio de esta cuadrícula,
+   más angosto que los genéricos de la página (900px/640px), porque 6
+   tarjetas cortas pero anchas necesitan un punto de quiebre más fino que el
+   resto del contenido. */
+@media (max-width: 35em) {
+  .catalog__home-categories {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

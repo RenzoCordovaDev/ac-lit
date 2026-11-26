@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Catálogo de componentes — ac-lit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
     <link rel="stylesheet" href="./tokens/base.css" />
     <link rel="stylesheet" href="./tokens/modern-warm-palette.css" />
     <link rel="stylesheet" href="./tokens/modern-warm-palette-light.css" />
@@ -263,18 +269,106 @@
             <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+        <button type="button" class="catalog__topbar-logo" id="catalog-topbar-home-link">
+          <img src="./assets/frontspark-icon.webp" alt="" width="54" height="48" />
+          <span class="catalog__topbar-logo-text">FrontSpark</span>
+        </button>
         <nav class="catalog__breadcrumb" aria-label="Ubicación">
           <ol id="catalog-breadcrumb"></ol>
         </nav>
+        <nav class="catalog__home-nav" aria-label="Navegación principal">
+          <ul>
+            <li>
+              <button
+                type="button"
+                class="catalog__home-nav-link"
+                id="catalog-home-nav-home"
+                aria-current="page"
+              >
+                Inicio
+              </button>
+            </li>
+            <li>
+              <button type="button" class="catalog__home-nav-link" id="catalog-home-nav-components">
+                Componentes
+              </button>
+            </li>
+            <li>
+              <button type="button" class="catalog__home-nav-link" id="catalog-home-nav-lab">
+                Laboratorio
+              </button>
+            </li>
+            <li>
+              <a
+                class="catalog__home-nav-link"
+                href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/docs/CONVENTIONS.md"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Documentación
+              </a>
+            </li>
+            <li>
+              <a
+                class="catalog__home-nav-link"
+                href="https://github.com/RenzoCordovaDev/ac-lit/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Comunidad
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M14 5h5v5M19 5l-8 8M11 7H6a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1v-5"
+                  />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </nav>
         <div class="catalog__topbar-actions">
+          <button
+            type="button"
+            class="catalog__icon-button catalog__home-menu-toggle"
+            id="catalog-home-menu-toggle"
+            aria-label="Menú de navegación"
+            aria-expanded="false"
+            aria-controls="catalog-home-mobile-nav"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           <a
             class="catalog__repo-link"
+            id="catalog-repo-link"
             href="https://github.com/RenzoCordovaDev/ac-lit"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
+            aria-label="Repositorio de FrontSpark en GitHub"
           >
-            Repositorio
+            <span class="catalog__repo-link-text" aria-hidden="true">Repositorio</span>
             <svg
+              class="catalog__repo-link-icon"
               viewBox="0 0 24 24"
               width="14"
               height="14"
@@ -329,165 +423,280 @@
         </div>
       </header>
 
+      <nav
+        class="catalog__home-mobile-nav"
+        id="catalog-home-mobile-nav"
+        aria-label="Navegación móvil"
+        hidden
+      >
+        <button
+          type="button"
+          class="catalog__home-nav-link"
+          id="catalog-home-nav-home-mobile"
+          aria-current="page"
+        >
+          Inicio
+        </button>
+        <button
+          type="button"
+          class="catalog__home-nav-link"
+          id="catalog-home-nav-components-mobile"
+        >
+          Componentes
+        </button>
+        <button type="button" class="catalog__home-nav-link" id="catalog-home-nav-lab-mobile">
+          Laboratorio
+        </button>
+        <a
+          class="catalog__home-nav-link"
+          href="https://github.com/RenzoCordovaDev/ac-lit/blob/main/docs/CONVENTIONS.md"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Documentación
+        </a>
+        <a
+          class="catalog__home-nav-link"
+          href="https://github.com/RenzoCordovaDev/ac-lit/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Comunidad
+        </a>
+        <a
+          class="catalog__home-nav-link catalog__home-mobile-github"
+          href="https://github.com/RenzoCordovaDev/ac-lit"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Repositorio GitHub
+        </a>
+      </nav>
+
       <main class="catalog__home" id="view-home">
         <div class="catalog__home-scroll">
-          <section class="catalog__home-hero">
-            <img
-              class="catalog__home-hero-icon"
-              src="./assets/frontspark-icon.webp"
-              alt="FrontSpark"
-              width="148"
-              height="120"
-            />
-            <h1 class="catalog__home-title">
-              Aprende a construir Web Components profesionales, paso a paso.
-            </h1>
-            <p class="catalog__home-text">
-              ac-lit es un entorno de formación: un espacio para practicar arquitectura de
-              componentes, testing en tres niveles, accesibilidad y un flujo de trabajo completo de
-              FrontSpark a CI/CD — con Lit v3 como base.
-            </p>
-            <div class="catalog__home-actions">
-              <button type="button" class="catalog__cta" id="catalog-cta">
-                Explorar los componentes →
-              </button>
-              <button type="button" class="catalog__home-cta-ghost" id="catalog-home-lab-link">
-                Ir al laboratorio →
-              </button>
-              <a class="catalog__home-cta-ghost" href="#cli-quickstart"
-                >Inicio rápido (FrontSpark)</a
-              >
+          <section class="catalog__home-hero catalog__home-hero--split">
+            <div class="catalog__home-hero-grid">
+              <div class="catalog__home-hero-copy">
+                <p class="catalog__home-eyebrow">
+                  <span aria-hidden="true"></span>Framework de formación frontend
+                </p>
+                <h1 class="catalog__home-title">
+                  Construye Web Components reales con
+                  <span class="catalog__home-title-accent">Lit v3</span>
+                </h1>
+                <p class="catalog__home-text">
+                  ac-lit es un entorno de formación: un espacio para practicar arquitectura de
+                  componentes, testing en tres niveles, accesibilidad y un flujo de trabajo completo
+                  de FrontSpark a CI/CD.
+                </p>
+                <div class="catalog__home-actions">
+                  <button type="button" class="catalog__cta" id="catalog-home-lab-link">
+                    Comenzar ahora →
+                  </button>
+                  <button type="button" class="catalog__home-cta-ghost" id="catalog-cta">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v13"
+                      />
+                    </svg>
+                    Explorar catálogo
+                  </button>
+                </div>
+                <ul class="catalog__home-stats">
+                  <li>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 3l4 4-4 14-4-14z" />
+                    </svg>
+                    <span>Lit v3</span>
+                  </li>
+                  <li>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect x="4" y="4" width="6.5" height="6.5" rx="1.5" />
+                      <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" />
+                      <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" />
+                      <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
+                    </svg>
+                    <span><span id="catalog-count">Varios</span>+ componentes</span>
+                  </li>
+                  <li>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M9 12l2 2 4-4" />
+                      <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Testing (Unit · E2E · a11y)
+                  </li>
+                  <li>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M8 7l-5 5 5 5M16 7l5 5-5 5" />
+                    </svg>
+                    Open Source (MIT)
+                  </li>
+                </ul>
+              </div>
+              <div class="catalog__terminal catalog__home-hero-terminal" aria-hidden="true">
+                <div class="catalog__terminal-titlebar">
+                  <span class="catalog__terminal-dots" aria-hidden="true"
+                    ><i></i><i></i><i></i
+                  ></span>
+                  <span class="catalog__terminal-filename">FrontSpark CLI</span>
+                </div>
+                <div class="catalog__terminal-body">
+                  <p class="catalog__terminal-line">
+                    <span class="catalog__terminal-prompt">$</span>
+                    <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
+                  </p>
+                  <p class="catalog__terminal-line">
+                    <span class="catalog__terminal-prompt">$</span>
+                    <span class="catalog__terminal-cmd">aclit component:create ac-button</span>
+                  </p>
+                  <p class="catalog__terminal-line">
+                    <span class="catalog__terminal-prompt">$</span>
+                    <span class="catalog__terminal-cmd">aclit component:serve</span>
+                  </p>
+                  <p class="catalog__terminal-line catalog__terminal-line--comment">
+                    # Componente listo en http://localhost:5173
+                  </p>
+                </div>
+              </div>
             </div>
-            <p class="catalog__home-stats">
-              <span id="catalog-count">Varios</span> componentes de práctica · tests unitarios + E2E
-              + a11y · FrontSpark para scaffolding propio · Licencia MIT
-            </p>
           </section>
 
-          <section class="catalog__home-section" aria-labelledby="home-goals-title">
-            <h2 class="catalog__home-section-title" id="home-goals-title">
-              Objetivos de este entorno de formación
-            </h2>
-            <p class="catalog__home-section-intro">
-              Cada componente del catálogo es, a la vez, un ejemplo de producción y un ejercicio:
-              así se ve una arquitectura de Web Components pensada para durar.
-            </p>
-            <ul class="catalog__home-goals">
-              <li class="catalog__home-goal">
-                <svg
-                  class="catalog__home-goal-icon"
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <rect x="4" y="4" width="16" height="6" rx="1.5" />
-                  <rect x="4" y="14" width="16" height="6" rx="1.5" />
-                </svg>
-                <h3 class="catalog__home-goal-title">Arquitectura con Lit v3</h3>
-                <p class="catalog__home-goal-text">
-                  Mixins reutilizables, tokens de diseño y convenciones de naming consistentes en
-                  los 28 componentes del catálogo.
-                </p>
+          <section
+            class="catalog__home-features catalog__home-section--wide"
+            aria-label="Beneficios de FrontSpark"
+          >
+            <ul class="catalog__home-feature-grid">
+              <li class="catalog__home-feature">
+                <span class="catalog__home-feature-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M12 4 4 8.5 12 13l8-4.5L12 4Z" />
+                    <path d="M4 12.5l8 4.5 8-4.5" />
+                    <path d="M4 16.5l8 4.5 8-4.5" />
+                  </svg>
+                </span>
+                <div class="catalog__home-feature-content">
+                  <h3 class="catalog__home-feature-title">Arquitectura sólida</h3>
+                  <p class="catalog__home-feature-text">Mixins, tokens y patrones reutilizables.</p>
+                </div>
               </li>
-              <li class="catalog__home-goal">
-                <svg
-                  class="catalog__home-goal-icon"
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M9 12l2 2 4-4" />
-                  <circle cx="12" cy="12" r="9" />
-                </svg>
-                <h3 class="catalog__home-goal-title">Testing en tres niveles</h3>
-                <p class="catalog__home-goal-text">
-                  Cada componente trae tests unitarios, E2E y de accesibilidad (axe-core) — practica
-                  a escribirlos y a leerlos.
-                </p>
+              <li class="catalog__home-feature">
+                <span class="catalog__home-feature-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M9 2h6" />
+                    <path
+                      d="M10 2v6.5a2 2 0 0 1-.4 1.2L4.9 17.4A1.8 1.8 0 0 0 6.3 20h11.4a1.8 1.8 0 0 0 1.4-2.6l-4.7-7.5a2 2 0 0 1-.4-1.2V2"
+                    />
+                    <path d="M7 15h10" />
+                  </svg>
+                </span>
+                <div class="catalog__home-feature-content">
+                  <h3 class="catalog__home-feature-title">Testing completo</h3>
+                  <p class="catalog__home-feature-text">Unitarios, E2E y accesibilidad (a11y).</p>
+                </div>
               </li>
-              <li class="catalog__home-goal">
-                <svg
-                  class="catalog__home-goal-icon"
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 6l-2 12" />
-                </svg>
-                <h3 class="catalog__home-goal-title">Flujo de trabajo real</h3>
-                <p class="catalog__home-goal-text">
-                  Un CLI propio — FrontSpark, nombre visual en este sitio para el comando real
-                  <code>aclit</code> — para crear componentes, y un pipeline de CI/CD con
-                  Conventional Commits y versionado por Changesets.
-                </p>
+              <li class="catalog__home-feature">
+                <span class="catalog__home-feature-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+                  </svg>
+                </span>
+                <div class="catalog__home-feature-content">
+                  <h3 class="catalog__home-feature-title">Flujo de trabajo real</h3>
+                  <p class="catalog__home-feature-text">CLI, scaffolding y CI/CD con estándares.</p>
+                </div>
               </li>
-              <li class="catalog__home-goal">
-                <svg
-                  class="catalog__home-goal-icon"
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                <h3 class="catalog__home-goal-title">Accesibilidad primero</h3>
-                <p class="catalog__home-goal-text">
-                  0 errores de axe-core en cada componente: la accesibilidad no es una fase final,
-                  es parte del diseño.
-                </p>
-              </li>
-              <li class="catalog__home-goal">
-                <svg
-                  class="catalog__home-goal-icon"
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z" />
-                </svg>
-                <h3 class="catalog__home-goal-title">Buenas prácticas y estándares</h3>
-                <p class="catalog__home-goal-text">
-                  Convenciones de código, estructura de carpetas y revisión en cada PR, alineadas
-                  con la
-                  <a
-                    class="catalog__home-link"
-                    href="https://lit.dev"
-                    target="_blank"
-                    rel="noopener"
-                    >documentación oficial de Lit ↗</a
-                  >.
-                </p>
+              <li class="catalog__home-feature">
+                <span class="catalog__home-feature-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                </span>
+                <div class="catalog__home-feature-content">
+                  <h3 class="catalog__home-feature-title">Buenas prácticas</h3>
+                  <p class="catalog__home-feature-text">
+                    Convenciones, estructura y documentación clara.
+                  </p>
+                </div>
               </li>
             </ul>
           </section>
@@ -567,64 +776,23 @@
           </section>
 
           <section
-            class="catalog__home-section"
-            id="cli-quickstart"
-            aria-labelledby="home-cli-title"
+            class="catalog__home-section catalog__home-section--wide catalog__home-roadmap"
+            aria-labelledby="home-categories-title"
           >
-            <h2 class="catalog__home-section-title" id="home-cli-title">
-              Tu primer ejercicio: crear un componente
-            </h2>
-            <p class="catalog__home-section-intro">
-              Instala FrontSpark, crea tu primer componente y levanta su demo — los mismos comandos
-              que se usan para construir todo este catálogo.
-            </p>
-            <div
-              class="catalog__terminal"
-              role="group"
-              aria-label="Comandos de ejemplo de FrontSpark (aclit)"
-            >
-              <div class="catalog__terminal-titlebar">
-                <span class="catalog__terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span class="catalog__terminal-filename">terminal — aclit</span>
+            <div class="catalog__home-categories-header">
+              <div>
+                <p class="catalog__home-eyebrow">
+                  <span aria-hidden="true"></span>Ruta de aprendizaje
+                </p>
+                <h2 class="catalog__home-section-title" id="home-categories-title">
+                  Aprende paso a paso, con práctica real
+                </h2>
               </div>
-              <div class="catalog__terminal-body">
-                <p class="catalog__terminal-line">
-                  <span class="catalog__terminal-prompt">$</span>
-                  <span class="catalog__terminal-cmd">npm install -g @ac-base/cli</span>
-                </p>
-                <p class="catalog__terminal-line">
-                  <span class="catalog__terminal-prompt">$</span>
-                  <span class="catalog__terminal-cmd">aclit component:create ac-mi-componente</span>
-                </p>
-                <p class="catalog__terminal-line catalog__terminal-line--comment">
-                  # Componente creado en ./ac-mi-componente
-                </p>
-                <p class="catalog__terminal-line">
-                  <span class="catalog__terminal-prompt">$</span>
-                  <span class="catalog__terminal-cmd">aclit component:serve</span>
-                </p>
-                <p class="catalog__terminal-line catalog__terminal-line--comment">
-                  # levanta la demo con Vite en http://localhost:5173
-                </p>
-                <p class="catalog__terminal-line">
-                  <span class="catalog__terminal-prompt">$</span>
-                  <span class="catalog__terminal-cmd">aclit help</span>
-                </p>
-                <p class="catalog__terminal-line catalog__terminal-line--comment">
-                  # lista todos los comandos disponibles
-                </p>
-              </div>
+              <p class="catalog__home-section-intro">
+                Explora los módulos del catálogo y construye tu dominio en el desarrollo de Web
+                Components.
+              </p>
             </div>
-          </section>
-
-          <section class="catalog__home-section" aria-labelledby="home-categories-title">
-            <h2 class="catalog__home-section-title" id="home-categories-title">
-              Ruta de aprendizaje por módulos
-            </h2>
-            <p class="catalog__home-section-intro">
-              Cada categoría agrupa componentes que comparten patrones de diseño y API. Explóralas
-              en el orden que prefieras — no hay un camino único.
-            </p>
             <div class="catalog__home-categories" id="catalog-home-categories"></div>
           </section>
 
