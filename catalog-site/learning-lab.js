@@ -5,9 +5,10 @@
 // que catalog-meta.js/catalog-api.js: data hand-authored, sin generación automática.
 //
 // Niveles: Intermedio/Avanzado NO son "lo mismo pero más difícil" -- cada uno suma temas
-// nuevos que Básico no cubre (testing, accesibilidad, e2e, analítica...). Por eso hoy solo
-// Básico tiene contenido real; Intermedio/Avanzado existen como estructura (su propia
-// página, su propio progreso) con `chapters: []`, a escribir en otra sesión.
+// nuevos que Básico no cubre (testing, accesibilidad, e2e, analítica...). Los 3 niveles
+// tienen contenido real: Básico (fundamentos, construcción, testing unitario, repaso de
+// scope/closures), Intermedio (accesibilidad, testing e2e, flujo de contribución, JS
+// intermedio) y Avanzado (JS avanzado, guía de construcción de una app completa).
 //
 // Forma de cada laboratorio: { id, title, objective, context, steps: [...], hint, selfCheck, estimatedMinutes }
 // Forma de cada capítulo: { id, title, summary, labs: [...], estimatedMinutes, outcomes: [...] }
