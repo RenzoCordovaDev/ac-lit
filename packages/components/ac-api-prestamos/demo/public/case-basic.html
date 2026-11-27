@@ -1,0 +1,115 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula productos de préstamo, simulación de cuotas, solicitudes, pagos de cuotas y cronograma.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarProductos(queryParams = {})</code>
+      <p>
+        Lista los productos de préstamo del mock. <code>queryParams</code>: sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-prestamos-products-success / ac-api-prestamos-products-error</code></span
+      >
+    </li>
+    <li>
+      <code>simularPrestamo(productoId, monto, plazoMeses)</code>
+      <p>
+        Calcula una cuota estimada con interés simple sobre la tasa anual del producto. Falla si el
+        producto no existe, o si el monto o el plazo superan el máximo del producto.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-prestamos-simulate-success / ac-api-prestamos-simulate-error</code></span
+      >
+    </li>
+    <li>
+      <code>solicitarPrestamo(productoId, monto, plazoMeses)</code>
+      <p>
+        Valida igual que <code>simularPrestamo</code> y crea un préstamo nuevo en estado
+        <code>activo</code>, sin cuotas pagadas.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-prestamos-request-success / ac-api-prestamos-request-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarPrestamos(queryParams = {})</code>
+      <p>
+        Lista los préstamos. <code>queryParams</code>: estado, productoId, sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-prestamos-list-success / ac-api-prestamos-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>pagarCuota(prestamoId)</code>
+      <p>
+        Suma una cuota pagada al préstamo; al pagar la última, su estado pasa a
+        <code>pagado</code>. Falla si el préstamo no existe o no tiene cuotas pendientes.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-prestamos-pay-success / ac-api-prestamos-pay-error</code></span
+      >
+    </li>
+    <li>
+      <code>obtenerCronograma(prestamoId)</code>
+      <p>
+        Devuelve un array de cuotas <code>{numero, fecha, monto, estado}</code> con fechas mensuales
+        a partir de <code>proximoPago</code>. Falla si el préstamo no existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-prestamos-schedule-success / ac-api-prestamos-schedule-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-prestamos-products-success</code>, <code>ac-api-prestamos-products-error</code>,
+    <code>ac-api-prestamos-simulate-success</code>, <code>ac-api-prestamos-simulate-error</code>,
+    <code>ac-api-prestamos-request-success</code>, <code>ac-api-prestamos-request-error</code>,
+    <code>ac-api-prestamos-list-success</code>, <code>ac-api-prestamos-list-error</code>,
+    <code>ac-api-prestamos-pay-success</code>, <code>ac-api-prestamos-pay-error</code>,
+    <code>ac-api-prestamos-schedule-success</code>, <code>ac-api-prestamos-schedule-error</code>
+  </p>
+</section>

@@ -1,0 +1,107 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula la gestión de tarjetas de débito y crédito: listado, solicitud, bloqueo, desbloqueo,
+    cambio de PIN y consulta de línea disponible.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarTarjetas(queryParams = {})</code>
+      <p>
+        Lista las tarjetas del mock. <code>queryParams</code>: estado, tipo, sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-tarjetas-list-success / ac-api-tarjetas-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>solicitarTarjeta(cuentaId, tipo)</code>
+      <p>
+        Crea una tarjeta activa para la cuenta indicada. <code>tipo</code> debe ser
+        <code>debito</code> o <code>credito</code>.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-tarjetas-request-success / ac-api-tarjetas-request-error</code></span
+      >
+    </li>
+    <li>
+      <code>bloquearTarjeta(tarjetaId, motivo)</code>
+      <p>Bloquea una tarjeta activa; falla si no existe o ya está bloqueada.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-tarjetas-block-success / ac-api-tarjetas-block-error</code></span
+      >
+    </li>
+    <li>
+      <code>desbloquearTarjeta(tarjetaId)</code>
+      <p>Reactiva una tarjeta bloqueada; falla si no existe o no está bloqueada.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-tarjetas-unblock-success / ac-api-tarjetas-unblock-error</code></span
+      >
+    </li>
+    <li>
+      <code>cambiarPin(tarjetaId, pinActual, pinNuevo)</code>
+      <p>
+        Valida el PIN actual contra el PIN simulado fijo y confirma el cambio; falla si la tarjeta
+        no existe o el PIN actual no coincide.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-tarjetas-pin-success / ac-api-tarjetas-pin-error</code></span
+      >
+    </li>
+    <li>
+      <code>consultarLineaDisponible(tarjetaId)</code>
+      <p>
+        Devuelve la línea de crédito y el disponible de una tarjeta de crédito; falla si la tarjeta
+        no existe o es de débito.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-tarjetas-credit-line-success / ac-api-tarjetas-credit-line-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-tarjetas-list-success</code>, <code>ac-api-tarjetas-list-error</code>,
+    <code>ac-api-tarjetas-request-success</code>, <code>ac-api-tarjetas-request-error</code>,
+    <code>ac-api-tarjetas-block-success</code>, <code>ac-api-tarjetas-block-error</code>,
+    <code>ac-api-tarjetas-unblock-success</code>, <code>ac-api-tarjetas-unblock-error</code>,
+    <code>ac-api-tarjetas-pin-success</code>, <code>ac-api-tarjetas-pin-error</code>,
+    <code>ac-api-tarjetas-credit-line-success</code>, <code>ac-api-tarjetas-credit-line-error</code>
+  </p>
+</section>

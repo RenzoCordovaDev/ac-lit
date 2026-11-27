@@ -1,0 +1,101 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el catálogo de seguros, cotizaciones, contrataciones y cancelaciones de pólizas.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarProductos(queryParams = {})</code>
+      <p>
+        Lista el catálogo de seguros. <code>queryParams</code>: tipo, sortBy/sortDir,
+        pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-seguros-products-success / ac-api-seguros-products-error</code></span
+      >
+    </li>
+    <li>
+      <code>cotizar(productoId, datos)</code>
+      <p>
+        Estima la prima mensual del producto: <code>primaMensual</code> multiplicado por
+        <code>datos.factorRiesgo</code> (por defecto 1). Falla si el producto no existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-seguros-quote-success / ac-api-seguros-quote-error</code></span
+      >
+    </li>
+    <li>
+      <code>contratarSeguro(productoId, datos)</code>
+      <p>
+        Crea una póliza nueva en estado <code>vigente</code>, con número autogenerado
+        (<code>POL-00XX</code>) y vigencia de un año desde hoy. Falla si el producto no existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara:
+        <code>ac-api-seguros-subscribe-success / ac-api-seguros-subscribe-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarPolizas(queryParams = {})</code>
+      <p>
+        Lista las pólizas de la instancia. <code>queryParams</code>: estado, productoId,
+        sortBy/sortDir, pagination/page.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-seguros-policies-success / ac-api-seguros-policies-error</code></span
+      >
+    </li>
+    <li>
+      <code>cancelarPoliza(polizaId, motivo)</code>
+      <p>
+        Cambia el estado de la póliza a <code>cancelada</code> y guarda el motivo. Falla si la
+        póliza no existe o ya está cancelada.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-seguros-cancel-success / ac-api-seguros-cancel-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-seguros-products-success</code>, <code>ac-api-seguros-products-error</code>,
+    <code>ac-api-seguros-quote-success</code>, <code>ac-api-seguros-quote-error</code>,
+    <code>ac-api-seguros-subscribe-success</code>, <code>ac-api-seguros-subscribe-error</code>,
+    <code>ac-api-seguros-policies-success</code>, <code>ac-api-seguros-policies-error</code>,
+    <code>ac-api-seguros-cancel-success</code>, <code>ac-api-seguros-cancel-error</code>
+  </p>
+</section>

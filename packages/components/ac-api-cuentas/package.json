@@ -1,0 +1,39 @@
+{
+  "name": "@ac-components/ac-api-cuentas",
+  "version": "0.1.0",
+  "description": "ac-lit ac-api-cuentas — simulador de API de ciclo de vida de cuentas bancarias (sin UI)",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "/src/",
+    "index.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "component:lint": "eslint .",
+    "component:serve": "vite demo",
+    "component:build": "vite build",
+    "component:preview": "vite preview",
+    "component:test": "web-test-runner \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@ac-base/ac-api-mixin": "workspace:^"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-demo-content": "workspace:^",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "lit": "^3.0.0",
+    "vite": "^5.4.8"
+  }
+}
