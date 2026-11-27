@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from 'node:test';
+import { describe, it, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -101,6 +101,32 @@ describe('aclit (bin)', () => {
 
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /serving/);
+  });
+
+  test('uses npm and forwards flags when package-lock.json exists', () => {
+    fs.writeFileSync(path.join(tmpDir, 'package-lock.json'), '{"lockfileVersion":3}');
+    fs.writeFileSync(
+      path.join(tmpDir, 'package.json'),
+      JSON.stringify({
+        name: 'tmp',
+        scripts: { check: 'node check.cjs' },
+      }),
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, 'check.cjs'),
+      'console.log(process.env.npm_config_user_agent, process.argv[2]);',
+    );
+
+    const result = runAc(['check', '--example'], tmpDir);
+    assert.match(result.stdout, /npm\/[^\r\n]+ --example/);
+  });
+
+  test('asks for a declared manager when both lockfiles exist', () => {
+    fs.writeFileSync(path.join(tmpDir, 'package-lock.json'), '{}');
+    fs.writeFileSync(path.join(tmpDir, 'pnpm-lock.yaml'), '');
+
+    const result = runAc(['component:serve'], tmpDir);
+    assert.match(result.stderr, /Declara el gestor en packageManager/);
   });
 
   it('prints help with no arguments', () => {

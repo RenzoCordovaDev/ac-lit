@@ -1,6 +1,6 @@
 # @ac-base/cli
 
-CLI de `ac-lit` — comando `aclit`. Implementado con [Commander.js](https://github.com/tj/commander.js), sin wizard interactivo ni resolución de rutas/config: siempre opera sobre el directorio desde el que lo ejecutas.
+CLI de `ac-lit` — comando `aclit`. Implementado con [Commander.js](https://github.com/tj/commander.js), sin wizard interactivo. Ejecuta las tareas desde el directorio actual.
 
 ## Uso
 
@@ -33,17 +33,19 @@ Los comandos propios (`component:create`, `app:create`) se declaran en `src/comm
 
 ### Tareas (passthrough genérico)
 
-Cualquier otro comando es un passthrough directo a `pnpm run <nombre>` en el directorio actual:
+Cualquier otro comando ejecuta el script con el gestor del proyecto en el directorio actual. El CLI busca desde ese directorio hacia la raíz del repo. En cada carpeta consulta `packageManager` primero, después el lockfile y, para pnpm, `pnpm-workspace.yaml`. Si encuentra los dos lockfiles juntos, declara el gestor en `packageManager`. Sin configuración ni lockfile, usa pnpm.
+
+Para un componente externo instalado con `npm install`, `aclit component:serve` usa npm. Si el componente se generó con una versión anterior del CLI, actualiza los scripts de su `package.json` con los de la plantilla actual para quitar las llamadas internas a pnpm. Conserva el lockfile y el árbol de dependencias del gestor elegido.
 
 ```bash
-aclit component:serve           # = pnpm run component:serve — levanta el demo con Vite en http://localhost:5173
-aclit component:build           # = pnpm run component:build
-aclit component:lint            # = pnpm run component:lint — corre ESLint sobre el paquete actual
-aclit component:preview         # = pnpm run component:preview
-aclit component:test            # = pnpm run component:test
-aclit component:test:e2e        # = pnpm run component:test:e2e
-aclit component:test:e2e:a11y   # = pnpm run component:test:e2e:a11y
-aclit build                     # = pnpm run build (donde exista ese script)
+aclit component:serve  # levanta el demo con Vite en http://localhost:5173
+aclit component:build
+aclit component:lint  # corre ESLint sobre el paquete actual
+aclit component:preview
+aclit component:test
+aclit component:test:e2e
+aclit component:test:e2e:a11y
+aclit build  # donde exista ese script
 ```
 
 El CLI no mantiene una lista de scripts conocidos — cualquier script que exista en el `package.json` del directorio actual queda disponible automáticamente (`aclit help` lista los del directorio actual).
