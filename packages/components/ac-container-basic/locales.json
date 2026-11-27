@@ -1,0 +1,23 @@
+{
+  "es-PE": {
+    "container-basic-demo-delivery-title": "Detalle de entrega",
+    "container-basic-demo-delivery-address": "El pedido se enviará a la dirección registrada.",
+    "container-basic-demo-padding-small": "Espaciado compacto",
+    "container-basic-demo-padding-medium": "Espaciado medio",
+    "container-basic-demo-padding-large": "Espaciado amplio"
+  },
+  "en-EN": {
+    "container-basic-demo-delivery-title": "Delivery details",
+    "container-basic-demo-delivery-address": "Your order will be shipped to the address on file.",
+    "container-basic-demo-padding-small": "Compact spacing",
+    "container-basic-demo-padding-medium": "Medium spacing",
+    "container-basic-demo-padding-large": "Spacious padding"
+  },
+  "pt-BR": {
+    "container-basic-demo-delivery-title": "Detalhes da entrega",
+    "container-basic-demo-delivery-address": "O pedido será enviado para o endereço cadastrado.",
+    "container-basic-demo-padding-small": "Espaçamento compacto",
+    "container-basic-demo-padding-medium": "Espaçamento médio",
+    "container-basic-demo-padding-large": "Espaçamento amplo"
+  }
+}

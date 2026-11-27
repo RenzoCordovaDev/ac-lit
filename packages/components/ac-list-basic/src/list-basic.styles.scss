@@ -1,0 +1,121 @@
+:host {
+  --list-basic-text: var(--color-text, #bcbec4);
+  --list-basic-surface: var(--color-surface, #2b2b2b);
+  --list-basic-hover: var(--color-muted, #313335);
+  --list-basic-divider: var(--color-subtext, #787a80);
+  --list-basic-focus: var(--color-primary-300, #6ee7b7);
+
+  display: block;
+}
+
+:host-context([data-theme='light']) {
+  --list-basic-text: var(--color-text, #27272a);
+  --list-basic-surface: var(--color-surface, #f1efe8);
+  --list-basic-hover: var(--color-muted, #d9d6cb);
+  --list-basic-divider: var(--color-subtext, #5f5e58);
+  --list-basic-focus: var(--color-primary-700, #047857);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-list-basic {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--list-basic-text);
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
+}
+
+.ac-list-basic--surface {
+  padding: var(--space-2, 0.5rem);
+  border-radius: var(--radius-lg, 1.5rem);
+  corner-shape: squircle;
+  background: var(--list-basic-surface);
+  box-shadow: var(--elev-1, 0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.ac-list-basic__item + .ac-list-basic__item,
+::slotted(li:not(:first-child)) {
+  border-block-start: 1px solid var(--list-basic-divider);
+}
+
+.ac-list-basic__row,
+::slotted(li) {
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+}
+
+.ac-list-basic__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  border-radius: var(--radius-md, 1rem);
+  corner-shape: squircle;
+}
+
+.ac-list-basic__button {
+  box-sizing: border-box;
+  inline-size: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.ac-list-basic__item:not([data-selected]) .ac-list-basic__button:enabled:hover {
+  background: var(--list-basic-hover);
+}
+
+.ac-list-basic__button:focus-visible {
+  outline: 2px solid var(--list-basic-focus);
+  outline-offset: calc(-1 * var(--space-1, 0.25rem));
+}
+
+.ac-list-basic__item[data-disabled]:not([data-selected]) {
+  color: color-mix(in srgb, var(--list-basic-text) 70%, var(--list-basic-divider));
+}
+
+.ac-list-basic__button:disabled {
+  cursor: not-allowed;
+}
+
+.ac-list-basic__item[data-selected] .ac-list-basic__row {
+  --list-basic-focus: var(--color-primary-50, #ecfdf5);
+
+  background: var(--color-primary-700, #047857);
+  color: var(--color-primary-50, #ecfdf5);
+}
+
+.ac-list-basic__icon {
+  flex: none;
+  inline-size: var(--space-5, 1.25rem);
+  block-size: var(--space-5, 1.25rem);
+}
+
+.ac-list-basic__content {
+  display: grid;
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.ac-list-basic__text {
+  font-weight: var(--font-weight-medium, 600);
+}
+
+.ac-list-basic__description {
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.ac-list-basic__visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

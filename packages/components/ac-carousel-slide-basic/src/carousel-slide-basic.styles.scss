@@ -1,0 +1,33 @@
+:host {
+  --ac-carousel-slide-basic-border: var(--color-primary-300, #6ee7b7);
+  display: block;
+  min-inline-size: 0;
+}
+
+:host([ambient='secondary']) {
+  --ac-carousel-slide-basic-border: var(--color-accent-300, #fcd34d);
+}
+
+:host-context([data-theme='light']) {
+  --ac-carousel-slide-basic-border: var(--color-primary-700, #047857);
+}
+
+:host-context([data-theme='light']):host([ambient='secondary']) {
+  --ac-carousel-slide-basic-border: color-mix(
+    in srgb,
+    var(--color-accent-500, #f59e0b),
+    var(--color-neutral, #44433d)
+  );
+}
+
+:host(:not([active])),
+:host([hidden]) {
+  display: none;
+}
+
+.carousel-slide-basic {
+  border: 1px solid var(--ac-carousel-slide-basic-border);
+  border-radius: var(--radius-lg, 1.5rem);
+  corner-shape: squircle;
+  padding: var(--space-4, 1rem);
+}

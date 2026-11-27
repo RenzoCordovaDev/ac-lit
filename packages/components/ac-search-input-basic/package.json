@@ -1,0 +1,47 @@
+{
+  "name": "@ac-components/ac-search-input-basic",
+  "version": "0.1.0",
+  "description": "ac-lit search-input-basic Web Component",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./locales.json": "./locales.json"
+  },
+  "files": [
+    "/src/",
+    "index.js",
+    "locales.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "component:lint": "eslint .",
+    "component:build:styles": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src",
+    "component:build:styles:watch": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src --watch",
+    "component:serve": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src && concurrently -k -n styles,vite -c blue,green \"node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src --watch\" \"vite demo\"",
+    "component:build": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src && vite build",
+    "component:preview": "vite preview",
+    "component:test": "node ./node_modules/@ac-base/cli/scripts/compile-scss-to-lit.cjs src && web-test-runner \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@ac-base/ac-component-mixin": "workspace:^",
+    "@ac-base/ac-intl-mixin": "workspace:^"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@ac-base/ac-core": "workspace:^",
+    "@ac-base/ac-demo-content": "workspace:^",
+    "@ac-base/cli": "workspace:^",
+    "@open-wc/testing": "^4.0.0",
+    "@web/test-runner": "^0.18.0",
+    "concurrently": "^9.1.0",
+    "lit": "^3.0.0",
+    "sass": "^1.79.4",
+    "vite": "^5.4.8"
+  }
+}

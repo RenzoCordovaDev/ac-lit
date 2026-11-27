@@ -1,0 +1,60 @@
+:host {
+  display: block;
+  --breadcrumb-basic-primary-color: var(--color-primary-300, #6ee7b7);
+  --breadcrumb-basic-secondary-color: var(--color-accent-300, #fcd34d);
+  --breadcrumb-basic-text-color: var(--color-text, #bcbec4);
+}
+
+:host-context([data-theme='light']) {
+  --breadcrumb-basic-primary-color: var(--color-primary-700, #047857);
+  --breadcrumb-basic-secondary-color: var(--color-accent-900, #451a03);
+  --breadcrumb-basic-text-color: var(--color-text, #27272a);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-breadcrumb-basic__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--breadcrumb-basic-text-color);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height);
+}
+
+.ac-breadcrumb-basic__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.ac-breadcrumb-basic__item + .ac-breadcrumb-basic__item::before {
+  content: '›' / '';
+}
+
+.ac-breadcrumb-basic__link {
+  color: var(--breadcrumb-basic-primary-color);
+  text-decoration: underline;
+}
+
+:host([ambient='secondary']) .ac-breadcrumb-basic__link {
+  color: var(--breadcrumb-basic-secondary-color);
+}
+
+.ac-breadcrumb-basic__link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+  corner-shape: squircle;
+}
+
+.ac-breadcrumb-basic__item [aria-current='page'] {
+  font-weight: var(--font-weight-bold);
+}

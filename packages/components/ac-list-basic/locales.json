@@ -1,0 +1,29 @@
+{
+  "es-PE": {
+    "list-basic-profile": "Perfil",
+    "list-basic-profile-description": "Administra tu información personal",
+    "list-basic-notifications": "Notificaciones",
+    "list-basic-notifications-description": "Elige qué avisos quieres recibir",
+    "list-basic-security": "Seguridad",
+    "list-basic-security-description": "Revisa tu contraseña y tus sesiones",
+    "list-basic-selected": "Seleccionado"
+  },
+  "en-EN": {
+    "list-basic-profile": "Profile",
+    "list-basic-profile-description": "Manage your personal information",
+    "list-basic-notifications": "Notifications",
+    "list-basic-notifications-description": "Choose which alerts you want to receive",
+    "list-basic-security": "Security",
+    "list-basic-security-description": "Review your password and sessions",
+    "list-basic-selected": "Selected"
+  },
+  "pt-BR": {
+    "list-basic-profile": "Perfil",
+    "list-basic-profile-description": "Gerencie suas informações pessoais",
+    "list-basic-notifications": "Notificações",
+    "list-basic-notifications-description": "Escolha quais avisos você quer receber",
+    "list-basic-security": "Segurança",
+    "list-basic-security-description": "Revise sua senha e suas sessões",
+    "list-basic-selected": "Selecionado"
+  }
+}

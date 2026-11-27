@@ -1,0 +1,20 @@
+{
+  "es-PE": {
+    "rating-basic-group-label": "Calificación",
+    "rating-basic-star-label": "{value} estrella",
+    "rating-basic-stars-label": "{value} estrellas",
+    "rating-basic-readonly-label": "Calificación: {value} de {max} estrellas"
+  },
+  "en-EN": {
+    "rating-basic-group-label": "Rating",
+    "rating-basic-star-label": "{value} star",
+    "rating-basic-stars-label": "{value} stars",
+    "rating-basic-readonly-label": "Rating: {value} out of {max} stars"
+  },
+  "pt-BR": {
+    "rating-basic-group-label": "Avaliação",
+    "rating-basic-star-label": "{value} estrela",
+    "rating-basic-stars-label": "{value} estrelas",
+    "rating-basic-readonly-label": "Avaliação: {value} de {max} estrelas"
+  }
+}

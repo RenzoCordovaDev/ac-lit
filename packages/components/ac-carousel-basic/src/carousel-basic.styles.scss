@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+  --_carousel-indicator: var(--color-primary-300, #6ee7b7);
+  --_carousel-control-bg: var(--color-primary-100, #d1fae5);
+  --_carousel-ink: var(--color-neutral, #44433d);
+}
+
+:host([ambient='secondary']) {
+  --_carousel-indicator: var(--color-accent-300, #fcd34d);
+  --_carousel-control-bg: var(--color-accent-100, #fef3c7);
+}
+
+:host-context([data-theme='light']) {
+  --_carousel-indicator: var(--color-primary-700, #047857);
+}
+
+:host-context([data-theme='light']):host([ambient='secondary']) {
+  --_carousel-indicator: var(--color-neutral, #44433d);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.carousel-basic {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+.carousel-basic__viewport {
+  touch-action: pan-y pinch-zoom;
+}
+
+.carousel-basic__controls,
+.carousel-basic__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-basic__controls {
+  gap: var(--space-2, 0.5rem);
+}
+
+.carousel-basic__control,
+.carousel-basic__dot {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.carousel-basic__control {
+  inline-size: calc(2 * var(--space-5, 1.25rem));
+  block-size: calc(2 * var(--space-5, 1.25rem));
+  border: 1px solid var(--_carousel-ink);
+  border-radius: var(--radius-sm, 0.5rem);
+  corner-shape: squircle;
+  background: var(--_carousel-control-bg);
+  color: var(--_carousel-ink);
+}
+
+.carousel-basic__control svg {
+  inline-size: var(--space-5, 1.25rem);
+  block-size: var(--space-5, 1.25rem);
+}
+
+.carousel-basic__dot {
+  inline-size: var(--space-6, 1.5rem);
+  block-size: var(--space-6, 1.5rem);
+  border: 0;
+  border-radius: var(--radius-full, 9999px);
+  background: transparent;
+  color: var(--_carousel-indicator);
+}
+
+.carousel-basic__dot::before {
+  content: '';
+  box-sizing: border-box;
+  inline-size: var(--space-3, 0.75rem);
+  block-size: var(--space-3, 0.75rem);
+  border: 2px solid currentColor;
+  border-radius: var(--radius-full, 9999px);
+}
+
+.carousel-basic__dot[aria-current='true']::before {
+  background: currentColor;
+}
+
+.carousel-basic:focus-visible,
+.carousel-basic__control:focus-visible,
+.carousel-basic__dot:focus-visible {
+  outline: 2px solid var(--_carousel-indicator);
+  outline-offset: 2px;
+}
+
+.carousel-basic__status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

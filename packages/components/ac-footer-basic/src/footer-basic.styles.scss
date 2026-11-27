@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.footer-basic {
+  padding: var(--space-6, 1.5rem);
+  background: var(--color-neutral, #44433d);
+  color: var(--color-primary-50, #ecfdf5);
+  font-size: var(--font-size-md, 0.95rem);
+  line-height: var(--line-height, 1.5);
+  overflow-wrap: anywhere;
+}
+
+:host([ambient='plain']) .footer-basic {
+  background: transparent;
+  color: var(--color-text, #bcbec4);
+}
+
+:host-context([data-theme='light']):host([ambient='plain']) .footer-basic {
+  color: var(--color-text, #27272a);
+}
+
+.footer-basic__main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-6, 1.5rem);
+}
+
+.footer-basic__bottom {
+  font-size: var(--font-size-sm, 0.85rem);
+}
+
+.footer-basic__bottom--divided {
+  margin-block-start: var(--space-4, 1rem);
+  padding-block-start: var(--space-3, 0.75rem);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
