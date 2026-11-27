@@ -515,6 +515,14 @@ function handleCompleteButtonClick(lab) {
 // ESE capítulo está completo) -- la comparten el nav, la auto-selección y la
 // búsqueda de un laboratorio por id, en vez de recalcularla cada una por su cuenta.
 function chapterEntries(level) {
+  if (level.freeNavigation) {
+    return level.chapters.map(chapter => ({
+      chapter,
+      doneCount: 0,
+      labs: chapter.labs.map(lab => ({ lab, locked: false })),
+    }));
+  }
+
   let previousChapterComplete = true;
   return level.chapters.map(chapter => {
     const doneCount = chapter.labs.filter(lab => labProgress.has(lab.id)).length;
@@ -558,9 +566,12 @@ function formatMinutes(minutes) {
 }
 
 function renderLabLevel(level) {
+  const freeNavigation = Boolean(level.freeNavigation);
+  labLevelEl.toggleAttribute('data-free-navigation', freeNavigation);
   renderLabNav(level);
   renderLabContent(level);
-  updateLabProgressBar(level);
+  labLevelEl.querySelector('.catalog__lab-progress').hidden = freeNavigation;
+  if (!freeNavigation) updateLabProgressBar(level);
 }
 
 function renderLabNav(level) {
@@ -596,8 +607,11 @@ function renderLabNav(level) {
     const summary = create('summary', 'catalog__lab-nav-group-summary');
     summary.append(create('span', 'catalog__lab-nav-group-title', chapter.title));
     if (chapter.labs.length > 0) {
+      const count = level.freeNavigation
+        ? `${chapter.labs.length} artículos`
+        : `${doneCount}/${chapter.labs.length}`;
       summary.append(
-        create('span', 'catalog__lab-nav-group-count', `${doneCount}/${chapter.labs.length}`),
+        create('span', 'catalog__lab-nav-group-count', count),
         create('span', 'catalog__lab-nav-group-time', formatMinutes(chapter.estimatedMinutes)),
       );
     }
@@ -617,12 +631,15 @@ function renderLabNav(level) {
         );
         if (lab.id === selectedLabId) row.classList.add('catalog__lab-nav-item--active');
 
-        const checkbox = create('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = labProgress.has(lab.id);
-        checkbox.disabled = locked;
-        checkbox.setAttribute('aria-label', `Marcar "${lab.title}" como completado`);
-        checkbox.addEventListener('change', () => toggleLabComplete(lab.id));
+        if (!level.freeNavigation) {
+          const checkbox = create('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = labProgress.has(lab.id);
+          checkbox.disabled = locked;
+          checkbox.setAttribute('aria-label', `Marcar "${lab.title}" como completado`);
+          checkbox.addEventListener('change', () => toggleLabComplete(lab.id));
+          row.append(checkbox);
+        }
 
         const button = create('button', 'catalog__lab-nav-item-button');
         button.type = 'button';
@@ -633,7 +650,7 @@ function renderLabNav(level) {
         );
         button.addEventListener('click', () => selectLab(lab.id));
 
-        row.append(checkbox, button);
+        row.append(button);
         groupBody.append(row);
       }
     }
@@ -863,8 +880,10 @@ function renderLabContent(level) {
     }
   }
 
-  if (lab.checkpoint) {
-    labContentEl.append(buildLabCallout('check', 'Checkpoint', lab.checkpoint, CHECK_ICON));
+  const calloutText = level.freeNavigation ? lab.takeaway : lab.checkpoint;
+  if (calloutText) {
+    const title = level.freeNavigation ? 'Para recordar' : 'Checkpoint';
+    labContentEl.append(buildLabCallout('check', title, calloutText, CHECK_ICON));
   }
 
   const actions = create('div', 'catalog__lab-content-actions');
@@ -875,18 +894,20 @@ function renderLabContent(level) {
     link.rel = 'noopener noreferrer';
     actions.append(link);
   }
-  const isDone = labProgress.has(lab.id);
-  const completeButton = create(
-    'button',
-    isDone
-      ? 'catalog__lab-content-complete-button catalog__lab-content-complete-button--done'
-      : 'catalog__lab-content-complete-button',
-    isDone ? 'Completado ✓' : 'Marcar como completado',
-  );
-  completeButton.type = 'button';
-  completeButton.addEventListener('click', () => handleCompleteButtonClick(lab));
-  actions.append(completeButton);
-  labContentEl.append(actions);
+  if (!level.freeNavigation) {
+    const isDone = labProgress.has(lab.id);
+    const completeButton = create(
+      'button',
+      isDone
+        ? 'catalog__lab-content-complete-button catalog__lab-content-complete-button--done'
+        : 'catalog__lab-content-complete-button',
+      isDone ? 'Completado ✓' : 'Marcar como completado',
+    );
+    completeButton.type = 'button';
+    completeButton.addEventListener('click', () => handleCompleteButtonClick(lab));
+    actions.append(completeButton);
+  }
+  if (actions.childElementCount > 0) labContentEl.append(actions);
 }
 
 function updateLabProgressBar(level) {

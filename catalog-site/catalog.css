@@ -2575,7 +2575,8 @@ body[data-view='home'] .catalog__terminal-body {
   border-radius: var(--radius-full, 999px);
 }
 
-:root[data-theme='light'] .catalog__lab-content-time {
+:root[data-theme='light'] .catalog__lab-content-time,
+[data-free-navigation] .catalog__lab-content-time {
   color: var(--color-primary-700, #047857);
 }
 
@@ -2632,6 +2633,10 @@ body[data-view='home'] .catalog__terminal-body {
   background: var(--color-primary-100, #d1fae5);
   border-color: var(--color-primary-300, #6ee7b7);
   color: var(--color-text, #27272a);
+}
+
+[data-free-navigation] .catalog__lab-content-callout {
+  color: var(--color-neutral, #44433d);
 }
 
 .catalog__lab-content-callout-icon {
@@ -2774,6 +2779,11 @@ body[data-view='home'] .catalog__terminal-body {
   border: 1px solid var(--ce-border);
   border-radius: var(--radius-md, 1rem);
   color: var(--ce-text);
+}
+
+[data-free-navigation] .catalog__code-editor {
+  --ce-muted: var(--color-neutral, #44433d);
+  --ce-line-number: var(--color-neutral, #44433d);
 }
 
 .catalog__code-editor-head {

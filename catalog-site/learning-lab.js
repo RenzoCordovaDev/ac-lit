@@ -4102,6 +4102,593 @@ const ROCKET_FEATURE_ICON =
   '<path d="M12 2c3 2 4 6 4 10 0 2-1 4-2 5l-2 2-2-2c-1-1-2-3-2-5 0-4 1-8 4-10z"/><path d="M9 15l-3 3 1 1M15 15l3 3-1 1"/>';
 const STAR_FEATURE_ICON =
   '<path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 16l-5.3 2.8 1-5.8-4.2-4.1 5.9-.9L12 3z" fill="currentColor" stroke="none"/>';
+const SPARKLE_ICON =
+  '<path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7z" fill="currentColor" stroke="none"/>';
+
+// Espacio IA -- a diferencia de los niveles de arriba, es un hub de REFERENCIA de
+// navegación libre (`freeNavigation: true` en su nivel, ver LAB_LEVELS más abajo):
+// sin bloqueo secuencial, sin checkbox de progreso ni barra de avance. Por eso cada
+// lab usa `takeaway` ("lo clave para recordar") en vez de `checkpoint` (que en los
+// demás niveles es un gate de validación antes de desbloquear el siguiente lab).
+const AI_SPACE_CHAPTERS = [
+  {
+    id: 'skills-buenas-practicas',
+    title: 'Skills y buenas prácticas de desarrollo con IA',
+    summary:
+      'Qué distingue a un agente de código del autocompletado clásico, cómo encargarle tareas con alcance y criterio de aceptación claros, cuándo conviene delegar a un subagente y qué revisar siempre antes de aceptar un cambio generado por IA.',
+    estimatedMinutes: 41,
+    outcomes: [
+      'Podés explicar la diferencia entre un agente de código y un autocompletador clásico, y qué significa su ciclo de percepción-acción.',
+      'Podés armar un encargo completo para un agente: alcance, contexto y un criterio de aceptación verificable.',
+      'Podés decidir cuándo delegar una tarea a un subagente y cuándo resolverla vos mismo en la conversación actual.',
+      'Podés aplicar una checklist concreta antes de aceptar cualquier cambio generado por IA.',
+    ],
+    labs: [
+      {
+        id: 'agente-vs-autocompletado',
+        title: 'Qué es un agente de código y en qué se diferencia de autocompletar',
+        objective:
+          'Un agente de código no sugiere la próxima línea: puede leer varios archivos, ejecutar comandos y tests, y actuar en pasos sucesivos dentro de los límites que le da la persona. Entender esa diferencia evita tratarlo como un autocompletado "más inteligente".',
+        estimatedMinutes: 10,
+        content: [
+          { type: 'heading', text: 'Del autocompletado al agente' },
+          {
+            type: 'p',
+            text: 'El autocompletado clásico sugiere una línea o un bloque corto a partir del texto que tenés alrededor del cursor. No sabe si tu proyecto tiene tests, no corre nada, y no sabe si lo que sugirió funciona de verdad: solo predice texto probable. Vos aceptás o rechazás, línea por línea.',
+          },
+          {
+            type: 'p',
+            text: 'Un agente de código (Claude Code, el modo agente de GitHub Copilot, Cursor en su modalidad de agente, etc.) trabaja distinto: puede leer varios archivos para entender el contexto real, modificar más de uno a la vez, ejecutar comandos de terminal, correr la suite de tests, y mirar el resultado real antes de decidir el siguiente paso. No es "una pasada de generación de texto más larga": es un ciclo que se repite.',
+          },
+          { type: 'heading', text: 'El ciclo de percepción-acción' },
+          {
+            type: 'p',
+            text: 'Ese ciclo tiene siempre la misma forma: el agente lee el estado real (el código tal como está, el resultado de un test, un mensaje de error), decide qué hacer en base a eso, actúa (edita un archivo, corre un comando), y vuelve a leer el estado resultante antes de seguir. Si un test falla después de un cambio, un agente puede verlo y corregir -- un autocompletado nunca llega a ese punto, porque no ejecuta nada.',
+          },
+          {
+            type: 'note',
+            text: 'Que el agente actúe en pasos no significa que tenga vía libre: cada comando fuera de lo ya permitido suele pedir confirmación. La autonomía es real, pero ocurre dentro de los límites que la persona define, no por fuera de ellos.',
+          },
+        ],
+        takeaway:
+          'Un agente de código se diferencia del autocompletado porque ejecuta y observa el resultado real de sus propios pasos (código, comandos, tests) antes de seguir, en vez de limitarse a predecir el próximo fragmento de texto.',
+      },
+      {
+        id: 'encargar-tareas-agente',
+        title: 'Cómo encargarle una tarea a un agente: alcance, contexto y criterio de aceptación',
+        objective:
+          'El resultado de un agente depende mucho más de cómo se formula el encargo que de qué tan avanzado sea el modelo. Un encargo completo define alcance, contexto y un criterio de "terminado" que se pueda verificar, no solo el problema a resolver.',
+        estimatedMinutes: 12,
+        content: [
+          { type: 'heading', text: 'Por qué el encargo pesa más que el modelo' },
+          {
+            type: 'p',
+            text: 'Pedirle a un agente "arreglá el bug de los filtros" puede producir un cambio que funciona, pero también uno que toca archivos de más, rompe una convención del proyecto, o resuelve el síntoma equivocado. El agente llena con suposiciones todo lo que el encargo no especifica, y esas suposiciones no siempre coinciden con lo que la persona tenía en mente.',
+          },
+          { type: 'heading', text: 'Las tres partes de un buen encargo' },
+          {
+            type: 'p',
+            text: 'Alcance: qué archivos o módulos entran y cuáles quedan explícitamente afuera. Contexto: qué ya se intentó y no funcionó, y qué convención del proyecto debe respetar (en ac-lit, por ejemplo: estilo Lit con Shadow DOM, propiedad `ambient` en vez de `variant`, tests con la interfaz `suite`/`test` de Mocha). Criterio de aceptación: qué test tiene que pasar, qué comando tiene que correr sin error, o qué se tiene que ver en el navegador para considerar la tarea terminada.',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            code: `Mal encargo:
+"Arreglá el bug de los filtros en la demo."
+
+Buen encargo:
+"En packages/components/ac-filter/, el checkbox Solo activos no
+persiste su estado al cambiar de pestaña (ver demo/index.html, caso 2).
+No toques ac-filter-group ni la demo de otros componentes.
+Ya se intentó guardar el estado en una propiedad reactiva simple y no
+alcanza porque se resetea en cada render.
+Criterio de terminado: el test en ac-filter.test.js que reproduce el
+cambio de pestaña pasa, y el checkbox mantiene su estado marcado al
+volver a la pestaña en la demo manual."`,
+          },
+          {
+            type: 'note',
+            text: 'El "buen encargo" no es más largo porque sea más cortés: cada frase elimina una suposición que el agente, si no la tiene, va a tener que inventar por su cuenta.',
+          },
+        ],
+        takeaway:
+          'Un encargo completo no describe el problema en general: fija qué entra, qué queda afuera, qué contexto ya existe, y cómo se comprueba que terminó. Eso determina la calidad del resultado más que el modelo que lo ejecuta.',
+      },
+      {
+        id: 'delegar-a-un-subagente',
+        title: 'Cuándo delegar a un subagente y cuándo hacerlo uno mismo',
+        objective:
+          'Lanzar subagentes en paralelo para investigación o implementación aislada ahorra tiempo y contexto, pero solo cuando la tarea tiene un resultado verificable y no necesita ida y vuelta constante con la persona.',
+        estimatedMinutes: 10,
+        content: [
+          { type: 'heading', text: 'Qué resuelve un subagente' },
+          {
+            type: 'p',
+            text: 'Muchas herramientas de agentes (Claude Code entre ellas) permiten lanzar subagentes: instancias separadas que investigan o implementan algo de forma aislada y después reportan solo la conclusión. La ventaja es doble: pueden trabajar en paralelo, y el ruido de sus intentos intermedios (archivos leídos de más, hipótesis descartadas) no se acumula en la conversación principal.',
+          },
+          { type: 'heading', text: 'La regla práctica' },
+          {
+            type: 'p',
+            text: 'Delegar tiene sentido cuando la tarea ya está bien definida y su resultado se puede verificar sin más contexto: "buscá en todo el repo dónde se define el token --color-muted y en qué componentes se usa", o "redactá el contenido de este capítulo siguiendo este formato". Conviene resolverlo uno mismo, en la sesión actual, cuando hay ambigüedad real que solo se destraba conversando con la persona, o cuando el contexto ya acumulado en la conversación es necesario para la tarea: rehacerlo desde cero en un subagente nuevo sale más caro que seguir donde se está.',
+          },
+          {
+            type: 'note',
+            text: 'La idea central es "no delegues el pensamiento, delegá la pieza ya pensada". Un encargo a un subagente tiene que ser autocontenido: archivos exactos, comportamiento esperado, y qué queda fuera de alcance, igual que un buen encargo de la persona hacia el agente principal, pero un nivel más abajo.',
+          },
+        ],
+        takeaway:
+          'Delegá a un subagente cuando la tarea ya está acotada y su resultado se puede chequear sin ida y vuelta; resolvela en la sesión actual cuando la ambigüedad o el contexto acumulado hacen que repetirlo en otro lado cueste más que seguir.',
+      },
+      {
+        id: 'revisar-antes-de-aceptar',
+        title: 'Qué revisar siempre antes de aceptar un cambio generado por IA',
+        objective:
+          'Un cambio generado por un agente se revisa con el mismo criterio que el código de otra persona: nadie firma un PR sin leerlo, y un agente no es la excepción. Esta checklist cubre los puntos donde más suelen aparecer problemas.',
+        estimatedMinutes: 9,
+        content: [
+          { type: 'heading', text: 'Antes de aceptar, revisá esto' },
+          {
+            type: 'p',
+            text: 'Un agente puede producir un cambio que "funciona" y aun así no sea el que había que hacer: tests que pasan de forma trivial, dependencias agregadas sin que se pidieran, o una URL que suena plausible pero no existe. Nada de esto se detecta corriendo el comando de build: hace falta leer el diff.',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            code: `- ¿El diff toca solo los archivos que pediste, o el agente aprovechó
+  para "mejorar" algo que no estaba en el encargo?
+- ¿Agregó una dependencia nueva o cambió un archivo de configuración
+  sin que se lo pidieras?
+- ¿El test que agregó o modificó ejercita realmente el comportamiento,
+  o solo está armado para que pase (afirmando algo trivial o
+  mockeando justo lo que debería probar)?
+- ¿Hay URLs, nombres de paquetes o métodos de una API que el agente
+  pudo haber inventado? Si no los reconocés, verificá que existan
+  antes de confiar en ellos.
+- ¿Alguien del equipo que lea este cambio sin el contexto de tu
+  conversación con el agente lo entendería igual?`,
+          },
+          {
+            type: 'note',
+            text: 'Esto aplica incluso cuando el agente explica su razonamiento con mucha confianza: la confianza del texto que genera no es evidencia de que el cambio sea correcto.',
+          },
+        ],
+        takeaway:
+          'Revisar un cambio generado por IA es revisar código que vas a firmar como propio, no una sugerencia que "probablemente está bien". La checklist no es opcional por el hecho de que el diff compile o los tests pasen.',
+      },
+    ],
+  },
+  {
+    id: 'modelos-recomendados',
+    title: 'Modelos recomendados y cuándo usar cada uno',
+    summary:
+      'No hay un modelo de IA "mejor" en abstracto: hay un espectro entre velocidad/costo y profundidad de razonamiento, y la habilidad está en elegir el punto de ese espectro que corresponde a cada tarea, no en usar siempre el más potente.',
+    estimatedMinutes: 34,
+    outcomes: [
+      'Podés explicar qué significa que un modelo sea "más chico/rápido" o "más grande/razonador", y por qué ninguno de los dos es superior en todos los casos.',
+      'Podés identificar, para una tarea concreta de desarrollo, si conviene priorizar latencia o profundidad de razonamiento.',
+      'Podés reconocer el trade-off costo/latencia/calidad como una decisión de diseño del flujo de trabajo, no como una limitación técnica.',
+      'Podés decidir, en un flujo con subagentes, qué partes merecen un modelo de mayor razonamiento y cuáles no.',
+    ],
+    labs: [
+      {
+        id: 'familias-de-modelos',
+        title: 'Familias de modelos: tamaño, velocidad y profundidad de razonamiento',
+        objective:
+          'Los modelos de IA no forman un ranking de "mejor a peor": forman un espectro entre modelos chicos y rápidos, pensados para tareas acotadas de alto volumen, y modelos grandes con más capacidad de razonamiento, pensados para problemas ambiguos de varios pasos.',
+        estimatedMinutes: 10,
+        content: [
+          { type: 'heading', text: 'No existe "el mejor modelo"' },
+          {
+            type: 'p',
+            text: 'Es tentador pensar que siempre conviene usar el modelo más potente disponible. En la práctica, "potente" no es una sola escala: hay un espectro. En un extremo están los modelos chicos y rápidos, optimizados para responder en poco tiempo y a bajo costo. En el otro, los modelos grandes, con más capacidad de razonamiento, pensados para problemas donde la respuesta no es obvia y hay que sopesar varias alternativas antes de decidir.',
+          },
+          {
+            type: 'p',
+            text: 'Ningún extremo del espectro es "mejor": un modelo chico y rápido usado para autocompletar código mientras escribís es la elección correcta, no una versión limitada de algo mejor. Y un modelo grande usado para formatear un archivo JSON es un desperdicio de tiempo y de cómputo, no una garantía de mejor resultado.',
+          },
+          { type: 'heading', text: 'Qué significa "esfuerzo de razonamiento"' },
+          {
+            type: 'p',
+            text: 'Algunos modelos pueden "pensar" antes de responder: en vez de generar la primera respuesta plausible, exploran varios caminos, revisan su propio razonamiento, descartan hipótesis y recién ahí producen la respuesta final. A esto se le llama esfuerzo de razonamiento, y es ajustable: más esfuerzo tiende a dar respuestas más confiables en problemas difíciles, a costa de más tiempo de espera y más costo de cómputo.',
+          },
+          {
+            type: 'note',
+            text: 'El esfuerzo de razonamiento no es una propiedad fija del modelo sino, en muchos casos, un parámetro que se puede subir o bajar según la tarea. Por eso la pregunta útil no es "¿qué modelo es mejor?" sino "¿cuánto esfuerzo de razonamiento necesita esta tarea puntual?".',
+          },
+          {
+            type: 'p',
+            text: 'Una forma simple de pensarlo: tareas acotadas, de patrón conocido y alto volumen (autocompletar, clasificar texto, dar formato) se benefician poco de más razonamiento porque la respuesta correcta ya es casi evidente a partir del contexto inmediato. Tareas ambiguas, de varios pasos, donde hay que sopesar trade-offs (diseñar una arquitectura, encontrar un bug que no se reproduce fácil, planificar un refactor grande) se benefician mucho, porque el costo de una respuesta apresurada y equivocada es alto.',
+          },
+          {
+            type: 'note',
+            text: 'Esto no es exclusivo de la IA: es la misma lógica de "pensar rápido vs. pensar despacio" que aplicamos las personas. La diferencia es que en un modelo de IA ese dial es explícito y lo podés configurar.',
+          },
+        ],
+        takeaway:
+          'El espectro rápido/económico vs. grande/razonador no tiene un lado "correcto": la tarea define cuánto esfuerzo de razonamiento vale la pena pagar en tiempo y costo.',
+      },
+      {
+        id: 'modelo-segun-tarea',
+        title: 'Qué modelo conviene según la tarea',
+        objective:
+          'Distintas tareas de desarrollo necesitan distintas combinaciones de velocidad y razonamiento: la misma pregunta ("¿qué modelo uso?") tiene respuestas distintas si estás autocompletando código, revisando un PR o diseñando una arquitectura.',
+        estimatedMinutes: 12,
+        content: [
+          {
+            type: 'heading',
+            text: 'La pregunta no es "qué modelo" sino "qué necesita esta tarea"',
+          },
+          {
+            type: 'p',
+            text: 'En vez de memorizar qué modelo comercial usar para cada caso (eso cambia todo el tiempo), conviene razonar por tipo de tarea y qué prioriza cada una: ¿necesito una respuesta en milisegundos o puedo esperar? ¿la tarea tiene una forma clara o es ambigua? ¿el riesgo de una respuesta mediocre es bajo (la corrijo al toque) o alto (un bug sutil que se cuela a producción)?',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            code: `Tarea                                  | Qué priorizar
+---------------------------------------|---------------------------------------
+Autocompletar mientras se escribe      | Latencia baja. Acepta menor
+código                                 | profundidad: el contexto inmediato
+                                        | suele bastar para una sugerencia útil.
+
+Revisión de un Pull Request            | Buen entendimiento de contexto amplio
+                                        | (todo el diff, el historial, el por qué
+                                        | del cambio) y juicio, no solo velocidad.
+
+Generación de tests                    | Razonamiento medio: hay que entender
+                                        | el comportamiento real del código, no
+                                        | solo imitar la forma de otros tests.
+
+Diseño de arquitectura /               | Razonamiento profundo. Acepta más
+debugging de un bug esquivo            | latencia y costo a cambio de explorar
+                                        | varias hipótesis antes de responder.
+
+Refactor grande multi-archivo          | Buen manejo de contexto largo y
+                                        | consistencia entre archivos, más que
+                                        | velocidad de respuesta individual.`,
+          },
+          {
+            type: 'p',
+            text: 'Fijate el patrón: autocompletar y generación de tests parecen tareas de "escribir código" por igual, pero piden cosas distintas. Autocompletar es sobre todo un problema de velocidad porque la respuesta se descarta o acepta en segundos. Generar un test útil (no uno que solo hace pasar la cobertura) requiere entender qué debería hacer el código, que es un problema de razonamiento, aunque modesto comparado con diseñar una arquitectura.',
+          },
+          {
+            type: 'note',
+            text: 'Esta tabla es una guía de criterio, no una receta fija. El punto es entrenar la pregunta "¿qué le pido a este modelo: velocidad o profundidad?" antes de delegar la tarea, no memorizar nombres de modelos que van a cambiar.',
+          },
+        ],
+        takeaway:
+          'Para elegir qué modelo usar, preguntate qué prioriza la tarea (latencia, contexto amplio, razonamiento de varios pasos, consistencia entre archivos) antes de preguntar qué modelo es "mejor".',
+      },
+      {
+        id: 'trade-off-costo-latencia-calidad',
+        title: 'El trade-off costo/latencia/calidad, y cómo decidirlo a propósito',
+        objective:
+          'Usar siempre el modelo de mayor razonamiento no es la opción "segura": es gastar presupuesto de cómputo donde no aporta. Repartir el trabajo entre modelos livianos y modelos de más razonamiento, según la dificultad real de cada subtarea, es una decisión de diseño del flujo de trabajo.',
+        estimatedMinutes: 12,
+        content: [
+          { type: 'heading', text: 'Más potencia no es automáticamente mejor resultado' },
+          {
+            type: 'p',
+            text: 'Cuando un flujo de trabajo se compone de muchas tareas chicas -- por ejemplo, un agente que delega subtareas a subagentes -- usar el modelo de mayor razonamiento para todas no mejora el resultado final de forma proporcional: la mayoría de esas subtareas son mecánicas y un modelo liviano las resuelve igual de bien, en menos tiempo.',
+          },
+          {
+            type: 'p',
+            text: 'Pensalo en términos de presupuesto: el esfuerzo de razonamiento (y el tiempo, y el costo que implica) es un recurso limitado. Gastarlo en una tarea que no lo necesita no suma calidad; solo suma espera. La pregunta útil es "¿dónde, dentro de este flujo, una respuesta mediocre realmente me cuesta algo?".',
+          },
+          {
+            type: 'heading',
+            text: 'Reservar el razonamiento profundo para lo que realmente lo necesita',
+          },
+          {
+            type: 'p',
+            text: 'Tareas rutinarias y de forma predecible -- revisar si un CI quedó en verde, confirmar un merge después de una aprobación humana, listar archivos, aplicar un formato -- tienen una respuesta correcta casi evidente a partir del contexto inmediato. Delegarlas a un modelo liviano no es "conformarse": es correcto, porque el resultado no mejora con más razonamiento, solo se demora.',
+          },
+          {
+            type: 'p',
+            text: 'En cambio, decidir cómo resolver un bug que no se reproduce, elegir entre dos arquitecturas con trade-offs reales, o revisar un cambio grande antes de fusionarlo a la rama principal son los puntos del flujo donde vale la pena pagar más tiempo y costo por un modelo que explore más hipótesis antes de responder.',
+          },
+          {
+            type: 'note',
+            text: 'Esta repartición no es una limitación que haya que lamentar ni un atajo por ahorrar costo: es diseñar el flujo de trabajo a propósito, igual que un equipo humano no pone a la persona más senior a revisar cada commit chico, sino que la reserva para las decisiones donde su criterio realmente cambia el resultado.',
+          },
+        ],
+        takeaway:
+          'Diseñar un flujo con IA incluye decidir qué partes merecen razonamiento profundo y cuáles no: usar siempre el modelo más potente no es prudencia, es desperdiciar presupuesto de cómputo en tareas que no lo necesitan.',
+      },
+    ],
+  },
+  {
+    id: 'procesos-flujo-trabajo',
+    title: 'Procesos y flujo de trabajo con agentes',
+    summary:
+      'Cómo encaja un agente de IA en el ciclo real de un cambio de código: ramas, commits, pull requests, code review y CI/CD -- qué partes acelera y en cuáles la decisión final siempre es de una persona.',
+    estimatedMinutes: 33,
+    outcomes: [
+      'Podés identificar en qué pasos del flujo de ramas/commits/PR un agente aporta valor real y en cuáles no debería decidir solo.',
+      'Podés distinguir qué parte de un code review es automatizable y qué siempre necesita criterio humano.',
+      'Podés explicar por qué la autonomía de un agente en CI/CD depende de qué tan reversible es la acción, no de si "sabe hacerla".',
+      'Podés armar un checklist propio de qué tareas de proceso delegarle a un agente en tu equipo y cuáles no.',
+    ],
+    labs: [
+      {
+        id: 'ia-ramas-commits-prs',
+        title: 'Integrar IA en el flujo de ramas, commits y PRs',
+        objective:
+          'Un agente de IA puede escribir el mensaje de commit, armar la descripción de un PR o sugerir el nombre de una rama a partir de los cambios reales -- pero integrar esos cambios a la rama principal sigue siendo una decisión de una persona.',
+        estimatedMinutes: 12,
+        content: [
+          { type: 'heading', text: 'El flujo no cambia, cambia quién escribe el texto' },
+          {
+            type: 'p',
+            text: 'En un repo trunk-based, el flujo es siempre el mismo: rama corta desde main, commits con Conventional Commits, PR, CI en verde, squash merge. Un agente no cambia ese flujo -- lo que puede hacer es ahorrar el trabajo mecánico de redactar los textos que lo documentan, mirando el diff real en vez de que la persona lo escriba de memoria.',
+          },
+          { type: 'heading', text: 'Dónde ayuda de verdad' },
+          {
+            type: 'p',
+            text: 'Tres tareas concretas donde un agente rinde bien: redactar el mensaje de commit en formato Conventional Commits a partir del diff (tipo correcto -- feat, fix, docs, etc. -- y un resumen que explica el cambio, no que repite el diff); armar el resumen y el plan de pruebas de un PR a partir de los commits que ya existen; y sugerir a qué prefijo de rama corresponde un cambio (feat/, fix/, docs/) mirando qué se modificó.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: `# Un uso típico: generar el mensaje de commit a partir del diff real
+git diff --staged | ai-commit-msg
+# feat(catalog-site): agrega selector de tema oscuro al sidebar
+
+# vs. escribirlo de memoria sin mirar qué quedó realmente en el staging`,
+          },
+          { type: 'heading', text: 'Dónde no debería decidir solo' },
+          {
+            type: 'p',
+            text: 'Hay tres líneas que un agente nunca cruza por su cuenta: nunca pushear directo a main (la rama está protegida justamente para forzar que todo cambio pase por PR y revisión), nunca forzar un push (git push --force) sobre una rama compartida, y nunca saltarse el hook de commit con --no-verify para que un commit mal formado "pase". El hook de commitlint existe para rechazar automáticamente lo que no sigue el formato -- evitarlo no resuelve el problema, solo lo esconde.',
+          },
+          {
+            type: 'note',
+            text: 'Si un agente sugiere --no-verify porque el hook "está siendo muy estricto", la respuesta correcta casi siempre es arreglar el mensaje de commit, no desactivar la validación.',
+          },
+          {
+            type: 'p',
+            text: 'La idea de fondo: el agente acelera la redacción y el trabajo repetitivo alrededor del cambio. La persona sigue siendo quien decide qué se integra a main y cuándo.',
+          },
+        ],
+        takeaway:
+          'Un agente puede escribir el commit y el PR a partir del diff real, pero integrar a main, forzar un push o saltarse un hook de validación son decisiones que una persona toma siempre, nunca el agente por su cuenta.',
+      },
+      {
+        id: 'code-review-asistido-ia',
+        title: 'Code review asistido por IA: qué automatizar y qué siempre revisa una persona',
+        objective:
+          'Un review de IA es una primera pasada que detecta lo mecánico antes de que lo vea una persona -- nunca un sustituto del reviewer humano que aprueba y mergea.',
+        estimatedMinutes: 11,
+        content: [
+          { type: 'heading', text: 'Dos tipos de preguntas en un review' },
+          {
+            type: 'p',
+            text: 'Cuando revisás un PR te hacés preguntas de dos tipos muy distintos: unas son mecánicas y verificables ("¿sigue el estilo del repo? ¿tiene tests? ¿rompe un patrón ya documentado?"), y otras son de juicio ("¿esto resuelve el problema real? ¿vale la pena este trade-off de arquitectura?"). Un agente de IA es bueno en las primeras y ciego para las segundas.',
+          },
+          { type: 'heading', text: 'Lo que es razonable automatizar' },
+          {
+            type: 'p',
+            text: 'Pedirle a un agente que revise primero: que el código siga las convenciones de naming y estructura del repo, que existan tests para el código nuevo, que no se esté rompiendo un patrón ya documentado en docs/CONVENTIONS.md (por ejemplo, usar opacity para atenuar texto, o variant en vez de ambient), código muerto que quedó de una iteración anterior, y duplicación obvia de lógica que ya existe en otro componente.',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            code: `Primera pasada automatizada (agente):
+[ ] Convenciones de naming/estructura del repo
+[ ] Tests presentes para el código nuevo
+[ ] No rompe patrones documentados en CONVENTIONS.md
+[ ] Sin código muerto ni duplicación obvia
+
+Revisión humana (siempre):
+[ ] ¿Resuelve el problema real que motivó el cambio?
+[ ] Trade-offs de arquitectura
+[ ] Seguridad / datos sensibles
+[ ] Aprobar y mergear`,
+          },
+          { type: 'heading', text: 'Lo que siempre necesita una persona' },
+          {
+            type: 'p',
+            text: 'Hay decisiones que un agente no puede tomar por falta de contexto, no por falta de capacidad: si el cambio resuelve el problema de negocio que lo originó, cualquier trade-off de arquitectura (performance vs. simplicidad, acoplamiento vs. duplicación), todo lo que toque seguridad o datos sensibles, y la aprobación final que habilita el merge.',
+          },
+          {
+            type: 'note',
+            text: 'Un review de IA que no encuentra nada no significa "este PR está listo para mergear" -- significa "lo mecánico está en orden". Son cosas distintas.',
+          },
+        ],
+        takeaway:
+          'Dejá que un agente filtre lo mecánico (estilo, tests, patrones rotos, duplicación) antes de que vos mires el PR -- pero la responsabilidad de entender si el cambio es correcto y de aprobar el merge nunca se delega.',
+      },
+      {
+        id: 'cicd-agentes-autonomia',
+        title: 'CI/CD y agentes: qué puede correr solo y qué necesita aprobación',
+        objective:
+          'La autonomía de un agente en CI/CD no es "todo o nada": depende de qué tan reversible es la acción y qué tan visible es para el resto del equipo si sale mal.',
+        estimatedMinutes: 10,
+        content: [
+          { type: 'heading', text: 'El criterio no es "¿lo sabe hacer?"' },
+          {
+            type: 'p',
+            text: 'Un agente puede tener el permiso técnico para mergear un PR o borrar una rama -- la pregunta no es si puede, sino si debería hacerlo sin que una persona lo confirme primero. El criterio útil es otro: qué tan reversible es la acción, y cuánta gente se ve afectada si se equivoca.',
+          },
+          { type: 'heading', text: 'Autonomía alta: acciones reversibles y de bajo impacto' },
+          {
+            type: 'p',
+            text: 'Correr lint y tests en local antes de subir un cambio, leer los logs de un job de CI que falló, y listar qué pasos fallaron y por qué -- son acciones que no afectan a nadie más que a quien las pide, y repetirlas no cuesta nada si algo salió mal en la lectura.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: `# Autonomía alta: diagnóstico, no cambia nada para otros
+pnpm --filter @ac-components/mi-componente run component:test
+gh run view <run-id> --log-failed`,
+          },
+          { type: 'heading', text: 'Autonomía baja: siempre con confirmación humana explícita' },
+          {
+            type: 'p',
+            text: 'Mergear a main, hacer un release, desplegar a producción, borrar una rama o un force-push comparten algo: son difíciles o imposibles de revertir sin esfuerzo, y afectan a todo el equipo (o a usuarios reales) si se ejecutan mal. Ninguna de estas debería dispararse porque un agente "decidió que ya estaba todo en verde" -- las dispara una persona, con el agente como mucho preparando el terreno.',
+          },
+          {
+            type: 'code',
+            lang: 'text',
+            code: `Reversible + bajo impacto  -> el agente puede ejecutar solo
+  - lint/tests en local
+  - leer logs de CI
+  - listar qué falló
+
+Irreversible o alto impacto -> siempre requiere confirmación humana
+  - merge a main
+  - release / deploy a producción
+  - borrar una rama
+  - force-push`,
+          },
+          {
+            type: 'note',
+            text: 'Esta misma escala aplica a cualquier acción nueva que le deleguen a un agente: antes de automatizarla, pregunten "¿qué tan fácil es deshacerla, y a quién le importa si sale mal?".',
+          },
+        ],
+        takeaway:
+          'No existe una autonomía única para "un agente en CI/CD" -- hay una escala según reversibilidad e impacto, y mergear, desplegar o forzar un push siempre quedan del lado de la confirmación humana.',
+      },
+    ],
+  },
+  {
+    id: 'seguridad-limites',
+    title: 'Seguridad, privacidad y límites',
+    summary:
+      'Límites prácticos para trabajar con agentes de IA sin exponer información sensible, sin perder control sobre acciones irreversibles, y sabiendo detectar cuándo una respuesta segura no es una respuesta correcta.',
+    estimatedMinutes: 34,
+    outcomes: [
+      'Podés identificar qué tipo de información nunca debe entrar en el prompt de un agente.',
+      'Podés decidir qué acciones de un agente requieren confirmación humana antes de ejecutarse, según su reversibilidad e impacto.',
+      'Podés reconocer una alucinación verificando en vez de confiar en el tono seguro de la respuesta.',
+      'Podés explicar por qué las convenciones del propio proyecto siempre tienen que primar sobre el comportamiento "por defecto" de un agente.',
+    ],
+    labs: [
+      {
+        id: 'que-nunca-compartir',
+        title: 'Qué nunca compartir con un agente',
+        objective:
+          'Todo lo que le pasás a un agente en el prompt puede terminar guardado en un log o visible para otra persona. Este artículo repasa qué información nunca debería entrar ahí, y da una regla simple para decidirlo en el momento.',
+        estimatedMinutes: 10,
+        content: [
+          { type: 'heading', text: 'Qué nunca compartir con un agente' },
+          {
+            type: 'p',
+            text: 'Todo lo que escribís en el prompt de un agente -- y todo lo que el agente lee de tus archivos cuando le dás acceso al repo -- puede terminar guardado en logs, usado para mejorar un modelo, o simplemente visible para quien tenga acceso a esa conversación. Antes de pegar algo, vale la pena preguntarse qué pasa si ese texto sale del entorno donde lo escribiste.',
+          },
+          { type: 'heading', text: 'Tres categorías que nunca van en un prompt' },
+          {
+            type: 'p',
+            text: 'Secrets y credenciales: API keys, tokens de acceso, contraseñas, strings de conexión a bases de datos, archivos .env completos. Datos personales de usuarios reales (PII): nombres, emails, teléfonos, direcciones, cualquier dato que identifique a una persona concreta, incluso en un log de ejemplo "para que el agente entienda el bug". Información confidencial de la organización: roadmaps no anunciados, contratos, métricas internas que la empresa no comparte públicamente.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            filename: '.env',
+            code: `# Esto es lo que normalmente NO deberías pegar en un prompt:
+DATABASE_URL=postgres://admin:S3cr3tP4ss@prod-db.internal:5432/app
+STRIPE_SECRET_KEY=sk_live_51H...
+JWT_SIGNING_SECRET=a8f3e9...`,
+          },
+          {
+            type: 'note',
+            text: 'Un caso muy común: pegás el archivo de configuración completo del proyecto para que el agente "entienda cómo está armado", y sin darte cuenta ese archivo trae la cadena de conexión a la base de datos de producción. El agente no la pidió -- estaba ahí, mezclada con el resto.',
+          },
+          {
+            type: 'p',
+            text: 'Regla práctica: si no lo pegarías en un canal de Slack público de tu equipo, tampoco lo pegues en el prompt de un agente que corre en un servicio externo. Si necesitás que el agente "entienda" un archivo con secrets, compartí una copia con los valores reemplazados por placeholders (DATABASE_URL=<redacted>), no el original.',
+          },
+        ],
+        takeaway:
+          'Antes de pegar un archivo completo en un prompt, revisá si tiene credenciales, datos personales o información confidencial mezclada -- y si tenés dudas, redactá esos valores primero.',
+      },
+      {
+        id: 'confirmacion-humana',
+        title: 'Cuándo un agente necesita confirmación humana antes de actuar',
+        objective:
+          'No todas las acciones de un agente pesan lo mismo: algunas se deshacen con un commit más, otras no se pueden deshacer nunca. Saber distinguirlas es la diferencia entre darle autonomía útil a un agente y exponerte a un desastre de una sola línea.',
+        estimatedMinutes: 12,
+        content: [
+          {
+            type: 'heading',
+            text: 'Cuándo un agente necesita confirmación humana antes de actuar',
+          },
+          {
+            type: 'p',
+            text: 'El criterio no es "¿esto es código o es git?", sino dos preguntas: ¿qué tan fácil es deshacer esta acción si está mal? y ¿a quién más afecta si sale mal? Una acción local y reversible se puede probar y corregir sin costo. Una acción destructiva, o que ya quedó visible para otras personas, no da esa segunda oportunidad.',
+          },
+          { type: 'heading', text: 'Autonomía razonable: acciones locales y reversibles' },
+          {
+            type: 'p',
+            text: 'Estas acciones las puede ejecutar un agente sin pedir permiso en cada paso, porque un error se corrige fácil: editar un archivo en tu rama de trabajo, correr la suite de tests, instalar una dependencia de desarrollo, crear un commit local (todavía no pusheado), o navegar y leer el código para entender algo.',
+          },
+          {
+            type: 'heading',
+            text: 'Confirmación explícita: acciones destructivas o de alto impacto',
+          },
+          {
+            type: 'p',
+            text: 'Estas acciones siempre deberían pararse a preguntar antes de ejecutarse, aunque el agente "esté seguro" de que es lo correcto: borrar archivos o ramas, git push --force (reescribe el historial que otros ya vieron), git reset --hard (descarta cambios sin pasar por el stash), saltarse hooks de seguridad (--no-verify, --no-gpg-sign), modificar permisos o infraestructura compartida (CI, variables de entorno de producción, accesos), y cualquier cosa que quede visible para otra persona antes de que la revises: mandar un mensaje en un canal del equipo, comentar en un PR ajeno, o abrir un PR propio.',
+          },
+          {
+            type: 'code',
+            lang: 'bash',
+            code: `# Estos comandos son candidatos típicos a "pedir confirmación primero":
+git push --force
+git reset --hard origin/main
+git branch -D feature/algo-importante
+git commit --no-verify`,
+          },
+          {
+            type: 'note',
+            text: 'Abrir un PR es técnicamente reversible (se puede cerrar), pero igual entra en la lista: en el momento en que otra persona lo ve, ya gastaste su atención y la confianza del equipo en que el agente no actúa a sus espaldas. El costo no siempre es técnico -- a veces es social.',
+          },
+        ],
+        takeaway:
+          'Clasificá cada acción por cuánto cuesta deshacerla y a quién más afecta si sale mal: lo local y reversible puede correr con autonomía, lo destructivo o visible para otros siempre pide confirmación antes de ejecutarse.',
+      },
+      {
+        id: 'alucinaciones-sesgos',
+        title: 'Alucinaciones y sesgos: cómo detectarlos y qué hacer',
+        objective:
+          'Un agente puede afirmar con total seguridad algo falso -- una función que no existe, una librería que se comporta distinto a como dice -- y puede sugerir patrones que no encajan con las convenciones de tu proyecto solo porque son los más comunes "en general". Ninguna de las dos cosas se nota mirando la respuesta con confianza; se nota verificando.',
+        estimatedMinutes: 12,
+        content: [
+          { type: 'heading', text: 'Qué es una alucinación en este contexto' },
+          {
+            type: 'p',
+            text: 'Una alucinación es cuando el agente afirma algo falso con el mismo tono de seguridad que usaría para algo verdadero: una función que no existe en esa librería, una URL inventada, un paquete de npm que no es el real (o que existe pero hace otra cosa), o un comportamiento de una API que simplemente no es así. No es que el agente "mienta" a propósito -- genera la respuesta más probable según su entrenamiento, y a veces eso no coincide con la realidad del código que tenés enfrente.',
+          },
+          { type: 'heading', text: 'Cómo detectarlas en la práctica' },
+          {
+            type: 'p',
+            text: 'Tres hábitos simples cubren la mayoría de los casos. Primero: correr el código, no solo leerlo -- una alucinación casi siempre se rompe apenas se ejecuta. Segundo: cuando el agente menciona una API, un paquete o un método que no conocías, buscar su documentación real antes de asumir que existe tal como lo describió. Tercero: desconfiar un poco más de las respuestas muy seguras sobre detalles muy específicos -- un número de versión exacto, el nombre de una función poco común -- porque ahí es donde el modelo tiene más margen para "completar" en vez de recordar.',
+          },
+          {
+            type: 'code',
+            lang: 'js',
+            code: `// Si el agente te sugiere algo así y no te suena...
+import { debounceAsync } from 'lit/decorators/timing.js';
+
+// ...buscá en la documentación real de Lit antes de usarlo.
+// Si no aparece, probablemente no existe: es una alucinación.`,
+          },
+          { type: 'heading', text: 'Sesgo: cuando "lo más común" no es lo que tu proyecto eligió' },
+          {
+            type: 'p',
+            text: 'Un agente entrenado mayormente con cierto tipo de código tiende a sugerir los patrones más frecuentes en ese entrenamiento, no los que tu equipo decidió a propósito. En ac-lit esto aparece seguido: el agente puede sugerir TypeScript cuando el proyecto decidió explícitamente no usarlo, o proponer un wizard interactivo para la CLI cuando la convención acá es "cero wizard, defaults sensatos". No es que el agente esté mal entrenado -- es que no sabe que tu proyecto tomó esa decisión, a menos que se lo digas.',
+          },
+          {
+            type: 'note',
+            text: 'El contexto y las convenciones del propio repo (docs/CONVENTIONS.md, AGENTS.md, lo que ya existe en el código) siempre tienen que ganarle a lo que el modelo "suele hacer por defecto". Si una sugerencia no encaja con una convención que ya conocés, el default equivocado es del modelo, no tuyo.',
+          },
+        ],
+        takeaway:
+          'No le creas a una afirmación segura sin verificarla -- corriendo el código o mirando la documentación real --, y recordá que el agente no conoce tus convenciones a menos que se las digas: ante la duda, gana lo que tu proyecto ya decidió.',
+      },
+    ],
+  },
+];
 
 export const LAB_LEVELS = [
   {
@@ -4147,5 +4734,25 @@ export const LAB_LEVELS = [
       { icon: STAR_FEATURE_ICON, text: 'Optimización y performance' },
     ],
     chapters: AVANZADO_CHAPTERS,
+  },
+  {
+    id: 'espacio-ia',
+    title: 'Espacio IA',
+    levelLabel: 'Referencia',
+    description:
+      'Guía de referencia sobre agentes de IA: skills, modelos recomendados, procesos de trabajo y buenas prácticas de seguridad -- sin orden fijo, abrí cualquier artículo cuando lo necesites.',
+    icon: SPARKLE_ICON,
+    ctaLabel: 'Explorar',
+    // Hub de referencia de navegación libre: a diferencia de los niveles de
+    // arriba, no bloquea capítulos/labs por progreso ni muestra barra de
+    // avance -- ver chapterEntries()/renderLabNav()/renderLabContent() en
+    // catalog.js, que leen este flag.
+    freeNavigation: true,
+    features: [
+      { icon: DOC_FEATURE_ICON, text: 'Guías de referencia' },
+      { icon: CHECK_FEATURE_ICON, text: 'Buenas prácticas' },
+      { icon: BOLT_FEATURE_ICON, text: 'Navegación libre' },
+    ],
+    chapters: AI_SPACE_CHAPTERS,
   },
 ];
