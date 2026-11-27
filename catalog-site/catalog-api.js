@@ -2202,6 +2202,261 @@ export const COMPONENT_API = {
       { name: 'ac-api-archivos-download-error', detail: '{ method, params, error }' },
     ],
   },
+
+  'ac-api-cuentas': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarTiposCuenta()',
+        description: 'Lista los tipos de cuenta disponibles para abrir (mock de catálogo).',
+        event: 'ac-api-cuentas-types-success / ac-api-cuentas-types-error',
+      },
+      {
+        signature: 'listarCuentas(queryParams = {})',
+        description:
+          'Lista las cuentas del mock. `queryParams`: estado, tipoId, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-cuentas-list-success / ac-api-cuentas-list-error',
+      },
+      {
+        signature: 'abrirCuenta(tipoId, alias)',
+        description:
+          'Abre una cuenta activa de un tipo existente; falla si `tipoId` no existe en el mock.',
+        event: 'ac-api-cuentas-open-success / ac-api-cuentas-open-error',
+      },
+      {
+        signature: 'actualizarAlias(cuentaId, alias)',
+        description: 'Cambia el alias de una cuenta; falla si no existe o ya está cerrada.',
+        event: 'ac-api-cuentas-rename-success / ac-api-cuentas-rename-error',
+      },
+      {
+        signature: 'bloquearCuenta(cuentaId, motivo)',
+        description: 'Bloquea una cuenta activa; falla si ya está bloqueada o cerrada.',
+        event: 'ac-api-cuentas-block-success / ac-api-cuentas-block-error',
+      },
+      {
+        signature: 'cerrarCuenta(cuentaId)',
+        description: 'Cierra una cuenta; falla si no existe o ya está cerrada.',
+        event: 'ac-api-cuentas-close-success / ac-api-cuentas-close-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-cuentas-types-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-types-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-cuentas-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-cuentas-open-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-open-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-cuentas-rename-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-rename-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-cuentas-block-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-block-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-cuentas-close-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-cuentas-close-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-tarjetas': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarTarjetas(queryParams = {})',
+        description:
+          'Lista las tarjetas del mock. `queryParams`: estado, tipo, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-tarjetas-list-success / ac-api-tarjetas-list-error',
+      },
+      {
+        signature: 'solicitarTarjeta(cuentaId, tipo)',
+        description:
+          'Solicita una tarjeta nueva (`debito` o `credito`); falla si `tipo` no es válido.',
+        event: 'ac-api-tarjetas-request-success / ac-api-tarjetas-request-error',
+      },
+      {
+        signature: 'bloquearTarjeta(tarjetaId, motivo)',
+        description: 'Bloquea una tarjeta activa; falla si no existe o ya está bloqueada.',
+        event: 'ac-api-tarjetas-block-success / ac-api-tarjetas-block-error',
+      },
+      {
+        signature: 'desbloquearTarjeta(tarjetaId)',
+        description: 'Reactiva una tarjeta bloqueada; falla si no existe o no está bloqueada.',
+        event: 'ac-api-tarjetas-unblock-success / ac-api-tarjetas-unblock-error',
+      },
+      {
+        signature: 'cambiarPin(tarjetaId, pinActual, pinNuevo)',
+        description:
+          'Cambia el PIN; falla si la tarjeta no existe o `pinActual` no coincide con el PIN simulado.',
+        event: 'ac-api-tarjetas-pin-success / ac-api-tarjetas-pin-error',
+      },
+      {
+        signature: 'consultarLineaDisponible(tarjetaId)',
+        description:
+          'Devuelve línea y disponible de una tarjeta de crédito; falla si es de débito.',
+        event: 'ac-api-tarjetas-credit-line-success / ac-api-tarjetas-credit-line-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-tarjetas-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-tarjetas-request-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-request-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-tarjetas-block-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-block-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-tarjetas-unblock-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-unblock-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-tarjetas-pin-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-pin-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-tarjetas-credit-line-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-tarjetas-credit-line-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-seguros': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarProductos(queryParams = {})',
+        description:
+          'Lista el catálogo de seguros. `queryParams`: tipo, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-seguros-products-success / ac-api-seguros-products-error',
+      },
+      {
+        signature: 'cotizar(productoId, datos)',
+        description:
+          'Estima la prima mensual de un producto según `datos.factorRiesgo`; falla si el producto no existe.',
+        event: 'ac-api-seguros-quote-success / ac-api-seguros-quote-error',
+      },
+      {
+        signature: 'contratarSeguro(productoId, datos)',
+        description: 'Crea una póliza vigente por un año; falla si el producto no existe.',
+        event: 'ac-api-seguros-subscribe-success / ac-api-seguros-subscribe-error',
+      },
+      {
+        signature: 'listarPolizas(queryParams = {})',
+        description:
+          'Lista las pólizas. `queryParams`: estado, productoId, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-seguros-policies-success / ac-api-seguros-policies-error',
+      },
+      {
+        signature: 'cancelarPoliza(polizaId, motivo)',
+        description: 'Cancela una póliza; falla si no existe o ya está cancelada.',
+        event: 'ac-api-seguros-cancel-success / ac-api-seguros-cancel-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-seguros-products-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-seguros-products-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-seguros-quote-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-seguros-quote-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-seguros-subscribe-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-seguros-subscribe-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-seguros-policies-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-seguros-policies-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-seguros-cancel-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-seguros-cancel-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-prestamos': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarProductos(queryParams = {})',
+        description:
+          'Lista el catálogo de préstamos. `queryParams`: sortBy/sortDir, pagination/page.',
+        event: 'ac-api-prestamos-products-success / ac-api-prestamos-products-error',
+      },
+      {
+        signature: 'simularPrestamo(productoId, monto, plazoMeses)',
+        description:
+          'Calcula una cuota estimada (interés simple sobre la tasa anual) sin crear nada; falla si el producto no existe o el monto/plazo superan el máximo.',
+        event: 'ac-api-prestamos-simulate-success / ac-api-prestamos-simulate-error',
+      },
+      {
+        signature: 'solicitarPrestamo(productoId, monto, plazoMeses)',
+        description: 'Crea un préstamo activo con las mismas validaciones que `simularPrestamo`.',
+        event: 'ac-api-prestamos-request-success / ac-api-prestamos-request-error',
+      },
+      {
+        signature: 'listarPrestamos(queryParams = {})',
+        description:
+          'Lista los préstamos. `queryParams`: estado, productoId, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-prestamos-list-success / ac-api-prestamos-list-error',
+      },
+      {
+        signature: 'pagarCuota(prestamoId)',
+        description:
+          'Registra el pago de la siguiente cuota; el préstamo pasa a `pagado` con la última. Falla si no tiene cuotas pendientes.',
+        event: 'ac-api-prestamos-pay-success / ac-api-prestamos-pay-error',
+      },
+      {
+        signature: 'obtenerCronograma(prestamoId)',
+        description:
+          'Devuelve el cronograma completo de cuotas (pagadas y pendientes) de un préstamo.',
+        event: 'ac-api-prestamos-schedule-success / ac-api-prestamos-schedule-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-prestamos-products-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-products-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-prestamos-simulate-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-simulate-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-prestamos-request-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-request-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-prestamos-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-prestamos-pay-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-pay-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-prestamos-schedule-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-prestamos-schedule-error', detail: '{ method, params, error }' },
+    ],
+  },
+
+  'ac-api-inversiones': {
+    properties: API_SIMULATOR_PROPERTIES,
+    methods: [
+      {
+        signature: 'listarProductos(queryParams = {})',
+        description:
+          'Lista el catálogo de inversiones (depósitos a plazo y fondos mutuos). `queryParams`: tipo, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-inversiones-products-success / ac-api-inversiones-products-error',
+      },
+      {
+        signature: 'simularRentabilidad(productoId, monto, plazoDias)',
+        description:
+          'Calcula la rentabilidad estimada proporcional al plazo, sin crear nada; falla si el producto no existe o el monto es menor al mínimo.',
+        event: 'ac-api-inversiones-simulate-success / ac-api-inversiones-simulate-error',
+      },
+      {
+        signature: 'suscribirInversion(productoId, monto)',
+        description:
+          'Crea una inversión activa con inicio hoy y vencimiento según el plazo del producto.',
+        event: 'ac-api-inversiones-subscribe-success / ac-api-inversiones-subscribe-error',
+      },
+      {
+        signature: 'listarInversiones(queryParams = {})',
+        description:
+          'Lista las inversiones. `queryParams`: estado, productoId, sortBy/sortDir, pagination/page.',
+        event: 'ac-api-inversiones-list-success / ac-api-inversiones-list-error',
+      },
+      {
+        signature: 'rescatarInversion(inversionId)',
+        description:
+          'Rescata una inversión activa: calcula principal + rentabilidad al día de hoy; falla si no existe o ya fue rescatada.',
+        event: 'ac-api-inversiones-redeem-success / ac-api-inversiones-redeem-error',
+      },
+    ],
+    events: [
+      { name: 'ac-api-inversiones-products-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-inversiones-products-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-inversiones-simulate-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-inversiones-simulate-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-inversiones-subscribe-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-inversiones-subscribe-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-inversiones-list-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-inversiones-list-error', detail: '{ method, params, error }' },
+      { name: 'ac-api-inversiones-redeem-success', detail: '{ method, params, data }' },
+      { name: 'ac-api-inversiones-redeem-error', detail: '{ method, params, error }' },
+    ],
+  },
 };
 
 Object.assign(COMPONENT_API, {

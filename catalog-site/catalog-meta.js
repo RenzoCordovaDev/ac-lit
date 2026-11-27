@@ -100,6 +100,11 @@ export const GROUPS = [
       'ac-api-direcciones',
       'ac-api-notificaciones',
       'ac-api-archivos',
+      'ac-api-cuentas',
+      'ac-api-tarjetas',
+      'ac-api-seguros',
+      'ac-api-prestamos',
+      'ac-api-inversiones',
     ],
   },
   {
@@ -320,6 +325,35 @@ export const COMPONENT_META = {
     summary: 'Simulador de API de archivos (sin UI)',
     description:
       'Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.',
+  },
+  'ac-api-cuentas': {
+    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="7" cy="15" r="1"/>',
+    summary: 'Simulador de ciclo de vida de cuentas bancarias (sin UI)',
+    description:
+      'Simula tipos de cuenta, apertura, cambio de alias, bloqueo y cierre de cuentas (sin saldo ni movimientos, eso lo simula ac-api-operaciones).',
+  },
+  'ac-api-tarjetas': {
+    icon: '<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
+    summary: 'Simulador de gestión de tarjetas (sin UI)',
+    description:
+      'Simula solicitud, bloqueo/desbloqueo, cambio de PIN y línea de crédito disponible de tarjetas de débito y crédito.',
+  },
+  'ac-api-seguros': {
+    icon: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/>',
+    summary: 'Simulador de seguros (sin UI)',
+    description: 'Simula catálogo de seguros, cotización, contratación y cancelación de pólizas.',
+  },
+  'ac-api-prestamos': {
+    icon: '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="4"/>',
+    summary: 'Simulador de préstamos (sin UI)',
+    description:
+      'Simula catálogo de préstamos, simulación y solicitud, pago de cuotas y cronograma de pagos.',
+  },
+  'ac-api-inversiones': {
+    icon: '<path d="M4 18V9M10 18V5M16 18v-7M4 18h16"/><path d="M15 6l3-1.5V7.5z"/>',
+    summary: 'Simulador de inversiones (sin UI)',
+    description:
+      'Simula catálogo de depósitos a plazo y fondos mutuos, simulación de rentabilidad, suscripción y rescate.',
   },
   'ac-list-basic': {
     icon: '<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/>',
