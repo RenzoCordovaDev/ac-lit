@@ -586,6 +586,31 @@ importers:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
 
+  packages/components/ac-api-tarjetas:
+    dependencies:
+      '@ac-base/ac-api-mixin':
+        specifier: workspace:^
+        version: link:../../base/ac-api-mixin
+    devDependencies:
+      '@ac-base/ac-core':
+        specifier: workspace:^
+        version: link:../../base/ac-core
+      '@ac-base/ac-demo-content':
+        specifier: workspace:^
+        version: link:../../base/ac-demo-content
+      '@open-wc/testing':
+        specifier: ^4.0.0
+        version: 4.0.0
+      '@web/test-runner':
+        specifier: ^0.18.0
+        version: 0.18.3(bare-buffer@3.7.1)
+      lit:
+        specifier: ^3.0.0
+        version: 3.3.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@26.6.6)(sass@1.108.1)
+
   packages/components/ac-api-users:
     dependencies:
       '@ac-base/ac-api-mixin':
