@@ -1,0 +1,100 @@
+<section class="api-doc">
+  <p class="api-doc__summary">
+    Simula el ciclo de vida de cuentas bancarias, desde la apertura hasta el cierre.
+  </p>
+</section>
+
+<section class="api-doc">
+  <h2>Propiedades</h2>
+  <ul class="api-doc__list">
+    <li>
+      <code>version</code> <span class="api-doc__meta">String, por defecto 'v1'</span>
+      <p>
+        Versión de los mocks / del servicio simulado que se consume. No cambia el comportamiento por
+        sí sola — es informativa, para simular múltiples versiones de API en una demo o integración.
+      </p>
+    </li>
+    <li>
+      <code>timeout</code> <span class="api-doc__meta">Number, por defecto 3000</span>
+      <p>
+        Milisegundos de latencia simulada antes de resolver o rechazar cada llamada. Se aplica por
+        instancia: todas las llamadas de esa instancia esperan el mismo tiempo configurado.
+      </p>
+    </li>
+    <li>
+      <code>simulateError</code> <span class="api-doc__meta">Boolean, por defecto false</span>
+      <p>
+        Si es true, fuerza que toda llamada posterior falle (dispara el evento de error
+        correspondiente) sin tocar los datos mock — pensado para probar el manejo de errores del
+        consumidor. Se puede alternar en caliente.
+      </p>
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Métodos públicos</h2>
+  <ul class="api-doc__list api-doc__list--methods">
+    <li>
+      <code>listarTiposCuenta()</code>
+      <p>Devuelve los tipos de cuenta disponibles.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-types-success / ac-api-cuentas-types-error</code></span
+      >
+    </li>
+    <li>
+      <code>listarCuentas(queryParams = {})</code>
+      <p>
+        Lista las cuentas. <code>estado</code> y <code>tipoId</code> filtran los resultados,
+        <code>sortBy</code> y <code>sortDir</code> los ordenan, y <code>pagination</code> y
+        <code>page</code> los paginan.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-list-success / ac-api-cuentas-list-error</code></span
+      >
+    </li>
+    <li>
+      <code>abrirCuenta(tipoId, alias)</code>
+      <p>
+        Crea una cuenta activa con la moneda del tipo y la fecha actual en UTC. Falla si el tipo no
+        existe.
+      </p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-open-success / ac-api-cuentas-open-error</code></span
+      >
+    </li>
+    <li>
+      <code>actualizarAlias(cuentaId, alias)</code>
+      <p>Cambia el alias de una cuenta activa o bloqueada.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-rename-success / ac-api-cuentas-rename-error</code></span
+      >
+    </li>
+    <li>
+      <code>bloquearCuenta(cuentaId, motivo)</code>
+      <p>Bloquea una cuenta activa y guarda el motivo en <code>motivoBloqueo</code>.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-block-success / ac-api-cuentas-block-error</code></span
+      >
+    </li>
+    <li>
+      <code>cerrarCuenta(cuentaId)</code>
+      <p>Cierra una cuenta activa o bloqueada y la conserva en el listado.</p>
+      <span class="api-doc__event"
+        >Dispara: <code>ac-api-cuentas-close-success / ac-api-cuentas-close-error</code></span
+      >
+    </li>
+  </ul>
+</section>
+
+<section class="api-doc">
+  <h2>Eventos</h2>
+  <p class="api-doc__events-list">
+    <code>ac-api-cuentas-types-success</code>, <code>ac-api-cuentas-types-error</code>,
+    <code>ac-api-cuentas-list-success</code>, <code>ac-api-cuentas-list-error</code>,
+    <code>ac-api-cuentas-open-success</code>, <code>ac-api-cuentas-open-error</code>,
+    <code>ac-api-cuentas-rename-success</code>, <code>ac-api-cuentas-rename-error</code>,
+    <code>ac-api-cuentas-block-success</code>, <code>ac-api-cuentas-block-error</code>,
+    <code>ac-api-cuentas-close-success</code>, <code>ac-api-cuentas-close-error</code>
+  </p>
+</section>
