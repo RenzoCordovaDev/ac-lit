@@ -1,0 +1,11 @@
+{
+  "es-PE": {
+    "carousel-slide-basic-position": "Diapositiva {current} de {total}"
+  },
+  "en-EN": {
+    "carousel-slide-basic-position": "Slide {current} of {total}"
+  },
+  "pt-BR": {
+    "carousel-slide-basic-position": "Slide {current} de {total}"
+  }
+}

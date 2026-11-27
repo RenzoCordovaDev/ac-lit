@@ -1,0 +1,36 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.demo-root {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.container-example h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-lg);
+}
+
+.container-example p {
+  margin: 0;
+}
+
+.container-padding-examples {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.container-padding-example {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: center;
+}

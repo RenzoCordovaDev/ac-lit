@@ -1,0 +1,17 @@
+{
+  "es-PE": {
+    "search-input-basic-label": "Buscar",
+    "search-input-basic-placeholder": "Buscar…",
+    "search-input-basic-clear-label": "Limpiar búsqueda"
+  },
+  "en-EN": {
+    "search-input-basic-label": "Search",
+    "search-input-basic-placeholder": "Search…",
+    "search-input-basic-clear-label": "Clear search"
+  },
+  "pt-BR": {
+    "search-input-basic-label": "Buscar",
+    "search-input-basic-placeholder": "Buscar…",
+    "search-input-basic-clear-label": "Limpar busca"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "es-PE": {
+    "pagination-basic-nav": "Paginación",
+    "pagination-basic-previous-page": "Página anterior",
+    "pagination-basic-next-page": "Página siguiente",
+    "pagination-basic-go-to-page": "Ir a la página {page}"
+  },
+  "en-EN": {
+    "pagination-basic-nav": "Pagination",
+    "pagination-basic-previous-page": "Previous page",
+    "pagination-basic-next-page": "Next page",
+    "pagination-basic-go-to-page": "Go to page {page}"
+  },
+  "pt-BR": {
+    "pagination-basic-nav": "Paginação",
+    "pagination-basic-previous-page": "Página anterior",
+    "pagination-basic-next-page": "Próxima página",
+    "pagination-basic-go-to-page": "Ir para a página {page}"
+  }
+}

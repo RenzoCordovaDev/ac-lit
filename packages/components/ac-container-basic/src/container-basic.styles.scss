@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.ac-container-basic {
+  box-sizing: border-box;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  corner-shape: squircle;
+  color: var(--color-text, #bcbec4);
+  background-color: var(--color-surface, #2b2b2b);
+  box-shadow: var(--elev-1);
+}
+
+:host-context([data-theme='light']) .ac-container-basic {
+  color: var(--color-text, #27272a);
+  background-color: var(--color-surface, #f1efe8);
+}
+
+:host([ambient='outlined']) .ac-container-basic {
+  background-color: transparent;
+  border: 1px solid var(--color-subtext, currentColor);
+  box-shadow: none;
+}
+
+:host([padding='sm']) .ac-container-basic {
+  padding: var(--space-3);
+}
+
+:host([padding='lg']) .ac-container-basic {
+  padding: var(--space-6);
+}

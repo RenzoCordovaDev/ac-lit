@@ -1,0 +1,29 @@
+{
+  "es-PE": {
+    "breadcrumb-basic-navigation": "Ruta de navegación",
+    "breadcrumb-basic-home": "Inicio",
+    "breadcrumb-basic-catalog": "Catálogo",
+    "breadcrumb-basic-headphones": "Audífonos",
+    "breadcrumb-basic-support": "Soporte",
+    "breadcrumb-basic-guides": "Guías",
+    "breadcrumb-basic-installation": "Instalación"
+  },
+  "en-EN": {
+    "breadcrumb-basic-navigation": "Breadcrumb",
+    "breadcrumb-basic-home": "Home",
+    "breadcrumb-basic-catalog": "Catalog",
+    "breadcrumb-basic-headphones": "Headphones",
+    "breadcrumb-basic-support": "Support",
+    "breadcrumb-basic-guides": "Guides",
+    "breadcrumb-basic-installation": "Installation"
+  },
+  "pt-BR": {
+    "breadcrumb-basic-navigation": "Caminho de navegação",
+    "breadcrumb-basic-home": "Início",
+    "breadcrumb-basic-catalog": "Catálogo",
+    "breadcrumb-basic-headphones": "Fones de ouvido",
+    "breadcrumb-basic-support": "Suporte",
+    "breadcrumb-basic-guides": "Guias",
+    "breadcrumb-basic-installation": "Instalação"
+  }
+}

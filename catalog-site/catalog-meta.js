@@ -31,6 +31,8 @@ export const GROUPS = [
       'ac-checkbox-basic',
       'ac-input-basic',
       'ac-radio-basic',
+      'ac-rating-basic',
+      'ac-search-input-basic',
       'ac-select-basic',
       'ac-slider-basic',
       'ac-switch-basic',
@@ -47,6 +49,10 @@ export const GROUPS = [
       'ac-expandable-step',
       'ac-expandable-multistep',
       'ac-transition-container',
+      'ac-breadcrumb-basic',
+      'ac-pagination-basic',
+      'ac-carousel-basic',
+      'ac-carousel-slide-basic',
     ],
   },
   {
@@ -57,7 +63,11 @@ export const GROUPS = [
       'ac-avatar-basic',
       'ac-badge-basic',
       'ac-card-basic',
+      'ac-container-basic',
       'ac-date-basic',
+      'ac-footer-basic',
+      'ac-header-basic',
+      'ac-list-basic',
       'ac-profile-card-basic',
       'ac-divider-basic',
       'ac-tooltip-basic',
@@ -310,5 +320,57 @@ export const COMPONENT_META = {
     summary: 'Simulador de API de archivos (sin UI)',
     description:
       'Simula el consumo de una API de archivos: listar, subir (con progreso), descargar y eliminar.',
+  },
+  'ac-list-basic': {
+    icon: '<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/>',
+    summary: 'Lista de ítems',
+    description: 'Lista genérica de ítems, con icono, descripción y acción opcionales por fila.',
+  },
+  'ac-container-basic': {
+    icon: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/>',
+    summary: 'Contenedor/panel',
+    description:
+      'Superficie neutra para agrupar contenido arbitrario, con padding y elevación configurables.',
+  },
+  'ac-header-basic': {
+    icon: '<rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M3 13h18M3 17h10"/>',
+    summary: 'Encabezado de sección',
+    description: 'Franja de encabezado con zona de inicio, contenido central opcional y acciones.',
+  },
+  'ac-footer-basic': {
+    icon: '<path d="M3 15h18M3 19h10"/><rect x="3" y="4" width="18" height="9" rx="1.5"/>',
+    summary: 'Pie de página',
+    description: 'Pie de página con columnas de contenido y una franja de copyright/legal.',
+  },
+  'ac-carousel-basic': {
+    icon: '<rect x="7" y="5" width="10" height="14" rx="2"/><path d="M3 9v6M21 9v6"/>',
+    summary: 'Carrusel de diapositivas',
+    description: 'Carrusel con flechas, paginación, swipe, teclado y autoplay pausable.',
+  },
+  'ac-carousel-slide-basic': {
+    icon: '<rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 16l4.5-4 3 2.5L16 10l4 4"/>',
+    summary: 'Diapositiva de carrusel',
+    description:
+      'Diapositiva individual coordinada por `ac-carousel-basic`, sin conocer a su padre.',
+  },
+  'ac-search-input-basic': {
+    icon: '<circle cx="10.5" cy="10.5" r="6"/><path d="M20 20l-4.8-4.8"/>',
+    summary: 'Input de búsqueda',
+    description: 'Campo de búsqueda con icono de lupa, botón de limpiar y búsqueda con debounce.',
+  },
+  'ac-breadcrumb-basic': {
+    icon: '<path d="M4 12h4l2-7 3 14 2-7h5"/>',
+    summary: 'Ruta de navegación',
+    description: 'Ruta de navegación tipo breadcrumb, con el último ítem como página actual.',
+  },
+  'ac-pagination-basic': {
+    icon: '<rect x="2.5" y="8" width="5" height="8" rx="1"/><rect x="9.5" y="8" width="5" height="8" rx="1"/><rect x="16.5" y="8" width="5" height="8" rx="1"/>',
+    summary: 'Paginación numérica',
+    description: 'Paginación con flechas, números de página y elipsis para rangos largos.',
+  },
+  'ac-rating-basic': {
+    icon: '<path d="M12 3.5l2.6 5.3 5.9.8-4.3 4.1 1 5.8L12 16.6l-5.2 2.9 1-5.8-4.3-4.1 5.9-.8z"/>',
+    summary: 'Calificación por estrellas',
+    description: 'Calificación por estrellas, interactiva por teclado/click o de solo lectura.',
   },
 };

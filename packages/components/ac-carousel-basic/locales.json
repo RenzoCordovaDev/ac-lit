@@ -1,0 +1,32 @@
+{
+  "es-PE": {
+    "carousel-basic-region-label": "Carrusel",
+    "carousel-basic-previous-label": "Diapositiva anterior",
+    "carousel-basic-next-label": "Diapositiva siguiente",
+    "carousel-basic-pagination-label": "Paginación de diapositivas",
+    "carousel-basic-go-to-label": "Ir a la diapositiva {current}",
+    "carousel-basic-position-label": "Diapositiva {current} de {total}",
+    "carousel-basic-pause-label": "Pausar reproducción automática",
+    "carousel-basic-play-label": "Iniciar reproducción automática"
+  },
+  "en-EN": {
+    "carousel-basic-region-label": "Carousel",
+    "carousel-basic-previous-label": "Previous slide",
+    "carousel-basic-next-label": "Next slide",
+    "carousel-basic-pagination-label": "Slide pagination",
+    "carousel-basic-go-to-label": "Go to slide {current}",
+    "carousel-basic-position-label": "Slide {current} of {total}",
+    "carousel-basic-pause-label": "Pause autoplay",
+    "carousel-basic-play-label": "Start autoplay"
+  },
+  "pt-BR": {
+    "carousel-basic-region-label": "Carrossel",
+    "carousel-basic-previous-label": "Slide anterior",
+    "carousel-basic-next-label": "Próximo slide",
+    "carousel-basic-pagination-label": "Paginação de slides",
+    "carousel-basic-go-to-label": "Ir para o slide {current}",
+    "carousel-basic-position-label": "Slide {current} de {total}",
+    "carousel-basic-pause-label": "Pausar reprodução automática",
+    "carousel-basic-play-label": "Iniciar reprodução automática"
+  }
+}

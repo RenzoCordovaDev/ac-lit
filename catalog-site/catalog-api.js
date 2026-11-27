@@ -2203,3 +2203,361 @@ export const COMPONENT_API = {
     ],
   },
 };
+
+Object.assign(COMPONENT_API, {
+  'ac-list-basic': {
+    properties: [
+      {
+        name: 'items',
+        attribute: 'items',
+        type: 'Array o string JSON',
+        default: '[]',
+        description:
+          'Ítems en orden de presentación: { id, text, description?, icon?, disabled?, selected? }. Tiene prioridad sobre el slot.',
+      },
+      {
+        name: 'selectable',
+        attribute: 'selectable',
+        type: 'Boolean',
+        default: 'false',
+        description:
+          'Renderiza un botón nativo por ítem, enfocable con Tab y activable con Enter/Espacio.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'surface'",
+        description: "'surface' (fondo y elevación) | 'plain' (fondo transparente).",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-list-basic-item-click',
+        detail: '{ id, index }',
+        description: 'Se activa un botón de fila habilitado (selectable=true).',
+      },
+    ],
+  },
+  'ac-container-basic': {
+    properties: [
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'surface'",
+        description:
+          "'surface' (fondo sólido y elevación) | 'outlined' (fondo transparente y borde).",
+      },
+      {
+        name: 'padding',
+        attribute: 'padding',
+        type: 'String',
+        default: "'md'",
+        description: "'sm' | 'md' | 'lg'. Espaciado interno (--space-3/-4/-6).",
+      },
+    ],
+    events: [],
+  },
+  'ac-header-basic': {
+    properties: [
+      {
+        name: 'sticky',
+        attribute: 'sticky',
+        type: 'Boolean',
+        default: 'false',
+        description: 'Queda pegado al borde superior del contenedor con scroll.',
+      },
+      {
+        name: 'divider',
+        attribute: 'divider',
+        type: 'Boolean',
+        default: 'true',
+        description: 'Muestra un borde inferior decorativo.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'surface'",
+        description: "'surface' | 'transparent'.",
+      },
+    ],
+    events: [],
+  },
+  'ac-footer-basic': {
+    properties: [
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'surface'",
+        description: "'surface' (fondo neutro sólido) | 'plain' (fondo transparente).",
+      },
+    ],
+    events: [],
+  },
+  'ac-carousel-basic': {
+    properties: [
+      {
+        name: 'activeIndex',
+        attribute: 'active-index',
+        type: 'Number',
+        default: '0',
+        description: 'Índice de la diapositiva activa, desde cero. Se ajusta al rango disponible.',
+      },
+      {
+        name: 'autoplay',
+        attribute: 'autoplay',
+        type: 'Number',
+        default: '0',
+        description: 'Intervalo en ms entre avances automáticos. Con 0, desactivado.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' | 'secondary'. Color de los controles.",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-carousel-basic-change',
+        detail: '{ index: number }',
+        description:
+          'Flechas, puntos, teclado, gesto táctil o autoplay cambian la diapositiva. Silencioso en la carga inicial y en asignaciones de activeIndex desde código.',
+      },
+    ],
+  },
+  'ac-carousel-slide-basic': {
+    properties: [
+      {
+        name: 'active',
+        attribute: 'active',
+        type: 'Boolean',
+        default: 'false',
+        description: 'Muestra la diapositiva y permite enfocar su contenido.',
+      },
+      {
+        name: 'index',
+        attribute: '—',
+        type: 'Number',
+        default: '0',
+        description:
+          'Posición desde cero para el nombre accesible. Asignada por ac-carousel-basic.',
+      },
+      {
+        name: 'total',
+        attribute: '—',
+        type: 'Number',
+        default: '1',
+        description: 'Cantidad total de diapositivas. Asignada por ac-carousel-basic.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' (borde esmeralda) | 'secondary' (borde ámbar).",
+      },
+    ],
+    events: [],
+  },
+  'ac-search-input-basic': {
+    properties: [
+      {
+        name: 'value',
+        attribute: 'value',
+        type: 'String',
+        default: "''",
+        description: 'Texto actual del campo de búsqueda.',
+      },
+      {
+        name: 'placeholder',
+        attribute: 'placeholder',
+        type: 'String',
+        default: "''",
+        description: 'Texto de ejemplo, traducible con this.t().',
+      },
+      {
+        name: 'disabled',
+        attribute: 'disabled',
+        type: 'Boolean',
+        default: 'false',
+        description: 'Deshabilita el campo y el botón de limpiar.',
+      },
+      {
+        name: 'name',
+        attribute: 'name',
+        type: 'String',
+        default: "''",
+        description: 'Nombre del input interno.',
+      },
+      {
+        name: 'debounce',
+        attribute: 'debounce',
+        type: 'Number',
+        default: '300',
+        description: 'Espera en ms desde el último cambio antes de buscar.',
+      },
+      {
+        name: 'label',
+        attribute: 'label',
+        type: 'String',
+        default: "''",
+        description: 'Etiqueta visible y traducible.',
+      },
+      {
+        name: 'a11yLabel',
+        attribute: 'a11y-label',
+        type: 'String',
+        default: "''",
+        description: 'Nombre accesible cuando se omite label.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' | 'secondary'. Color del foco.",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-search-input-basic-input',
+        detail: '{ value: string }',
+        description: 'Con cada cambio del usuario o al limpiar.',
+      },
+      {
+        name: 'ac-search-input-basic-search',
+        detail: '{ value: string }',
+        description: 'Al transcurrir debounce, pulsar Enter o limpiar.',
+      },
+      {
+        name: 'ac-search-input-basic-clear',
+        detail: '{}',
+        description: 'Al activar el botón de limpiar.',
+      },
+    ],
+  },
+  'ac-breadcrumb-basic': {
+    properties: [
+      {
+        name: 'items',
+        attribute: 'items',
+        type: 'Array o string JSON',
+        default: '[]',
+        description:
+          'Ruta ordenada de objetos { text, href? }. El último ítem siempre se muestra como texto con aria-current="page".',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' (verde) | 'secondary' (ámbar).",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-breadcrumb-basic-navigate',
+        detail: '{ index, item: { text, href } }',
+        description: 'Se activa un enlace con clic o Enter; conserva la navegación nativa.',
+      },
+    ],
+  },
+  'ac-pagination-basic': {
+    properties: [
+      {
+        name: 'page',
+        attribute: 'page',
+        type: 'Number',
+        default: '1',
+        description: 'Página activa, desde 1 hasta totalPages.',
+      },
+      {
+        name: 'totalPages',
+        attribute: 'total-pages',
+        type: 'Number',
+        default: '1',
+        description: 'Cantidad total de páginas, mínimo 1.',
+      },
+      {
+        name: 'siblingCount',
+        attribute: 'sibling-count',
+        type: 'Number',
+        default: '1',
+        description: 'Páginas vecinas visibles a cada lado de la activa, mínimo 0.',
+      },
+      {
+        name: 'disabled',
+        attribute: 'disabled',
+        type: 'Boolean',
+        default: 'false',
+        description: 'Deshabilita todos los botones.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' | 'secondary'. Color de la página activa.",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-pagination-basic-page-change',
+        detail: '{ page: number }',
+        description:
+          'El usuario cambia de página con una flecha o un número. Silencioso al cargar o asignar page desde código.',
+      },
+    ],
+  },
+  'ac-rating-basic': {
+    properties: [
+      {
+        name: 'value',
+        attribute: 'value',
+        type: 'Number',
+        default: '0',
+        description: 'Calificación entera entre 0 y max.',
+      },
+      {
+        name: 'max',
+        attribute: 'max',
+        type: 'Number',
+        default: '5',
+        description: 'Cantidad de estrellas, mínimo 1.',
+      },
+      {
+        name: 'readonly',
+        attribute: 'readonly',
+        type: 'Boolean',
+        default: 'false',
+        description: 'Muestra el valor como una imagen accesible, sin interacción.',
+      },
+      {
+        name: 'name',
+        attribute: 'name',
+        type: 'String',
+        default: "''",
+        description: 'Identificador del campo para el consumidor.',
+      },
+      {
+        name: 'ambient',
+        attribute: 'ambient',
+        type: 'String',
+        default: "'primary'",
+        description: "'primary' (esmeralda) | 'secondary' (ámbar). Color de las estrellas llenas.",
+      },
+    ],
+    events: [
+      {
+        name: 'ac-rating-basic-change',
+        detail: '{ value: number }',
+        description: 'El usuario cambia la calificación con clic o teclado.',
+      },
+    ],
+  },
+});
