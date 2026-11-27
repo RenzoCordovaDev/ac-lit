@@ -3,7 +3,7 @@ import { appCreate } from './app-create.js';
 
 /**
  * Comandos propios del CLI. Cualquier otro primer argumento es un passthrough a
- * `pnpm run <script>`, y estos nombres tienen prioridad sobre un script homónimo.
+ * los scripts del proyecto, y estos nombres tienen prioridad sobre un script homónimo.
  * `bin/aclit.js` los registra en Commander y `help.js` los lista desde acá, así que
  * agregar uno nuevo es una sola entrada.
  */

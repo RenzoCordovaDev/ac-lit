@@ -40,7 +40,7 @@ export function formatHelp(cwd = process.cwd()) {
     ...COMMANDS.map((command, index) => row(usages[index], command.description)),
     row('aclit help', 'Lista todos los comandos disponibles (también: aclit -h, aclit --help)'),
     '',
-    'Tareas (passthrough a "pnpm run <script>" en el directorio actual):',
+    'Tareas (npm o pnpm en el directorio actual):',
     ...COMMON_TASKS.map(group => `  ${group.join('    ')}`),
     '  aclit <cualquier script definido en package.json>',
   ];
